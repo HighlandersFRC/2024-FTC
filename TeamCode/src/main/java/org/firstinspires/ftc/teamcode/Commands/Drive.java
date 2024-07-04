@@ -63,7 +63,7 @@ public class Drive implements Command {
 
         // Reset and initialize heading
         Peripherals.resetYaw();
-        initialHeading = Peripherals.getYaw();
+        initialHeading = Peripherals.getYawDegrees();
         targetHeading = initialHeading;
 
         // Start timer
