@@ -14,6 +14,8 @@ public abstract class Subsystem {
         return name;
     }
 
-    public abstract void initialize(HardwareMap hardwareMap);
+    public static void initialize(HardwareMap hardwareMap) {
+
+    }
 
 }

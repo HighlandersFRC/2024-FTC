@@ -8,7 +8,8 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
 public class Peripherals extends Subsystem {
 
-    private DcMotor leftMotor, rightMotor;
+    private static DcMotor leftMotor;
+    private static DcMotor rightMotor;
     private double xPosition = 0, yPosition = 0, theta = 0;
     private int lastLeftPosition = 0, lastRightPosition = 0;
     private double wheelDiameter = 0.1; // Wheel diameter in meters
@@ -19,8 +20,8 @@ public class Peripherals extends Subsystem {
         super(name);
     }
 
-    @Override
-    public void initialize(HardwareMap hardwareMap) {
+
+    public static void initialize(HardwareMap hardwareMap) {
         leftMotor = hardwareMap.get(DcMotor.class, "left_motor");
         rightMotor = hardwareMap.get(DcMotor.class, "right_motor");
 
@@ -52,6 +53,7 @@ public class Peripherals extends Subsystem {
 
         lastLeftPosition = leftPosition;
         lastRightPosition = rightPosition;
+
     }
 
     public double getXPosition() {

@@ -1,77 +1,132 @@
 package org.firstinspires.ftc.teamcode.PathingTool;
 
-import android.content.Context;
-import android.content.res.AssetManager;
+import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
-import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.Subsystems.DriveSubsystem;
-import org.firstinspires.ftc.teamcode.TestAuto;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.util.ArrayList;
 
 public class PathEngine {
 
-    private String pathFileName;
-    private DriveSubsystem driveSubsystem;
-    private ArrayList<PathPoint> pathPoints;
-    private Telemetry telemetry;
-    private TestAuto context;
+    private JSONObject jsonPathData;
+    private static int currentIndex = 0;
+    private final double COORDINATE_UNIT = 1.0;
+    private double[] lastPoint = {0.0, 0.0};
+    private double[] currentPoint = {0.0, 0.0};
+    private static double lastPointLeft = 0;
+    private static double lastpointRight = 0;
 
-    public PathEngine(String pathFileName, DriveSubsystem driveSubsystem, Telemetry telemetry, TestAuto context) {
-        this.pathFileName = pathFileName;
-        this.driveSubsystem = driveSubsystem;
-        this.telemetry = telemetry;
-        this.context = context;
+    public PathEngine(OpMode opMode, String pathFileName) {
+        loadJSONFromAsset(opMode, pathFileName);
+        System.out.println(jsonPathData);
     }
 
-    public void initializePath() throws IOException, JSONException {
-        JSONArray jsonArray = loadJSONArrayFromAssets(pathFileName);
-
-        pathPoints = new ArrayList<>();
-        for (int i = 0; i < jsonArray.length(); i++) {
-            JSONObject jsonObject = jsonArray.getJSONObject(i);
-            double x = jsonObject.getDouble("x");
-            double y = jsonObject.getDouble("y");
-            pathPoints.add(new PathPoint(x, y));
+    private void loadJSONFromAsset(OpMode opMode, String pathFileName) {
+        try {
+            BufferedReader reader = new BufferedReader(
+                    new InputStreamReader(opMode.hardwareMap.appContext.getAssets().open(pathFileName))
+            );
+            StringBuilder sb = new StringBuilder();
+            String line;
+            while ((line = reader.readLine()) != null) {
+                sb.append(line);
+            }
+            reader.close();
+            jsonPathData = new JSONObject(sb.toString());
+        } catch (IOException | JSONException e) {
+            e.printStackTrace();
+            opMode.telemetry.addData("Error", "Failed to load JSON file: " + pathFileName);
+            opMode.telemetry.update();
         }
     }
 
-    public void runPathFollowing() throws InterruptedException {
-        for (PathPoint point : pathPoints) {
-            double targetX = point.getX();
-            double targetY = point.getY();
-
-            // Example movement logic (replace with your own)
-            driveSubsystem.moveToPoint(targetX, targetY);
-
-            // Example telemetry updates (replace with your own)
-            telemetry.addData("Target X", targetX);
-            telemetry.addData("Target Y", targetY);
-            telemetry.update();
-
-            Thread.sleep(1000); // Example delay (adjust as needed)
+    public double getNextSampledPointTime() {
+        try {
+            JSONArray sampledPoints = jsonPathData.getJSONArray("sampled_points");
+            if (currentIndex < sampledPoints.length()) {
+                JSONObject nextPoint = sampledPoints.getJSONObject(currentIndex);
+                double time = nextPoint.getDouble("time");
+                return time;
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
         }
+        return 0.0;
     }
 
-
-    private JSONArray loadJSONArrayFromAssets(String fileName) throws IOException, JSONException {
-        AssetManager assetManager = context.getAssets();
-        InputStream inputStream = assetManager.open(fileName);
-        BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
-        StringBuilder builder = new StringBuilder();
-        String line;
-        while ((line = reader.readLine()) != null) {
-            builder.append(line);
+    public double getNextSampledPointX() {
+        try {
+            JSONArray sampledPoints = jsonPathData.getJSONArray("sampled_points");
+            if (currentIndex < sampledPoints.length()) {
+                JSONObject nextPoint = sampledPoints.getJSONObject(currentIndex);
+                double x = nextPoint.getDouble("x") * COORDINATE_UNIT;
+                return x;
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
         }
-        reader.close();
+        return 0.0;
+    }
 
-        return new JSONArray(builder.toString());
+    public double getNextSampledPointY() {
+        try {
+            JSONArray sampledPoints = jsonPathData.getJSONArray("sampled_points");
+            if (currentIndex < sampledPoints.length()) {
+                JSONObject nextPoint = sampledPoints.getJSONObject(currentIndex);
+                double y = nextPoint.getDouble("y") * COORDINATE_UNIT;
+                return y;
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return 0.0;
+    }
+
+    public double getNextSampledPointAngle() {
+        try {
+            JSONArray sampledPoints = jsonPathData.getJSONArray("sampled_points");
+            if (currentIndex < sampledPoints.length()) {
+                JSONObject nextPoint = sampledPoints.getJSONObject(currentIndex);
+                double angle = nextPoint.getDouble("angle");
+                return angle;
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return 0.0;
+    }
+
+    public static void finishCurrentPoint() {
+        currentIndex++;
+        lastPointLeft = DriveSubsystem.leftMotor.getCurrentPosition();
+        lastpointRight = DriveSubsystem.rightMotor.getCurrentPosition();
+    }
+
+    public void update() throws InterruptedException {
+        System.out.println(getNextSampledPointX());
+        double x = getNextSampledPointX();
+        double y = getNextSampledPointY();
+        double angle = getNextSampledPointAngle();
+        DriveSubsystem.moveToPosition(x, y, calculateDistance(), angle, lastPointLeft, lastpointRight);
+        lastPoint[0] = currentPoint[0];
+        lastPoint[1] = currentPoint[1];
+        currentPoint[0] = x;
+        currentPoint[1] = y;
+    }
+
+    public double calculateDistance() {
+        double lastX = lastPoint[0];
+        double lastY = lastPoint[1];
+        double currentX = getNextSampledPointX();
+        double currentY = getNextSampledPointY();
+
+        double deltaX = currentX - lastX;
+        double deltaY = currentY - lastY;
+        return Math.sqrt(deltaX * deltaX + deltaY * deltaY);
     }
 }

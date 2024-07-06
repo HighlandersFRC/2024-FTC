@@ -9,15 +9,13 @@ public class PID {
     private double IValue;
     private double DValue;
 
-    // Dictates the inputs and outputs
     private double maxInput;
     private double minInput;
-    private double maxOutput = 1500; // Defaults to 100% and -100% motor power
-    private double minOutput = -1500;
+    private double maxOutput = 1.0; // Example max motor power
+    private double minOutput = -1.0;
 
-    private boolean continuous = false; // Only for absolute encoders
-    private double setPoint; // This will be set continuously
-    private double output;
+    private boolean continuous = false;
+    private double setPoint;
     private double result;
 
     public PID(double kp, double ki, double kd) {
@@ -39,11 +37,7 @@ public class PID {
             }
         }
 
-        if (Math.abs(error * PValue) < maxOutput) {
-            totalError += error;
-        } else {
-            totalError = 0;
-        }
+        totalError += error;
 
         result = PValue * error + IValue * totalError + DValue * (error - prevError);
         prevError = error;
@@ -61,7 +55,7 @@ public class PID {
         setPoint = target;
     }
 
-    public double getResult(double headingError) {
+    public double getResult() {
         return result;
     }
 
@@ -85,10 +79,6 @@ public class PID {
         continuous = value;
     }
 
-    public int getSetPoint() {
-        return (int) setPoint;
-    }
-
     public double clamp(double input) {
         if (input > maxOutput) {
             return maxOutput;
@@ -100,6 +90,6 @@ public class PID {
     }
 
     public double getError() {
-        return prevError;
+        return error;
     }
 }

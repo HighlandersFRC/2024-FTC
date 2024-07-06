@@ -2,153 +2,32 @@ package org.firstinspires.ftc.teamcode.Subsystems;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
-
-import org.firstinspires.ftc.robotcore.external.Func;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.teamcode.PathingTool.PathEngine;
+import org.firstinspires.ftc.teamcode.Tools.PID;
 
 public class DriveSubsystem extends Subsystem {
 
-    private static DcMotor leftMotor;
-    private static DcMotor rightMotor;
+    public static DcMotor leftMotor;
+    public static DcMotor rightMotor;
     private static Telemetry telemetry;
+    private static PID turnPID = new PID(1, 0, 0);
+    private static PID drivePIDL = new PID(1, 0, 0);
+    private static PID drivePIDR = new PID(1, 0, 0);
 
-    private static final double COUNTS_PER_INCH = 100; // Example value, adjust for your robot
+    private static final double COUNTS_PER_INCH = 9999; // Example value, adjust for your robot
 
     public DriveSubsystem(String name, HardwareMap hardwareMap) {
         super(name);
         initialize(hardwareMap);
     }
 
-    @Override
-    public void initialize(HardwareMap hardwareMap) {
+    public static void initialize(HardwareMap hardwareMap) {
         leftMotor = hardwareMap.get(DcMotor.class, "left_motor");
         rightMotor = hardwareMap.get(DcMotor.class, "right_motor");
-        telemetry = new Telemetry() {
-            @Override
-            public Item addData(String caption, String format, Object... args) {
-                return null;
-            }
 
-            @Override
-            public Item addData(String caption, Object value) {
-                return null;
-            }
-
-            @Override
-            public <T> Item addData(String caption, Func<T> valueProducer) {
-                return null;
-            }
-
-            @Override
-            public <T> Item addData(String caption, String format, Func<T> valueProducer) {
-                return null;
-            }
-
-            @Override
-            public boolean removeItem(Item item) {
-                return false;
-            }
-
-            @Override
-            public void clear() {
-
-            }
-
-            @Override
-            public void clearAll() {
-
-            }
-
-            @Override
-            public Object addAction(Runnable action) {
-                return null;
-            }
-
-            @Override
-            public boolean removeAction(Object token) {
-                return false;
-            }
-
-            @Override
-            public void speak(String text) {
-
-            }
-
-            @Override
-            public void speak(String text, String languageCode, String countryCode) {
-
-            }
-
-            @Override
-            public boolean update() {
-                return false;
-            }
-
-            @Override
-            public Line addLine() {
-                return null;
-            }
-
-            @Override
-            public Line addLine(String lineCaption) {
-                return null;
-            }
-
-            @Override
-            public boolean removeLine(Line line) {
-                return false;
-            }
-
-            @Override
-            public boolean isAutoClear() {
-                return false;
-            }
-
-            @Override
-            public void setAutoClear(boolean autoClear) {
-
-            }
-
-            @Override
-            public int getMsTransmissionInterval() {
-                return 0;
-            }
-
-            @Override
-            public void setMsTransmissionInterval(int msTransmissionInterval) {
-
-            }
-
-            @Override
-            public String getItemSeparator() {
-                return "";
-            }
-
-            @Override
-            public void setItemSeparator(String itemSeparator) {
-
-            }
-
-            @Override
-            public String getCaptionValueSeparator() {
-                return "";
-            }
-
-            @Override
-            public void setCaptionValueSeparator(String captionValueSeparator) {
-
-            }
-
-            @Override
-            public void setDisplayFormat(DisplayFormat displayFormat) {
-
-            }
-
-            @Override
-            public Log log() {
-                return null;
-            }
-        }; // Initialize telemetry here or pass it from op mode
+        // Initialize telemetry here or pass it from OpMode
+        telemetry = telemetry;
 
         // Set motor directions and other configurations as needed
         leftMotor.setDirection(DcMotor.Direction.FORWARD);
@@ -161,56 +40,54 @@ public class DriveSubsystem extends Subsystem {
         setRunMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 
-    public void moveToPoint(double x, double y) {
-        double currentX = 0; // Placeholder for current X position, replace with actual logic
-        double currentY = 0; // Placeholder for current Y position, replace with actual logic
+    public static void moveToPosition(double x, double y, double distanceThreshold, double angleDegrees, double leftTargetPos, double rightTargetPos) {
+        double leftSpeed = 0;
+        double rightSpeed = 0;
 
-        // Calculate angle and distance to the target point
-        double angleToTarget = Math.atan2(y - currentY, x - currentX);
-        double distanceToTarget = Math.sqrt(Math.pow(x - currentX, 2) + Math.pow(y - currentY, 2));
 
-        // Convert angle to degrees
-        double angleDegrees = Math.toDegrees(angleToTarget);
+        double remainingDistance = calculateRemainingDistance(leftTargetPos, rightTargetPos);
+         {
+            if (Math.abs(drivePIDL.getError()) < 2) {
+                drivePIDL.setSetPoint(leftTargetPos);
+                drivePIDR.setSetPoint(rightTargetPos);
 
-        // Adjust angle to fit within 0 to 360 degrees
-        if (angleDegrees < 0) {
-            angleDegrees += 360;
+                drivePIDL.clamp(1);
+                drivePIDR.clamp(1);
+
+                drivePIDL.updatePID(leftMotor.getCurrentPosition());
+                drivePIDR.updatePID(rightMotor.getCurrentPosition());
+
+                leftSpeed = drivePIDL.getResult();
+                rightSpeed = drivePIDR.getResult();
+                System.out.println(leftSpeed);
+            } else {
+                if (!(angleDegrees == Peripherals.getYawDegrees())) {
+                    turnPID.setSetPoint(angleDegrees);
+                    turnPID.updatePID(Peripherals.getYawDegrees());
+                    turnPID.setPID(0.03, 0, 0);
+                    turnPID.clamp(1);
+
+                    leftSpeed = turnPID.getResult();
+                    rightSpeed = -turnPID.getResult();
+                    System.out.println(leftSpeed);
+                }
+            }
         }
 
-        // Move robot to the target point
-        moveToPosition(x, y, distanceToTarget, angleDegrees);
+
+        leftMotor.setPower(leftSpeed);
+        rightMotor.setPower(rightSpeed);
+
+        while (leftMotor.isBusy() && rightMotor.isBusy()) {
+        }
     }
 
-    public static void moveToPosition(double x, double y, double distance, double angleDegrees) {
-        // Convert distance to encoder counts based on your robot's setup
-        int targetCounts = (int) (distance * COUNTS_PER_INCH);
+    private static double calculateRemainingDistance(double leftTargetPos, double rightTargetPos) {
+        double currentLeftPos = leftMotor.getCurrentPosition();
+        double currentRightPos = rightMotor.getCurrentPosition();
 
-        // Calculate encoder targets for left and right motors
-        int leftTarget = leftMotor.getCurrentPosition() + targetCounts;
-        int rightTarget = rightMotor.getCurrentPosition() + targetCounts;
-
-        // Set target positions for the motors
-        leftMotor.setTargetPosition(leftTarget);
-        rightMotor.setTargetPosition(rightTarget);
-
-        // Calculate motor powers based on speed and angle
-        // Example: Implement PID control or basic proportional control here
-        double speed = 0.5; // Example speed
-        double leftPower = speed;
-        double rightPower = speed;
-
-        // Set motor powers
-        leftMotor.setPower(leftPower);
-        rightMotor.setPower(rightPower);
-
-        // Wait for movement to complete
-        while (leftMotor.isBusy() && rightMotor.isBusy()) {
-            telemetry.addData("Status", "Moving to point...");
-            telemetry.update();
-        }
-
-        // Stop the robot
-        stop();
+        // Assuming distance is a function of difference between target and current encoder positions
+        return Math.abs(leftTargetPos - currentLeftPos) + Math.abs(rightTargetPos - currentRightPos);
     }
 
     public static void stop() {
@@ -229,5 +106,10 @@ public class DriveSubsystem extends Subsystem {
         // Set motor run mode
         leftMotor.setMode(mode);
         rightMotor.setMode(mode);
+    }
+
+    @Override
+    public String getName() {
+        return super.getName();
     }
 }

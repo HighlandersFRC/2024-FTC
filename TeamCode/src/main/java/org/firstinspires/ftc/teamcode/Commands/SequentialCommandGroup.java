@@ -10,9 +10,11 @@ public class SequentialCommandGroup implements Command {
     private boolean isFinished;
 
     public SequentialCommandGroup() {
+
         commands = new ArrayList<>();
         currentCommandIndex = 0;
         isFinished = false;
+
     }
 
     public void addCommand(Command command) {
