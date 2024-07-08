@@ -112,6 +112,7 @@ public class DriveSubsystem extends Subsystem {
         // Set motor run mode
         leftMotor.setMode(mode);
         rightMotor.setMode(mode);
+
     }
 
     @Override
