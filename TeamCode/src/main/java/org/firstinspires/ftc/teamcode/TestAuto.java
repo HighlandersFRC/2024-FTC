@@ -1,5 +1,9 @@
 package org.firstinspires.ftc.teamcode;
 
+import static org.firstinspires.ftc.teamcode.Subsystems.DriveSubsystem.calculateRemainingDistance;
+import static org.firstinspires.ftc.teamcode.Subsystems.DriveSubsystem.drivePIDL;
+import static org.firstinspires.ftc.teamcode.Subsystems.DriveSubsystem.turnPID;
+
 import android.content.Context;
 import android.content.res.AssetManager;
 
@@ -29,6 +33,14 @@ public class TestAuto extends LinearOpMode {
         PathEngine pathEngine = new PathEngine(this, "ParabolicPath.json");
         waitForStart();
         while (opModeIsActive()){
+           System.out.println("PidError"+ drivePIDL.getError());
+           System.out.println("PidPower"+ drivePIDL.getResult());
+           System.out.println("TurnPidError"+turnPID.getError());
+           System.out.println("JsonX"+ pathEngine.getNextSampledPointX());
+           System.out.println("JsonY"+ pathEngine.getNextSampledPointY());
+           System.out.println("JsonAngle"+ pathEngine.getNextSampledPointAngle());
+           System.out.println("current posL"+ DriveSubsystem.CurrentPosL());
+            System.out.println("current posR"+ DriveSubsystem.CurrentPosR());
             pathEngine.update();
             sleep(50);
         }

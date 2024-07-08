@@ -22,4 +22,5 @@ dependencies {
     implementation 'androidx.appcompat:appcompat:1.2.0'
     implementation 'com.fasterxml.jackson.core:jackson-databind:2.13.1'
     implementation  (name:'navx_ftc-release', ext:'aar')
+
 }

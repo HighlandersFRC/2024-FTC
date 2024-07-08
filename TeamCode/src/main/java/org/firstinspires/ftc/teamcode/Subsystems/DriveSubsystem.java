@@ -11,8 +11,8 @@ public class DriveSubsystem extends Subsystem {
     public static DcMotor leftMotor;
     public static DcMotor rightMotor;
     private static Telemetry telemetry;
-    private static PID turnPID = new PID(1, 0, 0);
-    private static PID drivePIDL = new PID(1, 0, 0);
+    public static PID turnPID = new PID(1, 0, 0);
+    public static PID drivePIDL = new PID(1, 0, 0);
     private static PID drivePIDR = new PID(1, 0, 0);
 
     private static final double COUNTS_PER_INCH = 9999; // Example value, adjust for your robot
@@ -47,8 +47,8 @@ public class DriveSubsystem extends Subsystem {
 
         double remainingDistance = calculateRemainingDistance(leftTargetPos, rightTargetPos);
          {
-            if (Math.abs(drivePIDL.getError()) < 2) {
-                drivePIDL.setSetPoint(leftTargetPos);
+            if (Math.abs(drivePIDL.getError()) < 1 && drivePIDL.getError() > -1) {
+                drivePIDL.setSetPoint(-leftTargetPos);
                 drivePIDR.setSetPoint(rightTargetPos);
 
                 drivePIDL.clamp(1);
@@ -82,12 +82,18 @@ public class DriveSubsystem extends Subsystem {
         }
     }
 
-    private static double calculateRemainingDistance(double leftTargetPos, double rightTargetPos) {
+    public static double calculateRemainingDistance(double leftTargetPos, double rightTargetPos) {
         double currentLeftPos = leftMotor.getCurrentPosition();
         double currentRightPos = rightMotor.getCurrentPosition();
 
         // Assuming distance is a function of difference between target and current encoder positions
         return Math.abs(leftTargetPos - currentLeftPos) + Math.abs(rightTargetPos - currentRightPos);
+    }
+    public static double CurrentPosL (){
+    return leftMotor.getCurrentPosition();
+    }
+    public static double CurrentPosR (){
+       return rightMotor.getCurrentPosition();
     }
 
     public static void stop() {
