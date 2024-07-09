@@ -25,7 +25,7 @@ import java.io.IOException;
 
 public class TestAuto extends LinearOpMode {
 
-
+boolean x = true;
     @Override
     public void runOpMode() throws InterruptedException {
         DriveSubsystem driveSubsystem = new DriveSubsystem("drive", hardwareMap);
@@ -41,8 +41,14 @@ public class TestAuto extends LinearOpMode {
            System.out.println("JsonAngle"+ pathEngine.getNextSampledPointAngle());
            System.out.println("current posL"+ DriveSubsystem.CurrentPosL());
             System.out.println("current posR"+ DriveSubsystem.CurrentPosR());
-            pathEngine.update();
-            sleep(50);
+
+            System.out.println(time);
+            if (x) {
+                sleep(10000);
+                x = false;
+                pathEngine.update();
+                System.out.println("updated");
+            }
 
         }
     }

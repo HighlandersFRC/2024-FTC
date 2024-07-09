@@ -1,11 +1,8 @@
 package org.firstinspires.ftc.teamcode.Subsystems;
-
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.teamcode.PathingTool.PathEngine;
 import org.firstinspires.ftc.teamcode.Tools.PID;
-
 public class DriveSubsystem extends Subsystem {
 
     public static DcMotor leftMotor;
@@ -47,7 +44,7 @@ public class DriveSubsystem extends Subsystem {
 
         double remainingDistance = calculateRemainingDistance(leftTargetPos, rightTargetPos);
          {
-            if (Math.abs(drivePIDL.getError()) < 1 && drivePIDL.getError() > -1) {
+            if (Math.abs(drivePIDL.getError()) < 1 || drivePIDL.getError() > -1) {
                 drivePIDL.setSetPoint(-leftTargetPos);
                 drivePIDR.setSetPoint(rightTargetPos);
 
