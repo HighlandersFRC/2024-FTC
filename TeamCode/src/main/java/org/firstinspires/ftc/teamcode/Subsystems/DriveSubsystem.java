@@ -1,8 +1,11 @@
 package org.firstinspires.ftc.teamcode.Subsystems;
+
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.teamcode.PathingTool.PathEngine;
 import org.firstinspires.ftc.teamcode.Tools.PID;
+
 public class DriveSubsystem extends Subsystem {
 
     public static DcMotor leftMotor;
@@ -43,9 +46,9 @@ public class DriveSubsystem extends Subsystem {
 
 
         double remainingDistance = calculateRemainingDistance(leftTargetPos, rightTargetPos);
-         {
-            if (Math.abs(drivePIDL.getError()) < 1 || drivePIDL.getError() > -1) {
-                drivePIDL.setSetPoint(-leftTargetPos);
+        {
+            if (Math.abs(drivePIDL.getError()) < 1 && drivePIDL.getError() > -1) {
+                drivePIDL.setSetPoint(leftTargetPos);
                 drivePIDR.setSetPoint(rightTargetPos);
 
                 drivePIDL.clamp(1);
@@ -86,12 +89,6 @@ public class DriveSubsystem extends Subsystem {
         // Assuming distance is a function of difference between target and current encoder positions
         return Math.abs(leftTargetPos - currentLeftPos) + Math.abs(rightTargetPos - currentRightPos);
     }
-    public static double CurrentPosL (){
-    return leftMotor.getCurrentPosition();
-    }
-    public static double CurrentPosR (){
-       return rightMotor.getCurrentPosition();
-    }
 
     public static void stop() {
         // Stop both motors
@@ -109,11 +106,16 @@ public class DriveSubsystem extends Subsystem {
         // Set motor run mode
         leftMotor.setMode(mode);
         rightMotor.setMode(mode);
-
     }
 
     @Override
     public String getName() {
         return super.getName();
+    }
+    public static double CurrentPosL (){
+        return leftMotor.getCurrentPosition();
+    }
+    public static double CurrentPosR (){
+        return rightMotor.getCurrentPosition();
     }
 }
