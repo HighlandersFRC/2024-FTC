@@ -1,27 +1,22 @@
 package org.firstinspires.ftc.teamcode.Commands;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class SequentialCommandGroup implements Command {
-
     private List<Command> commands;
     private int currentCommandIndex;
     private boolean isFinished;
 
-    public SequentialCommandGroup() {
-
-        commands = new ArrayList<>();
+    public SequentialCommandGroup(Command... commands) {
+        this.commands = new ArrayList<>();
+        Collections.addAll(this.commands, commands);
         currentCommandIndex = 0;
         isFinished = false;
-
     }
 
-    public void addCommand(Command command) {
-        commands.add(command);
-    }
-
-
+    @Override
     public void start() {
         if (!commands.isEmpty()) {
             commands.get(currentCommandIndex).start();
@@ -29,16 +24,19 @@ public class SequentialCommandGroup implements Command {
     }
 
     @Override
-    public void execute() {
-        if (!commands.isEmpty()) {
-            commands.get(currentCommandIndex).execute();
-            if (commands.get(currentCommandIndex).isFinished()) {
-                commands.get(currentCommandIndex).end();
+    public void execute() throws InterruptedException {
+        if (!commands.isEmpty() && currentCommandIndex < commands.size()) {
+            Command currentCommand = commands.get(currentCommandIndex);
+            if (!currentCommand.isFinished()) {
+                currentCommand.execute();
+            }
+            if (currentCommand.isFinished()) {
+                currentCommand.end();
                 currentCommandIndex++;
-                if (currentCommandIndex >= commands.size()) {
-                    isFinished = true;
-                } else {
+                if (currentCommandIndex < commands.size()) {
                     commands.get(currentCommandIndex).start();
+                } else {
+                    isFinished = true;
                 }
             }
         } else {

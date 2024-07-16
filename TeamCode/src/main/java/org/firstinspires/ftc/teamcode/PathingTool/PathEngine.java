@@ -2,6 +2,11 @@ package org.firstinspires.ftc.teamcode.PathingTool;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
+import org.firstinspires.ftc.teamcode.Commands.Command;
+import org.firstinspires.ftc.teamcode.Commands.CommandScheduler;
+import org.firstinspires.ftc.teamcode.Commands.Drive;
+import org.firstinspires.ftc.teamcode.Commands.SequentialCommandGroup;
+import org.firstinspires.ftc.teamcode.Commands.TestCommand;
 import org.firstinspires.ftc.teamcode.Subsystems.DriveSubsystem;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -10,6 +15,8 @@ import org.json.JSONObject;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.HashMap;
+import java.util.Map;
 
 public class PathEngine {
 
@@ -20,10 +27,16 @@ public class PathEngine {
     private double[] currentPoint = {0.0, 0.0};
     private static double lastPointLeft = 0;
     private static double lastpointRight = 0;
+    CommandScheduler scheduler;
+    HashMap<String, Command> map = new HashMap<String, Command>();
+
 
     public PathEngine(OpMode opMode, String pathFileName) {
         loadJSONFromAsset(opMode, pathFileName);
+
         System.out.println(jsonPathData);
+
+        map.put("TestCommand", new TestCommand());
     }
 
     private void loadJSONFromAsset(OpMode opMode, String pathFileName) {
@@ -102,9 +115,9 @@ public class PathEngine {
     }
 
     public static void finishCurrentPoint() {
-        currentIndex++;
         lastPointLeft = DriveSubsystem.leftMotor.getCurrentPosition();
         lastpointRight = DriveSubsystem.rightMotor.getCurrentPosition();
+        currentIndex++;
     }
 
     public void update() throws InterruptedException {

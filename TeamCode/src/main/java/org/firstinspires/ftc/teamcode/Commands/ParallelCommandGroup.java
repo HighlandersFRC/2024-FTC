@@ -1,68 +1,40 @@
 package org.firstinspires.ftc.teamcode.Commands;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
-public class ParallelCommandGroup implements Command {
+public class ParallelCommandGroup extends Command {
+    List<Command> commands = new ArrayList<>();
 
-    private List<Command> commands;
-    private boolean isFinished;
-
-    public ParallelCommandGroup() {
-        commands = new ArrayList<>();
-        isFinished = false;
-    }
-
-    public void addCommand(Command command) {
-        commands.add(command);
-    }
-
-
-    public void start() {
-        for (Command command : commands) {
-            command.start();
-        }
-    }
-
-    @Override
-    public void execute() {
-        for (Command command : commands) {
-            if (!command.isFinished()) {
-                command.execute();
-            }
-        }
-        checkCompletion(); // Check if all commands are finished
-    }
-
-    private void checkCompletion() {
-        boolean allFinished = true;
-        for (Command command : commands) {
-            if (!command.isFinished()) {
-                allFinished = false;
-                break;
-            }
-        }
-        isFinished = allFinished;
-    }
-
-    @Override
-    public void end() {
-        for (Command command : commands) {
-            command.end();
-        }
-    }
-
-    @Override
-    public boolean isFinished() {
-        return isFinished;
-    }
-
-    @Override
+    Scheduler scheduler;
     public String getSubsystem() {
-        // Return subsystem of the first command (assuming all use the same subsystem)
-        if (!commands.isEmpty()) {
-            return commands.get(0).getSubsystem();
+        return "ipfaujas;ldkfjaoidlfjkaepifjasdfpueowakdjaipfs[asasdfasdf asdf asd;flkasj goirejfdlvmfb soeuhijsafdj akjds;lkfjas;ieol jdlkf asljfkdslflkas;djf alksjdfl;kasjd;fl";
+    }
+    public ParallelCommandGroup(Scheduler scheduler, Command... commands) {
+        this.scheduler = scheduler;
+        Collections.addAll(this.commands, commands);
+    }
+    public void start() {
+        for (int i = 0; i < commands.size(); i++){
+            scheduler.add(commands.get(i));
         }
-        return "";
+    }
+
+    public void execute() {
+    }
+
+
+    public void end() {
+
+    }
+
+    public boolean isFinished() {
+        for (int i = 0; i < commands.size(); i++){
+            if(commands.get(i).isFinished() == false) {
+                return false;
+            }
+        }
+        return true;
     }
 }

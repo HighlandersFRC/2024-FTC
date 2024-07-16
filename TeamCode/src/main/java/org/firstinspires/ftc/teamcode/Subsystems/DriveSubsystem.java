@@ -11,8 +11,8 @@ public class DriveSubsystem extends Subsystem {
     public static DcMotor leftMotor;
     public static DcMotor rightMotor;
     private static Telemetry telemetry;
-    public static PID turnPID = new PID(1, 0, 0);
-    public static PID drivePIDL = new PID(1, 0, 0);
+    private static PID turnPID = new PID(1, 0, 0);
+    private static PID drivePIDL = new PID(1, 0, 0);
     private static PID drivePIDR = new PID(1, 0, 0);
 
     private static final double COUNTS_PER_INCH = 9999; // Example value, adjust for your robot
@@ -41,13 +41,14 @@ public class DriveSubsystem extends Subsystem {
     }
 
     public static void moveToPosition(double x, double y, double distanceThreshold, double angleDegrees, double leftTargetPos, double rightTargetPos) {
+
         double leftSpeed = 0;
         double rightSpeed = 0;
 
-
         double remainingDistance = calculateRemainingDistance(leftTargetPos, rightTargetPos);
         {
-            if (Math.abs(drivePIDL.getError()) < 1 && drivePIDL.getError() > -1) {
+
+            if (Math.abs(turnPID.getError()) < 2) {
                 drivePIDL.setSetPoint(leftTargetPos);
                 drivePIDR.setSetPoint(rightTargetPos);
 
@@ -60,8 +61,9 @@ public class DriveSubsystem extends Subsystem {
                 leftSpeed = drivePIDL.getResult();
                 rightSpeed = drivePIDR.getResult();
                 System.out.println(leftSpeed);
+
             } else {
-                if (!(angleDegrees == Peripherals.getYawDegrees())) {
+
                     turnPID.setSetPoint(angleDegrees);
                     turnPID.updatePID(Peripherals.getYawDegrees());
                     turnPID.setPID(0.03, 0, 0);
@@ -70,7 +72,7 @@ public class DriveSubsystem extends Subsystem {
                     leftSpeed = turnPID.getResult();
                     rightSpeed = -turnPID.getResult();
                     System.out.println(leftSpeed);
-                }
+
             }
         }
 
@@ -82,11 +84,10 @@ public class DriveSubsystem extends Subsystem {
         }
     }
 
-    public static double calculateRemainingDistance(double leftTargetPos, double rightTargetPos) {
+    private static double calculateRemainingDistance(double leftTargetPos, double rightTargetPos) {
         double currentLeftPos = leftMotor.getCurrentPosition();
         double currentRightPos = rightMotor.getCurrentPosition();
 
-        // Assuming distance is a function of difference between target and current encoder positions
         return Math.abs(leftTargetPos - currentLeftPos) + Math.abs(rightTargetPos - currentRightPos);
     }
 
@@ -111,11 +112,5 @@ public class DriveSubsystem extends Subsystem {
     @Override
     public String getName() {
         return super.getName();
-    }
-    public static double CurrentPosL (){
-        return leftMotor.getCurrentPosition();
-    }
-    public static double CurrentPosR (){
-        return rightMotor.getCurrentPosition();
     }
 }

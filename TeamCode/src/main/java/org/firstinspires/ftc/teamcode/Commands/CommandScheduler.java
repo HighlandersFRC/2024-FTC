@@ -4,11 +4,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class CommandScheduler {
-
     private List<Command> commandList;
     private static CommandScheduler instance;
 
-    private CommandScheduler() {
+    public CommandScheduler() {
         commandList = new ArrayList<>();
     }
 
@@ -21,12 +20,25 @@ public class CommandScheduler {
 
     public void schedule(Command command) {
         commandList.add(command);
+        command.start(); // Ensure command start is called when scheduled
+    }
+
+    public void schedule(Command... commands) {
+        for (Command command : commands) {
+            schedule(command); // Use the single command schedule to ensure start is called
+        }
+    }
+
+    public void schedule(List<Command> commands) {
+        for (Command command : commands) {
+            schedule(command); // Use the single command schedule to ensure start is called
+        }
     }
 
     public void cancel(Command command) {
         if (commandList.contains(command)) {
-            commandList.remove(command);
             command.end();
+            commandList.remove(command);
         }
     }
 
@@ -37,7 +49,7 @@ public class CommandScheduler {
         commandList.clear();
     }
 
-    public void run() {
+    public void run() throws InterruptedException {
         List<Command> finishedCommands = new ArrayList<>();
         for (Command command : commandList) {
             if (!command.isFinished()) {

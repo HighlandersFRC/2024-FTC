@@ -1,23 +1,20 @@
 package org.firstinspires.ftc.teamcode.Commands;
 
+
+import org.firstinspires.ftc.teamcode.Commands.Command;
+
 public class Wait implements Command {
     public String getSubsystem() {
         return "Misc";
     }
-        long time;
+    long time;
     long endTime;
     public Wait(long time){
-                this.time = time;
+        this.time = time;
     }
     public void start(){
         endTime = System.currentTimeMillis() + time;
     }
-
-
-    public void initialize() {
-
-    }
-
     public void execute(){
 
     }

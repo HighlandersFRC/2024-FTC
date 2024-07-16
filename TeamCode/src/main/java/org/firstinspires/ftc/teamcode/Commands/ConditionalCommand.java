@@ -1,49 +1,60 @@
 package org.firstinspires.ftc.teamcode.Commands;
 
-
 public class ConditionalCommand implements Command {
 
     private Command onTrue;
     private Command onFalse;
-    private Command CommandToRun;
+    private Command commandToRun;
     private boolean condition;
 
-    public ConditionalCommand(Boolean Condition,Command onTrue, Command onFalse) {
+    public ConditionalCommand(boolean condition, Command onTrue, Command onFalse) {
+        this.condition = condition;
         this.onTrue = onTrue;
         this.onFalse = onFalse;
-        this.condition = Condition;
+        if (condition){
+            commandToRun = onTrue;
+        }else{
+            commandToRun = onFalse;
+        }
     }
 
     @Override
     public void start() {
-        if (condition){
-            CommandToRun = onTrue;
+        if (condition) {
+            commandToRun = onTrue;
+        } else {
+            commandToRun = onFalse;
         }
-        else {
-            CommandToRun = onFalse;
+
+        if (commandToRun != null) {
+            commandToRun.start();
         }
     }
 
-
-
     @Override
-    public void execute() {
-        CommandToRun.execute();;
+    public void execute() throws InterruptedException {
+        if (commandToRun != null) {
+            commandToRun.execute();
+        }
     }
 
     @Override
     public void end() {
-        CommandToRun.end();
-
+        if (commandToRun != null) {
+            commandToRun.end();
+        }
     }
 
     @Override
     public boolean isFinished() {
-        return CommandToRun.isFinished();
+        return commandToRun != null && commandToRun.isFinished();
     }
 
     @Override
     public String getSubsystem() {
-        return CommandToRun.getSubsystem();
+        if (commandToRun != null) {
+            return commandToRun.getSubsystem();
+        }
+        return "";
     }
 }
