@@ -1,32 +1,48 @@
 package org.firstinspires.ftc.teamcode.Commands;
 
-
-import org.firstinspires.ftc.teamcode.Commands.Command;
-
 public class Wait implements Command {
+    private final long duration;
+    private long startTime;
+    private boolean isStarted;
+
+    public Wait(long duration) {
+        this.duration = duration;
+        this.isStarted = false;
+    }
+
+    @Override
     public String getSubsystem() {
         return "Misc";
     }
-    long time;
-    long endTime;
-    public Wait(long time){
-        this.time = time;
-    }
-    public void start(){
-        endTime = System.currentTimeMillis() + time;
-    }
-    public void execute(){
 
-    }
-    public void end(){
+    @Override
+    public void start() {
+        startTime = System.currentTimeMillis();
+        isStarted = true;
     }
 
+    @Override
+    public void execute() {
+        long currentTime = System.currentTimeMillis();
+        long elapsedTime = currentTime - startTime;
+        if (elapsedTime % 1000 == 0) {
+            System.out.println("Wait command: " + elapsedTime / 1000 + " seconds elapsed");
+        }
+    }
+
+    @Override
+    public void end() {
+        System.out.println("Wait Ended");
+        // Reset all internal state variables
+        startTime = 0;
+        isStarted = false;
+    }
+
+    @Override
     public boolean isFinished() {
-        if (System.currentTimeMillis() >= endTime){
-            return true;
+        if (!isStarted) {
+            start();
         }
-        else {
-            return false;
-        }
+        return System.currentTimeMillis() - startTime >= duration;
     }
 }

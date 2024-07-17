@@ -1,40 +1,67 @@
 package org.firstinspires.ftc.teamcode.Commands;
 
+import org.firstinspires.ftc.teamcode.Tools.Parameters;
+
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
-public class ParallelCommandGroup extends Command {
-    List<Command> commands = new ArrayList<>();
+public class ParallelCommandGroup implements Command {
+    private List<Command> commands = new ArrayList<>();
+    private Parameters parameters;
 
-    Scheduler scheduler;
-    public String getSubsystem() {
-        return "ipfaujas;ldkfjaoidlfjkaepifjasdfpueowakdjaipfs[asasdfasdf asdf asd;flkasj goirejfdlvmfb soeuhijsafdj akjds;lkfjas;ieol jdlkf asljfkdslflkas;djf alksjdfl;kasjd;fl";
+    public ParallelCommandGroup(Parameters parameters, Command... commands) {
+        this.parameters = parameters;
+        for (Command command : commands) {
+            this.commands.add(command);
+        }
     }
-    public ParallelCommandGroup(Scheduler scheduler, Command... commands) {
-        this.scheduler = scheduler;
-        Collections.addAll(this.commands, commands);
-    }
+
+    @Override
     public void start() {
-        for (int i = 0; i < commands.size(); i++){
-            scheduler.add(commands.get(i));
+        for (Command command : commands) {
+            command.start();
         }
     }
 
-    public void execute() {
+    @Override
+    public void execute() throws InterruptedException {
+        for (Command command : commands) {
+            command.execute();
+        }
     }
 
-
+    @Override
     public void end() {
-
+        for (Command command : commands) {
+            command.end();
+        }
     }
 
+    @Override
     public boolean isFinished() {
-        for (int i = 0; i < commands.size(); i++){
-            if(commands.get(i).isFinished() == false) {
-                return false;
+        if (parameters == Parameters.ALL) {
+            for (Command command : commands) {
+                if (!command.isFinished()) {
+                    return false;
+                }
             }
+            return true;
+        } else if (parameters == Parameters.ANY) {
+            for (Command command : commands) {
+                if (command.isFinished()) {
+                    return true;
+                }
+            }
+            return false;
+        } else { // Parameters.SPECIFIC
+            // Implement specific logic if needed
+            return true; // Placeholder
         }
-        return true;
+    }
+
+    @Override
+    public String getSubsystem() {
+        // Return a combined subsystem string if needed
+        return "Combined subsystems"; // Placeholder
     }
 }

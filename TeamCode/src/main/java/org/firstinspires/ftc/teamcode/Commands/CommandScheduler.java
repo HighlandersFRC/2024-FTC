@@ -1,14 +1,16 @@
 package org.firstinspires.ftc.teamcode.Commands;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 public class CommandScheduler {
-    private List<Command> commandList;
+    private List<Command> commandList = new ArrayList<>();
+
     private static CommandScheduler instance;
 
-    public CommandScheduler() {
-        commandList = new ArrayList<>();
+    private CommandScheduler() {
+        // Private constructor to prevent instantiation
     }
 
     public static CommandScheduler getInstance() {
@@ -18,28 +20,34 @@ public class CommandScheduler {
         return instance;
     }
 
+    public Command getActive() {
+        if (!commandList.isEmpty()) {
+            return commandList.get(0);
+        }
+        return null;
+    }
+
     public void schedule(Command command) {
         commandList.add(command);
-        command.start(); // Ensure command start is called when scheduled
+        command.start();
     }
 
-    public void schedule(Command... commands) {
-        for (Command command : commands) {
-            schedule(command); // Use the single command schedule to ensure start is called
-        }
-    }
-
-    public void schedule(List<Command> commands) {
-        for (Command command : commands) {
-            schedule(command); // Use the single command schedule to ensure start is called
+    public void run() throws InterruptedException {
+        Iterator<Command> iterator = commandList.iterator();
+        while (iterator.hasNext()) {
+            Command command = iterator.next();
+            if (command.isFinished()) {
+                command.end();
+                iterator.remove();
+            } else {
+                command.execute();
+            }
         }
     }
 
     public void cancel(Command command) {
-        if (commandList.contains(command)) {
-            command.end();
-            commandList.remove(command);
-        }
+        command.end();
+        commandList.remove(command);
     }
 
     public void cancelAll() {
@@ -49,40 +57,7 @@ public class CommandScheduler {
         commandList.clear();
     }
 
-    public void run() throws InterruptedException {
-        List<Command> finishedCommands = new ArrayList<>();
-        for (Command command : commandList) {
-            if (!command.isFinished()) {
-                command.execute();
-            } else {
-                command.end();
-                finishedCommands.add(command);
-            }
-        }
-        commandList.removeAll(finishedCommands);
-    }
-
     public boolean isScheduled(Command command) {
         return commandList.contains(command);
-    }
-
-    public boolean isScheduled() {
-        return !commandList.isEmpty();
-    }
-
-    public int size() {
-        return commandList.size();
-    }
-
-    public void clear() {
-        commandList.clear();
-    }
-
-    public void remove(Command command) {
-        commandList.remove(command);
-    }
-
-    public void remove(int index) {
-        commandList.remove(index);
     }
 }
