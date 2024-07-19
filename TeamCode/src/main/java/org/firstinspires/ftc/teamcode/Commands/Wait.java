@@ -1,48 +1,49 @@
 package org.firstinspires.ftc.teamcode.Commands;
 
+import com.qualcomm.robotcore.util.RobotLog;
+
 public class Wait implements Command {
-    private final long duration;
+    private long waitTime;
     private long startTime;
+    private long elapsedTime;
     private boolean isStarted;
 
-    public Wait(long duration) {
-        this.duration = duration;
+    public Wait(long waitTime) {
+        this.waitTime = waitTime;
+        this.elapsedTime = 0;
         this.isStarted = false;
     }
 
     @Override
-    public String getSubsystem() {
-        return "Misc";
-    }
-
-    @Override
     public void start() {
+        RobotLog.d("Wait Command Started: " + waitTime + "ms");
         startTime = System.currentTimeMillis();
         isStarted = true;
     }
 
     @Override
     public void execute() {
-        long currentTime = System.currentTimeMillis();
-        long elapsedTime = currentTime - startTime;
-        if (elapsedTime % 1000 == 0) {
-            System.out.println("Wait command: " + elapsedTime / 1000 + " seconds elapsed");
+        if (isStarted) {
+            elapsedTime += System.currentTimeMillis() - startTime;
+            startTime = System.currentTimeMillis();
+            RobotLog.d("Wait Command Executing: " + waitTime + "ms, Elapsed: " + elapsedTime + "ms");
         }
     }
 
     @Override
     public void end() {
-        System.out.println("Wait Ended");
-        // Reset all internal state variables
-        startTime = 0;
         isStarted = false;
+        RobotLog.d("Wait Command Ended: " + waitTime + "ms, Total Elapsed: " + elapsedTime + "ms");
     }
 
     @Override
     public boolean isFinished() {
-        if (!isStarted) {
-            start();
-        }
-        return System.currentTimeMillis() - startTime >= duration;
+        return elapsedTime >= waitTime;
+    }
+
+
+    public void reset() {
+        elapsedTime = 0;
+        isStarted = false;
     }
 }

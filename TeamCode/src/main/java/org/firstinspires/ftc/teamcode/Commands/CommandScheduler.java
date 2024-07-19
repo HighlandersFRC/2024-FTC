@@ -1,17 +1,13 @@
 package org.firstinspires.ftc.teamcode.Commands;
 
+import com.qualcomm.robotcore.util.RobotLog;
+
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 public class CommandScheduler {
-    private List<Command> commandList = new ArrayList<>();
-
     private static CommandScheduler instance;
-
-    private CommandScheduler() {
-        // Private constructor to prevent instantiation
-    }
+    private List<Command> scheduledCommands = new ArrayList<>();
 
     public static CommandScheduler getInstance() {
         if (instance == null) {
@@ -20,44 +16,39 @@ public class CommandScheduler {
         return instance;
     }
 
-    public Command getActive() {
-        if (!commandList.isEmpty()) {
-            return commandList.get(0);
-        }
-        return null;
-    }
-
     public void schedule(Command command) {
-        commandList.add(command);
         command.start();
+        scheduledCommands.add(command);
+        RobotLog.d("Command Scheduled: " + command.getClass().getSimpleName());
     }
 
     public void run() throws InterruptedException {
-        Iterator<Command> iterator = commandList.iterator();
-        while (iterator.hasNext()) {
-            Command command = iterator.next();
+        List<Command> finishedCommands = new ArrayList<>();
+        for (Command command : scheduledCommands) {
             if (command.isFinished()) {
                 command.end();
-                iterator.remove();
+                finishedCommands.add(command);
+                RobotLog.d("Command Finished and Ended: " + command.getClass().getSimpleName());
             } else {
                 command.execute();
             }
         }
+        scheduledCommands.removeAll(finishedCommands);
     }
-
     public void cancel(Command command) {
         command.end();
-        commandList.remove(command);
+        scheduledCommands.remove(command);
+        RobotLog.d("Command Cancelled: " + command.getClass().getSimpleName());
     }
 
     public void cancelAll() {
-        for (Command command : commandList) {
+        for (Command command : scheduledCommands) {
             command.end();
+            RobotLog.d("Command Cancelled: " + command.getClass().getSimpleName());
         }
-        commandList.clear();
+        scheduledCommands.clear();
+    }
+    public CommandScheduler() {
     }
 
-    public boolean isScheduled(Command command) {
-        return commandList.contains(command);
-    }
 }

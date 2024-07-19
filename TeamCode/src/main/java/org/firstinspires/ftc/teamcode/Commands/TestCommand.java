@@ -22,7 +22,6 @@ public class TestCommand implements Command{
         return false;
     }
 
-    @Override
     public String getSubsystem() {
         return "";
     }

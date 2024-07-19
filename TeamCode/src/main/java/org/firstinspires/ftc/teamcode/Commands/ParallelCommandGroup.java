@@ -1,23 +1,27 @@
 package org.firstinspires.ftc.teamcode.Commands;
 
 import org.firstinspires.ftc.teamcode.Tools.Parameters;
+import com.qualcomm.robotcore.util.RobotLog;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class ParallelCommandGroup implements Command {
-    private List<Command> commands = new ArrayList<>();
-    private Parameters parameters;
+    private final List<Command> commands = new ArrayList<>();
+    private CommandScheduler scheduler;
+    private final Parameters parameter;
+    private Command specificCommand;
 
-    public ParallelCommandGroup(Parameters parameters, Command... commands) {
-        this.parameters = parameters;
-        for (Command command : commands) {
-            this.commands.add(command);
-        }
+    public ParallelCommandGroup(CommandScheduler scheduler, Parameters parameter, Command... commands) {
+        this.scheduler = scheduler;
+        this.parameter = parameter;
+        Collections.addAll(this.commands, commands);
     }
 
     @Override
     public void start() {
+        RobotLog.d("Parallel Command Group Started with parameter: " + parameter);
         for (Command command : commands) {
             command.start();
         }
@@ -35,33 +39,30 @@ public class ParallelCommandGroup implements Command {
         for (Command command : commands) {
             command.end();
         }
+        RobotLog.d("Parallel Command Group Ended");
     }
 
     @Override
     public boolean isFinished() {
-        if (parameters == Parameters.ALL) {
-            for (Command command : commands) {
-                if (!command.isFinished()) {
-                    return false;
+        switch (parameter) {
+            case ALL:
+                for (Command command : commands) {
+                    if (!command.isFinished()) {
+                        return false;
+                    }
                 }
-            }
-            return true;
-        } else if (parameters == Parameters.ANY) {
-            for (Command command : commands) {
-                if (command.isFinished()) {
-                    return true;
+                return true;
+            case ANY:
+                for (Command command : commands) {
+                    if (command.isFinished()) {
+                        return true;
+                    }
                 }
-            }
-            return false;
-        } else { // Parameters.SPECIFIC
-            // Implement specific logic if needed
-            return true; // Placeholder
+                return false;
+            case SPECIFIC:
+                return specificCommand != null && specificCommand.isFinished();
+            default:
+                return true;
         }
-    }
-
-    @Override
-    public String getSubsystem() {
-        // Return a combined subsystem string if needed
-        return "Combined subsystems"; // Placeholder
     }
 }
