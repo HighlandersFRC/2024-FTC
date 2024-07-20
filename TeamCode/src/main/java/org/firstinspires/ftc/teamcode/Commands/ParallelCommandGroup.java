@@ -1,6 +1,8 @@
 package org.firstinspires.ftc.teamcode.Commands;
 
 import org.firstinspires.ftc.teamcode.Tools.Parameters;
+
+import com.qualcomm.hardware.bosch.BHI260IMU;
 import com.qualcomm.robotcore.util.RobotLog;
 
 import java.util.ArrayList;
@@ -17,6 +19,9 @@ public class ParallelCommandGroup implements Command {
         this.scheduler = scheduler;
         this.parameter = parameter;
         Collections.addAll(this.commands, commands);
+        if (parameter == Parameters.SPECIFIC){
+            specificCommand = commands[0];
+        }
     }
 
     @Override

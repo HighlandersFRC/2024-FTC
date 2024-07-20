@@ -1,5 +1,9 @@
 package org.firstinspires.ftc.teamcode;
 
+import static org.firstinspires.ftc.teamcode.Tools.Parameters.ALL;
+import static org.firstinspires.ftc.teamcode.Tools.Parameters.ANY;
+import static org.firstinspires.ftc.teamcode.Tools.Parameters.SPECIFIC;
+
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import org.firstinspires.ftc.teamcode.Commands.*;
@@ -12,21 +16,21 @@ public class TestAuto extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
 
+        waitForStart();
+
         scheduler = new CommandScheduler();
 
         SequentialCommandGroup commandGroup = new SequentialCommandGroup(
-                new ParallelCommandGroup(scheduler, Parameters.ANY, new Wait(10000), new Wait(1000000000)),
+                new ParallelCommandGroup(scheduler, SPECIFIC, new Wait(10000), new Wait(1000)),
                 new TestCommand());
 
         scheduler.schedule(commandGroup);
 
-
         while (!isStopRequested()) {
-            while (opModeIsActive()){
-                scheduler.run();
-            }
-            {
-                commandGroup.end();
+            if (!opModeInInit()) {
+                while (opModeIsActive()) {
+                    scheduler.run();
+                }
             }
             sleep(50);
         }

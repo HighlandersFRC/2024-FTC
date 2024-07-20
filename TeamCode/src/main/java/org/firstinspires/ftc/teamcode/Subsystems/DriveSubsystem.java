@@ -22,6 +22,11 @@ public class DriveSubsystem extends Subsystem {
         initialize(hardwareMap);
     }
 
+    public static void Drive(double leftPower, double rightPower){
+        leftMotor.setPower(leftPower);
+        rightMotor.setPower(rightPower);
+    }
+
     public static void initialize(HardwareMap hardwareMap) {
         leftMotor = hardwareMap.get(DcMotor.class, "left_motor");
         rightMotor = hardwareMap.get(DcMotor.class, "right_motor");
