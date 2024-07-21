@@ -66,6 +66,7 @@ public class PathEngine {
         commandMap.put("ElevatorUp", new ElevatorUp());
         commandMap.put("ArmUp", new ArmUp());
         commandMap.put("ArmDown", new ArmDown());
+        commandMap.put("SequentialCommandGroup", new SequentialCommandGroup());
     }
 
     public void startPath(double startTime) {

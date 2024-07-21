@@ -7,6 +7,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.teamcode.PathingTool.PathEngine;
 import org.firstinspires.ftc.teamcode.Commands.CommandScheduler;
 import org.firstinspires.ftc.teamcode.Subsystems.DriveSubsystem;
+import org.firstinspires.ftc.teamcode.Tools.Robot;
 import org.json.JSONException;
 
 @Autonomous(name = "Path Following Autonomous", group = "Autonomous")
@@ -18,7 +19,8 @@ public class TestAuto extends LinearOpMode {
 
     @Override
     public void runOpMode() {
-        DriveSubsystem.initialize(hardwareMap);
+        Robot.initialize(hardwareMap);
+
         scheduler = CommandScheduler.getInstance();
 
         pathEngine = new PathEngine(this, "SimplePath.polarpath");
