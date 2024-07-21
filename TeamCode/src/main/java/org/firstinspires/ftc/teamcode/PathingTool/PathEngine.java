@@ -2,11 +2,17 @@ package org.firstinspires.ftc.teamcode.PathingTool;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
+import org.firstinspires.ftc.teamcode.Commands.ArmDown;
+import org.firstinspires.ftc.teamcode.Commands.ArmUp;
 import org.firstinspires.ftc.teamcode.Commands.Command;
 import org.firstinspires.ftc.teamcode.Commands.CommandScheduler;
-import org.firstinspires.ftc.teamcode.Commands.Drive;
+import org.firstinspires.ftc.teamcode.Commands.ElevatorDown;
+import org.firstinspires.ftc.teamcode.Commands.ElevatorUp;
+import org.firstinspires.ftc.teamcode.Commands.Intake;
+import org.firstinspires.ftc.teamcode.Commands.Outtake;
 import org.firstinspires.ftc.teamcode.Commands.SequentialCommandGroup;
-import org.firstinspires.ftc.teamcode.Commands.TestCommand;
+import org.firstinspires.ftc.teamcode.Commands.ParallelCommandGroup;
+import org.firstinspires.ftc.teamcode.Commands.ConditionalCommand;
 import org.firstinspires.ftc.teamcode.Subsystems.DriveSubsystem;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -25,18 +31,14 @@ public class PathEngine {
     private final double COORDINATE_UNIT = 1.0;
     private double[] lastPoint = {0.0, 0.0};
     private double[] currentPoint = {0.0, 0.0};
-    private static double lastPointLeft = 0;
-    private static double lastpointRight = 0;
-    CommandScheduler scheduler;
-    HashMap<String, Command> map = new HashMap<String, Command>();
-
+    private double startTime = 0.0;
+    private CommandScheduler scheduler = CommandScheduler.getInstance();
+    private HashMap<String, Command> commandMap = new HashMap<>();
 
     public PathEngine(OpMode opMode, String pathFileName) {
         loadJSONFromAsset(opMode, pathFileName);
-
+        initializeCommandMap();
         System.out.println(jsonPathData);
-
-        map.put("TestCommand", new TestCommand());
     }
 
     private void loadJSONFromAsset(OpMode opMode, String pathFileName) {
@@ -53,90 +55,72 @@ public class PathEngine {
             jsonPathData = new JSONObject(sb.toString());
         } catch (IOException | JSONException e) {
             e.printStackTrace();
-            opMode.telemetry.addData("Error", "Failed to load JSON file: " + pathFileName);
-            opMode.telemetry.update();
+
         }
     }
 
-    public double getNextSampledPointTime() {
-        try {
-            JSONArray sampledPoints = jsonPathData.getJSONArray("sampled_points");
-            if (currentIndex < sampledPoints.length()) {
-                JSONObject nextPoint = sampledPoints.getJSONObject(currentIndex);
-                double time = nextPoint.getDouble("time");
-                return time;
+    private void initializeCommandMap() {
+        commandMap.put("Outtake", new Outtake());
+        commandMap.put("Intake", new Intake());
+        commandMap.put("ElevatorDown", new ElevatorDown());
+        commandMap.put("ElevatorUp", new ElevatorUp());
+        commandMap.put("ArmUp", new ArmUp());
+        commandMap.put("ArmDown", new ArmDown());
+    }
+
+    public void startPath(double startTime) {
+        this.startTime = startTime;
+    }
+
+    public double getElapsedTime(double currentTime) {
+        return currentTime - startTime;
+    }
+
+    public void update(double currentTime) throws InterruptedException, JSONException {
+        double elapsedTime = getElapsedTime(currentTime);
+        if (currentIndex < jsonPathData.getJSONArray("key_points").length()) {
+            JSONObject currentPointData = jsonPathData.getJSONArray("key_points").getJSONObject(currentIndex);
+            double pointTime = currentPointData.getDouble("time");
+
+            if (elapsedTime >= pointTime) {
+                double x = currentPointData.getDouble("x") * COORDINATE_UNIT;
+                double y = currentPointData.getDouble("y") * COORDINATE_UNIT;
+                double angle = currentPointData.getDouble("angle");
+
+                DriveSubsystem.moveToPosition(angle, x, y);
+
+                lastPoint[0] = currentPoint[0];
+                lastPoint[1] = currentPoint[1];
+                currentPoint[0] = x;
+                currentPoint[1] = y;
+
+                JSONArray commands = jsonPathData.optJSONArray("commands");
+                if (commands != null) {
+                    for (int i = 0; i < commands.length(); i++) {
+                        JSONObject commandData = commands.getJSONObject(i);
+                        double commandStart = commandData.getDouble("start");
+                        double commandEnd = commandData.getDouble("end");
+                        String commandName = commandData.getJSONObject("command").getString("name");
+
+                        if (elapsedTime >= commandStart && elapsedTime <= commandEnd) {
+                            Command command = commandMap.get(commandName);
+                            if (command != null) {
+                                scheduler.schedule(command);
+                            }
+                        }
+                    }
+                }
+
+                currentIndex++;
             }
-        } catch (JSONException e) {
-            e.printStackTrace();
         }
-        return 0.0;
-    }
-
-    public double getNextSampledPointX() {
-        try {
-            JSONArray sampledPoints = jsonPathData.getJSONArray("sampled_points");
-            if (currentIndex < sampledPoints.length()) {
-                JSONObject nextPoint = sampledPoints.getJSONObject(currentIndex);
-                double x = nextPoint.getDouble("x") * COORDINATE_UNIT;
-                return x;
-            }
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        return 0.0;
-    }
-
-    public double getNextSampledPointY() {
-        try {
-            JSONArray sampledPoints = jsonPathData.getJSONArray("sampled_points");
-            if (currentIndex < sampledPoints.length()) {
-                JSONObject nextPoint = sampledPoints.getJSONObject(currentIndex);
-                double y = nextPoint.getDouble("y") * COORDINATE_UNIT;
-                return y;
-            }
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        return 0.0;
-    }
-
-    public double getNextSampledPointAngle() {
-        try {
-            JSONArray sampledPoints = jsonPathData.getJSONArray("sampled_points");
-            if (currentIndex < sampledPoints.length()) {
-                JSONObject nextPoint = sampledPoints.getJSONObject(currentIndex);
-                double angle = nextPoint.getDouble("angle");
-                return angle;
-            }
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        return 0.0;
-    }
-
-    public static void finishCurrentPoint() {
-        lastPointLeft = DriveSubsystem.leftMotor.getCurrentPosition();
-        lastpointRight = DriveSubsystem.rightMotor.getCurrentPosition();
-        currentIndex++;
-    }
-
-    public void update() throws InterruptedException {
-        System.out.println(getNextSampledPointX());
-        double x = getNextSampledPointX();
-        double y = getNextSampledPointY();
-        double angle = getNextSampledPointAngle();
-        DriveSubsystem.moveToPosition(x, y, calculateDistance(), angle, lastPointLeft, lastpointRight);
-        lastPoint[0] = currentPoint[0];
-        lastPoint[1] = currentPoint[1];
-        currentPoint[0] = x;
-        currentPoint[1] = y;
     }
 
     public double calculateDistance() {
         double lastX = lastPoint[0];
         double lastY = lastPoint[1];
-        double currentX = getNextSampledPointX();
-        double currentY = getNextSampledPointY();
+        double currentX = currentPoint[0];
+        double currentY = currentPoint[1];
 
         double deltaX = currentX - lastX;
         double deltaY = currentY - lastY;

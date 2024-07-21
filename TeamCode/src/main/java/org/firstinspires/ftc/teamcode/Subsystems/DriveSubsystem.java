@@ -1,9 +1,11 @@
 package org.firstinspires.ftc.teamcode.Subsystems;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.PathingTool.PathEngine;
+import org.firstinspires.ftc.teamcode.Tools.Odometry;
 import org.firstinspires.ftc.teamcode.Tools.PID;
 
 public class DriveSubsystem extends Subsystem {
@@ -15,7 +17,7 @@ public class DriveSubsystem extends Subsystem {
     private static PID drivePIDL = new PID(1, 0, 0);
     private static PID drivePIDR = new PID(1, 0, 0);
 
-    private static final double COUNTS_PER_INCH = 9999; // Example value, adjust for your robot
+    private static final double COUNTS_PER_INCH = 30;
 
     public DriveSubsystem(String name, HardwareMap hardwareMap) {
         super(name);
@@ -31,63 +33,54 @@ public class DriveSubsystem extends Subsystem {
         leftMotor = hardwareMap.get(DcMotor.class, "left_motor");
         rightMotor = hardwareMap.get(DcMotor.class, "right_motor");
 
-        // Initialize telemetry here or pass it from OpMode
         telemetry = telemetry;
 
-        // Set motor directions and other configurations as needed
         leftMotor.setDirection(DcMotor.Direction.FORWARD);
         rightMotor.setDirection(DcMotor.Direction.REVERSE);
 
-        // Reset encoders if needed
         resetEncoders();
 
-        // Set motor run modes
         setRunMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 
-    public static void moveToPosition(double x, double y, double distanceThreshold, double angleDegrees, double leftTargetPos, double rightTargetPos) {
+    public static void moveToPosition(double angleDegrees, double targetX, double targetY) {
+        double currentYaw = Peripherals.getYawDegrees();
+        double angleError = angleDegrees - currentYaw;
+        double currentX = Odometry.getX();
+        double currentY = Odometry.getY();
 
-        double leftSpeed = 0;
-        double rightSpeed = 0;
+        if (Math.abs(angleError) > 2) {
+            turnPID.setSetPoint(angleDegrees);
+            turnPID.updatePID(currentYaw);
+            double turnPower = turnPID.getResult();
 
-        double remainingDistance = calculateRemainingDistance(leftTargetPos, rightTargetPos);
-        {
+            Drive(turnPower, turnPower);
 
-            if (Math.abs(turnPID.getError()) < 2) {
-                drivePIDL.setSetPoint(leftTargetPos);
-                drivePIDR.setSetPoint(rightTargetPos);
+            System.out.println("Turning with power: " + turnPower + " Current Yaw: " + currentYaw + " Target Angle: " + angleDegrees);
+        } else {
 
-                drivePIDL.clamp(1);
-                drivePIDR.clamp(1);
+            double deltaX = targetX - currentX;
+            double deltaY = targetY - currentY;
+            double distanceError = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
 
-                drivePIDL.updatePID(leftMotor.getCurrentPosition());
-                drivePIDR.updatePID(rightMotor.getCurrentPosition());
+            if (distanceError > 0.1) {
+                drivePIDL.setSetPoint(distanceError);
+                drivePIDL.updatePID(0);
+                double movePower = drivePIDL.getResult();
 
-                leftSpeed = drivePIDL.getResult();
-                rightSpeed = drivePIDR.getResult();
-                System.out.println(leftSpeed);
+                double angleRadians = Math.toRadians(angleDegrees);
+                double moveX = movePower * Math.cos(angleRadians);
+                double moveY = movePower * Math.sin(angleRadians);
 
+                Drive(moveY + moveX, moveY - moveX);
+
+                System.out.println("Moving with power: " + movePower + " Current Position: (" + currentX + ", " + currentY + ") Target Position: (" + targetX + ", " + targetY + ")");
             } else {
-
-                    turnPID.setSetPoint(angleDegrees);
-                    turnPID.updatePID(Peripherals.getYawDegrees());
-                    turnPID.setPID(0.03, 0, 0);
-                    turnPID.clamp(1);
-
-                    leftSpeed = turnPID.getResult();
-                    rightSpeed = -turnPID.getResult();
-                    System.out.println(leftSpeed);
-
+                stop();
             }
         }
-
-
-        leftMotor.setPower(leftSpeed);
-        rightMotor.setPower(rightSpeed);
-
-        while (leftMotor.isBusy() && rightMotor.isBusy()) {
-        }
     }
+
 
     private static double calculateRemainingDistance(double leftTargetPos, double rightTargetPos) {
         double currentLeftPos = leftMotor.getCurrentPosition();
@@ -97,19 +90,16 @@ public class DriveSubsystem extends Subsystem {
     }
 
     public static void stop() {
-        // Stop both motors
         leftMotor.setPower(0);
         rightMotor.setPower(0);
     }
 
     private static void resetEncoders() {
-        // Reset motor encoders
         leftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         rightMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
     }
 
     private static void setRunMode(DcMotor.RunMode mode) {
-        // Set motor run mode
         leftMotor.setMode(mode);
         rightMotor.setMode(mode);
     }

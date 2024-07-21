@@ -1,38 +1,47 @@
 package org.firstinspires.ftc.teamcode;
 
-import static org.firstinspires.ftc.teamcode.Tools.Parameters.ALL;
-import static org.firstinspires.ftc.teamcode.Tools.Parameters.ANY;
-import static org.firstinspires.ftc.teamcode.Tools.Parameters.SPECIFIC;
-
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import org.firstinspires.ftc.teamcode.Commands.*;
-import org.firstinspires.ftc.teamcode.Tools.Parameters;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
-@Autonomous(name = "TestAuto", group = "Test")
+import org.firstinspires.ftc.teamcode.PathingTool.PathEngine;
+import org.firstinspires.ftc.teamcode.Commands.CommandScheduler;
+import org.firstinspires.ftc.teamcode.Subsystems.DriveSubsystem;
+import org.json.JSONException;
+
+@Autonomous(name = "Path Following Autonomous", group = "Autonomous")
 public class TestAuto extends LinearOpMode {
+
+    private PathEngine pathEngine;
     private CommandScheduler scheduler;
+    private ElapsedTime runtime;
 
     @Override
-    public void runOpMode() throws InterruptedException {
+    public void runOpMode() {
+        DriveSubsystem.initialize(hardwareMap);
+        scheduler = CommandScheduler.getInstance();
+
+        pathEngine = new PathEngine(this, "SimplePath.polarpath");
 
         waitForStart();
 
-        scheduler = new CommandScheduler();
+        runtime = new ElapsedTime();
 
-        SequentialCommandGroup commandGroup = new SequentialCommandGroup(
-                new ParallelCommandGroup(scheduler, SPECIFIC, new Wait(10000), new Wait(1000)),
-                new TestCommand());
+        pathEngine.startPath(runtime.time());
 
-        scheduler.schedule(commandGroup);
+        while (opModeIsActive()) {
+            try {
+                pathEngine.update(runtime.time());
 
-        while (!isStopRequested()) {
-            if (!opModeInInit()) {
-                while (opModeIsActive()) {
-                    scheduler.run();
-                }
+                scheduler.run();
+            } catch (InterruptedException | JSONException e) {
+
+                e.printStackTrace();
             }
-            sleep(50);
+
+            telemetry.update();
         }
+
+        scheduler.cancelAll();
     }
 }

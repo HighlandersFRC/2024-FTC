@@ -25,7 +25,7 @@ public class TankDrive extends LinearOpMode {
             double leftPower = (y + rx) / denominator;
             double rightPower = (y - rx) / denominator;
             DriveSubsystem.Drive(leftPower, rightPower);
-
+            
         }
     }
 }
