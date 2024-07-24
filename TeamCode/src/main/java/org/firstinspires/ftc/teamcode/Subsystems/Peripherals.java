@@ -17,7 +17,7 @@ public class Peripherals extends Subsystem {
     private static IMU imu;
 
     public Peripherals(String name) {
-        super(name);
+        super();
     }
 
 

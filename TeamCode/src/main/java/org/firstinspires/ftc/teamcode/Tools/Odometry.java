@@ -2,66 +2,77 @@ package org.firstinspires.ftc.teamcode.Tools;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
-import org.firstinspires.ftc.teamcode.Subsystems.Peripherals;
 
 public class Odometry {
-    private static double x;
-    private static double y;
-    private double theta;
-    private double lastLeftEncoder, lastRightEncoder, lastYEncoder;
-    private double wheelDiameter = 3.77953; // inches
-    private double ticksPerRevolution = 1440; // Adjust based on your encoder
-    private double ticksPerMeter = (ticksPerRevolution) / (Math.PI * wheelDiameter * 0.0254); // Hardcoded ticks per meter value
-    private DcMotor lateralLeft, lateralRight, Y;
+    public static DcMotor leftEncoderMotor, rightEncoderMotor, centerEncoderMotor;
 
-    public void initialize(HardwareMap hardwareMap){
-        lateralLeft = hardwareMap.get(DcMotor.class, "lateralLeft");
-        lateralRight = hardwareMap.get(DcMotor.class, "lateralRight");
-        Y = hardwareMap.get(DcMotor.class, "Y");
+    public static final double TICKS_PER_REV = 2000;
+    public static final double WHEEL_DIAMETER = 48 / 1000.0;
+    public static final double WHEEL_CIRCUMFERENCE = Math.PI * WHEEL_DIAMETER;
 
-        lastLeftEncoder = lateralLeft.getCurrentPosition();
-        lastRightEncoder = lateralRight.getCurrentPosition();
-        lastYEncoder = Y.getCurrentPosition();
+    public static final double TRACK_WIDTH = 152.4 / 1000.0;
+    public static double x = 0.0;
+    public static double y = 0.0;
+    public static double theta = 0.0;
+
+    public static int lastLeftPos = 0;
+    public static int lastRightPos = 0;
+    public static int lastCenterPos = 0;
+
+    public static void initialize(HardwareMap hardwareMap) {
+        leftEncoderMotor = hardwareMap.get(DcMotor.class, "left_motor");
+        rightEncoderMotor = hardwareMap.get(DcMotor.class, "right_motor");
+        centerEncoderMotor = hardwareMap.get(DcMotor.class, "vertical");
+
+        resetEncoders();
+        x = 0.0;
+        y = 0.0;
+        theta = 0.0;
     }
 
-    public void setStartPosition(double startX, double startY, double startTheta) {
-        x = startX;
-        y = startY;
-        theta = startTheta;
+    public static void resetEncoders() {
+        lastLeftPos = leftEncoderMotor.getCurrentPosition();
+        lastRightPos = rightEncoderMotor.getCurrentPosition();
+        lastCenterPos = centerEncoderMotor.getCurrentPosition();
     }
 
-    public void update() {
-        double leftEncoder = lateralLeft.getCurrentPosition();
-        double rightEncoder = lateralRight.getCurrentPosition();
-        double yEncoder = Y.getCurrentPosition();
+    public static void update() {
+        int currentLeftPos = leftEncoderMotor.getCurrentPosition();
+        int currentRightPos = rightEncoderMotor.getCurrentPosition();
+        int currentCenterPos = centerEncoderMotor.getCurrentPosition();
 
-        double deltaLeft = (leftEncoder - lastLeftEncoder) / ticksPerMeter;
-        double deltaRight = (rightEncoder - lastRightEncoder) / ticksPerMeter;
-        double deltaY = (yEncoder - lastYEncoder) / ticksPerMeter;
+        int deltaLeft = currentLeftPos - lastLeftPos;
+        int deltaRight = currentRightPos - lastRightPos;
+        int deltaCenter = currentCenterPos - lastCenterPos;
 
-        lastLeftEncoder = leftEncoder;
-        lastRightEncoder = rightEncoder;
-        lastYEncoder = yEncoder;
+        lastLeftPos = currentLeftPos;
+        lastRightPos = currentRightPos;
+        lastCenterPos = currentCenterPos;
 
-        double deltaTheta = (deltaLeft - deltaRight) / wheelDiameter;
-        theta += deltaTheta;
+        double distanceLeft = (deltaLeft / (double) TICKS_PER_REV) * WHEEL_CIRCUMFERENCE;
+        double distanceRight = (deltaRight / (double) TICKS_PER_REV) * WHEEL_CIRCUMFERENCE;
+        double distanceCenter = (deltaCenter / (double) TICKS_PER_REV) * WHEEL_CIRCUMFERENCE;
 
-        double deltaX = deltaY * Math.sin(theta);
-        double deltaYPosition = deltaY * Math.cos(theta);
+        double deltaTheta = (distanceRight - distanceLeft) / TRACK_WIDTH;
+        double deltaX = distanceCenter * Math.cos(Math.toRadians(theta)) - (distanceRight + distanceLeft) / 2 * Math.sin(Math.toRadians(theta));
+        double deltaY = distanceCenter * Math.sin(Math.toRadians(theta)) + (distanceRight + distanceLeft) / 2 * Math.cos(Math.toRadians(theta));
+
+        theta += Math.toDegrees(deltaTheta);
+        theta = (theta + 360) % 360;
 
         x += deltaX;
-        y += deltaYPosition;
+        y += deltaY;
     }
 
     public static double getX() {
-        return x;
+        return x * 97.5;
     }
 
     public static double getY() {
         return y;
     }
 
-    public double getTheta() {
+    public static double getTheta() {
         return theta;
     }
 }

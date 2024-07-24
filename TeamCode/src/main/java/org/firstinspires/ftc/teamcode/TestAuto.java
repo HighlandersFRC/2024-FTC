@@ -7,6 +7,8 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.teamcode.PathingTool.PathEngine;
 import org.firstinspires.ftc.teamcode.Commands.CommandScheduler;
 import org.firstinspires.ftc.teamcode.Subsystems.DriveSubsystem;
+import org.firstinspires.ftc.teamcode.Subsystems.Peripherals;
+import org.firstinspires.ftc.teamcode.Tools.Odometry;
 import org.firstinspires.ftc.teamcode.Tools.Robot;
 import org.json.JSONException;
 
@@ -23,7 +25,10 @@ public class TestAuto extends LinearOpMode {
 
         scheduler = CommandScheduler.getInstance();
 
-        pathEngine = new PathEngine(this, "SimplePath.polarpath");
+        Odometry odometry = new Odometry();
+
+
+        pathEngine = new PathEngine(this, "OneMeter.polarpath", odometry, new DriveSubsystem(hardwareMap));
 
         waitForStart();
 
@@ -33,10 +38,12 @@ public class TestAuto extends LinearOpMode {
 
         while (opModeIsActive()) {
             try {
+                telemetry.addData("IMU", Peripherals.getYawDegrees());
+
                 pathEngine.update(runtime.time());
 
                 scheduler.run();
-            } catch (InterruptedException | JSONException e) {
+            } catch (InterruptedException e) {
 
                 e.printStackTrace();
             }

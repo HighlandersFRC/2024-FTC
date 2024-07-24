@@ -2,7 +2,6 @@ package org.firstinspires.ftc.teamcode.Commands;
 
 import org.firstinspires.ftc.teamcode.Tools.Parameters;
 
-import com.qualcomm.hardware.bosch.BHI260IMU;
 import com.qualcomm.robotcore.util.RobotLog;
 
 import java.util.ArrayList;
@@ -10,7 +9,7 @@ import java.util.Collections;
 import java.util.List;
 
 public class ParallelCommandGroup implements Command {
-    private final List<Command> commands = new ArrayList<>();
+    public static List<Command> commands = new ArrayList<>();
     private CommandScheduler scheduler;
     private final Parameters parameter;
     private Command specificCommand;
@@ -22,6 +21,9 @@ public class ParallelCommandGroup implements Command {
         if (parameter == Parameters.SPECIFIC){
             specificCommand = commands[0];
         }
+    }
+    public void addCommand(Command... commands) {
+        Collections.addAll(this.commands, commands);
     }
 
     @Override
@@ -66,7 +68,9 @@ public class ParallelCommandGroup implements Command {
                 return false;
             case SPECIFIC:
                 return specificCommand != null && specificCommand.isFinished();
-            default:
+            case NEVER:
+                return false;
+                default:
                 return true;
         }
     }

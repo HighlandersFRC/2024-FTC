@@ -16,7 +16,7 @@ public class ArmDown implements Command {
     }
 
     public void start(){
-        PID.setSetPoint(Constants.ArmUpPosition);
+        PID.setSetPoint(Constants.ArmDownPosition);
         PID.setMaxOutput(0.8);
         PID.setMinOutput(-0.8);
         PID.setContinuous(false);

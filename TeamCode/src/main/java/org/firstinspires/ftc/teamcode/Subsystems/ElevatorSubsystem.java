@@ -11,7 +11,7 @@ public class ElevatorSubsystem extends Subsystem{
     public static String name = "Elevators";
 
     public ElevatorSubsystem(String name) {
-        super(name);
+        super();
     }
 
     public static void initialize(HardwareMap hardwareMap){

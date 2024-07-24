@@ -11,7 +11,7 @@ public class ArmSubsystem extends Subsystem  {
     public static AnalogInput armEncoder;
 
     public ArmSubsystem(String name) {
-        super(name);
+        super();
     }
     public static void initialize(HardwareMap hardwareMap) {
         armMotor = hardwareMap.dcMotor.get("armMotor");

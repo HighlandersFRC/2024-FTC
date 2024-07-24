@@ -4,6 +4,8 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.Subsystems.DriveSubsystem;
+import org.firstinspires.ftc.teamcode.Subsystems.Peripherals;
+import org.firstinspires.ftc.teamcode.Tools.Odometry;
 
 
 @TeleOp
@@ -12,6 +14,11 @@ public class TankDrive extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
         waitForStart();
         DriveSubsystem.initialize(hardwareMap);
+        Odometry.initialize(hardwareMap);
+        Peripherals.initialize(hardwareMap);
+
+        Peripherals.resetYaw();
+
         while (opModeIsActive()){
 
             double y = gamepad1.left_stick_y;
@@ -21,10 +28,19 @@ public class TankDrive extends LinearOpMode {
 
             double intakePower = leftTrigger - rightTrigger ;
 
-            double denominator = Math.max(Math.abs(y) + Math.abs(rx), 1);
-            double leftPower = (y + rx) / denominator;
-            double rightPower = (y - rx) / denominator;
-            DriveSubsystem.Drive(leftPower, rightPower);
+            double leftPower = y + rx;
+            double rightPower = y - rx;
+
+            DriveSubsystem.drive(leftPower, rightPower);
+
+            telemetry.addData("X", Odometry.getX());
+            telemetry.addData("Y", Odometry.getY());
+            telemetry.addData("Theta", Odometry.getTheta());
+            telemetry.addData("IMU Yaw", Peripherals.getYawDegrees());
+            telemetry.addData("y", y);
+            telemetry.addData("rx", rx);
+            Odometry.update();
+            telemetry.update();
             
         }
     }

@@ -1,19 +1,9 @@
 package org.firstinspires.ftc.teamcode.PathingTool;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
-
-import org.firstinspires.ftc.teamcode.Commands.ArmDown;
-import org.firstinspires.ftc.teamcode.Commands.ArmUp;
-import org.firstinspires.ftc.teamcode.Commands.Command;
-import org.firstinspires.ftc.teamcode.Commands.CommandScheduler;
-import org.firstinspires.ftc.teamcode.Commands.ElevatorDown;
-import org.firstinspires.ftc.teamcode.Commands.ElevatorUp;
-import org.firstinspires.ftc.teamcode.Commands.Intake;
-import org.firstinspires.ftc.teamcode.Commands.Outtake;
-import org.firstinspires.ftc.teamcode.Commands.SequentialCommandGroup;
-import org.firstinspires.ftc.teamcode.Commands.ParallelCommandGroup;
-import org.firstinspires.ftc.teamcode.Commands.ConditionalCommand;
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.Subsystems.DriveSubsystem;
+import org.firstinspires.ftc.teamcode.Tools.Odometry;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -21,24 +11,24 @@ import org.json.JSONObject;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.List;
 
 public class PathEngine {
 
     private JSONObject jsonPathData;
-    private static int currentIndex = 0;
-    private final double COORDINATE_UNIT = 1.0;
-    private double[] lastPoint = {0.0, 0.0};
-    private double[] currentPoint = {0.0, 0.0};
-    private double startTime = 0.0;
-    private CommandScheduler scheduler = CommandScheduler.getInstance();
-    private HashMap<String, Command> commandMap = new HashMap<>();
+    private List<SampledPoint> sampledPoints;
+    private int currentPointIndex = 0;
+    private double startTime;
+    private Odometry odometry;
+    private DriveSubsystem driveSubsystem;
+    private static final double COORDINATE_UNIT = 1.0;
 
-    public PathEngine(OpMode opMode, String pathFileName) {
+    public PathEngine(OpMode opMode, String pathFileName, Odometry odometry, DriveSubsystem driveSubsystem) {
         loadJSONFromAsset(opMode, pathFileName);
-        initializeCommandMap();
-        System.out.println(jsonPathData);
+        parseSampledPoints();
+        this.odometry = odometry;
+        this.driveSubsystem = driveSubsystem;
     }
 
     private void loadJSONFromAsset(OpMode opMode, String pathFileName) {
@@ -55,76 +45,78 @@ public class PathEngine {
             jsonPathData = new JSONObject(sb.toString());
         } catch (IOException | JSONException e) {
             e.printStackTrace();
-
         }
     }
 
-    private void initializeCommandMap() {
-        commandMap.put("Outtake", new Outtake());
-        commandMap.put("Intake", new Intake());
-        commandMap.put("ElevatorDown", new ElevatorDown());
-        commandMap.put("ElevatorUp", new ElevatorUp());
-        commandMap.put("ArmUp", new ArmUp());
-        commandMap.put("ArmDown", new ArmDown());
-        commandMap.put("SequentialCommandGroup", new SequentialCommandGroup());
+    private void parseSampledPoints() {
+        sampledPoints = new ArrayList<>();
+        try {
+            JSONArray pointsArray = jsonPathData.getJSONArray("sampled_points");
+            for (int i = 0; i < pointsArray.length(); i++) {
+                JSONObject point = pointsArray.getJSONObject(i);
+                SampledPoint sampledPoint = new SampledPoint(
+                        point.getDouble("time"),
+                        point.getDouble("x"),
+                        point.getDouble("y"),
+                        point.getDouble("angle"),
+                        point.getDouble("x_velocity"),
+                        point.getDouble("y_velocity"),
+                        point.getDouble("angular_velocity"),
+                        point.getDouble("x_acceleration"),
+                        point.getDouble("y_acceleration"),
+                        point.getDouble("angular_acceleration")
+                );
+                sampledPoints.add(sampledPoint);
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
     }
 
     public void startPath(double startTime) {
         this.startTime = startTime;
-    }
+        currentPointIndex = 0;
 
-    public double getElapsedTime(double currentTime) {
-        return currentTime - startTime;
-    }
-
-    public void update(double currentTime) throws InterruptedException, JSONException {
-        double elapsedTime = getElapsedTime(currentTime);
-        if (currentIndex < jsonPathData.getJSONArray("key_points").length()) {
-            JSONObject currentPointData = jsonPathData.getJSONArray("key_points").getJSONObject(currentIndex);
-            double pointTime = currentPointData.getDouble("time");
-
-            if (elapsedTime >= pointTime) {
-                double x = currentPointData.getDouble("x") * COORDINATE_UNIT;
-                double y = currentPointData.getDouble("y") * COORDINATE_UNIT;
-                double angle = currentPointData.getDouble("angle");
-
-                DriveSubsystem.moveToPosition(angle, x, y);
-
-                lastPoint[0] = currentPoint[0];
-                lastPoint[1] = currentPoint[1];
-                currentPoint[0] = x;
-                currentPoint[1] = y;
-
-                JSONArray commands = jsonPathData.optJSONArray("commands");
-                if (commands != null) {
-                    for (int i = 0; i < commands.length(); i++) {
-                        JSONObject commandData = commands.getJSONObject(i);
-                        double commandStart = commandData.getDouble("start");
-                        double commandEnd = commandData.getDouble("end");
-                        String commandName = commandData.getJSONObject("command").getString("name");
-
-                        if (elapsedTime >= commandStart && elapsedTime <= commandEnd) {
-                            Command command = commandMap.get(commandName);
-                            if (command != null) {
-                                scheduler.schedule(command);
-                            }
-                        }
-                    }
-                }
-
-                currentIndex++;
-            }
+        // Initialize odometry at the starting point
+        if (!sampledPoints.isEmpty()) {
+            SampledPoint startPoint = sampledPoints.get(0);
         }
     }
 
-    public double calculateDistance() {
-        double lastX = lastPoint[0];
-        double lastY = lastPoint[1];
-        double currentX = currentPoint[0];
-        double currentY = currentPoint[1];
+    public void update(double currentTime) {
+        if (currentPointIndex >= sampledPoints.size()) {
+            driveSubsystem.stop();
+            return;
+        }
 
-        double deltaX = currentX - lastX;
-        double deltaY = currentY - lastY;
-        return Math.sqrt(deltaX * deltaX + deltaY * deltaY);
+        SampledPoint currentPoint = sampledPoints.get(currentPointIndex);
+
+        // Determine the target point based on time
+        while (currentPointIndex < sampledPoints.size() - 1 &&
+                sampledPoints.get(currentPointIndex + 1).time <= currentTime - startTime) {
+            currentPointIndex++;
+            currentPoint = sampledPoints.get(currentPointIndex);
+        }
+
+        // Move to the target point
+        driveSubsystem.moveToPosition(currentPoint.angle, currentPoint.x, currentPoint.y);
+    }
+
+    private static class SampledPoint {
+        double time, x, y, angle, x_velocity, y_velocity, angular_velocity, x_acceleration, y_acceleration, angular_acceleration;
+
+        public SampledPoint(double time, double x, double y, double angle, double x_velocity, double y_velocity,
+                            double angular_velocity, double x_acceleration, double y_acceleration, double angular_acceleration) {
+            this.time = time;
+            this.x = x;
+            this.y = y;
+            this.angle = angle;
+            this.x_velocity = x_velocity;
+            this.y_velocity = y_velocity;
+            this.angular_velocity = angular_velocity;
+            this.x_acceleration = x_acceleration;
+            this.y_acceleration = y_acceleration;
+            this.angular_acceleration = angular_acceleration;
+        }
     }
 }
