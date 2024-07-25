@@ -1,14 +1,16 @@
 package org.firstinspires.ftc.teamcode.Subsystems;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+
+import org.firstinspires.ftc.teamcode.Commands.Drive;
 import org.firstinspires.ftc.teamcode.Tools.Odometry;
 import org.firstinspires.ftc.teamcode.Tools.PID;
 
 public class DriveSubsystem {
 
-    private static DcMotor leftMotor;
-    private static DcMotor rightMotor;
+    public static DcMotor leftBack, leftFront, rightBack, rightFront;
     private PID turnPID = new PID(1, 0, 0);
     private PID drivePIDL = new PID(1, 0, 0);
     private PID drivePIDR = new PID(1, 0, 0);
@@ -20,20 +22,53 @@ public class DriveSubsystem {
     }
 
     public static void initialize(HardwareMap hardwareMap) {
-        leftMotor = hardwareMap.get(DcMotor.class, "left_motor");
-        rightMotor = hardwareMap.get(DcMotor.class, "right_motor");
+        leftBack = hardwareMap.get(DcMotor.class, "left_back");
+        rightBack = hardwareMap.get(DcMotor.class, "right_back");
+        leftFront = hardwareMap.get(DcMotor.class, "left_front");
+        rightFront = hardwareMap.get(DcMotor.class, "right_front");
 
-        leftMotor.setDirection(DcMotor.Direction.FORWARD);
-        rightMotor.setDirection(DcMotor.Direction.REVERSE);
+        leftBack.setDirection(DcMotor.Direction.FORWARD);
+        rightBack.setDirection(DcMotor.Direction.REVERSE);
+        leftFront.setDirection(DcMotor.Direction.FORWARD);
+        rightFront.setDirection(DcMotor.Direction.REVERSE);
 
         resetEncoders();}
 
-    public static void drive(double leftPower, double rightPower) {
-        leftMotor.setPower(leftPower);
-        rightMotor.setPower(rightPower);
-    }
+    public static void MecanumDrive(double x, double y, double rx) {
+        double botHeading = Peripherals.getYaw();
+        double pi = Math.PI;
+        double botHeadingRadian = -botHeading * pi/180;
 
-    public void moveToPosition(double angleDegrees, double targetX, double targetY) {
+        double rotX = (x * Math.cos(botHeadingRadian) - y * Math.sin(botHeadingRadian));
+        double rotY = (x * Math.sin(botHeadingRadian) + y * Math.cos(botHeadingRadian));
+
+        x = x *1.1;
+
+        double denominator = Math.max(Math.abs(rotY) + Math.abs(rotX) + Math.abs(rx), 1.0);
+        double frontLeftPower = (rotY + rotX + rx) / denominator;
+        double backLeftPower = (rotY - rotX + rx) / denominator;
+        double frontRightPower = (rotY - rotX - rx) / denominator;
+        double backRightPower = (rotY + rotX - rx) / denominator;
+
+        drive(frontLeftPower, frontRightPower, backLeftPower, backRightPower);
+    }
+    public static void drive(double leftFrontPower, double rightFrontPower, double leftBackPower, double rightBackPower) {
+        leftFront.setPower(leftFrontPower);
+        rightFront.setPower(rightFrontPower);
+        leftBack.setPower(leftBackPower);
+        rightBack.setPower(rightBackPower);
+    }
+/*
+
+    private double calculateRemainingDistance(double leftTargetPos, double rightTargetPos) {
+        double currentLeftPos = leftMotor.getCurrentPosition();
+        double currentRightPos = rightMotor.getCurrentPosition();
+
+        return Math.abs(leftTargetPos - currentLeftPos) + Math.abs(rightTargetPos - currentRightPos);
+    }
+*/
+
+    /*public void moveToPosition(double angleDegrees, double targetX, double targetY) {
         double currentYaw = Odometry.getTheta(); // Replace with actual yaw retrieval method
         double angleError = angleDegrees - currentYaw;
         double currentX = Odometry.getX();
@@ -64,26 +99,29 @@ public class DriveSubsystem {
                 stop();
             }
         }
-    }
-
-    private double calculateRemainingDistance(double leftTargetPos, double rightTargetPos) {
-        double currentLeftPos = leftMotor.getCurrentPosition();
-        double currentRightPos = rightMotor.getCurrentPosition();
-
-        return Math.abs(leftTargetPos - currentLeftPos) + Math.abs(rightTargetPos - currentRightPos);
-    }
+    }*/
 
     public void stop() {
-        drive(0, 0);
+        drive(0, 0, 0, 0);
     }
 
     private static void resetEncoders() {
-        leftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        rightMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        leftFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rightFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        leftBack.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rightBack.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+        leftFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rightFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        leftBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rightBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
     }
 
     private static void setRunMode(DcMotor.RunMode mode) {
-        leftMotor.setMode(mode);
-        rightMotor.setMode(mode);
+        leftBack.setMode(mode);
+        rightBack.setMode(mode);
+        leftFront.setMode(mode);
+        rightFront.setMode(mode);
     }
 }

@@ -31,7 +31,7 @@ public class TankDrive extends LinearOpMode {
             double leftPower = y + rx;
             double rightPower = y - rx;
 
-            DriveSubsystem.drive(leftPower, rightPower);
+            /*DriveSubsystem.drive(leftPower, rightPower);*/
 
             telemetry.addData("X", Odometry.getX());
             telemetry.addData("Y", Odometry.getY());

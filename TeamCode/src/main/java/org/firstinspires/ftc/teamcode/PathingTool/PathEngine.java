@@ -99,7 +99,9 @@ public class PathEngine {
         }
 
         // Move to the target point
+/*
         driveSubsystem.moveToPosition(currentPoint.angle, currentPoint.x, currentPoint.y);
+*/
     }
 
     private static class SampledPoint {

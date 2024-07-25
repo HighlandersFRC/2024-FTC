@@ -7,10 +7,12 @@ public class Odometry {
     public static DcMotor leftEncoderMotor, rightEncoderMotor, centerEncoderMotor;
 
     public static final double TICKS_PER_REV = 2000;
-    public static final double WHEEL_DIAMETER = 48 / 1000.0;
+    public static final double WHEEL_DIAMETER = 48 / 1000.0; // in meters
     public static final double WHEEL_CIRCUMFERENCE = Math.PI * WHEEL_DIAMETER;
 
-    public static final double TRACK_WIDTH = 152.4 / 1000.0;
+    public static final double TRACK_WIDTH = 12 * 25.4 / 1000.0; // 12 inches to meters
+    public static final double CENTER_WHEEL_OFFSET = 0;
+
     public static double x = 0.0;
     public static double y = 0.0;
     public static double theta = 0.0;
@@ -20,9 +22,9 @@ public class Odometry {
     public static int lastCenterPos = 0;
 
     public static void initialize(HardwareMap hardwareMap) {
-        leftEncoderMotor = hardwareMap.get(DcMotor.class, "left_motor");
-        rightEncoderMotor = hardwareMap.get(DcMotor.class, "right_motor");
-        centerEncoderMotor = hardwareMap.get(DcMotor.class, "vertical");
+        leftEncoderMotor = hardwareMap.get(DcMotor.class, "right_front");//0
+        rightEncoderMotor = hardwareMap.get(DcMotor.class, "left_front");//1
+        centerEncoderMotor = hardwareMap.get(DcMotor.class, "right_back");//2
 
         resetEncoders();
         x = 0.0;
@@ -54,18 +56,24 @@ public class Odometry {
         double distanceCenter = (deltaCenter / (double) TICKS_PER_REV) * WHEEL_CIRCUMFERENCE;
 
         double deltaTheta = (distanceRight - distanceLeft) / TRACK_WIDTH;
+
         double deltaX = distanceCenter * Math.cos(Math.toRadians(theta)) - (distanceRight + distanceLeft) / 2 * Math.sin(Math.toRadians(theta));
         double deltaY = distanceCenter * Math.sin(Math.toRadians(theta)) + (distanceRight + distanceLeft) / 2 * Math.cos(Math.toRadians(theta));
 
         theta += Math.toDegrees(deltaTheta);
-        theta = (theta + 360) % 360;
+        theta = (theta + 180) % 360;
+        if (theta < 0) {
+            theta += 360;
+        }
+        theta -= 180;
+
 
         x += deltaX;
         y += deltaY;
     }
 
     public static double getX() {
-        return x * 97.5;
+        return x;
     }
 
     public static double getY() {
