@@ -34,23 +34,34 @@ public class DriveSubsystem {
 
         resetEncoders();}
 
-    public static void MecanumDrive(double x, double y, double rx) {
-        double botHeading = Peripherals.getYaw();
-        double pi = Math.PI;
-        double botHeadingRadian = -botHeading * pi/180;
+    public static void MecanumDrive(double x, double y, double rotation) {
+        double heading = Peripherals.getYawDegrees();
+        double cosA = Math.cos(heading);
+        double sinA = Math.sin(heading);
+        double xAdjusted = x * cosA - y * sinA;
+        double yAdjusted = x * sinA + y * cosA;
 
-        double rotX = (x * Math.cos(botHeadingRadian) - y * Math.sin(botHeadingRadian));
-        double rotY = (x * Math.sin(botHeadingRadian) + y * Math.cos(botHeadingRadian));
+        // Calculate motor powers
+        double frontLeftPower = yAdjusted + xAdjusted + rotation;
+        double frontRightPower = yAdjusted - xAdjusted - rotation;
+        double backLeftPower = yAdjusted - xAdjusted + rotation;
+        double backRightPower = yAdjusted + xAdjusted - rotation;
 
-        x = x *1.1;
+        // Normalize the motor powers so no value exceeds 1.0
+        double maxPower = Math.max(Math.abs(frontLeftPower), Math.max(Math.abs(frontRightPower),
+                Math.max(Math.abs(backLeftPower), Math.abs(backRightPower))));
+        if (maxPower > 1.0) {
+            frontLeftPower /= maxPower;
+            frontRightPower /= maxPower;
+            backLeftPower /= maxPower;
+            backRightPower /= maxPower;
+        }
 
-        double denominator = Math.max(Math.abs(rotY) + Math.abs(rotX) + Math.abs(rx), 1.0);
-        double frontLeftPower = (rotY + rotX + rx) / denominator;
-        double backLeftPower = (rotY - rotX + rx) / denominator;
-        double frontRightPower = (rotY - rotX - rx) / denominator;
-        double backRightPower = (rotY + rotX - rx) / denominator;
-
-        drive(frontLeftPower, frontRightPower, backLeftPower, backRightPower);
+        // Set the motor powers
+        leftFront.setPower(frontLeftPower);
+        rightFront.setPower(frontRightPower);
+        leftBack.setPower(backLeftPower);
+        rightBack.setPower(backRightPower);
     }
     public static void drive(double leftFrontPower, double rightFrontPower, double leftBackPower, double rightBackPower) {
         leftFront.setPower(leftFrontPower);
