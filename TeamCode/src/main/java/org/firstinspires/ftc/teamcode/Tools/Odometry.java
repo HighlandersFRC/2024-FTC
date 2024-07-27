@@ -26,7 +26,6 @@ public class Odometry {
         rightEncoderMotor = hardwareMap.get(DcMotor.class, "right_back");
         centerEncoderMotor = hardwareMap.get(DcMotor.class, "left_front");
 
-
         resetEncoders();
         x = 0.0;
         y = 0.0;
@@ -78,15 +77,15 @@ public class Odometry {
         y += deltaY;
     }
 
-    public static double getX() {
+    public static double getOdometryX() {
         return y;
     }
 
-    public static double getY() {
+    public static double getOdometryY() {
         return x;
     }
 
-    public static double getTheta() {
+    public static double getOdometryTheta() {
         return theta;
     }
 }

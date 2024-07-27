@@ -11,8 +11,6 @@ import org.json.JSONObject;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.ArrayList;
-import java.util.List;
 
 public class PathEngine {
 
@@ -73,9 +71,9 @@ public class PathEngine {
 
         try {
             Number[] velocityArray = purePursuitController.purePursuitController(
-                    odometry.getX(),
-                    odometry.getY(),
-                    odometry.getTheta(),
+                    odometry.getOdometryX(),
+                    odometry.getOdometryY(),
+                    odometry.getOdometryTheta(),
                     currentPointIndex,
                     pathPoints
             );
@@ -92,9 +90,9 @@ public class PathEngine {
         }
 
         telemetry.addData("Current Time", currentTime);
-        telemetry.addData("Current Position X", Odometry.getX());
-        telemetry.addData("Current Position Y", Odometry.getY());
-        telemetry.addData("Current Angle", Odometry.getTheta());
+        telemetry.addData("Current Position X", Odometry.getOdometryX());
+        telemetry.addData("Current Position Y", Odometry.getOdometryY());
+        telemetry.addData("Current Angle", Odometry.getOdometryTheta());
         telemetry.update();
     }
 }

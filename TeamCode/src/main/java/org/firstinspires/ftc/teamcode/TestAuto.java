@@ -2,8 +2,7 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.OpMode;
-import com.qualcomm.robotcore.hardware.DcMotor;
+
 import org.firstinspires.ftc.teamcode.PathingTool.PathEngine;
 import org.firstinspires.ftc.teamcode.Subsystems.DriveSubsystem;
 import org.firstinspires.ftc.teamcode.Subsystems.Peripherals;
@@ -38,9 +37,9 @@ public class TestAuto extends LinearOpMode {
             pathEngine.update(currentTime);
 
             // Telemetry for debugging
-            telemetry.addData("X", Odometry.getX());
-            telemetry.addData("Y", Odometry.getY());
-            telemetry.addData("Theta", Odometry.getTheta());
+            telemetry.addData("X", Odometry.getOdometryX());
+            telemetry.addData("Y", Odometry.getOdometryY());
+            telemetry.addData("Theta", Odometry.getOdometryTheta());
             telemetry.update();
         }
     }

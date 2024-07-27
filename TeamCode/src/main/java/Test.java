@@ -1,7 +1,6 @@
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
-import org.firstinspires.ftc.teamcode.Subsystems.DriveSubsystem;
 import org.firstinspires.ftc.teamcode.Tools.Odometry;
 
 @Autonomous
@@ -15,9 +14,9 @@ Odometry.initialize(hardwareMap);
                 Odometry.resetEncoders();
             }
 
-            telemetry.addData("X", Odometry.getX());
-            telemetry.addData("Y", Odometry.getY());
-            telemetry.addData("Theta", Odometry.getTheta());
+            telemetry.addData("X", Odometry.getOdometryX());
+            telemetry.addData("Y", Odometry.getOdometryY());
+            telemetry.addData("Theta", Odometry.getOdometryTheta());
             telemetry.addData("Left Encoder", Odometry.leftEncoderMotor.getCurrentPosition());
             telemetry.addData("Right Encoder", Odometry.rightEncoderMotor.getCurrentPosition());
             telemetry.addData("Y", Odometry.centerEncoderMotor.getCurrentPosition());

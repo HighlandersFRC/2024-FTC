@@ -1,11 +1,9 @@
 package org.firstinspires.ftc.teamcode.Subsystems;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import org.firstinspires.ftc.teamcode.Tools.Odometry;
 import org.firstinspires.ftc.teamcode.Tools.PID;
-import org.firstinspires.ftc.teamcode.Subsystems.Peripherals;
 import org.firstinspires.ftc.teamcode.Tools.Vector;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -109,9 +107,9 @@ public class DriveSubsystem {
     }
 
     public void moveToPosition(double targetX, double targetY, double targetAngle) {
-        double currentX = Odometry.getX();
-        double currentY = Odometry.getY();
-        double currentAngle = Odometry.getTheta();
+        double currentX = Odometry.getOdometryX();
+        double currentY = Odometry.getOdometryY();
+        double currentAngle = Odometry.getOdometryTheta();
 
         double errorX = targetX - currentX;
         double errorY = targetY - currentY;
