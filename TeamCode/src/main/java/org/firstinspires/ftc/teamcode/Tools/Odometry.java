@@ -75,6 +75,14 @@ public class Odometry {
 
         x += deltaX;
         y += deltaY;
+
+        CameraDetection.update();
+
+        if (CameraDetection.getDetections() > 0){
+            x = CameraDetection.getCameraX();
+            y = CameraDetection.getCameraY();
+            theta = CameraDetection.getCameraTheta();
+        }
     }
 
     public static double getOdometryX() {

@@ -4,6 +4,7 @@ package org.firstinspires.ftc.teamcode.Tools;
 import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.gamepad1;
 
 import android.util.Size;
+
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
@@ -27,6 +28,9 @@ import java.util.concurrent.TimeUnit;
 
 @TeleOp
 public class CameraDetection  {
+    public static double CorrectX;
+    public static double CorrectY;
+    public static double theta;
     public static VisionPortal visionPortal;
          static AprilTagProcessor tagProcessor = new AprilTagProcessor.Builder()
                 .setDrawAxes(true)
@@ -71,6 +75,7 @@ public static void update(){
                     double y = detection.rawPose.z;
                     double z = -detection.rawPose.y;
 
+
                     Orientation rot = Orientation.getOrientation(detection.rawPose.R, AxesReference.INTRINSIC, AxesOrder.YXZ, AngleUnit.DEGREES);
                     double yaw = -rot.firstAngle;
                     double roll = rot.thirdAngle;
@@ -81,10 +86,10 @@ public static void update(){
 
                     AprilTagPoseFtc pose = new AprilTagPoseFtc(x, y, z, yaw, roll, pitch, range, bearing, elevation);
 
-                    double CorrectX = Constants.yCorrected(pose.y);
-                    double CorrectY = -Constants.xCorrected(pose.x);
+                    CorrectX = Constants.yCorrected(pose.y);
+                    CorrectY = -Constants.xCorrected(pose.x);
                     double r = Math.sqrt((CorrectX * CorrectX) + (CorrectY * CorrectY));
-                    double theta = (Math.atan2(CorrectY, CorrectX));
+                    theta = (Math.atan2(CorrectY, CorrectX));
 
                     double robotYaw = (Peripherals.getYaw());
                     double angleoffset = (theta + robotYaw);
@@ -103,6 +108,15 @@ public static void update(){
                 }     }
     }
     public static double getCameraX(){
-
+    return CorrectX;
+    }
+    public static double getCameraY(){
+    return CorrectY;
+    }
+    public static double getCameraTheta(){
+    return theta;
+    }
+    public static double getDetections(){
+    return tagProcessor.getDetections().size();
     }
 }
