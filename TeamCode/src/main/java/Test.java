@@ -19,7 +19,7 @@ Odometry.initialize(hardwareMap);
             telemetry.addData("Theta", Odometry.getOdometryTheta());
             telemetry.addData("Left Encoder", Odometry.leftEncoderMotor.getCurrentPosition());
             telemetry.addData("Right Encoder", Odometry.rightEncoderMotor.getCurrentPosition());
-            telemetry.addData("Y", Odometry.centerEncoderMotor.getCurrentPosition());
+            telemetry.addData("Y Encoder", Odometry.centerEncoderMotor.getCurrentPosition());
             Odometry.update();
             telemetry.update();
         }

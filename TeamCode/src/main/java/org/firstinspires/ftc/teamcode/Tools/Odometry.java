@@ -33,6 +33,10 @@ public class Odometry {
     }
 
     public static void resetEncoders() {
+        leftEncoderMotor.setMode(DcMotor.RunMode.RESET_ENCODERS);
+        rightEncoderMotor.setMode(DcMotor.RunMode.RESET_ENCODERS);
+        centerEncoderMotor.setMode(DcMotor.RunMode.RESET_ENCODERS);
+
         lastLeftPos = leftEncoderMotor.getCurrentPosition();
         lastRightPos = rightEncoderMotor.getCurrentPosition();
         lastCenterPos = centerEncoderMotor.getCurrentPosition();
@@ -46,7 +50,7 @@ public class Odometry {
 
     public static void update() {
         int currentLeftPos = leftEncoderMotor.getCurrentPosition();
-        int currentRightPos = rightEncoderMotor.getCurrentPosition();
+        int currentRightPos = -rightEncoderMotor.getCurrentPosition();
         int currentCenterPos = centerEncoderMotor.getCurrentPosition();
 
         int deltaLeft = currentLeftPos - lastLeftPos;
@@ -74,15 +78,8 @@ public class Odometry {
         theta -= 180;
 
         x += deltaX;
-        y += deltaY;
+        y += deltaY * 1.0416666666666666666666666666667;
 
-        CameraDetection.update();
-
-        if (CameraDetection.getDetections() > 0){
-            x = CameraDetection.getCameraX();
-            y = CameraDetection.getCameraY();
-            theta = CameraDetection.getCameraTheta();
-        }
     }
 
     public static double getOdometryX() {
@@ -95,5 +92,8 @@ public class Odometry {
 
     public static double getOdometryTheta() {
         return theta;
+    }
+
+    public void setCurrentPositionAndResetEncoders(double fieldX, double fieldY, double theta) {
     }
 }
