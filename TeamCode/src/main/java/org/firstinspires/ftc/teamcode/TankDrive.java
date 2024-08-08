@@ -5,7 +5,6 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.Subsystems.DriveSubsystem;
 import org.firstinspires.ftc.teamcode.Subsystems.Peripherals;
-import org.firstinspires.ftc.teamcode.Tools.Odometry;
 
 
 @TeleOp
@@ -14,7 +13,6 @@ public class TankDrive extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
         waitForStart();
         DriveSubsystem.initialize(hardwareMap);
-        Odometry.initialize(hardwareMap);
         Peripherals.initialize(hardwareMap);
 
         Peripherals.resetYaw();
@@ -33,13 +31,9 @@ public class TankDrive extends LinearOpMode {
 
             /*DriveSubsystem.drive(leftPower, rightPower);*/
 
-            telemetry.addData("X", Odometry.getOdometryX());
-            telemetry.addData("Y", Odometry.getOdometryY());
-            telemetry.addData("Theta", Odometry.getOdometryTheta());
             telemetry.addData("IMU Yaw", Peripherals.getYawDegrees());
             telemetry.addData("y", y);
             telemetry.addData("rx", rx);
-            Odometry.update();
             telemetry.update();
             
         }

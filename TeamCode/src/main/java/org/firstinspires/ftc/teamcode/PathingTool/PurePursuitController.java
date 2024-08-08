@@ -1,6 +1,5 @@
 package org.firstinspires.ftc.teamcode.PathingTool;
 
-import org.firstinspires.ftc.teamcode.Tools.Odometry;
 import org.firstinspires.ftc.teamcode.Subsystems.DriveSubsystem;
 import org.firstinspires.ftc.teamcode.Tools.PID;
 import org.firstinspires.ftc.teamcode.Tools.Constants;
@@ -12,11 +11,9 @@ public class PurePursuitController {
 
     private PID xPID, yPID, thetaPID;
     private DriveSubsystem driveSubsystem;
-    private Odometry odometry;
 
-    public PurePursuitController(DriveSubsystem driveSubsystem, Odometry odometry) {
+    public PurePursuitController(DriveSubsystem driveSubsystem) {
         this.driveSubsystem = driveSubsystem;
-        this.odometry = odometry;
         xPID = new PID(Constants.PID_X_P, Constants.PID_X_I, Constants.PID_X_D);
         yPID = new PID(Constants.PID_Y_P, Constants.PID_Y_I, Constants.PID_Y_D);
         thetaPID = new PID(Constants.PID_THETA_P, Constants.PID_THETA_I, Constants.PID_THETA_D);

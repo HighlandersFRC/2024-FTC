@@ -71,7 +71,7 @@ public class ParallelCommandGroup implements Command {
                 return specificCommand != null && specificCommand.isFinished();
             case NEVER:
                 return false;
-                default:
+            default:
                 return true;
         }
     }

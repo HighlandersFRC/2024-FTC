@@ -5,7 +5,6 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.Subsystems.DriveSubsystem;
 import org.firstinspires.ftc.teamcode.Subsystems.Peripherals;
-import org.firstinspires.ftc.teamcode.Tools.Odometry;
 
 @TeleOp
 public class Printouts extends LinearOpMode {

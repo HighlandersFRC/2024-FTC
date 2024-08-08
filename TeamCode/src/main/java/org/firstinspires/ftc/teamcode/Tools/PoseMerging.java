@@ -8,6 +8,7 @@ import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.Exposur
 import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.GainControl;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+import org.firstinspires.ftc.teamcode.Subsystems.DriveSubsystem;
 import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.apriltag.AprilTagPoseFtc;
 import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
@@ -25,7 +26,6 @@ public class PoseMerging extends LinearOpMode {
     private AprilTagProcessor tagProcessor;
     private VisionPortal visionPortal;
     private IMU imu;
-    private Odometry odometry;
     private boolean tagVisible = false; // Flag to track if the AprilTag is visible
 
     @Override
@@ -72,8 +72,6 @@ public class PoseMerging extends LinearOpMode {
         imu.resetYaw();
 
         // Initialize odometry with hardware map
-        odometry = new Odometry();
-        odometry.initialize(hardwareMap); // Initialize hardware
 
         waitForStart();
 
@@ -121,7 +119,7 @@ public class PoseMerging extends LinearOpMode {
                     double theta = (tagyaw + 180) - pose.yaw;
 
                     // Reset encoders to the detected position
-                    odometry.setCurrentPositionAndResetEncoders(FieldX, FieldY, theta);
+                    DriveSubsystem.setCurrentPositionAndResetEncoders(FieldX, FieldY, theta);
 
 
                     telemetry.addData("FieldX", FieldX);
@@ -134,12 +132,12 @@ public class PoseMerging extends LinearOpMode {
             if (!tagDetected) {
                 tagVisible = false;
                 // Update odometry if the tag is not visible
-                odometry.update();
+                DriveSubsystem.update();
 
                 // Retrieve the odometry values
-                double x = Odometry.getOdometryX();
-                double y = Odometry.getOdometryY();
-                double theta = Odometry.getOdometryTheta();
+                double x = DriveSubsystem.getOdometryX();
+                double y = DriveSubsystem.getOdometryY();
+                double theta = DriveSubsystem.getOdometryTheta();
 
                 telemetry.addData("Odometry X", x);
                 telemetry.addData("Odometry Y", y);

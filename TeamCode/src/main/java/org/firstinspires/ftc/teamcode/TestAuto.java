@@ -1,45 +1,61 @@
 package org.firstinspires.ftc.teamcode;
 
+import android.content.Context;
+
+import com.qualcomm.ftccommon.CommandList;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
-import org.firstinspires.ftc.teamcode.PathingTool.PathEngine;
+import org.firstinspires.ftc.teamcode.Commands.Command;
+import org.firstinspires.ftc.teamcode.Commands.CommandScheduler;
+import org.firstinspires.ftc.teamcode.Commands.ParallelCommandGroup;
+import org.firstinspires.ftc.teamcode.PathingTool.PathLoading;
+import org.firstinspires.ftc.teamcode.PathingTool.PolarPathFollower;
+import org.firstinspires.ftc.teamcode.Subsystems.Drive;
 import org.firstinspires.ftc.teamcode.Subsystems.DriveSubsystem;
 import org.firstinspires.ftc.teamcode.Subsystems.Peripherals;
-import org.firstinspires.ftc.teamcode.Tools.Odometry;
+import org.firstinspires.ftc.teamcode.Tools.Parameters;
+import org.json.JSONException;
+
 @Autonomous
 public class TestAuto extends LinearOpMode {
 
-    private Odometry odometry;
-    private DriveSubsystem driveSubsystem;
-    private PathEngine pathEngine;
+
 
     @Override
     public void runOpMode() throws InterruptedException {
         // Initialize hardware
-        odometry = new Odometry();
-        driveSubsystem = new DriveSubsystem(hardwareMap);
+        Drive.initialize(hardwareMap);
+        Drive driveSubsystem;
+        driveSubsystem = new Drive();
+        Peripherals peripherals = new Peripherals("Peripherals");
         Peripherals.initialize(hardwareMap);
-        pathEngine = new PathEngine(this, "OneMeter.polarpath", odometry, driveSubsystem);
+        PathLoading pathLoading = new PathLoading(hardwareMap.appContext, "Simple.polarpath");
+        CommandScheduler scheduler = new CommandScheduler();
 
-        // Initialize Odometry
-        odometry.initialize(hardwareMap);
 
-        // Wait for the start button to be pressed
         waitForStart();
 
         // Start the path following
-        pathEngine.startPath(getRuntime());
+        ParallelCommandGroup polarFollow = null;
+        try {
+            polarFollow = new PolarPathFollower(scheduler, Parameters.ALL,driveSubsystem, peripherals, pathLoading.getJsonPathData());
+        } catch (JSONException e) {
+            throw new RuntimeException(e);
+        }
 
+        scheduler.schedule(polarFollow);
         // Main loop
         while (opModeIsActive()) {
-            double currentTime = getRuntime();
-            pathEngine.update(currentTime);
+            try {
+                scheduler.run();
+            } catch (JSONException e) {
+                throw new RuntimeException(e);
+            }
 
-            // Telemetry for debugging
-            telemetry.addData("X", Odometry.getOdometryX());
-            telemetry.addData("Y", Odometry.getOdometryY());
-            telemetry.addData("Theta", Odometry.getOdometryTheta());
+            telemetry.addData("X", DriveSubsystem.getOdometryX());
+            telemetry.addData("Y", DriveSubsystem.getOdometryY());
+            telemetry.addData("Theta", DriveSubsystem.getOdometryTheta());
             telemetry.update();
         }
     }

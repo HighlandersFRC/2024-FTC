@@ -1,26 +1,27 @@
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
-import org.firstinspires.ftc.teamcode.Tools.Odometry;
+import org.firstinspires.ftc.teamcode.Subsystems.DriveSubsystem;
+
 
 @Autonomous
 public class Test extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
-Odometry.initialize(hardwareMap);
+DriveSubsystem.initialize(hardwareMap);
         waitForStart();
         while (opModeIsActive()) {
             if (gamepad1.a) {
-                Odometry.resetEncoders();
+                DriveSubsystem.resetEncoders();
             }
 
-            telemetry.addData("X", Odometry.getOdometryX());
-            telemetry.addData("Y", Odometry.getOdometryY());
-            telemetry.addData("Theta", Odometry.getOdometryTheta());
-            telemetry.addData("Left Encoder", Odometry.leftEncoderMotor.getCurrentPosition());
-            telemetry.addData("Right Encoder", Odometry.rightEncoderMotor.getCurrentPosition());
-            telemetry.addData("Y Encoder", Odometry.centerEncoderMotor.getCurrentPosition());
-            Odometry.update();
+            telemetry.addData("X", DriveSubsystem.getOdometryX());
+            telemetry.addData("Y", DriveSubsystem.getOdometryY());
+            telemetry.addData("Theta", DriveSubsystem.getOdometryTheta());
+            telemetry.addData("Left Encoder", DriveSubsystem.leftEncoderMotor.getCurrentPosition());
+            telemetry.addData("Right Encoder", DriveSubsystem.rightEncoderMotor.getCurrentPosition());
+            telemetry.addData("Y Encoder", DriveSubsystem.centerEncoderMotor.getCurrentPosition());
+            DriveSubsystem.update();
             telemetry.update();
         }
     }

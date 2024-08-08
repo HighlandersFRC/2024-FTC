@@ -1,7 +1,10 @@
+/*
 package org.firstinspires.ftc.teamcode.Tools;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+
+import org.firstinspires.ftc.teamcode.Subsystems.DriveSubsystem;
 
 public class Odometry {
     public static DcMotor leftEncoderMotor, rightEncoderMotor, centerEncoderMotor;
@@ -21,26 +24,6 @@ public class Odometry {
     public static int lastRightPos = 0;
     public static int lastCenterPos = 0;
 
-    public static void initialize(HardwareMap hardwareMap) {
-        leftEncoderMotor = hardwareMap.get(DcMotor.class, "left_back");
-        rightEncoderMotor = hardwareMap.get(DcMotor.class, "right_back");
-        centerEncoderMotor = hardwareMap.get(DcMotor.class, "left_front");
-
-        resetEncoders();
-        x = 0.0;
-        y = 0.0;
-        theta = 0.0;
-    }
-
-    public static void resetEncoders() {
-        leftEncoderMotor.setMode(DcMotor.RunMode.RESET_ENCODERS);
-        rightEncoderMotor.setMode(DcMotor.RunMode.RESET_ENCODERS);
-        centerEncoderMotor.setMode(DcMotor.RunMode.RESET_ENCODERS);
-
-        lastLeftPos = leftEncoderMotor.getCurrentPosition();
-        lastRightPos = rightEncoderMotor.getCurrentPosition();
-        lastCenterPos = centerEncoderMotor.getCurrentPosition();
-    }
 
     public static void setCurrentPosition(double x, double y, double theta) {
         Odometry.x = x;
@@ -50,7 +33,7 @@ public class Odometry {
 
     public static void update() {
         int currentLeftPos = leftEncoderMotor.getCurrentPosition();
-        int currentRightPos = -rightEncoderMotor.getCurrentPosition();
+        int currentRightPos = -drive.get;
         int currentCenterPos = centerEncoderMotor.getCurrentPosition();
 
         int deltaLeft = currentLeftPos - lastLeftPos;
@@ -96,4 +79,4 @@ public class Odometry {
 
     public void setCurrentPositionAndResetEncoders(double fieldX, double fieldY, double theta) {
     }
-}
+}*/

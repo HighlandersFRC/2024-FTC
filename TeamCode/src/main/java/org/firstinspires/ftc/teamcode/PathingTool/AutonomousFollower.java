@@ -6,7 +6,6 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import org.firstinspires.ftc.teamcode.Commands.Command;
 import org.firstinspires.ftc.teamcode.Subsystems.DriveSubsystem;
-import org.firstinspires.ftc.teamcode.Tools.Odometry;
 import org.firstinspires.ftc.teamcode.Tools.Vector;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -58,10 +57,10 @@ public class AutonomousFollower implements Command {
 
     @Override
     public void execute() throws JSONException {
-        Odometry.update();
-        odometryFusedX = Odometry.getOdometryX();
-        odometryFusedY = Odometry.getOdometryY();
-        odometryFusedTheta = Odometry.getOdometryTheta();
+        DriveSubsystem.update();
+        odometryFusedX = DriveSubsystem.getOdometryX();
+        odometryFusedY = DriveSubsystem.getOdometryY();
+        odometryFusedTheta = DriveSubsystem.getOdometryTheta();
 
         currentTime = (System.currentTimeMillis() - initTime) / 1000.0 + pathStartTime;
 
@@ -85,9 +84,9 @@ public class AutonomousFollower implements Command {
         double desiredThetaChange = 0.0;
         drive.autoDrive(velocityVector, desiredThetaChange);
 
-        odometryFusedX = Odometry.getOdometryX();
-        odometryFusedY = Odometry.getOdometryY();
-        odometryFusedTheta = Odometry.getOdometryTheta();
+        odometryFusedX = DriveSubsystem.getOdometryX();
+        odometryFusedY = DriveSubsystem.getOdometryY();
+        odometryFusedTheta = DriveSubsystem.getOdometryTheta();
         currentTime = System.currentTimeMillis() - initTime;
     }
 

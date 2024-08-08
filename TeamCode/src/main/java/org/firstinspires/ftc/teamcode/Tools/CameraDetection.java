@@ -27,7 +27,7 @@ import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import java.util.concurrent.TimeUnit;
 
 @TeleOp
-public class CameraDetection  {
+public class CameraDetection extends LinearOpMode {
     public static double CorrectX;
     public static double CorrectY;
     public static double theta;
@@ -118,5 +118,10 @@ public static void update(){
     }
     public static double getDetections(){
     return tagProcessor.getDetections().size();
+    }
+
+    @Override
+    public void runOpMode() throws InterruptedException {
+
     }
 }
