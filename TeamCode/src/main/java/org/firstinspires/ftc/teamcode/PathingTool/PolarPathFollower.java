@@ -24,7 +24,7 @@ public class PolarPathFollower extends ParallelCommandGroup {
     super(scheduler, parameter); // Call to the constructor of ParallelCommandGroup
 
     // Initialize the PurePursuitFollower
-    follower = new PurePursuitFollower(drive, peripherals, pathJSON.getJSONArray("sampled_points"));
+    follower = new PurePursuitFollower(drive, pathJSON.getJSONArray("sampled_points"));
     this.pathJSON = pathJSON;
 
     // Add the PurePursuitFollower to the list of commands

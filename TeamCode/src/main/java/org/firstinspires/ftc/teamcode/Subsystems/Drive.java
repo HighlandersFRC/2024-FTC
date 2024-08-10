@@ -49,6 +49,7 @@ public class Drive extends Subsystem{
 
         resetEncoders();
     }
+
     public static void drive(double leftFrontPower, double rightFrontPower, double leftBackPower, double rightBackPower) {
         frontLeftMotor.setPower(leftFrontPower);
         frontRightMotor.setPower(rightFrontPower);
@@ -59,10 +60,8 @@ public class Drive extends Subsystem{
                 ", BL=" + leftBackPower + ", BR=" + rightBackPower);
     }
     public static void autoDrive(Vector vector, double turnRadiansPerSec) {
-        // Update odometry to get the latest robot pose
         update();
 
-        // Get the current heading from the IMU or similar sensor, converting to radians
         double heading = Math.toRadians(Peripherals.getYawDegrees());
 
         // Adjust vector based on the current heading
@@ -94,6 +93,34 @@ public class Drive extends Subsystem{
         RobotLog.d("autoDrive Powers: FL=" + frontLeftPower + ", FR=" + frontRightPower +
                 ", BL=" + backLeftPower + ", BR=" + backRightPower);
     }
+    public static void vectorDrive(Vector vector, double turnRadiansPerSec) {
+        update();
+
+        double heading = Math.toRadians(Peripherals.getYawDegrees());
+
+        double xAdjusted = vector.getI() * Math.cos(heading) - vector.getJ() * Math.sin(heading);
+        double yAdjusted = vector.getI() * Math.sin(heading) + vector.getJ() * Math.cos(heading);
+
+        double frontLeftPower = yAdjusted + xAdjusted + turnRadiansPerSec;
+        double frontRightPower = yAdjusted - xAdjusted - turnRadiansPerSec;
+        double backLeftPower = yAdjusted - xAdjusted + turnRadiansPerSec;
+        double backRightPower = yAdjusted + xAdjusted - turnRadiansPerSec;
+
+        double maxPower = Math.max(Math.abs(frontLeftPower), Math.max(Math.abs(frontRightPower),
+                Math.max(Math.abs(backLeftPower), Math.abs(backRightPower))));
+        if (maxPower > 1.0) {
+            frontLeftPower /= maxPower;
+            frontRightPower /= maxPower;
+            backLeftPower /= maxPower;
+            backRightPower /= maxPower;
+        }
+
+        drive(frontLeftPower, frontRightPower, backLeftPower, backRightPower);
+
+        RobotLog.d("vectorDrive Powers: FL=" + frontLeftPower + ", FR=" + frontRightPower +
+                ", BL=" + backLeftPower + ", BR=" + backRightPower);
+    }
+
 
     public Number[] purePursuitController(double currentX, double currentY, double currentTheta, int currentIndex,
                                           JSONArray pathPoints) throws JSONException {

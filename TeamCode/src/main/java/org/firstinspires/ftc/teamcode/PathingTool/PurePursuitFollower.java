@@ -1,10 +1,5 @@
 package org.firstinspires.ftc.teamcode.PathingTool;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 
 import org.firstinspires.ftc.teamcode.Commands.Command;
@@ -18,7 +13,6 @@ import org.json.JSONException;
 
 public class PurePursuitFollower implements Command {
   private Drive drive;
-  private Peripherals peripherals;
 
   private JSONArray path;
 
@@ -32,12 +26,7 @@ public class PurePursuitFollower implements Command {
   private Number[] desiredVelocityArray = new Number[4];
   private double desiredThetaChange = 0;
 
-  private boolean record;
-
-  private ArrayList<double[]> recordedOdometry = new ArrayList<double[]>();
   private double pathStartTime;
-
-  private boolean pickupNote;
 
   private int currentPathPointIndex = 0;
   private int returnPathPointIndex = 0;
@@ -46,11 +35,10 @@ public class PurePursuitFollower implements Command {
     return currentPathPointIndex;
   }
 
-  public PurePursuitFollower(Drive drive, Peripherals peripherals, JSONArray pathPoints) throws JSONException {
+  public PurePursuitFollower(Drive drive, JSONArray pathPoints) throws JSONException {
     this.drive = drive;
     this.path = pathPoints;
     pathStartTime = pathPoints.getJSONObject(0).getDouble("time");
-    this.peripherals = peripherals;
     Drive.resetEncoders();
     Peripherals.resetYaw();
   }
@@ -67,7 +55,7 @@ public class PurePursuitFollower implements Command {
   }
 
   @Override
-  public void execute() throws JSONException {
+  public void execute() throws JSONException{
 
     DriveSubsystem.update();
     odometryFusedX = DriveSubsystem.getOdometryX();
@@ -83,11 +71,10 @@ public class PurePursuitFollower implements Command {
     velocityVector.setI(desiredVelocityArray[0].doubleValue());
     velocityVector.setJ(desiredVelocityArray[1].doubleValue());
     desiredThetaChange = desiredVelocityArray[2].doubleValue();
-    // velocityVector.setI(0);
-    // velocityVector.setJ(0);
+    // velocityVector.setI(0);    // velocityVector.setJ(0);
     // desiredThetaChange = 0;
 
-    Drive.autoDrive(velocityVector, desiredThetaChange);
+    mecanumVectorDrive(velocityVector, desiredThetaChange);
   }
 
   public void end() {
@@ -102,6 +89,28 @@ public class PurePursuitFollower implements Command {
     odometryFusedY = Drive.getOdometryY();
     odometryFusedTheta = Drive.getOdometryTheta();
     currentTime = System.currentTimeMillis() - initTime;
+  }
+  public void mecanumVectorDrive(Vector vector, double thetaChange) {
+    double X = vector.getI();
+    double Y = vector.getJ();
+
+    double odometryX = Drive.getOdometryX();
+    double odometryY = Drive.getOdometryY();
+    double odometryTheta = Drive.getOdometryTheta();
+
+    double deltaX = X - odometryX;
+    double deltaY = Y - odometryY;
+    double deltaTheta = thetaChange - odometryTheta;
+
+    double distance = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
+    double angle = Math.atan2(deltaY, deltaX);
+
+    double leftBackPower = distance * Math.cos(angle + Math.toRadians(90)) + deltaTheta;
+    double rightBackPower = distance * Math.sin(angle + Math.toRadians(90)) - deltaTheta;
+    double leftFrontPower = distance * Math.cos(angle - Math.toRadians(90)) + deltaTheta;
+    double rightFrontPower = distance * Math.sin(angle - Math.toRadians(90)) - deltaTheta;
+
+    Drive.drive(leftFrontPower, rightFrontPower, leftBackPower, rightBackPower);
   }
 
   @Override
