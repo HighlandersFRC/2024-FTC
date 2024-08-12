@@ -1,8 +1,10 @@
 package org.firstinspires.ftc.teamcode.Subsystems;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigurationType;
 import com.qualcomm.robotcore.util.RobotLog;
 
 import org.firstinspires.ftc.teamcode.Tools.Constants;
@@ -13,10 +15,10 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 public class Drive extends Subsystem{
-    static DcMotor frontLeftMotor;
-    static DcMotor backLeftMotor;
-    static DcMotor frontRightMotor;
-    static DcMotor backRightMotor;
+    public static DcMotorEx frontLeftMotor;
+    public static DcMotorEx backLeftMotor;
+    public static DcMotorEx frontRightMotor;
+    public static DcMotorEx backRightMotor;
 
     public static final double TICKS_PER_REV = 2000;
     public static final double WHEEL_DIAMETER = 48 / 1000.0;
@@ -38,16 +40,15 @@ public class Drive extends Subsystem{
     public static PID thetaPID = new PID(1, 0, 0);
 
     public static void initialize(HardwareMap hardwareMap){
-        frontLeftMotor = hardwareMap.dcMotor.get("left_front");
-        backLeftMotor = hardwareMap.dcMotor.get("left_back");
-        frontRightMotor = hardwareMap.dcMotor.get("right_front");
-        backRightMotor = hardwareMap.dcMotor.get("right_back");
+        frontLeftMotor = hardwareMap.get(DcMotorEx.class,"left_front");
+        backLeftMotor = hardwareMap.get(DcMotorEx.class,"left_back");
+        frontRightMotor = hardwareMap.get(DcMotorEx.class,"right_front");
+        backRightMotor = hardwareMap.get(DcMotorEx.class,"right_back");
 
         frontRightMotor.setDirection(DcMotorSimple.Direction.REVERSE);
-        backRightMotor.setDirection(DcMotorSimple.Direction.FORWARD);
-        backLeftMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+        backRightMotor.setDirection(DcMotorSimple.Direction.REVERSE);
 
-        resetEncoders();
+        resetEncoder();
     }
 
     public static void drive(double leftFrontPower, double rightFrontPower, double leftBackPower, double rightBackPower) {
@@ -59,71 +60,7 @@ public class Drive extends Subsystem{
         System.out.println("Drive Powers: FL=" + leftFrontPower + ", FR=" + rightFrontPower +
                 ", BL=" + leftBackPower + ", BR=" + rightBackPower);
     }
-    public static void autoDrive(Vector vector, double turnRadiansPerSec) {
-        update();
-
-        double heading = Math.toRadians(Peripherals.getYawDegrees());
-
-        // Adjust vector based on the current heading
-        double cosHeading = Math.cos(heading);
-        double sinHeading = Math.sin(heading);
-        double xAdjusted = vector.getI() * cosHeading - vector.getJ() * sinHeading;
-        double yAdjusted = vector.getI() * sinHeading + vector.getJ() * cosHeading;
-
-        // Calculate the power for each wheel
-        double frontLeftPower = yAdjusted + xAdjusted + turnRadiansPerSec;
-        double frontRightPower = yAdjusted - xAdjusted - turnRadiansPerSec;
-        double backLeftPower = yAdjusted - xAdjusted + turnRadiansPerSec;
-        double backRightPower = yAdjusted + xAdjusted - turnRadiansPerSec;
-
-        // Normalize the powers if necessary
-        double maxPower = Math.max(Math.abs(frontLeftPower), Math.max(Math.abs(frontRightPower),
-                Math.max(Math.abs(backLeftPower), Math.abs(backRightPower))));
-        if (maxPower > 1.0) {
-            frontLeftPower /= maxPower;
-            frontRightPower /= maxPower;
-            backLeftPower /= maxPower;
-            backRightPower /= maxPower;
-        }
-
-
-        drive(frontLeftPower, frontRightPower, backLeftPower, backRightPower);
-
-        // Optional: Print motor powers for debugging
-        RobotLog.d("autoDrive Powers: FL=" + frontLeftPower + ", FR=" + frontRightPower +
-                ", BL=" + backLeftPower + ", BR=" + backRightPower);
-    }
-    public static void vectorDrive(Vector vector, double turnRadiansPerSec) {
-        update();
-
-        double heading = Math.toRadians(Peripherals.getYawDegrees());
-
-        double xAdjusted = vector.getI() * Math.cos(heading) - vector.getJ() * Math.sin(heading);
-        double yAdjusted = vector.getI() * Math.sin(heading) + vector.getJ() * Math.cos(heading);
-
-        double frontLeftPower = yAdjusted + xAdjusted + turnRadiansPerSec;
-        double frontRightPower = yAdjusted - xAdjusted - turnRadiansPerSec;
-        double backLeftPower = yAdjusted - xAdjusted + turnRadiansPerSec;
-        double backRightPower = yAdjusted + xAdjusted - turnRadiansPerSec;
-
-        double maxPower = Math.max(Math.abs(frontLeftPower), Math.max(Math.abs(frontRightPower),
-                Math.max(Math.abs(backLeftPower), Math.abs(backRightPower))));
-        if (maxPower > 1.0) {
-            frontLeftPower /= maxPower;
-            frontRightPower /= maxPower;
-            backLeftPower /= maxPower;
-            backRightPower /= maxPower;
-        }
-
-        drive(frontLeftPower, frontRightPower, backLeftPower, backRightPower);
-
-        RobotLog.d("vectorDrive Powers: FL=" + frontLeftPower + ", FR=" + frontRightPower +
-                ", BL=" + backLeftPower + ", BR=" + backRightPower);
-    }
-
-
-    public Number[] purePursuitController(double currentX, double currentY, double currentTheta, int currentIndex,
-                                          JSONArray pathPoints) throws JSONException {
+    public Number[] purePursuitController(double currentX, double currentY, double currentTheta, int currentIndex, JSONArray pathPoints) throws JSONException {
         JSONObject targetPoint = pathPoints.getJSONObject(pathPoints.length() - 1);
         int targetIndex = pathPoints.length() - 1;
         for (int i = currentIndex; i < pathPoints.length(); i++) {
@@ -179,6 +116,19 @@ public class Drive extends Subsystem{
         x = x;
         y = y;
         theta = theta;
+    }
+
+    public static double getVelocityBackLeft(){
+        return backLeftMotor.getVelocity();
+    }
+    public static double getVelocityBackRight(){
+        return backRightMotor.getVelocity();
+    }
+    public static double getVelocityFrontLeft(){
+        return frontLeftMotor.getVelocity();
+    }
+    public static double getVelocityFrontRight(){
+        return frontRightMotor.getVelocity();
     }
 
     public static void update() {
@@ -251,11 +201,11 @@ public class Drive extends Subsystem{
 
 
     public static double getOdometryX() {
-        return y;
+        return x;
     }
 
     public static double getOdometryY() {
-        return x;
+        return y;
     }
 
     public static double getOdometryTheta() {
@@ -265,7 +215,7 @@ public class Drive extends Subsystem{
     public static void setCurrentPositionAndResetEncoders(double fieldX, double fieldY, double theta) {
     }
     public static int getLeftEncoder(){
-        return -backLeftMotor.getCurrentPosition();
+        return -frontLeftMotor.getCurrentPosition();
     }
     public static int getRightEncoder(){
         return -backRightMotor.getCurrentPosition();
@@ -273,15 +223,19 @@ public class Drive extends Subsystem{
     public static int getCenterEncoder(){
         return frontRightMotor.getCurrentPosition();
     }
-    public static void resetEncoders() {
-        frontLeftMotor.setMode(DcMotor.RunMode.RESET_ENCODERS);
-        frontRightMotor.setMode(DcMotor.RunMode.RESET_ENCODERS);
-        backLeftMotor.setMode(DcMotor.RunMode.RESET_ENCODERS);
-        backRightMotor.setMode(DcMotor.RunMode.RESET_ENCODERS);
+    public static void resetEncoder(){
+        backRightMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        backLeftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        frontRightMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        frontLeftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
-        frontLeftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODERS);
-        frontRightMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODERS);
-        backLeftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODERS);
-        backRightMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODERS);
+        backRightMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        backLeftMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        frontRightMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        frontLeftMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+        x = 0;
+        y = 0;
+        theta = 0;
     }
 }

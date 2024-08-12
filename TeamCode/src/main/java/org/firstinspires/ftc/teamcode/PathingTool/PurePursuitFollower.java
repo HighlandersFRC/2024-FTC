@@ -39,7 +39,6 @@ public class PurePursuitFollower implements Command {
     this.drive = drive;
     this.path = pathPoints;
     pathStartTime = pathPoints.getJSONObject(0).getDouble("time");
-    Drive.resetEncoders();
     Peripherals.resetYaw();
   }
 
@@ -83,8 +82,6 @@ public class PurePursuitFollower implements Command {
     velocityVector.setI(0);
     velocityVector.setJ(0);
     double desiredThetaChange = 0.0;
-    Drive.autoDrive(velocityVector, desiredThetaChange);
-
     odometryFusedX = Drive.getOdometryX();
     odometryFusedY = Drive.getOdometryY();
     odometryFusedTheta = Drive.getOdometryTheta();

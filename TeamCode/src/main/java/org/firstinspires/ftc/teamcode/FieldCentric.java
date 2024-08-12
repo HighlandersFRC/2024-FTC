@@ -8,7 +8,6 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.teamcode.Subsystems.Drive;
-import org.firstinspires.ftc.teamcode.Subsystems.DriveSubsystem;
 import org.firstinspires.ftc.teamcode.Subsystems.Peripherals;
 
 @TeleOp
@@ -16,6 +15,7 @@ public class FieldCentric extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         Drive.initialize(hardwareMap);
+
         Peripherals.initialize(hardwareMap);
 
         waitForStart();
@@ -23,25 +23,42 @@ public class FieldCentric extends LinearOpMode {
         if (isStopRequested()) return;
 
         while (opModeIsActive()) {
-            double y = -gamepad1.left_stick_y; // Remember, Y stick value is reversed
-            double x = -gamepad1.left_stick_x * 1.1; // Counteract imperfect strafing
+            double y = -gamepad1.left_stick_y;
+            double x = -gamepad1.left_stick_x;
             double rx = -gamepad1.right_stick_x;
 
-            // Denominator is the largest motor power (absolute value) or 1
-            // This ensures all the powers maintain the same ratio,
-            // but only if at least one is out of the range [-1, 1]
-            double denominator = Math.max(Math.abs(y) + Math.abs(x) + Math.abs(rx), 1);
-            double frontLeftPower = (y + x + rx) / denominator;
-            double backLeftPower = (y - x + rx) / denominator;
-            double frontRightPower = (y - x - rx) / denominator;
-            double backRightPower = (y + x - rx) / denominator;
+            if (gamepad1.right_bumper) {
+                Peripherals.resetYaw();
+                Drive.resetEncoder();
+            }
+
+            double botHeading = -Peripherals.getYaw();
+            double rotX = x * Math.cos(-botHeading) - y * Math.sin(-botHeading);
+            double rotY = x * Math.sin(-botHeading) + y * Math.cos(-botHeading);
+
+            rotX = rotX * 1.1;
+
+
+            double denominator = Math.max(Math.abs(rotY) + Math.abs(rotX) + Math.abs(rx), 1);
+            double frontLeftPower = (rotY + rotX + rx) / denominator;
+            double backLeftPower = (rotY - rotX + rx) / denominator;
+            double frontRightPower = (rotY - rotX - rx) / denominator;
+            double backRightPower = (rotY + rotX - rx) / denominator;
 
             Drive.drive(frontLeftPower, frontRightPower, backLeftPower, backRightPower);
 
-            telemetry.addData("OdoX", Drive.getOdometryX());
-            telemetry.addData("OdoY", Drive.getOdometryY());
-            telemetry.addData("OdoThetha", Drive.getOdometryTheta());
             telemetry.addData("IMU Yaw", Peripherals.getYawDegrees());
+            telemetry.addData("Left Back Velocity", Drive.getVelocityBackLeft());
+            telemetry.addData("Left Front Velocity", Drive.getVelocityFrontLeft());
+            telemetry.addData("Right Back Velocity", Drive.getVelocityBackRight());
+            telemetry.addData("Right Front Velocity", Drive.getVelocityFrontRight());
+            telemetry.addData("Odometry X", Drive.getOdometryX());
+            telemetry.addData("Odometry Y", Drive.getOdometryY());
+            telemetry.addData("Odometry Theta", Drive.getOdometryTheta());
+            telemetry.addData("Left Back Position", Drive.frontLeftMotor.getCurrentPosition());
+            telemetry.addData("Left Front Position", Drive.backLeftMotor.getCurrentPosition());
+            telemetry.addData("Right Back Position", Drive.frontRightMotor.getCurrentPosition());
+            telemetry.addData("Right Front Position", Drive.backRightMotor.getCurrentPosition());
             telemetry.addData("Left Encoder", Drive.getLeftEncoder());
             telemetry.addData("Right Encoder", Drive.getRightEncoder());
             telemetry.addData("Center Encoder", Drive.getCenterEncoder());
