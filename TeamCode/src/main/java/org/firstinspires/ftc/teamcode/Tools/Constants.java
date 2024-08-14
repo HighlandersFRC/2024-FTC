@@ -45,6 +45,10 @@ public class Constants {
         }
     }
 
+    public static double yOffset(double x) {
+        return -0.276 + 0.394 * x + (-0.114 * x * x) + (0.01 * x * x * x);
+    }
+
     // HashMap to store AprilTag data
     public static final Map<Integer, AprilTagData> aprilTagMap = new HashMap<>();
 

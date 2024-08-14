@@ -38,7 +38,6 @@ public class FieldCentric extends LinearOpMode {
 
             rotX = rotX * 1.1;
 
-
             double denominator = Math.max(Math.abs(rotY) + Math.abs(rotX) + Math.abs(rx), 1);
             double frontLeftPower = (rotY + rotX + rx) / denominator;
             double backLeftPower = (rotY - rotX + rx) / denominator;
@@ -48,20 +47,17 @@ public class FieldCentric extends LinearOpMode {
             Drive.drive(frontLeftPower, frontRightPower, backLeftPower, backRightPower);
 
             telemetry.addData("IMU Yaw", Peripherals.getYawDegrees());
-            telemetry.addData("Left Back Velocity", Drive.getVelocityBackLeft());
-            telemetry.addData("Left Front Velocity", Drive.getVelocityFrontLeft());
-            telemetry.addData("Right Back Velocity", Drive.getVelocityBackRight());
-            telemetry.addData("Right Front Velocity", Drive.getVelocityFrontRight());
+
             telemetry.addData("Odometry X", Drive.getOdometryX());
             telemetry.addData("Odometry Y", Drive.getOdometryY());
             telemetry.addData("Odometry Theta", Drive.getOdometryTheta());
+            telemetry.addData("Total X", Drive.getTotalXTraveled());
+            telemetry.addData("Total Y", Drive.getTotalYTraveled());
+            telemetry.addData("Total Theta", Drive.totalThetaTraveled);
             telemetry.addData("Left Back Position", Drive.frontLeftMotor.getCurrentPosition());
             telemetry.addData("Left Front Position", Drive.backLeftMotor.getCurrentPosition());
             telemetry.addData("Right Back Position", Drive.frontRightMotor.getCurrentPosition());
             telemetry.addData("Right Front Position", Drive.backRightMotor.getCurrentPosition());
-            telemetry.addData("Left Encoder", Drive.getLeftEncoder());
-            telemetry.addData("Right Encoder", Drive.getRightEncoder());
-            telemetry.addData("Center Encoder", Drive.getCenterEncoder());
             telemetry.update();
             Drive.update();
         }
