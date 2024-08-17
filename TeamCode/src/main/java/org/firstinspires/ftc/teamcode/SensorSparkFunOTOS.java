@@ -8,6 +8,8 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
+
+
 import org.firstinspires.ftc.teamcode.Tools.SparkFunOTOS;
 
 /*
@@ -59,9 +61,10 @@ public class SensorSparkFunOTOS extends LinearOpMode {
             telemetry.addLine();
 
             // Log the position to the telemetry
-            telemetry.addData("X coordinate", pos.x);
+            telemetry.addData("X coordinate", pos.x*1.27485976543);
             telemetry.addData("Y coordinate", pos.y);
             telemetry.addData("Heading angle", pos.h);
+
 
             // Update the telemetry on the driver station
             telemetry.update();
@@ -80,7 +83,7 @@ public class SensorSparkFunOTOS extends LinearOpMode {
         // myOtos.setLinearUnit(SparkFunOTOS.LinearUnit.METERS);
         mouse.setLinearUnit(SparkFunOTOS.LinearUnit.METERS);
         // myOtos.setAngularUnit(SparkFunOTOS.AngularUnit.RADIANS);
-        mouse.setAngularUnit(SparkFunOTOS.AngularUnit.DEGREES);
+        mouse.setAngularUnit(SparkFunOTOS.AngularUnit.RADIANS);
 
         // Assuming you've mounted your sensor to a robot and it's not centered,
         // you can specify the offset for the sensor relative to the center of the
@@ -93,7 +96,7 @@ public class SensorSparkFunOTOS extends LinearOpMode {
         // clockwise (negative rotation) from the robot's orientation, the offset
         // would be {-5, 10, -90}. These can be any value, even the angle can be
         // tweaked slightly to compensate for imperfect mounting (eg. 1.3 degrees).
-        SparkFunOTOS.Pose2D offset = new SparkFunOTOS.Pose2D(0.01905, 0.1016, 90);
+        SparkFunOTOS.Pose2D offset = new SparkFunOTOS.Pose2D(0, 0, 0);
         mouse.setOffset(offset);
 
         // Here we can set the linear and angular scalars, which can compensate for
@@ -112,8 +115,10 @@ public class SensorSparkFunOTOS extends LinearOpMode {
         // multiple speeds to get an average, then set the linear scalar to the
         // inverse of the error. For example, if you move the robot 100 inches and
         // the sensor reports 103 inches, set the linear scalar to 100/103 = 0.971
-        mouse.setLinearScalar(1.0);
-        mouse.setAngularScalar(1.0);
+        mouse.setLinearScalar(1.27485976543);
+        mouse.setAngularScalar(1);
+
+               // 0.99982958904
 
         // The IMU on the OTOS includes a gyroscope and accelerometer, which could
         // have an offset. Note that as of firmware version 1.0, the calibration

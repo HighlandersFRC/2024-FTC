@@ -1,6 +1,6 @@
 /*
     SPDX-License-Identifier: MIT
-    
+
     Copyright (c) 2024 SparkFun Electronics
 */
 package org.firstinspires.ftc.teamcode.Tools;
@@ -34,7 +34,7 @@ public class SparkFunOTOS extends I2cDeviceSynchDevice {
     public static final double MIN_SCALAR = 0.872;
 
     // Maximum scalar value for the linear and angular scalars
-    public static final double MAX_SCALAR = 1.127;
+    public static final double MAX_SCALAR = 100.0;
 
     // OTOS register map
     protected static final byte REG_PRODUCT_ID = 0x00;
