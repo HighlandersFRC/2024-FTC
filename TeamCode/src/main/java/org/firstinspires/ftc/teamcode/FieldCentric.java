@@ -15,7 +15,6 @@ public class FieldCentric extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         Drive.initialize(hardwareMap);
-
         Peripherals.initialize(hardwareMap);
 
         waitForStart();
