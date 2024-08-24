@@ -41,7 +41,10 @@ public class SensorSparkFunOTOS extends LinearOpMode {
                 mouse.calibrateImu();
             }
             if (gamepad1.a){
-                power = 0.1;
+                power = 0.5;
+            }
+            else if (gamepad1.b) {
+                power = -0.5;
             }
             else {
                 power = 0;
@@ -49,7 +52,7 @@ public class SensorSparkFunOTOS extends LinearOpMode {
 
 
 
-            if (gamepad1.a && !timing) {
+            if (gamepad1.a && !timing ) {
                 // Start timing when the button is first pressed
                 startTime = System.currentTimeMillis();
                 timing = true;
@@ -60,6 +63,13 @@ public class SensorSparkFunOTOS extends LinearOpMode {
                 timing = false;
 
             }
+            else if (gamepad1.b&& !timing){
+                startTime = System.currentTimeMillis();
+                timing = true;
+            }
+            else if (gamepad1.b && timing){
+
+            }
 
 
             double denominator = Math.max(Math.abs(y) + Math.abs(x) + Math.abs(rx), 1);
@@ -68,7 +78,8 @@ public class SensorSparkFunOTOS extends LinearOpMode {
             double frontRightPower = (power) / denominator;
             double backRightPower = (power) / denominator;
             Drive.drive(-frontLeftPower, -frontRightPower, -backLeftPower, -backRightPower);
-
+            double realX = pos.x/elapsedTime;
+            double offset = pos.x* (1.07 + (-1.71 * realX) + (2.92 * (Math.pow(realX, 2))) + (-1.52 * (Math.pow(realX, 3))) + (0.256 * (Math.pow(realX, 4))));
             telemetry.addLine("Press Y (triangle) on Gamepad to reset tracking");
             telemetry.addLine("Press X (square) on Gamepad to calibrate the IMU");
             telemetry.addLine();
@@ -81,6 +92,11 @@ public class SensorSparkFunOTOS extends LinearOpMode {
             telemetry.addData("true Elapsed time",elapsedTime);
             telemetry.addData("velocity x",   pos.x/elapsedTime);
             telemetry.addData("velocity y",   pos.y/elapsedTime);
+            telemetry.addData("better X", (1.07 + (-1.71 * realX) + (2.92 * (Math.pow(realX, 2))) + (-1.52 * (Math.pow(realX, 3))) + (0.256 * (Math.pow(realX, 4)))));
+            telemetry.addData("better X2", (1.07 + (-1.71 * realX) + (2.92 * (Math.pow(realX, 2))) + (-1.52 * (Math.pow(realX, 3))) + (0.256 * (Math.pow(realX, 4)))*0.9910802775));
+            telemetry.addData("offset", offset*pos.x);
+
+
             telemetry.update();
         }
     }
