@@ -19,9 +19,7 @@ public class SensorSparkFunOTOS extends LinearOpMode {
         waitForStart();
 
         double startTimeA = 0;
-        double elapsedTimeA = 0;
         double elapsedTime = 0;
-        double power = 0;
         double currentPosX = 0;
         double lastPosX = 0;
 
@@ -31,8 +29,9 @@ public class SensorSparkFunOTOS extends LinearOpMode {
             double rx = -gamepad1.right_stick_x;
             SparkFunOTOS.Pose2D pos = mouse.getPosition();
             currentPosX = pos.x;
-            double PosDifX = currentPosX-lastPosX;
+            double PosDifX = currentPosX - lastPosX;
             lastPosX = pos.x;
+
             if (gamepad1.y) {
                 mouse.resetTracking();
             }
@@ -41,47 +40,33 @@ public class SensorSparkFunOTOS extends LinearOpMode {
                 mouse.calibrateImu();
             }
 
-            if (PosDifX!=0&&!timing) {
-                // Start timing when the button is first pressed
+            if (PosDifX != 0 && !timing) {
+                // Start timing when PosDifX is first non-zero
                 startTimeA = System.currentTimeMillis();
-                timing=true;
-
-            } else if (PosDifX==0&&timing) {
-                // Stop timing when the button is released
-                 elapsedTimeA = System.currentTimeMillis();
-                elapsedTime = ( startTimeA-elapsedTimeA) / 1000.0; // Convert to seconds
-                timing=false;
-
+                timing = true;
+            } else if (PosDifX == 0 && timing) {
+                // Stop timing when PosDifX returns to zero
+                elapsedTime = (System.currentTimeMillis() - startTimeA) / 1000.0; // Convert to seconds
+                timing = false;
             }
 
-
-
-
-
             double denominator = Math.max(Math.abs(y) + Math.abs(x) + Math.abs(rx), 1);
-            double frontLeftPower = power / denominator;
-            double backLeftPower = power / denominator;
-            double frontRightPower = power / denominator;
-            double backRightPower = power / denominator;
+            double frontLeftPower = y / denominator;
+            double backLeftPower = y / denominator;
+            double frontRightPower = y / denominator;
+            double backRightPower = y / denominator;
             Drive.drive(-frontLeftPower, -frontRightPower, -backLeftPower, -backRightPower);
-            double realX = pos.x / elapsedTimeA;  // Assuming elapsedTimeA is the time to calculate velocity
+            double realX = pos.x / elapsedTime;  // Assuming elapsedTimeA is the time to calculate velocity
 
             telemetry.addLine("Press Y (triangle) on Gamepad to reset tracking");
             telemetry.addLine("Press X (square) on Gamepad to calibrate the IMU");
             telemetry.addLine();
-            telemetry.addData(" Timing",timing);
-            telemetry.addData(" Timing",timing);
-            telemetry.addData(" Time",elapsedTime);
-            telemetry.addData("X coordinate", pos.x );
+            telemetry.addData("Timing", timing);
+            telemetry.addData("Time Elapsed (seconds)", elapsedTime);
+            telemetry.addData("X coordinate", pos.x);
             telemetry.addData("Y coordinate", pos.y);
-            telemetry.addData("better X", (0.837 + -1.34 * pos.x + 2.29 * Math.pow(pos.x, 2) + -1.19 * Math.pow(pos.x, 3) + 0.201 * Math.pow(pos.x, 4))*pos.x);
-            telemetry.addData("better X2", (1.07 + (-1.71 * realX) + (2.92 * (Math.pow(realX, 2))) + (-1.52 * (Math.pow(realX, 3))) + (0.256 * (Math.pow(realX, 4)))) /pos.x);
+            telemetry.addData("PosDifX", PosDifX);
             telemetry.addData("Heading angle", pos.h);
-            telemetry.addData("Power", Drive.backLeftMotor.getPower());
-            telemetry.addData("Velocity X", pos.x / elapsedTimeA);
-            telemetry.addData("Velocity Y", pos.y / elapsedTimeA);
-            telemetry.addData("pos dif",PosDifX);
-
             telemetry.update();
         }
     }
