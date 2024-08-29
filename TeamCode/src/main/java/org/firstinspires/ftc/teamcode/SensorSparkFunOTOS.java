@@ -1,5 +1,3 @@
-// SPDX-License-Identifier: MIT
-
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -17,22 +15,24 @@ public class SensorSparkFunOTOS extends LinearOpMode {
         Drive.initialize(hardwareMap);
         mouse = hardwareMap.get(SparkFunOTOS.class, "mouse");
         configureOtos();
-
+        boolean timing = false;
         waitForStart();
 
-        double startTime = 0;
+        double startTimeA = 0;
+        double elapsedTimeA = 0;
         double elapsedTime = 0;
         double power = 0;
-        boolean timing = false;
+        double currentPosX = 0;
+        double lastPosX = 0;
 
         while (opModeIsActive()) {
             double y = -gamepad1.left_stick_y;
             double x = -gamepad1.left_stick_x;
             double rx = -gamepad1.right_stick_x;
-
-
             SparkFunOTOS.Pose2D pos = mouse.getPosition();
-
+            currentPosX = pos.x;
+            double PosDifX = currentPosX-lastPosX;
+            lastPosX = pos.x;
             if (gamepad1.y) {
                 mouse.resetTracking();
             }
@@ -40,62 +40,47 @@ public class SensorSparkFunOTOS extends LinearOpMode {
             if (gamepad1.x) {
                 mouse.calibrateImu();
             }
-            if (gamepad1.a){
-                power = 0.5;
-            }
-            else if (gamepad1.b) {
-                power = -0.5;
-            }
-            else {
-                power = 0;
-            }
 
-
-
-            if (gamepad1.a && !timing ) {
+            if (PosDifX!=0&&!timing) {
                 // Start timing when the button is first pressed
-                startTime = System.currentTimeMillis();
-                timing = true;
+                startTimeA = System.currentTimeMillis();
+                timing=true;
 
-            } else if (!gamepad1.a && timing) {
+            } else if (PosDifX==0&&timing) {
                 // Stop timing when the button is released
-                elapsedTime = (System.currentTimeMillis() - startTime) / 1000.0; // Convert to seconds
-                timing = false;
+                 elapsedTimeA = System.currentTimeMillis();
+                elapsedTime = ( startTimeA-elapsedTimeA) / 1000.0; // Convert to seconds
+                timing=false;
 
             }
-            else if (gamepad1.b&& !timing){
-                startTime = System.currentTimeMillis();
-                timing = true;
-            }
-            else if (gamepad1.b && timing){
 
-            }
+
+
 
 
             double denominator = Math.max(Math.abs(y) + Math.abs(x) + Math.abs(rx), 1);
-            double frontLeftPower = (power) / denominator;
-            double backLeftPower = (power) / denominator;
-            double frontRightPower = (power) / denominator;
-            double backRightPower = (power) / denominator;
+            double frontLeftPower = power / denominator;
+            double backLeftPower = power / denominator;
+            double frontRightPower = power / denominator;
+            double backRightPower = power / denominator;
             Drive.drive(-frontLeftPower, -frontRightPower, -backLeftPower, -backRightPower);
-            double realX = pos.x/elapsedTime;
-            double offset = pos.x* (1.07 + (-1.71 * realX) + (2.92 * (Math.pow(realX, 2))) + (-1.52 * (Math.pow(realX, 3))) + (0.256 * (Math.pow(realX, 4))));
+            double realX = pos.x / elapsedTimeA;  // Assuming elapsedTimeA is the time to calculate velocity
+
             telemetry.addLine("Press Y (triangle) on Gamepad to reset tracking");
             telemetry.addLine("Press X (square) on Gamepad to calibrate the IMU");
             telemetry.addLine();
-            telemetry.addData("timing",timing);
-            telemetry.addData("X coordinate", pos.x * 1.27485976543);
+            telemetry.addData(" Timing",timing);
+            telemetry.addData(" Timing",timing);
+            telemetry.addData(" Time",elapsedTime);
+            telemetry.addData("X coordinate", pos.x );
             telemetry.addData("Y coordinate", pos.y);
+            telemetry.addData("better X", (0.837 + -1.34 * pos.x + 2.29 * Math.pow(pos.x, 2) + -1.19 * Math.pow(pos.x, 3) + 0.201 * Math.pow(pos.x, 4))*pos.x);
+            telemetry.addData("better X2", (1.07 + (-1.71 * realX) + (2.92 * (Math.pow(realX, 2))) + (-1.52 * (Math.pow(realX, 3))) + (0.256 * (Math.pow(realX, 4)))) /pos.x);
             telemetry.addData("Heading angle", pos.h);
-            telemetry.addData("Elapsed Time", timing ? (System.currentTimeMillis() - startTime) / 1000.0 : elapsedTime);
-            telemetry.addData("power",Drive.backLeftMotor.getPower());
-            telemetry.addData("true Elapsed time",elapsedTime);
-            telemetry.addData("velocity x",   pos.x/elapsedTime);
-            telemetry.addData("velocity y",   pos.y/elapsedTime);
-            telemetry.addData("better X", (1.07 + (-1.71 * realX) + (2.92 * (Math.pow(realX, 2))) + (-1.52 * (Math.pow(realX, 3))) + (0.256 * (Math.pow(realX, 4)))));
-            telemetry.addData("better X2", (1.07 + (-1.71 * realX) + (2.92 * (Math.pow(realX, 2))) + (-1.52 * (Math.pow(realX, 3))) + (0.256 * (Math.pow(realX, 4)))*0.9910802775));
-            telemetry.addData("offset", offset*pos.x);
-
+            telemetry.addData("Power", Drive.backLeftMotor.getPower());
+            telemetry.addData("Velocity X", pos.x / elapsedTimeA);
+            telemetry.addData("Velocity Y", pos.y / elapsedTimeA);
+            telemetry.addData("pos dif",PosDifX);
 
             telemetry.update();
         }
