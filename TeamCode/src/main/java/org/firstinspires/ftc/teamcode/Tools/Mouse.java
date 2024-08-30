@@ -1,6 +1,10 @@
 package org.firstinspires.ftc.teamcode.Tools;
 
 
+import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.gamepad1;
+import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.hardwareMap;
+import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.telemetry;
+
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import org.firstinspires.ftc.teamcode.Subsystems.Drive;
@@ -8,23 +12,23 @@ import org.firstinspires.ftc.teamcode.Subsystems.DriveSubsystem;
 import org.firstinspires.ftc.teamcode.Tools.SparkFunOTOS;
 
 @TeleOp(name = "Sensor: SparkFun OTOS", group = "Sensor")
-public class Mouse extends LinearOpMode {
+public class Mouse {
     SparkFunOTOS mouse;
 
-    @Override
-    public void runOpMode() throws InterruptedException {
+
+    public void runOpMode()  {
         Drive.initialize(hardwareMap);
         mouse = hardwareMap.get(SparkFunOTOS.class, "mouse");
         configureOtos();
         boolean timing = false;
-        waitForStart();
+
 
         double startTimeA = 0;
         double elapsedTime = 0;
         double currentPosX = 0;
         double lastPosX = 0;
 
-        while (opModeIsActive()) {
+
             double y = -gamepad1.left_stick_y;
             double x = -gamepad1.left_stick_x;
             double rx = -gamepad1.right_stick_x;
@@ -69,7 +73,7 @@ public class Mouse extends LinearOpMode {
             telemetry.addData("PosDifX", PosDifX);
             telemetry.addData("Heading angle", pos.h);
             telemetry.update();
-        }
+
     }
 
     private void configureOtos() {
