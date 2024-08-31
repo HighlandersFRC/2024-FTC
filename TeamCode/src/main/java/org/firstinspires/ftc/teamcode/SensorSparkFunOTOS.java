@@ -3,17 +3,31 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import org.firstinspires.ftc.teamcode.Subsystems.Drive;
-import org.firstinspires.ftc.teamcode.Subsystems.DriveSubsystem;
 import org.firstinspires.ftc.teamcode.Tools.SparkFunOTOS;
+import org.firstinspires.ftc.teamcode.Tools.KalmanFilter;
 
 @TeleOp(name = "Sensor: SparkFun OTOS", group = "Sensor")
 public class SensorSparkFunOTOS extends LinearOpMode {
     SparkFunOTOS mouse;
+    KalmanFilter kalmanFilterX; // Kalman Filter for X coordinate
+    KalmanFilter kalmanFilterY; // Kalman Filter for Y coordinate
 
     @Override
     public void runOpMode() throws InterruptedException {
         Drive.initialize(hardwareMap);
         mouse = hardwareMap.get(SparkFunOTOS.class, "mouse");
+
+        // Initialize Kalman Filters with appropriate dimensions and noise covariances
+        int stateDim = 2; // Assuming 2D position tracking
+        double[][] processNoiseCov = {{1e-4, 0}, {0, 1e-4}}; // Tune this
+        double[][] measurementNoiseCov = {{1e-2, 0}, {0, 1e-2}}; // Tune this
+        double[][] initialCovariance = {{1, 0}, {0, 1}};
+        double[] initialStateX = {0, 0}; // Initial state for X
+        double[] initialStateY = {0, 0}; // Initial state for Y
+
+        kalmanFilterX = new KalmanFilter(stateDim, processNoiseCov, measurementNoiseCov, initialCovariance, initialStateX);
+        kalmanFilterY = new KalmanFilter(stateDim, processNoiseCov, measurementNoiseCov, initialCovariance, initialStateY);
+
         configureOtos();
         boolean timing = false;
         waitForStart();
@@ -24,13 +38,27 @@ public class SensorSparkFunOTOS extends LinearOpMode {
         double lastPosX = 0;
 
         while (opModeIsActive()) {
+
             double y = -gamepad1.left_stick_y;
             double x = -gamepad1.left_stick_x;
             double rx = -gamepad1.right_stick_x;
             SparkFunOTOS.Pose2D pos = mouse.getPosition();
-            currentPosX = pos.x;
+
+            // Update Kalman Filters with the new measurements
+            kalmanFilterX.predict(state -> state); // Predict step (simple identity for now)
+            kalmanFilterX.update(new double[]{pos.x}, state -> state); // Measurement update for X
+
+            kalmanFilterY.predict(state -> state); // Predict step (simple identity for now)
+            kalmanFilterY.update(new double[]{pos.y}, state -> state); // Measurement update for Y
+
+            // Get the filtered positions
+            double filteredPosX = kalmanFilterX.currentState()[0];
+            double filteredPosY = kalmanFilterY.currentState()[0];
+
+            // Calculate PosDifX with the filtered X position
+            currentPosX = filteredPosX;
             double PosDifX = currentPosX - lastPosX;
-            lastPosX = pos.x;
+            lastPosX = currentPosX;
 
             if (gamepad1.y) {
                 mouse.resetTracking();
@@ -41,13 +69,13 @@ public class SensorSparkFunOTOS extends LinearOpMode {
             }
 
             if (PosDifX != 0 && !timing) {
-                // Start timing when PosDifX is first non-zero
                 startTimeA = System.currentTimeMillis();
                 timing = true;
+                sleep(1);
             } else if (PosDifX == 0 && timing) {
-                // Stop timing when PosDifX returns to zero
-                elapsedTime = (System.currentTimeMillis() - startTimeA) / 1000.0; // Convert to seconds
+                elapsedTime = (System.currentTimeMillis() - startTimeA) / 1000.0;
                 timing = false;
+                sleep(1);
             }
 
             double denominator = Math.max(Math.abs(y) + Math.abs(x) + Math.abs(rx), 1);
@@ -56,15 +84,15 @@ public class SensorSparkFunOTOS extends LinearOpMode {
             double frontRightPower = y / denominator;
             double backRightPower = y / denominator;
             Drive.drive(-frontLeftPower, -frontRightPower, -backLeftPower, -backRightPower);
-            double realX = pos.x / elapsedTime;  // Assuming elapsedTimeA is the time to calculate velocity
+            double realX = filteredPosX / elapsedTime;
 
             telemetry.addLine("Press Y (triangle) on Gamepad to reset tracking");
             telemetry.addLine("Press X (square) on Gamepad to calibrate the IMU");
             telemetry.addLine();
             telemetry.addData("Timing", timing);
             telemetry.addData("Time Elapsed (seconds)", elapsedTime);
-            telemetry.addData("X coordinate", pos.x);
-            telemetry.addData("Y coordinate", pos.y);
+            telemetry.addData("X coordinate (filtered)", filteredPosX);
+            telemetry.addData("Y coordinate (filtered)", filteredPosY);
             telemetry.addData("PosDifX", PosDifX);
             telemetry.addData("Heading angle", pos.h);
             telemetry.update();
