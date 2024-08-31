@@ -58,7 +58,7 @@ public class SensorSparkFunOTOS extends LinearOpMode {
             // Calculate PosDifX with the filtered X position
             currentPosX = filteredPosX;
             double PosDifX = currentPosX - lastPosX;
-            lastPosX = currentPosX;
+            lastPosX = filteredPosX;
 
             if (gamepad1.y) {
                 mouse.resetTracking();
