@@ -1,10 +1,14 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.hardware.sparkfun.SparkFunOTOS;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.Subsystems.Drive;
 import org.firstinspires.ftc.teamcode.Tools.LowPassFilter;
-import org.firstinspires.ftc.teamcode.Tools.SparkFunOTOS;
+
 
 
 @TeleOp(name = "Sensor: SparkFun OTOS", group = "Sensor")
@@ -69,17 +73,19 @@ public class SensorSparkFunOTOS extends LinearOpMode {
             Drive.drive(-frontLeftPower, -frontRightPower, -backLeftPower, -backRightPower);
             double realXVel = PosDifX / elapsedTime;
 
+
             System.out.println("time"+timing);
             System.out.println("time"+elapsedTime);
-            System.out.println("DifX"+pos.x);
+            System.out.println("X"+pos.x);
             System.out.println("DifX_Working"+filteredReading);
             telemetry.addLine("Press Y (triangle) on Gamepad to reset tracking");
             telemetry.addLine("Press X (square) on Gamepad to calibrate the IMU");
             telemetry.addLine();
             telemetry.addData("Timing", timing);
             telemetry.addData("Time Elapsed (seconds)", elapsedTime);
-            telemetry.addData("X coordinate (filtered)", realXVel);
-            telemetry.addData("PosDifX", PosDifX);
+            telemetry.addData("X coordinate (filtered)", filteredReading);
+            telemetry.addData("X", pos.x*1.23997685377);
+            telemetry.addData("Y", pos.y*1.365708773626061);
             telemetry.addData("Heading angle", pos.h);
             telemetry.update();
         }
@@ -89,11 +95,11 @@ public class SensorSparkFunOTOS extends LinearOpMode {
         telemetry.addLine("Configuring OTOS...");
         telemetry.update();
 
-        mouse.setLinearUnit(SparkFunOTOS.LinearUnit.METERS);
-        mouse.setAngularUnit(SparkFunOTOS.AngularUnit.RADIANS);
+        mouse.setAngularUnit(AngleUnit.DEGREES);
+        mouse.setLinearUnit(DistanceUnit.METER );
         SparkFunOTOS.Pose2D offset = new SparkFunOTOS.Pose2D(0, 0, 0);
         mouse.setOffset(offset);
-        mouse.setLinearScalar(1.27485976543);
+        mouse.setLinearScalar(1.23997685377);
         mouse.setAngularScalar(1);
         mouse.calibrateImu();
         mouse.resetTracking();
