@@ -11,7 +11,6 @@ import org.firstinspires.ftc.teamcode.Subsystems.Drive;
 import org.firstinspires.ftc.teamcode.Subsystems.Peripherals;
 import org.firstinspires.ftc.teamcode.Tools.FieldOfMerit;
 import org.firstinspires.ftc.teamcode.Tools.FinalPose;
-import org.firstinspires.ftc.teamcode.Tools.Logger;
 import org.firstinspires.ftc.teamcode.Tools.Robot;
 
 @TeleOp
@@ -19,8 +18,6 @@ public class FieldCentric extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         Robot.initialize(hardwareMap);
-
-        Logger logger = new Logger();
 
         waitForStart();
 
@@ -71,10 +68,6 @@ public class FieldCentric extends LinearOpMode {
             telemetry.addData("Right Encoder", Drive.getRightEncoder());
             telemetry.addData("Center Encoder", Drive.getCenterEncoder());
             telemetry.update();
-
-            logger.log("Odometry X", Drive.getOdometryX());
-            logger.log("Odometry Y", Drive.getOdometryY());
-            logger.log("Odometry Theta", Drive.getOdometryTheta());
         }
     }
 }
