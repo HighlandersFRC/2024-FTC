@@ -1,19 +1,24 @@
-/*
 package org.firstinspires.ftc.teamcode.PathingTool;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 
 import org.firstinspires.ftc.teamcode.Commands.Command;
 import org.firstinspires.ftc.teamcode.Subsystems.Drive;
-import org.firstinspires.ftc.teamcode.Subsystems.DriveSubsystem;
 import org.firstinspires.ftc.teamcode.Subsystems.Peripherals;
+import org.firstinspires.ftc.teamcode.Tools.FieldOfMerit;
+import org.firstinspires.ftc.teamcode.Tools.FinalPose;
 import org.firstinspires.ftc.teamcode.Tools.Vector;
 import org.json.JSONArray;
 import org.json.JSONException;
 
-
 public class PurePursuitFollower implements Command {
   private Drive drive;
+  private Peripherals peripherals;
 
   private JSONArray path;
 
@@ -27,26 +32,36 @@ public class PurePursuitFollower implements Command {
   private Number[] desiredVelocityArray = new Number[4];
   private double desiredThetaChange = 0;
 
-  private double pathStartTime;
+  private boolean record;
+
+  private ArrayList<double[]> recordedOdometry = new ArrayList<double[]>();
+  public double pathStartTime;
+
+  private boolean pickupNote;
 
   private int currentPathPointIndex = 0;
   private int returnPathPointIndex = 0;
+  private int timesStagnated = 0;
+  private final int STAGNATE_THRESHOLD = 3;
 
-  public int getPathPointIndex(){
+  public int getPathPointIndex() {
     return currentPathPointIndex;
   }
 
-  public PurePursuitFollower(Drive drive, JSONArray pathPoints) throws JSONException {
+  public PurePursuitFollower(Drive drive, Peripherals peripherals, JSONArray pathPoints,
+                             boolean record) throws JSONException {
     this.drive = drive;
     this.path = pathPoints;
+    this.record = record;
     pathStartTime = pathPoints.getJSONObject(0).getDouble("time");
-    Peripherals.resetYaw();
+    this.peripherals = peripherals;
   }
 
   public void initialize() {
     initTime = System.currentTimeMillis();
     currentPathPointIndex = 0;
     returnPathPointIndex = 0;
+    timesStagnated = 0;
   }
 
   @Override
@@ -55,69 +70,65 @@ public class PurePursuitFollower implements Command {
   }
 
   @Override
-  public void execute() throws JSONException{
+  public void execute() throws JSONException {
+    FinalPose.poseUpdate();
+    odometryFusedX = FinalPose.x;
+    odometryFusedY = FinalPose.y;
+    odometryFusedTheta = Peripherals.getYawDegrees();
+    // System.out.println("Follower field side: " + this.drive.getFieldSide());
 
-    DriveSubsystem.update();
-    odometryFusedX = DriveSubsystem.getOdometryX();
-    odometryFusedY = DriveSubsystem.getOdometryY();
-    odometryFusedTheta = DriveSubsystem.getOdometryTheta();
+    // System.out.println("Odom - X: " + odometryFusedX + " Y: " + odometryFusedY +
+    // " Theta: " + odometryFusedTheta);
+
     currentTime = System.currentTimeMillis() - initTime + pathStartTime;
     // call PIDController function
     currentPathPointIndex = returnPathPointIndex;
-    desiredVelocityArray = drive.purePursuitController(odometryFusedX, odometryFusedY, odometryFusedTheta, currentPathPointIndex, path);
-    returnPathPointIndex = desiredVelocityArray[3].intValue() + 1;
+    desiredVelocityArray = drive.purePursuitController(odometryFusedX, odometryFusedY, odometryFusedTheta,
+            currentPathPointIndex, path);
+
+    returnPathPointIndex = desiredVelocityArray[3].intValue();
+    if (returnPathPointIndex == currentPathPointIndex) {
+      timesStagnated++;
+      if (timesStagnated > STAGNATE_THRESHOLD) {
+        returnPathPointIndex++;
+        timesStagnated = 0;
+      }
+    } else {
+      timesStagnated = 0;
+    }
+
     // create velocity vector and set desired theta change
     Vector velocityVector = new Vector();
     velocityVector.setI(desiredVelocityArray[0].doubleValue());
     velocityVector.setJ(desiredVelocityArray[1].doubleValue());
     desiredThetaChange = desiredVelocityArray[2].doubleValue();
-    // velocityVector.setI(0);    // velocityVector.setJ(0);
+    // velocityVector.setI(0);
+    // velocityVector.setJ(0);
     // desiredThetaChange = 0;
 
-    mecanumVectorDrive(velocityVector, desiredThetaChange);
+    drive.autoDrive(velocityVector, desiredThetaChange);
   }
 
+  @Override
   public void end() {
 
     Vector velocityVector = new Vector();
     velocityVector.setI(0);
     velocityVector.setJ(0);
     double desiredThetaChange = 0.0;
-    odometryFusedX = Drive.getOdometryX();
-    odometryFusedY = Drive.getOdometryY();
-    odometryFusedTheta = Drive.getOdometryTheta();
+    drive.autoDrive(velocityVector, desiredThetaChange);
+
+    odometryFusedX = FinalPose.x;
+    odometryFusedY = FinalPose.y;
+    odometryFusedTheta = Peripherals.getYawDegrees();
     currentTime = System.currentTimeMillis() - initTime;
   }
-  public void mecanumVectorDrive(Vector vector, double thetaChange) {
-    double X = vector.getI();
-    double Y = vector.getJ();
 
-    double odometryX = Drive.getOdometryX();
-    double odometryY = Drive.getOdometryY();
-    double odometryTheta = Drive.getOdometryTheta();
-
-    double deltaX = X - odometryX;
-    double deltaY = Y - odometryY;
-    double deltaTheta = thetaChange - odometryTheta;
-
-    double distance = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
-    double angle = Math.atan2(deltaY, deltaX);
-
-    double leftBackPower = distance * Math.cos(angle + Math.toRadians(90)) + deltaTheta;
-    double rightBackPower = distance * Math.sin(angle + Math.toRadians(90)) - deltaTheta;
-    double leftFrontPower = distance * Math.cos(angle - Math.toRadians(90)) + deltaTheta;
-    double rightFrontPower = distance * Math.sin(angle - Math.toRadians(90)) - deltaTheta;
-
-    Drive.drive(leftFrontPower, rightFrontPower, leftBackPower, rightBackPower);
-  }
-
-  @Override
   public boolean isFinished() {
-    if (currentPathPointIndex >= path.length()-1){
+    if (returnPathPointIndex >= path.length() - 1) {
       return true;
     } else {
       return false;
     }
   }
 }
-*/
