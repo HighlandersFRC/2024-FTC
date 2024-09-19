@@ -20,7 +20,7 @@ public class SensorSparkFunOTOS extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
         Drive.initialize(hardwareMap);
         mouse = hardwareMap.get(SparkFunOTOS.class, "mouse");
-        LowPassFilter filterX = new LowPassFilter(0.0001);
+        LowPassFilter filterX = new LowPassFilter(1);
 
 
         configureOtos();
@@ -66,10 +66,10 @@ public class SensorSparkFunOTOS extends LinearOpMode {
             }
 
             double denominator = Math.max(Math.abs(y) + Math.abs(x) + Math.abs(rx), 1);
-            double frontLeftPower = y / denominator;
-            double backLeftPower = y / denominator;
-            double frontRightPower = y / denominator;
-            double backRightPower = y / denominator;
+            double frontLeftPower = (y + x + rx) / denominator;
+            double backLeftPower = (y - x + rx) / denominator;
+            double frontRightPower = (y - x - rx) / denominator;
+            double backRightPower = (y + x - rx) / denominator;
             Drive.drive(-frontLeftPower, -frontRightPower, -backLeftPower, -backRightPower);
             double realXVel = PosDifX / elapsedTime;
 
@@ -84,8 +84,9 @@ public class SensorSparkFunOTOS extends LinearOpMode {
             telemetry.addData("Timing", timing);
             telemetry.addData("Time Elapsed (seconds)", elapsedTime);
             telemetry.addData("X coordinate (filtered)", filteredReading);
-            telemetry.addData("X", pos.x*1.23997685377);
-            telemetry.addData("Y", pos.y*1.365708773626061);
+            telemetry.addData("X", pos.x);
+            //telemetry.addData("Y", pos.y*1.365708773626061);
+            telemetry.addData("diff x",PosDifX);
             telemetry.addData("Heading angle", pos.h);
             telemetry.update();
         }
@@ -97,12 +98,15 @@ public class SensorSparkFunOTOS extends LinearOpMode {
 
         mouse.setAngularUnit(AngleUnit.DEGREES);
         mouse.setLinearUnit(DistanceUnit.METER );
+        // distance from center of robot
         SparkFunOTOS.Pose2D offset = new SparkFunOTOS.Pose2D(0, 0, 0);
         mouse.setOffset(offset);
-        mouse.setLinearScalar(1.23997685377);
+        mouse.setLinearScalar(1);
         mouse.setAngularScalar(1);
         mouse.calibrateImu();
         mouse.resetTracking();
+        // used for camara
+
         SparkFunOTOS.Pose2D currentPosition = new SparkFunOTOS.Pose2D(0, 0, 0);
         mouse.setPosition(currentPosition);
 
