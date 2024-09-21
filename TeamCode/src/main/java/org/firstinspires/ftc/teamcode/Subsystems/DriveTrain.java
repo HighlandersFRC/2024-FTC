@@ -235,7 +235,14 @@ public class DriveTrain extends Subsystem {
         lastRightPos = 0;
         lastCenterPos = 0;
     }
+public static void stop(){
+        DriveTrain.drive(0,0,0,0);
 
+        frontLeftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        frontRightMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        backLeftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        backRightMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+}
     public static int getLeftEncoder() {
         return -frontLeftMotor.getCurrentPosition();
     }

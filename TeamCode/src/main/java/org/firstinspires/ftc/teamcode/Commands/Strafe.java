@@ -1,12 +1,11 @@
 package org.firstinspires.ftc.teamcode.Commands;
-
 import com.qualcomm.hardware.sparkfun.SparkFunOTOS;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import org.firstinspires.ftc.teamcode.Subsystems.Peripherals;
 import org.firstinspires.ftc.teamcode.Subsystems.DriveTrain;
 import org.firstinspires.ftc.teamcode.Tools.PID;
 
-public class Drive extends SequentialCommandGroup {
+public class Strafe extends SequentialCommandGroup {
 
     // PID controllers for driving and correcting yaw
     private final PID yawPID = new PID(0.03, 0.0, 0.0);
@@ -23,7 +22,7 @@ public class Drive extends SequentialCommandGroup {
     private double targetPos;
     private double currentPos;
 
-    public Drive(HardwareMap hardwareMap, double speed, double distance) {
+    public Strafe (HardwareMap hardwareMap, double speed, double distance) {
         this.hardwareMap = hardwareMap;
         this.speed = speed;
         this.distance = distance;
@@ -56,7 +55,7 @@ public class Drive extends SequentialCommandGroup {
     @Override
     public void execute() {
         SparkFunOTOS.Pose2D position = mouse.getPosition();
-        double currentXPos = position.x;
+        double currentXPos = position.y;
 
         // Update the drive and yaw PIDs
         drivePID.updatePID(currentXPos);
@@ -72,7 +71,7 @@ public class Drive extends SequentialCommandGroup {
         double rightBackPower = speed + correction;
         double leftBackPower = speed - correction;
 
-        DriveTrain.drive(rightFrontPower, leftFrontPower, rightBackPower, leftBackPower);
+        DriveTrain.drive(-rightFrontPower, leftFrontPower, rightBackPower, -leftBackPower);
     }
 
     @Override
@@ -81,14 +80,14 @@ public class Drive extends SequentialCommandGroup {
     }
 
     @Override
-        public boolean isFinished() {
+    public boolean isFinished() {
         SparkFunOTOS.Pose2D position = mouse.getPosition();
-        double currentXPos = position.x/0.83766124979;
-            if (Math.abs(currentXPos) + 0.035 >= Math.abs(targetPos)) {
-                DriveTrain.stop();
-                return true;
-            }
-            return false;
+        double currentYPos = position.y;
+        if (Math.abs(currentYPos) + 0.035 >= Math.abs(targetPos)) {
+            DriveTrain.stop();
+            return true;
+        }
+        return false;
 
 
     }
