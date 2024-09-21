@@ -12,7 +12,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class Drive extends Subsystem {
+public class DriveTrain extends Subsystem {
     public static DcMotorEx frontLeftMotor;
     public static DcMotorEx backLeftMotor;
     public static DcMotorEx frontRightMotor;
@@ -208,7 +208,7 @@ public class Drive extends Subsystem {
     public static void setCurrentPositionAndResetEncoders(double fieldX, double fieldY, double theta) {
         x = fieldX;
         y = fieldY;
-        Drive.theta = theta;
+        DriveTrain.theta = theta;
         resetEncoder();
     }
 

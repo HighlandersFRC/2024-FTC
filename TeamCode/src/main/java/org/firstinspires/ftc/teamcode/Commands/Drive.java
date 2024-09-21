@@ -1,123 +1,90 @@
 package org.firstinspires.ftc.teamcode.Commands;
 
-import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.hardware.sparkfun.SparkFunOTOS;
 import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.Subsystems.Peripherals;
-import org.firstinspires.ftc.teamcode.Tools.DriveConstants;
+import org.firstinspires.ftc.teamcode.Subsystems.DriveTrain;
 import org.firstinspires.ftc.teamcode.Tools.PID;
 
-public class Drive implements Command {
+public class Drive extends SequentialCommandGroup {
 
-    private HardwareMap hardwareMap;
-    private Telemetry telemetry;
-    private PID rotationPID;
+    // PID controllers for driving and correcting yaw
+    private final PID yawPID = new PID(0.03, 0.0, 0.0);
+    private final PID drivePID = new PID(0.03, 0.0, 0.0);
+
+    // Hardware and sensor references
+    private final DriveTrain driveTrain = new DriveTrain();
+    private SparkFunOTOS mouse;
+    private final HardwareMap hardwareMap;
+
+    // Robot state variables
     private double speed;
-    private double distance;
-    private double targetTicks;
-    private DcMotor leftFront, rightFront, leftBack, rightBack;
-    private ElapsedTime runtime = new ElapsedTime();
-    private double initialHeading;
-    private double targetHeading;
-    private double currentHeading;
+    private final double distance;
+    private double targetPos;
+    private double currentPos;
 
-    public Drive(HardwareMap hardwareMap, Telemetry telemetry, double speed, double distance) {
+    public Drive(HardwareMap hardwareMap, double speed, double distance) {
         this.hardwareMap = hardwareMap;
-        this.telemetry = telemetry;
         this.speed = speed;
         this.distance = distance;
-        this.rotationPID = new PID(0.03, 0.0, 0.0); // Adjust PID constants as needed
+
+        yawPID.setSetPoint(0);
+        drivePID.setSetPoint(distance);
+
+        yawPID.setMaxInput(180);
+        yawPID.setMinInput(-180);
+        yawPID.setContinuous(true);
+        yawPID.setMinOutput(-0.25);
+        yawPID.setMaxOutput(0.25);
     }
 
-
     public String getSubsystem() {
-        return "Drive";
+        return "DriveTrain";
     }
 
     @Override
     public void start() {
-        // Initialize motors
-        leftFront = hardwareMap.dcMotor.get("Left_Front");
-        rightFront = hardwareMap.dcMotor.get("Right_Front");
-        leftBack = hardwareMap.dcMotor.get("Left_Back");
-        rightBack = hardwareMap.dcMotor.get("Right_Back");
+        mouse = hardwareMap.get(SparkFunOTOS.class, "mouse");
+        DriveTrain.initialize(hardwareMap);
 
-        // Reset encoders
-        leftFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        rightFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        leftBack.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        rightBack.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-
-        // Set target position in ticks
-        targetTicks = distance * DriveConstants.TicksPerInch;
-
-        // Set PID setpoint and parameters
-        rotationPID.setSetPoint(0); // Setpoint for rotation correction
-        rotationPID.setMaxInput(180); // Adjust based on your needs
-        rotationPID.setMinInput(-180); // Adjust based on your needs
-        rotationPID.setContinuous(true);
-        rotationPID.setMinOutput(-0.25); // Adjust based on your needs
-        rotationPID.setMaxOutput(0.25); // Adjust based on your needs
-
-        // Reset and initialize heading
         Peripherals.resetYaw();
-        initialHeading = Peripherals.getYawDegrees();
-        targetHeading = initialHeading;
 
-        // Start timer
-        runtime.reset();
+        targetPos = distance;
+        drivePID.setSetPoint(targetPos);
     }
 
     @Override
     public void execute() {
-        // Update current heading
-        currentHeading = Peripherals.getYaw();
+        SparkFunOTOS.Pose2D position = mouse.getPosition();
+        double currentXPos = position.x;
 
-        // Calculate correction using PID
-        double correction = rotationPID.updatePID(currentHeading);
+        // Update the drive and yaw PIDs
+        drivePID.updatePID(currentXPos);
+        currentPos = Peripherals.getYawDegrees();
+        yawPID.updatePID(currentPos);
 
-        // Calculate motor powers with correction
-        double leftFrontPower = speed - correction;
+        // Calculate corrections from yaw PID
+        double correction = yawPID.getResult();
+
+        // Set motor powers based on speed and correction
         double rightFrontPower = speed + correction;
-        double leftBackPower = speed - correction;
+        double leftFrontPower = speed - correction;
         double rightBackPower = speed + correction;
+        double leftBackPower = speed - correction;
 
-        // Set motor powers
-        leftFront.setPower(leftFrontPower);
-        rightFront.setPower(rightFrontPower);
-        leftBack.setPower(leftBackPower);
-        rightBack.setPower(rightBackPower);
-
-        // Log telemetry for debugging
-        telemetry.addData("Distance", distance);
-        telemetry.addData("Current Position", (leftFront.getCurrentPosition() + rightFront.getCurrentPosition() +
-                leftBack.getCurrentPosition() + rightBack.getCurrentPosition()) / 4);
-        telemetry.addData("Correction", correction);
-        telemetry.update();
+        DriveTrain.drive(rightFrontPower, leftFrontPower, rightBackPower, leftBackPower);
     }
 
     @Override
     public void end() {
-
-        leftFront.setPower(0);
-        rightFront.setPower(0);
-        leftBack.setPower(0);
-        rightBack.setPower(0);
-
-        leftFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        rightFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        leftBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        rightBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-
-        Peripherals.resetYaw();
+        DriveTrain.drive(0, 0, 0, 0);
     }
 
     @Override
     public boolean isFinished() {
-        // Check if average position of all motors reaches or exceeds target ticks
-        return Math.abs((leftFront.getCurrentPosition() + rightFront.getCurrentPosition() +
-                leftBack.getCurrentPosition() + rightBack.getCurrentPosition()) / 4) >= Math.abs(targetTicks);
+        SparkFunOTOS.Pose2D position = mouse.getPosition();
+        double currentXPos = position.x;
+        return Math.abs(currentXPos - targetPos) <= 0.02;
     }
 }
