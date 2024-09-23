@@ -15,15 +15,12 @@ buildscript {
     }
 }
 
-// This is now required because aapt2 has to be downloaded from the
-// google() repository beginning with version 3.2 of the Android Gradle Plugin
+// Required for aapt2 to be downloaded from the google() repository
 allprojects {
     repositories {
         mavenCentral()
         google()
+        maven { url 'https://jitpack.io' }
+        maven { url = 'https://maven.brott.dev/' }
     }
-}
-
-repositories {
-    mavenCentral()
 }

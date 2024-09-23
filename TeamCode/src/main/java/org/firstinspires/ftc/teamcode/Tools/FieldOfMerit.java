@@ -40,6 +40,9 @@ public class FieldOfMerit {
     public static void initialize(HardwareMap hardwareMap) {
         Drive.initialize(hardwareMap);
         Peripherals.initialize(hardwareMap);
+/*
+        FieldOfMerit.initialize(hardwareMap);
+*/
 
         tagProcessor = new AprilTagProcessor.Builder()
                 .setDrawAxes(true)
@@ -77,6 +80,7 @@ public class FieldOfMerit {
 
     public static void processTags() {
         tagProcessor.setPoseSolver(AprilTagProcessor.PoseSolver.APRILTAG_BUILTIN);
+        Drive.update();
 
         boolean tagDetected = false;
 
@@ -111,7 +115,6 @@ public class FieldOfMerit {
 
                 double xt = r * (Math.cos(angleoffset + Math.PI));
                 double yt = r * (Math.sin(angleoffset + Math.PI));
-
 
                 Constants.AprilTagData tagData = Constants.aprilTagMap.get(detection.id);
                 fieldX = xt + (tagData != null ? tagData.positionX : 0);
