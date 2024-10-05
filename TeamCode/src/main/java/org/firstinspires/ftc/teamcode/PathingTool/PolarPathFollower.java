@@ -33,7 +33,7 @@ public class PolarPathFollower extends ParallelCommandGroup {
 
         System.out.println("Loaded Path JSON: " + pathJSON.toString(2)); // Print JSON for debugging
 
-        follower = new PurePursuitFollower(drive, peripherals, pathJSON.getJSONArray("sampled_points"), false);
+        follower = new PurePursuitFolnlower(drive, peripherals, pathJSON.getJSONArray("sampled_points"), false);
 
         followerCommand = new TriggerCommand(scheduler,
                 () -> {

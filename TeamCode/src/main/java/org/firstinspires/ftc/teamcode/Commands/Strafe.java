@@ -50,7 +50,6 @@ public class Strafe extends SequentialCommandGroup {
 
         targetPos = distance;
         drivePID.setSetPoint(targetPos);
-
     }
 
     @Override

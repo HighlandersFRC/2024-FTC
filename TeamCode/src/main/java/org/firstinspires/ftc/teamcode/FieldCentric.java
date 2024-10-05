@@ -26,15 +26,15 @@ public class FieldCentric extends LinearOpMode {
         while (opModeIsActive()) {
             FinalPose.poseUpdate();
 
-            double y = gamepad1.left_stick_y;
+            double y = -gamepad1.left_stick_y;
             double x = gamepad1.left_stick_x;
             double rx = gamepad1.right_stick_x;
 
             if (gamepad1.right_bumper) {
                 Peripherals.resetYaw();
                 Drive.resetEncoder();
-
             }
+
             //debug stuff
             if (gamepad1.a) {
                 Drive.drive(1,0,0,0);

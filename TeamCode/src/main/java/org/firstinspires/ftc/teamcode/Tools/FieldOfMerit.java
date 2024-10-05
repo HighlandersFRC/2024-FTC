@@ -40,9 +40,6 @@ public class FieldOfMerit {
     public static void initialize(HardwareMap hardwareMap) {
         Drive.initialize(hardwareMap);
         Peripherals.initialize(hardwareMap);
-/*
-        FieldOfMerit.initialize(hardwareMap);
-*/
 
         tagProcessor = new AprilTagProcessor.Builder()
                 .setDrawAxes(true)

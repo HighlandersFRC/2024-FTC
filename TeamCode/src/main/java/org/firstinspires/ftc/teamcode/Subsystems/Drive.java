@@ -232,7 +232,6 @@ public class Drive extends Subsystem {
         y = Math.round(y * 1000) / 1000.0;
     }
 
-
     private static double normalizeAngle(double angle) {
         while (angle > Math.PI) angle -= 2 * Math.PI;
         while (angle < -Math.PI) angle += 2 * Math.PI;
@@ -340,17 +339,24 @@ public class Drive extends Subsystem {
 
         }
     }*/
+
     public static int getCenterEncoder() {
         return frontRightMotor.getCurrentPosition();
     }
     public static void autoDrive(Vector vector, double omega) {
         double vx = vector.getJ();
         double vy = -vector.getI();
-        double frontLeftPower = vx + vy + omega * (L + W);
-        double frontRightPower = vx - vy - omega * (L + W);
-        double backLeftPower = vx - vy + omega * (L + W);
-        double backRightPower = vx + vy - omega * (L + W);
 
+        // Adjust the scaling of omega based on robot dimensions
+        double rotationFactor = omega * (L + W);
+
+        // Calculate motor powers considering both linear and angular velocity
+        double frontLeftPower = vx + vy + rotationFactor;
+        double frontRightPower = vx - vy - rotationFactor;
+        double backLeftPower = vx - vy + rotationFactor;
+        double backRightPower = vx + vy - rotationFactor;
+
+        // Normalize the motor powers to prevent them from exceeding 1.0
         double maxMagnitude = Math.max(Math.max(Math.abs(frontLeftPower), Math.abs(frontRightPower)),
                 Math.max(Math.abs(backLeftPower), Math.abs(backRightPower)));
 
@@ -361,9 +367,11 @@ public class Drive extends Subsystem {
             backRightPower /= maxMagnitude;
         }
 
+        // Apply the motor powers to the drivetrain
         frontLeftMotor.setPower(frontLeftPower);
         frontRightMotor.setPower(frontRightPower);
         backLeftMotor.setPower(backLeftPower);
         backRightMotor.setPower(backRightPower);
     }
+
 }
