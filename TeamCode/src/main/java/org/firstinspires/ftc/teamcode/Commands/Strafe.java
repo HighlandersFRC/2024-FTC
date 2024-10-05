@@ -59,7 +59,7 @@ public class Strafe extends SequentialCommandGroup {
 
         // Update the drive and yaw PIDs
         drivePID.updatePID(currentXPos);
-        currentPos = Peripherals.getYawDegrees();
+        currentPos = -Peripherals.getYawDegrees();
         yawPID.updatePID(currentPos);
 
         // Calculate corrections from yaw PID
@@ -67,9 +67,9 @@ public class Strafe extends SequentialCommandGroup {
 
         // Set motor powers based on speed and correction
         double rightFrontPower = speed + correction;
-        double leftFrontPower = speed - correction;
+        double leftFrontPower = speed + correction;
         double rightBackPower = speed + correction;
-        double leftBackPower = speed - correction;
+        double leftBackPower = speed + correction;
 
         DriveTrain.drive(-rightFrontPower, leftFrontPower, rightBackPower, -leftBackPower);
     }
@@ -82,7 +82,7 @@ public class Strafe extends SequentialCommandGroup {
     @Override
     public boolean isFinished() {
         SparkFunOTOS.Pose2D position = mouse.getPosition();
-        double currentYPos = position.y;
+        double currentYPos = position.y*1.2;
         if (Math.abs(currentYPos) + 0.035 >= Math.abs(targetPos)) {
             DriveTrain.stop();
             return true;

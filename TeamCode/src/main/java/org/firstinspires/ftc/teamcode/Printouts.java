@@ -11,6 +11,7 @@ public class Printouts extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
+        Peripherals.initialize(hardwareMap);
         DriveSubsystem.initialize(hardwareMap);
         Peripherals.resetYaw();
         waitForStart();
