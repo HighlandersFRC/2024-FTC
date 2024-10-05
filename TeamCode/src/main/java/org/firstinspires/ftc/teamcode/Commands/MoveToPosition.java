@@ -1,6 +1,6 @@
 package org.firstinspires.ftc.teamcode.Commands;
 
-import org.firstinspires.ftc.teamcode.Subsystems.DriveTrain;
+import org.firstinspires.ftc.teamcode.Subsystems.Drive;
 import org.firstinspires.ftc.teamcode.Tools.FinalPose;
 import org.firstinspires.ftc.teamcode.Tools.PID;
 import org.firstinspires.ftc.teamcode.Tools.Vector;
@@ -50,12 +50,12 @@ public class MoveToPosition implements Command {
         double yVel = yPID.getResult();
         double thetaVel = Math.abs(targetTheta - currentTheta) < Math.toRadians(5) ? thetaPID.getResult() * 0.5 : thetaPID.getResult();
 
-        DriveTrain.autoDrive(new Vector(xVel, yVel), thetaVel);
+        Drive.autoDrive(new Vector(xVel, yVel), thetaVel);
     }
 
     @Override
     public void end() {
-        DriveTrain.stop();
+        Drive.stop();
     }
 
     @Override
@@ -71,5 +71,3 @@ public class MoveToPosition implements Command {
         return positionReached && angleReached;
     }
 }
-
-

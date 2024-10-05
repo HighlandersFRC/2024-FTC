@@ -11,7 +11,7 @@ public class PID {
 
     private double maxInput;
     private double minInput;
-    private double maxOutput = 1.0; // Example max motor power
+    private double maxOutput = 1.0;
     private double minOutput = -1.0;
 
     private boolean continuous = false;
@@ -22,6 +22,7 @@ public class PID {
         PValue = kp;
         IValue = ki;
         DValue = kd;
+        totalError = 0.0; // Initialize total error
     }
 
     public double updatePID(double value) {
@@ -29,15 +30,14 @@ public class PID {
 
         if (continuous) {
             if (Math.abs(error) > (maxInput - minInput) / 2) {
-                if (error > 0) {
-                    error -= maxInput - minInput;
-                } else {
-                    error += maxInput - minInput;
-                }
+                error = error > 0 ? error - (maxInput - minInput) : error + (maxInput - minInput);
             }
         }
 
-        totalError += error;
+        if (Math.abs(error) < 0.1) {
+            totalError += error;
+            totalError = clamp(totalError);
+        }
 
         result = PValue * error + IValue * totalError + DValue * (error - prevError);
         prevError = error;
@@ -53,8 +53,10 @@ public class PID {
 
     public void setSetPoint(double target) {
         setPoint = target;
+        totalError = 0;
     }
-    public double getSetPoint(){
+
+    public double getSetPoint() {
         return setPoint;
     }
 

@@ -15,22 +15,12 @@ buildscript {
     }
 }
 
+// Required for aapt2 to be downloaded from the google() repository
 allprojects {
     repositories {
         mavenCentral()
         google()
-        flatDir {
-            dirs 'libs','/Users/doadj/navx-mxp/android/libs'
-        }
-
+        maven { url 'https://jitpack.io' }
+        maven { url = 'https://maven.brott.dev/' }
     }
-}
-
-repositories {
-    mavenCentral()
-    flatDir {
-        dirs 'libs', 'C:\\Users\\doadj\\navx-micro\\android\\libs'
-    }
-
-
 }

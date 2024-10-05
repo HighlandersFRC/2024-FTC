@@ -1,29 +1,27 @@
 package org.firstinspires.ftc.teamcode.Commands;
 
-import com.qualcomm.hardware.sparkfun.SparkFunOTOS;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import org.firstinspires.ftc.teamcode.Subsystems.Peripherals;
-import org.firstinspires.ftc.teamcode.Subsystems.DriveTrain;
+import org.firstinspires.ftc.teamcode.Tools.FieldOfMerit;
+import org.firstinspires.ftc.teamcode.Tools.FinalPose;
 import org.firstinspires.ftc.teamcode.Tools.PID;
 
 public class Drive extends SequentialCommandGroup {
 
-    // PID controllers for driving and correcting yaw
     private final PID yawPID = new PID(0.03, 0.0, 0.0);
     private final PID drivePID = new PID(0.03, 0.0, 0.0);
 
-    // Hardware and sensor references
-    private final DriveTrain driveTrain = new DriveTrain();
-    private SparkFunOTOS mouse;
     private final HardwareMap hardwareMap;
 
-    // Robot state variables
     private double speed;
     private final double distance;
     private double targetPos;
     private double currentPos;
+    private final double tolerance = 0.035;
 
-    public Drive(HardwareMap hardwareMap, double speed, double distance) {
+    public Drive(HardwareMap hardwareMap, double speed, double distance, CommandScheduler scheduler) {
+
+        super(scheduler);
         this.hardwareMap = hardwareMap;
         this.speed = speed;
         this.distance = distance;
@@ -36,6 +34,7 @@ public class Drive extends SequentialCommandGroup {
         yawPID.setContinuous(true);
         yawPID.setMinOutput(-0.25);
         yawPID.setMaxOutput(0.25);
+
     }
 
     public String getSubsystem() {
@@ -44,52 +43,49 @@ public class Drive extends SequentialCommandGroup {
 
     @Override
     public void start() {
-        mouse = hardwareMap.get(SparkFunOTOS.class, "mouse");
-        DriveTrain.initialize(hardwareMap);
+
+        FieldOfMerit.initialize(hardwareMap);
 
         Peripherals.resetYaw();
 
         targetPos = distance;
-        drivePID.setSetPoint(targetPos);
+            drivePID.setSetPoint(targetPos);
+
     }
 
     @Override
     public void execute() {
-        SparkFunOTOS.Pose2D position = mouse.getPosition();
-        double currentXPos = position.x;
 
-        // Update the drive and yaw PIDs
+        FieldOfMerit.processTags();
+        double currentXPos = FinalPose.y;
+
         drivePID.updatePID(currentXPos);
         currentPos = Peripherals.getYawDegrees();
         yawPID.updatePID(currentPos);
 
-        // Calculate corrections from yaw PID
-        double correction = yawPID.getResult();
+        double correction = -yawPID.getResult();
 
-        // Set motor powers based on speed and correction
-        double rightFrontPower = speed + correction;
-        double leftFrontPower = speed - correction;
-        double rightBackPower = speed + correction;
-        double leftBackPower = speed - correction;
+        double rightFrontPower = Math.max(-1, Math.min(1, speed + correction));
+        double leftFrontPower = Math.max(-1, Math.min(1, speed - correction));
+        double rightBackPower = -Math.max(-1, Math.min(1, speed + correction));
+        double leftBackPower = Math.max(-1, Math.min(1, speed - correction));
 
-        DriveTrain.drive(rightFrontPower, leftFrontPower, rightBackPower, leftBackPower);
+        org.firstinspires.ftc.teamcode.Subsystems.Drive.drive(rightFrontPower, leftFrontPower, rightBackPower, leftBackPower);
+
     }
 
     @Override
     public void end() {
-        DriveTrain.drive(0, 0, 0, 0);
+        org.firstinspires.ftc.teamcode.Subsystems.Drive.drive(0, 0, 0, 0);
     }
 
     @Override
-        public boolean isFinished() {
-        SparkFunOTOS.Pose2D position = mouse.getPosition();
-        double currentXPos = position.x/0.83766124979;
-            if (Math.abs(currentXPos) + 0.035 >= Math.abs(targetPos)) {
-                DriveTrain.stop();
-                return true;
-            }
-            return false;
-
-
+    public boolean isFinished() {
+        double currentXPos = FinalPose.y;
+        if (Math.abs(currentXPos - targetPos) <= tolerance) {
+            org.firstinspires.ftc.teamcode.Subsystems.Drive.stop();
+            return true;
+        }
+        return false;
     }
 }

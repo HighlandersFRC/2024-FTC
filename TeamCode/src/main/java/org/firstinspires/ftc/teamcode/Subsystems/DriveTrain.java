@@ -6,6 +6,7 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.teamcode.Tools.Constants;
+import org.firstinspires.ftc.teamcode.Tools.FieldOfMerit;
 import org.firstinspires.ftc.teamcode.Tools.PID;
 
 import org.firstinspires.ftc.teamcode.Tools.Vector;
@@ -13,7 +14,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class DriveTrain extends Subsystem {
+public class Drive extends Subsystem {
 
     public static DcMotorEx frontLeftMotor;
     public static DcMotorEx backLeftMotor;
@@ -68,12 +69,12 @@ public class DriveTrain extends Subsystem {
     }
 
     public static void stop() {
-        DriveTrain.drive(0,0,0,0);
+    Drive.drive(0,0,0,0);
 
-        backLeftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        backRightMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        frontLeftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        frontRightMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+    backLeftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+    backRightMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+    frontLeftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+    frontRightMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
     }
     public Number[] purePursuitController(double currentX, double currentY, double currentTheta, int currentIndex,
                                           JSONArray pathPoints) throws JSONException {
@@ -82,7 +83,7 @@ public class DriveTrain extends Subsystem {
         for (int i = currentIndex; i < pathPoints.length(); i++) {
             JSONObject point = pathPoints.getJSONObject(i);
             double velocityMag = Math.sqrt((Math.pow(point.getDouble("x_velocity"), 2) + Math.pow(point.getDouble("y_velocity"), 2))
-                    + Math.pow(point.getDouble("angular_velocity"), 2));
+                            + Math.pow(point.getDouble("angular_velocity"), 2));
             double targetTheta = point.getDouble("angle");
             while (Math.abs(targetTheta - currentTheta) > Math.PI) {
                 if (targetTheta - currentTheta > Math.PI) {
