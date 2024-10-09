@@ -5,13 +5,11 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
-import org.firstinspires.ftc.teamcode.FieldCentric;
 import org.firstinspires.ftc.teamcode.Tools.Constants;
 import org.firstinspires.ftc.teamcode.Tools.FieldOfMerit;
 import org.firstinspires.ftc.teamcode.Tools.PID;
 
 import org.firstinspires.ftc.teamcode.Tools.Vector;
-import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -32,9 +30,9 @@ public class Drive extends Subsystem {
     public static double y = 0.0;
     public static double theta = 0.0;
 
-    public static int lastLeftPos = 0;
-    public static int lastRightPos = 0;
-    public static int lastCenterPos = 0;
+    public static double lastLeftPos = 0;
+    public static double lastRightPos = 0;
+    public static double lastCenterPos = 0;
 
     public static PID xPID = new PID(1, 0, 0);
     public static PID yPID = new PID(1, 0, 0);
@@ -64,10 +62,10 @@ public class Drive extends Subsystem {
     }
 
     public static void drive(double leftFrontPower, double rightFrontPower, double leftBackPower, double rightBackPower) {
-        frontLeftMotor.setPower(leftFrontPower);
-        frontRightMotor.setPower(rightFrontPower);
+        frontLeftMotor.setPower(-leftFrontPower);
+        frontRightMotor.setPower(-rightFrontPower);
         backLeftMotor.setPower(leftBackPower);
-        backRightMotor.setPower(rightBackPower);
+        backRightMotor.setPower(-rightBackPower);
     }
 
     public static void stop() {
@@ -84,8 +82,7 @@ public class Drive extends Subsystem {
         int targetIndex = pathPoints.length() - 1;
         for (int i = currentIndex; i < pathPoints.length(); i++) {
             JSONObject point = pathPoints.getJSONObject(i);
-            double velocityMag = Math
-                    .sqrt((Math.pow(point.getDouble("x_velocity"), 2) + Math.pow(point.getDouble("y_velocity"), 2))
+            double velocityMag = Math.sqrt((Math.pow(point.getDouble("x_velocity"), 2) + Math.pow(point.getDouble("y_velocity"), 2))
                             + Math.pow(point.getDouble("angular_velocity"), 2));
             double targetTheta = point.getDouble("angle");
             while (Math.abs(targetTheta - currentTheta) > Math.PI) {
@@ -148,7 +145,6 @@ public class Drive extends Subsystem {
         return Math.sqrt(Math.pow(deltaX, 2) + Math.pow(deltaY, 2) + Math.pow(deltaTheta, 2)) < radius;
     }
 
-    // Get velocity methods
     public static double getVelocityBackLeft() {
         return backLeftMotor.getVelocity();
     }
@@ -165,31 +161,30 @@ public class Drive extends Subsystem {
         return frontRightMotor.getVelocity();
     }
 
-
-    public static void update() {
+/*    public static void update() {
         double imuTheta = Peripherals.getYawDegrees();
 
-        int currentLeftPos = getLeftEncoder();
-        int currentRightPos = getRightEncoder();
-        int currentCenterPos = getCenterEncoder();
+        double currentLeftPos = getLeftEncoder();
+        double currentRightPos = getRightEncoder();
+        double currentCenterPos = getCenterEncoder();
 
-        int deltaLeft = currentLeftPos - lastLeftPos;
-        int deltaRight = currentRightPos - lastRightPos;
-        int deltaCenter = currentCenterPos - lastCenterPos;
+        double deltaLeft = currentLeftPos - lastLeftPos;
+        double deltaRight = currentRightPos - lastRightPos;
+        double deltaCenter = currentCenterPos - lastCenterPos;
 
         lastLeftPos = currentLeftPos;
         lastRightPos = currentRightPos;
         lastCenterPos = currentCenterPos;
 
-        double distanceLeft = (deltaLeft / TICKS_PER_REV) * WHEEL_CIRCUMFERENCE;
-        double distanceRight = (deltaRight / TICKS_PER_REV) * WHEEL_CIRCUMFERENCE;
-        double distanceCenter = (deltaCenter / TICKS_PER_REV) * WHEEL_CIRCUMFERENCE;
+        double distanceLeft = deltaLeft * WHEEL_CIRCUMFERENCE / TICKS_PER_REV;
+        double distanceRight = deltaRight * WHEEL_CIRCUMFERENCE / TICKS_PER_REV;
+        double distanceCenter = deltaCenter * WHEEL_CIRCUMFERENCE / TICKS_PER_REV;
 
         theta = imuTheta;
 
         double avgForwardMovement = (distanceLeft + distanceRight) / 2.0;
-
         double deltaTheta = Math.toRadians(theta);
+        double deltaThetaDegrees = theta;
 
         double deltaX = avgForwardMovement * Math.cos(deltaTheta) + distanceCenter * Math.sin(deltaTheta);
         double deltaY = -avgForwardMovement * Math.sin(deltaTheta) + distanceCenter * Math.cos(deltaTheta);
@@ -199,16 +194,61 @@ public class Drive extends Subsystem {
 
         totalXTraveled += Math.abs(deltaX);
         totalYTraveled += Math.abs(deltaY);
+    }*/
+
+    public static void update() {
+        double imuTheta = Peripherals.getYawDegrees();
+
+        double currentLeftPos = getLeftEncoder();
+        double currentRightPos = getRightEncoder();
+        double currentCenterPos = getCenterEncoder();
+
+        double deltaLeft = currentLeftPos - lastLeftPos;
+        double deltaRight = currentRightPos - lastRightPos;
+        double deltaCenter = currentCenterPos - lastCenterPos;
+
+        lastLeftPos = currentLeftPos;
+        lastRightPos = currentRightPos;
+        lastCenterPos = currentCenterPos;
+
+        double distanceLeft = deltaLeft * WHEEL_CIRCUMFERENCE / TICKS_PER_REV;
+        double distanceRight = deltaRight * WHEEL_CIRCUMFERENCE / TICKS_PER_REV;
+        double distanceCenter = deltaCenter * WHEEL_CIRCUMFERENCE / TICKS_PER_REV;
+
+        double avgForwardMovement = (distanceLeft + distanceRight) / 2.0;
+
+        double deltaTheta = Math.toRadians(imuTheta - theta);
+        theta = imuTheta;
+
+        double thetaRadians = Math.toRadians(theta);
+
+        double deltaX = avgForwardMovement * Math.cos(thetaRadians) - distanceCenter * Math.sin(thetaRadians);
+        double deltaY = avgForwardMovement * Math.sin(thetaRadians) + distanceCenter * Math.cos(thetaRadians);
+
+        x += deltaX;
+        y += deltaY;
+
+        x = Math.round(x * 1000) / 1000.0;
+        y = Math.round(y * 1000) / 1000.0;
     }
 
     private static double normalizeAngle(double angle) {
-        angle %= 360;
-        if (angle > 180) {
-            angle -= 360;
-        } else if (angle < -180) {
-            angle += 360;
-        }
+        while (angle > Math.PI) angle -= 2 * Math.PI;
+        while (angle < -Math.PI) angle += 2 * Math.PI;
         return angle;
+    }
+
+
+    public static double getLastLeftPos(){
+        return lastLeftPos;
+    }
+
+    public static double getLastRightPos(){
+        return lastRightPos;
+    }
+
+    public static double getLastCenterPos(){
+        return lastCenterPos;
     }
 
     public static double getOdometryX() {
@@ -236,14 +276,10 @@ public class Drive extends Subsystem {
     }
 
     public static void setPosition(double fieldX, double fieldY, double fieldTheta) {
-        // Update the robot's internal position and orientation
         x = fieldX;
         y = fieldY;
         theta = fieldTheta;
 
-        // Optionally: Update encoders to reflect this change (if required)
-        // If you want to adjust the encoder counts to match the new position,
-        // you would have to calculate the corresponding encoder ticks here.
         lastLeftPos = getLeftEncoder();
         lastRightPos = getRightEncoder();
         lastCenterPos = getCenterEncoder();
@@ -260,12 +296,10 @@ public class Drive extends Subsystem {
         frontRightMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         backRightMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
-        // Reset odometry values
         x = 0.0;
         y = 0.0;
         theta = 0.0;
 
-        // Reset encoder position tracking
         lastLeftPos = 0;
         lastRightPos = 0;
         lastCenterPos = 0;
@@ -279,8 +313,11 @@ public class Drive extends Subsystem {
     public static int getRightEncoder() {
         return frontLeftMotor.getCurrentPosition();
     }
+    public static int getBackEncoder(){
+        return backLeftMotor.getCurrentPosition();
+    }
 
-    public static void moveToAprilTag(int ID){
+ /*   public static void moveToAprilTag(int ID){
             double tagX = FieldOfMerit.x;
             double tagY = FieldOfMerit.y;
             double tagTheta = FieldOfMerit.tagyaw;
@@ -301,19 +338,25 @@ public class Drive extends Subsystem {
                 }
 
         }
-    }
+    }*/
+
     public static int getCenterEncoder() {
         return frontRightMotor.getCurrentPosition();
     }
     public static void autoDrive(Vector vector, double omega) {
         double vx = vector.getJ();
         double vy = -vector.getI();
-        double frontLeftPower = vx + vy + omega * (L + W);
-        double frontRightPower = vx - vy - omega * (L + W);
-        double backLeftPower = vx - vy + omega * (L + W);
-        double backRightPower = vx + vy - omega * (L + W);
 
-        // Normalize the powers to ensure they are within [-1, 1]
+        // Adjust the scaling of omega based on robot dimensions
+        double rotationFactor = omega * (L + W);
+
+        // Calculate motor powers considering both linear and angular velocity
+        double frontLeftPower = vx + vy + rotationFactor;
+        double frontRightPower = vx - vy - rotationFactor;
+        double backLeftPower = vx - vy + rotationFactor;
+        double backRightPower = vx + vy - rotationFactor;
+
+        // Normalize the motor powers to prevent them from exceeding 1.0
         double maxMagnitude = Math.max(Math.max(Math.abs(frontLeftPower), Math.abs(frontRightPower)),
                 Math.max(Math.abs(backLeftPower), Math.abs(backRightPower)));
 
@@ -324,11 +367,11 @@ public class Drive extends Subsystem {
             backRightPower /= maxMagnitude;
         }
 
-        // Set motor powers
+        // Apply the motor powers to the drivetrain
         frontLeftMotor.setPower(frontLeftPower);
         frontRightMotor.setPower(frontRightPower);
         backLeftMotor.setPower(backLeftPower);
         backRightMotor.setPower(backRightPower);
     }
-}
 
+}

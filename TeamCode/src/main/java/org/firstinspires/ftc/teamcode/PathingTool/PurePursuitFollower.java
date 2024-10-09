@@ -75,13 +75,8 @@ public class PurePursuitFollower implements Command {
     odometryFusedX = FinalPose.x;
     odometryFusedY = FinalPose.y;
     odometryFusedTheta = Peripherals.getYawDegrees();
-    // System.out.println("Follower field side: " + this.drive.getFieldSide());
-
-    // System.out.println("Odom - X: " + odometryFusedX + " Y: " + odometryFusedY +
-    // " Theta: " + odometryFusedTheta);
 
     currentTime = System.currentTimeMillis() - initTime + pathStartTime;
-    // call PIDController function
     currentPathPointIndex = returnPathPointIndex;
     desiredVelocityArray = drive.purePursuitController(odometryFusedX, odometryFusedY, odometryFusedTheta,
             currentPathPointIndex, path);
@@ -96,15 +91,10 @@ public class PurePursuitFollower implements Command {
     } else {
       timesStagnated = 0;
     }
-
-    // create velocity vector and set desired theta change
     Vector velocityVector = new Vector();
     velocityVector.setI(desiredVelocityArray[0].doubleValue());
     velocityVector.setJ(desiredVelocityArray[1].doubleValue());
     desiredThetaChange = desiredVelocityArray[2].doubleValue();
-    // velocityVector.setI(0);
-    // velocityVector.setJ(0);
-    // desiredThetaChange = 0;
 
     drive.autoDrive(velocityVector, desiredThetaChange);
   }
@@ -117,11 +107,6 @@ public class PurePursuitFollower implements Command {
     velocityVector.setJ(0);
     double desiredThetaChange = 0.0;
     drive.autoDrive(velocityVector, desiredThetaChange);
-
-    odometryFusedX = FinalPose.x;
-    odometryFusedY = FinalPose.y;
-    odometryFusedTheta = Peripherals.getYawDegrees();
-    currentTime = System.currentTimeMillis() - initTime;
   }
 
   public boolean isFinished() {

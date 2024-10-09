@@ -6,7 +6,7 @@ import org.firstinspires.ftc.teamcode.Tools.FieldOfMerit;
 import org.firstinspires.ftc.teamcode.Tools.FinalPose;
 import org.firstinspires.ftc.teamcode.Tools.PID;
 
-public class Drive extends SequentialCommandGroup {
+public class Strafe extends SequentialCommandGroup {
 
     private final PID yawPID = new PID(0.03, 0.0, 0.0);
     private final PID drivePID = new PID(0.03, 0.0, 0.0);
@@ -19,7 +19,7 @@ public class Drive extends SequentialCommandGroup {
     private double currentPos;
     private final double tolerance = 0.035;
 
-    public Drive(HardwareMap hardwareMap, double speed, double distance, CommandScheduler scheduler) {
+    public Strafe(HardwareMap hardwareMap, double speed, double distance, CommandScheduler scheduler) {
 
         super(scheduler);
         this.hardwareMap = hardwareMap;
@@ -49,29 +49,27 @@ public class Drive extends SequentialCommandGroup {
         Peripherals.resetYaw();
 
         targetPos = distance;
-            drivePID.setSetPoint(targetPos);
-
+        drivePID.setSetPoint(targetPos);
     }
 
     @Override
     public void execute() {
 
         FieldOfMerit.processTags();
-        double currentXPos = FinalPose.y;
+        double currentYPos = FinalPose.y;
 
-        drivePID.updatePID(currentXPos);
+        drivePID.updatePID(currentYPos);
         currentPos = Peripherals.getYawDegrees();
         yawPID.updatePID(currentPos);
 
         double correction = -yawPID.getResult();
 
-        double rightFrontPower = Math.max(-1, Math.min(1, speed + correction));
+        double rightFrontPower = -Math.max(-1, Math.min(1, speed + correction));
         double leftFrontPower = Math.max(-1, Math.min(1, speed - correction));
         double rightBackPower = -Math.max(-1, Math.min(1, speed + correction));
         double leftBackPower = Math.max(-1, Math.min(1, speed - correction));
 
         org.firstinspires.ftc.teamcode.Subsystems.Drive.drive(rightFrontPower, leftFrontPower, rightBackPower, leftBackPower);
-
     }
 
     @Override
@@ -81,8 +79,8 @@ public class Drive extends SequentialCommandGroup {
 
     @Override
     public boolean isFinished() {
-        double currentXPos = FinalPose.y;
-        if (Math.abs(currentXPos - targetPos) <= tolerance) {
+        double currentYPos = FinalPose.y;
+        if (Math.abs(currentYPos - targetPos) <= tolerance) {
             org.firstinspires.ftc.teamcode.Subsystems.Drive.stop();
             return true;
         }

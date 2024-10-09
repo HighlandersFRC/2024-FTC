@@ -4,65 +4,47 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import org.firstinspires.ftc.teamcode.Commands.Command;
 import org.firstinspires.ftc.teamcode.Commands.CommandScheduler;
-import org.firstinspires.ftc.teamcode.PathingTool.PathLoading;
-import org.firstinspires.ftc.teamcode.PathingTool.PolarPathFollower;
+import org.firstinspires.ftc.teamcode.Commands.MoveToPosition;
+import org.firstinspires.ftc.teamcode.Commands.SequentialCommandGroup;
 import org.firstinspires.ftc.teamcode.Subsystems.Drive;
 import org.firstinspires.ftc.teamcode.Subsystems.Peripherals;
+import org.firstinspires.ftc.teamcode.Tools.FieldOfMerit;
+import org.firstinspires.ftc.teamcode.Tools.FinalPose;
 import org.json.JSONException;
-
-import java.util.HashMap;
-import java.util.function.BooleanSupplier;
-import java.util.function.Supplier;
 
 @Autonomous
 public class TestAuto extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
+        FieldOfMerit.initialize(hardwareMap);
 
-        HashMap<String, Supplier<Command>> commandMap = new HashMap<>();
-        HashMap<String, BooleanSupplier> conditionMap = new HashMap<>();
+        Drive.setPosition(0, 0, 0);
 
-        Drive.initialize(hardwareMap);
-        Drive driveSubsystem = new Drive();
-        Peripherals peripherals = new Peripherals("Peripherals");
-        Peripherals.initialize(hardwareMap);
-
-        PathLoading pathLoading = new PathLoading(hardwareMap.appContext, "OneMeter.polarpath");
         CommandScheduler scheduler = new CommandScheduler();
-
-        Command polarFollow;
-        try {
-            polarFollow = new PolarPathFollower(driveSubsystem, peripherals, pathLoading.getJsonPathData(), commandMap, conditionMap, scheduler);
-        } catch (Exception e) {
-            telemetry.addData("Error", "Failed to initialize PolarPathFollower: " + e.getMessage());
-            telemetry.update();
-            return;
-        }
+        Command moveToPosition = new SequentialCommandGroup(scheduler, new MoveToPosition(0.5, 0, 0), new MoveToPosition(0.5, 0.5, 0), new MoveToPosition(0.0, 0.5, 0), new MoveToPosition(0,0,0));
 
         waitForStart();
 
         try {
-            scheduler.schedule(polarFollow);
+            scheduler.schedule(moveToPosition);
         } catch (JSONException e) {
-            telemetry.addData("Error", "Failed to schedule PolarPathFollower: " + e.getMessage());
-            telemetry.update();
-            return;
+            throw new RuntimeException(e);
         }
 
         while (opModeIsActive()) {
+            FinalPose.poseUpdate();
             try {
                 scheduler.run();
-                Thread.sleep(100);
-            } catch (Exception e) {
-                telemetry.addData("Error", "Runtime exception: " + e.getMessage());
-                telemetry.update();
+            } catch (JSONException e) {
+                throw new RuntimeException(e);
             }
 
-            telemetry.addData("X", driveSubsystem.getOdometryX());
-            telemetry.addData("Y", driveSubsystem.getOdometryY());
-            telemetry.addData("Theta", driveSubsystem.getOdometryTheta());
+            telemetry.addData("X", FinalPose.x);
+            telemetry.addData("Y", FinalPose.y);
+            telemetry.addData("Theta", Peripherals.getYawDegrees());
             telemetry.update();
+
         }
     }
 }

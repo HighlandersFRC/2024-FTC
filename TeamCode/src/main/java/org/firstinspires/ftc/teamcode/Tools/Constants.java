@@ -52,8 +52,9 @@ public class Constants {
     public static final Map<Integer, AprilTagData> aprilTagMap = new HashMap<>();
 
     static {
-        aprilTagMap.put(7, new AprilTagData(0.0, 0.0, 0.152, 0));
-        aprilTagMap.put(8, new AprilTagData(5.0, 5.0, 0.152, Math.PI / 2));
+        aprilTagMap.put(14, new AprilTagData(3.048, 3.66, 0.1016, 0));
+        aprilTagMap.put(15, new AprilTagData(3.66, 1.83, 0.1016, 0));
+        aprilTagMap.put(16, new AprilTagData(3.048, 0, 0.1016, 0));
     }
 
     public static final double AUTONOMOUS_LOOKAHEAD_DISTANCE = 10;
