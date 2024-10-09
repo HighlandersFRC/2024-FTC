@@ -29,7 +29,11 @@ public class ConditionalCommand implements Command {
         }
 
         if (commandToRun != null) {
-            commandToRun.start();
+            try {
+                commandToRun.start();
+            } catch (JSONException e) {
+                throw new RuntimeException(e);
+            }
         }
     }
 

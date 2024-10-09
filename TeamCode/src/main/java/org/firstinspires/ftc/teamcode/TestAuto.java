@@ -26,11 +26,7 @@ public class TestAuto extends LinearOpMode {
 
         waitForStart();
 
-        try {
-            scheduler.schedule(moveToPosition);
-        } catch (JSONException e) {
-            throw new RuntimeException(e);
-        }
+        scheduler.schedule(moveToPosition);
 
         while (opModeIsActive()) {
             FinalPose.poseUpdate();

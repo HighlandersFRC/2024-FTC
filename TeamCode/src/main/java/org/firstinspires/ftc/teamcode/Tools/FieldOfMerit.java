@@ -121,7 +121,7 @@ public class FieldOfMerit {
                 theta = (tagyaw + 180) - pose.yaw;
 
                 Drive.setPosition(fieldX, fieldY, theta);
-                FinalPose.setfinalPose(fieldX, fieldY, theta);
+                FinalPose.setFinalPose(fieldX, fieldY, theta);
             }
         }
 
@@ -131,7 +131,7 @@ public class FieldOfMerit {
             theta = Drive.getOdometryTheta();
 
             currentState = "Odometry Pods";
-            FinalPose.setfinalPose(fieldX, fieldY, theta);
+            FinalPose.setFinalPose(fieldX, fieldY, theta);
             tagDetected = true;
         }
     }

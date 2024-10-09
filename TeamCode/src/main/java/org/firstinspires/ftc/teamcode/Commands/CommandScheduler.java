@@ -19,7 +19,11 @@ public class CommandScheduler {
     }
 
     public void schedule(Command command) {
-        command.start();
+        try {
+            command.start();
+        } catch (JSONException e) {
+            throw new RuntimeException(e);
+        }
         scheduledCommands.add(command);
         RobotLog.d("Command Scheduled: " + command.getClass().getSimpleName());
     }

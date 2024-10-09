@@ -2,7 +2,7 @@ package org.firstinspires.ftc.teamcode.Commands;
 import com.qualcomm.hardware.sparkfun.SparkFunOTOS;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import org.firstinspires.ftc.teamcode.Subsystems.Peripherals;
-import org.firstinspires.ftc.teamcode.Subsystems.DriveTrain;
+import org.firstinspires.ftc.teamcode.Subsystems.Drive;
 import org.firstinspires.ftc.teamcode.Tools.PID;
 
 public class Strafe extends SequentialCommandGroup {
@@ -12,7 +12,7 @@ public class Strafe extends SequentialCommandGroup {
     private final PID drivePID = new PID(0.03, 0.0, 0.0);
 
     // Hardware and sensor references
-    private final DriveTrain driveTrain = new DriveTrain();
+    private final Drive drive = new Drive();
     private SparkFunOTOS mouse;
     private final HardwareMap hardwareMap;
 
@@ -22,7 +22,9 @@ public class Strafe extends SequentialCommandGroup {
     private double targetPos;
     private double currentPos;
 
-    public Strafe (HardwareMap hardwareMap, double speed, double distance) {
+    public Strafe (HardwareMap hardwareMap, double speed, double distance,CommandScheduler scheduler) {
+
+        super(scheduler);
         this.hardwareMap = hardwareMap;
         this.speed = speed;
         this.distance = distance;
@@ -44,7 +46,7 @@ public class Strafe extends SequentialCommandGroup {
     @Override
     public void start() {
         mouse = hardwareMap.get(SparkFunOTOS.class, "mouse");
-        DriveTrain.initialize(hardwareMap);
+        Drive.initialize(hardwareMap);
 
         Peripherals.resetYaw();
 
@@ -71,12 +73,12 @@ public class Strafe extends SequentialCommandGroup {
         double rightBackPower = speed + correction;
         double leftBackPower = speed + correction;
 
-        DriveTrain.drive(-rightFrontPower, leftFrontPower, rightBackPower, -leftBackPower);
+        Drive.drive(-rightFrontPower, leftFrontPower, rightBackPower, -leftBackPower);
     }
 
     @Override
     public void end() {
-        DriveTrain.drive(0, 0, 0, 0);
+        Drive.drive(0, 0, 0, 0);
     }
 
     @Override
@@ -84,7 +86,7 @@ public class Strafe extends SequentialCommandGroup {
         SparkFunOTOS.Pose2D position = mouse.getPosition();
         double currentYPos = position.y*1.2;
         if (Math.abs(currentYPos) + 0.035 >= Math.abs(targetPos)) {
-            DriveTrain.stop();
+            Drive.stop();
             return true;
         }
         return false;

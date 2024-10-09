@@ -9,7 +9,7 @@ import org.firstinspires.ftc.teamcode.Commands.CommandScheduler;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.Commands.Strafe;
-import org.firstinspires.ftc.teamcode.Subsystems.DriveTrain;
+import org.firstinspires.ftc.teamcode.Subsystems.Drive;
 import org.firstinspires.ftc.teamcode.Subsystems.Peripherals;
 import org.firstinspires.ftc.teamcode.Tools.LowPassFilter;
 import org.json.JSONException;
@@ -24,14 +24,14 @@ public class SensorSparkFunOTOS extends LinearOpMode {
         Peripherals.initialize(hardwareMap);
         LowPassFilter filterX = new LowPassFilter(1);
         CommandScheduler scheduler = new CommandScheduler();
-        DriveTrain.initialize(hardwareMap);
+        Drive.initialize(hardwareMap);
         Mouse.init(hardwareMap);
 
         boolean timing = false;
         waitForStart();
 
 
-        scheduler.schedule(new SequentialCommandGroup(new MoveToPosition(0.1,0,0)));
+        scheduler.schedule(new SequentialCommandGroup(scheduler,new MoveToPosition(0.1,0,0)));
 
         while (opModeIsActive()) {
             try {

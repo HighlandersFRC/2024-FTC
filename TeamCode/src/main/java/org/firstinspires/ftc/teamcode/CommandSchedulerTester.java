@@ -15,11 +15,7 @@ public class CommandSchedulerTester extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
         waitForStart();
         CommandScheduler scheduler = new CommandScheduler();
-        try {
-            scheduler.schedule(new SequentialCommandGroup(scheduler, new TestCommand(), new TestCommand2()));
-        } catch (JSONException e) {
-            throw new RuntimeException(e);
-        }
+        scheduler.schedule(new SequentialCommandGroup(scheduler, new TestCommand(), new TestCommand2()));
         while (opModeIsActive()) {
             telemetry.addData("Stick X", gamepad1.left_stick_x);
             telemetry.update();
