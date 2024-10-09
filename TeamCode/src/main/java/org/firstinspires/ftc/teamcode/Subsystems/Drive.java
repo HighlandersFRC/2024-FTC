@@ -74,7 +74,8 @@ public class Drive extends Subsystem {
     backLeftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
     backRightMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
     frontLeftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-    frontRightMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+    frontRightMotor.setZeroPowerBehavior(
+            DcMotor.ZeroPowerBehavior.BRAKE);
     }
     public Number[] purePursuitController(double currentX, double currentY, double currentTheta, int currentIndex,
                                           JSONArray pathPoints) throws JSONException {
@@ -97,6 +98,7 @@ public class Drive extends Subsystem {
                     (currentTheta - targetTheta) / Constants.AUTONOMOUS_LOOKAHEAD_ANGULAR_RADIUS,
                     Constants.AUTONOMOUS_LOOKAHEAD_DISTANCE /* * velocityMag */ + 0.01
             )) {
+
                 targetIndex = i;
                 targetPoint = pathPoints.getJSONObject(i);
                 break;
@@ -309,7 +311,6 @@ public class Drive extends Subsystem {
     public static int getLeftEncoder() {
         return backRightMotor.getCurrentPosition();
     }
-
     public static int getRightEncoder() {
         return frontLeftMotor.getCurrentPosition();
     }
@@ -347,16 +348,13 @@ public class Drive extends Subsystem {
         double vx = vector.getJ();
         double vy = -vector.getI();
 
-        // Adjust the scaling of omega based on robot dimensions
         double rotationFactor = omega * (L + W);
 
-        // Calculate motor powers considering both linear and angular velocity
         double frontLeftPower = vx + vy + rotationFactor;
         double frontRightPower = vx - vy - rotationFactor;
         double backLeftPower = vx - vy + rotationFactor;
         double backRightPower = vx + vy - rotationFactor;
 
-        // Normalize the motor powers to prevent them from exceeding 1.0
         double maxMagnitude = Math.max(Math.max(Math.abs(frontLeftPower), Math.abs(frontRightPower)),
                 Math.max(Math.abs(backLeftPower), Math.abs(backRightPower)));
 
@@ -367,7 +365,6 @@ public class Drive extends Subsystem {
             backRightPower /= maxMagnitude;
         }
 
-        // Apply the motor powers to the drivetrain
         frontLeftMotor.setPower(frontLeftPower);
         frontRightMotor.setPower(frontRightPower);
         backLeftMotor.setPower(backLeftPower);
