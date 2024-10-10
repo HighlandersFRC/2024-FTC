@@ -49,8 +49,8 @@ public class Limelight3a extends LinearOpMode {
             if (result != null && result.isValid()) {
                 Pose3D botpose = result.getBotpose();
                 if (botpose != null) {
-                    double x = botpose.getPosition().x;
-                    double y = botpose.getPosition().y;
+                    double x = botpose.getPosition().x + 1.83;
+                    double y = botpose.getPosition().y + 1.83;
                     telemetry.addData("MT1 Location", "(" + x + ", " + y + ")");
                 }
             }
