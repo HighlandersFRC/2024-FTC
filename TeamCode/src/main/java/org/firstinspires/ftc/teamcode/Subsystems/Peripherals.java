@@ -14,7 +14,7 @@ public class Peripherals extends Subsystem {
     private int lastLeftPosition = 0, lastRightPosition = 0;
     private double wheelDiameter = 0.1; // Wheel diameter in meters
     private double wheelBase = 0.3; // Distance between the two wheels in meters
-    private static IMU imu;
+    static IMU imu;
 
     public Peripherals(String name) {
         super();
