@@ -26,7 +26,7 @@ public class Mouse {
     }
 
     // Initialize the mouse sensor
-    private static void init(HardwareMap hardwareMap) {
+    public static void init(HardwareMap hardwareMap) {
         // Get the mouse instance from the hardware map
         mouse = hardwareMap.get(SparkFunOTOS.class, "mouse");
 
