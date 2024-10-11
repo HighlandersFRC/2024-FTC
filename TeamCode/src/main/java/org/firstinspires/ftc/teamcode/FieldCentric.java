@@ -1,17 +1,13 @@
 package org.firstinspires.ftc.teamcode;
 
-import com.qualcomm.hardware.sparkfun.SparkFunOTOS;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-
-import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.Subsystems.Drive;
 import org.firstinspires.ftc.teamcode.Subsystems.Peripherals;
 import org.firstinspires.ftc.teamcode.Tools.FinalPose;
 import org.firstinspires.ftc.teamcode.Tools.FieldOfMerit;
 import org.firstinspires.ftc.teamcode.Tools.Robot;
-import com.qualcomm.hardware.sparkfun.SparkFunOTOS;
+import org.firstinspires.ftc.teamcode.Tools.Mouse;
 
 @TeleOp
 public class FieldCentric extends LinearOpMode {
@@ -19,10 +15,11 @@ public class FieldCentric extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
         // Initialize the robot systems
         Robot.initialize(hardwareMap);
-        SparkFunOTOS myOtos;
-        myOtos = hardwareMap.get(SparkFunOTOS.class, "sensor_otos");
+
+
         waitForStart();
 
+        // Check for stop request (uncommented)
         if (isStopRequested()) return;
 
         while (opModeIsActive()) {
@@ -40,24 +37,8 @@ public class FieldCentric extends LinearOpMode {
                 Drive.resetEncoder();
             }
 
-            //debug stuff
-            if (gamepad1.a) {
-                Drive.drive(1,0,0,0);
-            }
-            if (gamepad1.b) {
-                Drive.drive(0,1,0,0);
-            }
-            if (gamepad1.y){
-                Drive.drive(0,0,1,0);
-            }
-            if (gamepad1.x){
-                Drive.drive(0,0,0,1);
-            }
-
-
-
             // Get robot's current heading
-            double botHeading = -Peripherals.getYaw();
+            double botHeading = Peripherals.getYaw();
 
             // Rotate gamepad inputs to align with the field
             double rotX = x * Math.cos(-botHeading) - y * Math.sin(-botHeading);
@@ -86,9 +67,9 @@ public class FieldCentric extends LinearOpMode {
                     .addData("Theta (deg)", "%.2f", Drive.getOdometryTheta());
 
             telemetry.addLine("Mouse Sensor Values")
-                    .addData("X (m)", "%.2f", Drive.getTotalXTraveled())
-                    .addData("Y (m)", "%.2f", Drive.getTotalYTraveled())
-                    .addData("Theta (deg)", "%.2f", Drive.totalThetaTraveled);
+                    .addData("X (m)", "%.2f", Mouse.getX())
+                    .addData("Y (m)", "%.2f", Mouse.getY())
+                    .addData("Theta (deg)", "%.2f", Mouse.getTheta());
 
             telemetry.addLine("Fused Pose")
                     .addData("X (m)", "%.2f", FinalPose.x)
@@ -104,9 +85,9 @@ public class FieldCentric extends LinearOpMode {
                     .addData("Current Sensor State", FieldOfMerit.currentState);
 
             telemetry.update();
-
-
         }
+
+        // Ensure motors are stopped after OpMode ends
+        Drive.stop();
     }
 }
-
