@@ -25,13 +25,14 @@ public class SensorSparkFunOTOS extends LinearOpMode {
         LowPassFilter filterX = new LowPassFilter(1);
         CommandScheduler scheduler = new CommandScheduler();
         Drive.initialize(hardwareMap);
-        Mouse.init(hardwareMap);
+       Mouse.init(hardwareMap);
+        
 
         boolean timing = false;
         waitForStart();
 
 
-        scheduler.schedule(new SequentialCommandGroup(scheduler,new MoveToPosition(0.1,0,0)));
+        scheduler.schedule(new SequentialCommandGroup(scheduler,new MoveToPosition(0.05,0,0)));
 
         while (opModeIsActive()) {
             try {

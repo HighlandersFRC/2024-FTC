@@ -4,8 +4,8 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import org.firstinspires.ftc.teamcode.Subsystems.Drive;
 import org.firstinspires.ftc.teamcode.Subsystems.Peripherals;
-import org.firstinspires.ftc.teamcode.Tools.FinalPose;
-import org.firstinspires.ftc.teamcode.Tools.FieldOfMerit;
+/*import org.firstinspires.ftc.teamcode.Tools.FinalPose;
+import org.firstinspires.ftc.teamcode.Tools.FieldOfMerit;*/
 import org.firstinspires.ftc.teamcode.Tools.Robot;
 import org.firstinspires.ftc.teamcode.Tools.Mouse;
 
@@ -24,7 +24,7 @@ public class FieldCentric extends LinearOpMode {
 
         while (opModeIsActive()) {
             // Update the robot's pose
-            FinalPose.poseUpdate();
+            /*  FinalPose.poseUpdate();*/
 
             // Retrieve gamepad inputs
             double y = -gamepad1.left_stick_y;  // Forward/backward
@@ -71,23 +71,20 @@ public class FieldCentric extends LinearOpMode {
                     .addData("Y (m)", "%.2f", Mouse.getY())
                     .addData("Theta (deg)", "%.2f", Mouse.getTheta());
 
-            telemetry.addLine("Fused Pose")
-                    .addData("X (m)", "%.2f", FinalPose.x)
-                    .addData("Y (m)", "%.2f", FinalPose.y)
-                    .addData("Theta (deg)", "%.2f", FinalPose.Yaw);
 
             telemetry.addLine("Encoders")
                     .addData("Left Encoder", Drive.getLeftEncoder())
                     .addData("Right Encoder", Drive.getRightEncoder())
                     .addData("Center Encoder", Drive.getCenterEncoder());
 
-            telemetry.addLine("Sensors")
-                    .addData("Current Sensor State", FieldOfMerit.currentState);
+            telemetry.addLine("Sensors");
+
 
             telemetry.update();
         }
 
-        // Ensure motors are stopped after OpMode ends
-        Drive.stop();
+            // Ensure motors are stopped after OpMode ends
+
+        }
     }
-}
+

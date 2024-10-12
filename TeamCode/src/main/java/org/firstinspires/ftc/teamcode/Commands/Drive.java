@@ -4,6 +4,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import org.firstinspires.ftc.teamcode.Subsystems.Peripherals;
 import org.firstinspires.ftc.teamcode.Tools.FieldOfMerit;
 import org.firstinspires.ftc.teamcode.Tools.FinalPose;
+
 import org.firstinspires.ftc.teamcode.Tools.PID;
 
 public class Drive extends SequentialCommandGroup {
@@ -44,22 +45,25 @@ public class Drive extends SequentialCommandGroup {
     @Override
     public void start() {
 
-        FieldOfMerit.initialize(hardwareMap);
+    FieldOfMerit.initialize(hardwareMap);
+
 
         Peripherals.resetYaw();
 
         targetPos = distance;
-            drivePID.setSetPoint(targetPos);
+        drivePID.setSetPoint(targetPos);
 
     }
 
     @Override
     public void execute() {
 
-        FieldOfMerit.processTags();
+      FieldOfMerit.processTags();
         double currentXPos = FinalPose.y;
 
-        drivePID.updatePID(currentXPos);
+
+   drivePID.updatePID(currentXPos);
+
         currentPos = Peripherals.getYawDegrees();
         yawPID.updatePID(currentPos);
 
@@ -79,13 +83,22 @@ public class Drive extends SequentialCommandGroup {
         org.firstinspires.ftc.teamcode.Subsystems.Drive.drive(0, 0, 0, 0);
     }
 
-    @Override
+  @Override
     public boolean isFinished() {
-        double currentXPos = FinalPose.y;
-        if (Math.abs(currentXPos - targetPos) <= tolerance) {
+
+     double currentXPos = FinalPose.y;
+
+ if (Math.abs(currentXPos - targetPos) <= tolerance) {
             org.firstinspires.ftc.teamcode.Subsystems.Drive.stop();
             return true;
-        }
+
+   }
         return false;
     }
+
 }
+
+
+
+
+

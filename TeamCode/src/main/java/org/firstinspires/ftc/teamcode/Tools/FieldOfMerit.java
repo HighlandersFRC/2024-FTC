@@ -77,7 +77,7 @@ public class FieldOfMerit {
 
     public static void processTags() {
         tagProcessor.setPoseSolver(AprilTagProcessor.PoseSolver.APRILTAG_BUILTIN);
-        Drive.update();
+
 
         boolean tagDetected = false;
 

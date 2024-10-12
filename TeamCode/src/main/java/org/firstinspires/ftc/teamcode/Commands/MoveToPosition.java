@@ -50,14 +50,14 @@ public class MoveToPosition implements Command {
         double yVel = yPID.getResult() * 2;
         double thetaVel = Math.abs(targetTheta - currentTheta) < Math.toRadians(5) ? thetaPID.getResult() * 0.5 : thetaPID.getResult();
 
-        Drive.autoDrive(new Vector(xVel, yVel), thetaVel);
+        Drive.autoDrive(new Vector(yVel, xVel), thetaVel);
     }
 
     @Override
     public void end() {
-/*
+
         Drive.stop();
-*/
+        System.out.println("end!");
     }
 
     @Override
@@ -71,5 +71,7 @@ public class MoveToPosition implements Command {
         boolean angleReached = Math.abs(targetTheta - currentTheta) < angleTolerance;
 
         return positionReached && angleReached;
+
     }
+
 }

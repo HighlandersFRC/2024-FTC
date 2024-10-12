@@ -1,4 +1,4 @@
-/*
+
 
 package org.firstinspires.ftc.teamcode.Tools;
 
@@ -23,6 +23,7 @@ public class Mouse {
         if (instance == null) {
             instance = new Mouse();
             init(hardwareMap);
+            configureOtos();
         }
         return instance;
     }
@@ -37,7 +38,7 @@ public class Mouse {
     }
 
     // Configure the SparkFun OTOS settings
-    private static void configureOtos() {
+    public static void configureOtos() {
         mouse.setLinearUnit(DistanceUnit.INCH);
         mouse.setAngularUnit(AngleUnit.DEGREES);
         // Distance from center of robot
@@ -80,4 +81,3 @@ public class Mouse {
         return theta;
     }
 }
-*/
