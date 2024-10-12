@@ -1,7 +1,11 @@
 package org.firstinspires.ftc.teamcode.Tools;
 
+import org.firstinspires.ftc.teamcode.Commands.Command;
+
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.BooleanSupplier;
+import java.util.function.Supplier;
 
 public class Constants {
     public static final double PID_X_P = 0.1;
@@ -31,6 +35,10 @@ public class Constants {
     public static double xCorrected(double AX) {
         return AX - (0.181 * AX + -0.00049);
     }
+
+    public static HashMap<String, Supplier<Command>> commandMap = new HashMap<>();
+    public static HashMap<String, BooleanSupplier> conditionMap = new HashMap<>();
+
     public static class AprilTagData {
         public double positionX;
         public double positionY;
@@ -60,4 +68,5 @@ public class Constants {
     public static final double AUTONOMOUS_LOOKAHEAD_DISTANCE = 10;
     public static final double AUTONOMOUS_LOOKAHEAD_LINEAR_RADIUS = 10;
     public static final double AUTONOMOUS_LOOKAHEAD_ANGULAR_RADIUS = Math.PI;
+
 }
