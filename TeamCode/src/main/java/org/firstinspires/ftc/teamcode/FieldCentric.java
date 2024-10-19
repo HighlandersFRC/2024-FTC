@@ -1,13 +1,17 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.hardware.sparkfun.SparkFunOTOS;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.Subsystems.Drive;
 import org.firstinspires.ftc.teamcode.Subsystems.Peripherals;
-/*import org.firstinspires.ftc.teamcode.Tools.FinalPose;
-import org.firstinspires.ftc.teamcode.Tools.FieldOfMerit;*/
+import org.firstinspires.ftc.teamcode.Tools.FinalPose;
+import org.firstinspires.ftc.teamcode.Tools.FieldOfMerit;
 import org.firstinspires.ftc.teamcode.Tools.Robot;
-import org.firstinspires.ftc.teamcode.Tools.Mouse;
+import com.qualcomm.hardware.sparkfun.SparkFunOTOS;
 
 @TeleOp
 public class FieldCentric extends LinearOpMode {
@@ -15,30 +19,42 @@ public class FieldCentric extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
         // Initialize the robot systems
         Robot.initialize(hardwareMap);
-
-
+        SparkFunOTOS mouse;
+        mouse = hardwareMap.get(SparkFunOTOS.class, "mouse");
         waitForStart();
 
-        // Check for stop request (uncommented)
         if (isStopRequested()) return;
 
         while (opModeIsActive()) {
             // Update the robot's pose
-            /*  FinalPose.poseUpdate();*/
+            FinalPose.poseUpdate();
 
             // Retrieve gamepad inputs
-            Mouse.update();
             double y = -gamepad1.left_stick_y;  // Forward/backward
             double x = gamepad1.left_stick_x;   // Strafe
             double rx = gamepad1.right_stick_x; // Rotation
-
-
 
             // Reset the yaw and encoders if the right bumper is pressed
             if (gamepad1.right_bumper) {
                 Peripherals.resetYaw();
                 Drive.resetEncoder();
             }
+
+            //debug stuff
+            if (gamepad1.a) {
+                Drive.drive(1,0,0,0);
+            }
+            if (gamepad1.b) {
+                Drive.drive(0,1,0,0);
+            }
+            if (gamepad1.y){
+                Drive.drive(0,0,1,0);
+            }
+            if (gamepad1.x){
+                Drive.drive(0,0,0,1);
+            }
+
+
 
             // Get robot's current heading
             double botHeading = Peripherals.getYaw();
@@ -70,24 +86,28 @@ public class FieldCentric extends LinearOpMode {
                     .addData("Theta (deg)", "%.2f", Drive.getOdometryTheta());
 
             telemetry.addLine("Mouse Sensor Values")
-                    .addData("X (m)", "%.2f", Mouse.getX())
-                    .addData("Y (m)", "%.2f", Mouse.getY())
-                    .addData("Theta (deg)", "%.2f", Mouse.getTheta());
+                    .addData("X (m)", "%.2f", Drive.getTotalXTraveled())
+                    .addData("Y (m)", "%.2f", Drive.getTotalYTraveled())
+                    .addData("Theta (deg)", "%.2f", Drive.totalThetaTraveled);
 
+            telemetry.addLine("Fused Pose")
+                    .addData("X (m)", "%.2f", FinalPose.x)
+                    .addData("Y (m)", "%.2f", FinalPose.y)
+                    .addData("Theta (deg)", "%.2f", FinalPose.Yaw);
 
             telemetry.addLine("Encoders")
                     .addData("Left Encoder", Drive.getLeftEncoder())
                     .addData("Right Encoder", Drive.getRightEncoder())
                     .addData("Center Encoder", Drive.getCenterEncoder());
 
-            telemetry.addLine("Sensors");
-
+            telemetry.addLine("Sensors")
+                    .addData("Current Sensor State", FieldOfMerit.currentState);
 
             telemetry.update();
-        }
 
-            // Ensure motors are stopped after OpMode ends
 
         }
+
     }
 
+}
