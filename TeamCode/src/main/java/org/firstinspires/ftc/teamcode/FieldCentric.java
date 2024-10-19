@@ -27,9 +27,12 @@ public class FieldCentric extends LinearOpMode {
             /*  FinalPose.poseUpdate();*/
 
             // Retrieve gamepad inputs
+            Mouse.update();
             double y = -gamepad1.left_stick_y;  // Forward/backward
             double x = gamepad1.left_stick_x;   // Strafe
             double rx = gamepad1.right_stick_x; // Rotation
+
+
 
             // Reset the yaw and encoders if the right bumper is pressed
             if (gamepad1.right_bumper) {

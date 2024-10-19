@@ -22,10 +22,9 @@ public class SensorSparkFunOTOS extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         Peripherals.initialize(hardwareMap);
-        LowPassFilter filterX = new LowPassFilter(1);
         CommandScheduler scheduler = new CommandScheduler();
         Drive.initialize(hardwareMap);
-       Mouse.init(hardwareMap);
+        Mouse.init(hardwareMap);
         
 
         boolean timing = false;
@@ -35,6 +34,7 @@ public class SensorSparkFunOTOS extends LinearOpMode {
         scheduler.schedule(new SequentialCommandGroup(scheduler,new MoveToPosition(0.05,0,0)));
 
         while (opModeIsActive()) {
+            Mouse.update();
             try {
                 scheduler.run();
             } catch (JSONException e) {

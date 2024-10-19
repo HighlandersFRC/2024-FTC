@@ -53,17 +53,15 @@ public class Mouse {
 
     // Update the field values by calling getPosition() only once
     public static void update() {
-        if (mouse != null) {
+
             // Call getPosition() once and store the result in the field object
-            field = mouse.getPosition();
+            field = mouse.getPosition() ;
 
             // Update global X, Y, and theta (heading) positions from the sensor's field values
             fieldX = Math.round(field.x * 1000) / 1000.0;
             fieldY = Math.round(field.y * 1000) / 1000.0;
             theta = field.h;  // No need to round theta, it’s in radians
-        } else {
-            throw new IllegalStateException("Mouse sensor is not initialized.");
-        }
+
     }
 
     // Get the X position (already updated in the update() method)

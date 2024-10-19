@@ -69,13 +69,13 @@ public class Drive extends Subsystem {
     }
 
     public static void stop() {
-    Drive.drive(0,0,0,0);
+        Drive.drive(0,0,0,0);
 
-    backLeftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-    backRightMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-    frontLeftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-    frontRightMotor.setZeroPowerBehavior(
-            DcMotor.ZeroPowerBehavior.BRAKE);
+        backLeftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        backRightMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        frontLeftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        frontRightMotor.setZeroPowerBehavior(
+                DcMotor.ZeroPowerBehavior.BRAKE);
     }
     public Number[] purePursuitController(double currentX, double currentY, double currentTheta, int currentIndex,
                                           JSONArray pathPoints) throws JSONException {
@@ -84,7 +84,7 @@ public class Drive extends Subsystem {
         for (int i = currentIndex; i < pathPoints.length(); i++) {
             JSONObject point = pathPoints.getJSONObject(i);
             double velocityMag = Math.sqrt((Math.pow(point.getDouble("x_velocity"), 2) + Math.pow(point.getDouble("y_velocity"), 2))
-                            + Math.pow(point.getDouble("angular_velocity"), 2));
+                    + Math.pow(point.getDouble("angular_velocity"), 2));
             double targetTheta = point.getDouble("angle");
             while (Math.abs(targetTheta - currentTheta) > Math.PI) {
                 if (targetTheta - currentTheta > Math.PI) {
