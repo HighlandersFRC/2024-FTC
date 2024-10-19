@@ -4,8 +4,7 @@ import com.qualcomm.hardware.sparkfun.SparkFunOTOS;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+import org.firstinspires.ftc.teamcode.Tools.Mouse;
 import org.firstinspires.ftc.teamcode.Subsystems.Drive;
 import org.firstinspires.ftc.teamcode.Subsystems.Peripherals;
 import org.firstinspires.ftc.teamcode.Tools.FinalPose;
@@ -20,12 +19,13 @@ public class FieldCentric extends LinearOpMode {
         // Initialize the robot systems
         Robot.initialize(hardwareMap);
         SparkFunOTOS mouse;
-        mouse = hardwareMap.get(SparkFunOTOS.class, "mouse");
+        Mouse.init(hardwareMap);
         waitForStart();
 
         if (isStopRequested()) return;
 
         while (opModeIsActive()) {
+            Mouse.update();
             // Update the robot's pose
             FinalPose.poseUpdate();
 
@@ -86,8 +86,8 @@ public class FieldCentric extends LinearOpMode {
                     .addData("Theta (deg)", "%.2f", Drive.getOdometryTheta());
 
             telemetry.addLine("Mouse Sensor Values")
-                    .addData("X (m)", "%.2f", Drive.getTotalXTraveled())
-                    .addData("Y (m)", "%.2f", Drive.getTotalYTraveled())
+                    .addData("X (m)", "%.2f",Mouse.getX() )
+                    .addData("Y (m)", "%.2f", Mouse.getX())
                     .addData("Theta (deg)", "%.2f", Drive.totalThetaTraveled);
 
             telemetry.addLine("Fused Pose")

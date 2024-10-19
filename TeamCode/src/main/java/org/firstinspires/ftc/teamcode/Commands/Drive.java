@@ -45,7 +45,7 @@ public class Drive extends SequentialCommandGroup {
     @Override
     public void start() {
 
-    FieldOfMerit.initialize(hardwareMap);
+
 
 
         Peripherals.resetYaw();

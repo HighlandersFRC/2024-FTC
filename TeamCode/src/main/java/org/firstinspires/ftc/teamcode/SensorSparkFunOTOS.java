@@ -2,6 +2,8 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+
+import org.firstinspires.ftc.teamcode.Tools.FinalPose;
 import org.firstinspires.ftc.teamcode.Tools.Mouse;
 import org.firstinspires.ftc.teamcode.Commands.MoveToPosition;
 import org.firstinspires.ftc.teamcode.Commands.SequentialCommandGroup;
@@ -18,9 +20,11 @@ import org.firstinspires.ftc.teamcode.Tools.Mouse;
 @Autonomous(name = "Sensor: SparkFun OTOS", group = "Sensor")
 public class SensorSparkFunOTOS extends LinearOpMode {
 
-    
+
     @Override
+
     public void runOpMode() throws InterruptedException {
+
         Peripherals.initialize(hardwareMap);
         CommandScheduler scheduler = new CommandScheduler();
         Drive.initialize(hardwareMap);
@@ -28,13 +32,16 @@ public class SensorSparkFunOTOS extends LinearOpMode {
         
 
         boolean timing = false;
+
         waitForStart();
 
 
-        scheduler.schedule(new SequentialCommandGroup(scheduler,new MoveToPosition(0.05,0,0)));
+        scheduler.schedule(new SequentialCommandGroup(scheduler,new MoveToPosition(1,0,0)));
 
         while (opModeIsActive()) {
+
             Mouse.update();
+            FinalPose.poseUpdate();
             try {
                 scheduler.run();
             } catch (JSONException e) {
