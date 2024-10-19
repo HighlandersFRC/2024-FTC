@@ -11,7 +11,7 @@ import java.io.InputStreamReader;
 
 public class PathLoading {
 
-    private JSONObject jsonPathData;
+    private static JSONObject jsonPathData;
 
     public PathLoading(Context context, String pathFileName) {
         loadJSONFromAsset(context, pathFileName);
@@ -37,7 +37,7 @@ public class PathLoading {
         }
     }
 
-    public JSONObject getJsonPathData() {
+    public static JSONObject getJsonPathData() {
         return jsonPathData;
     }
 }

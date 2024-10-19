@@ -3,7 +3,9 @@ package org.firstinspires.ftc.teamcode.PathingTool;
 import org.firstinspires.ftc.teamcode.Commands.*;
 import org.firstinspires.ftc.teamcode.Subsystems.Drive;
 import org.firstinspires.ftc.teamcode.Subsystems.Peripherals;
+import org.firstinspires.ftc.teamcode.Tools.FinalPose;
 import org.firstinspires.ftc.teamcode.Tools.Parameters;
+import org.firstinspires.ftc.teamcode.Tools.Vector;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -36,7 +38,10 @@ public class PolarPathFollower extends SequentialCommandGroup {
             double theta = point.getDouble("angle");
             System.out.println("x: " + x + " y: " + y);
 
-            MoveToPosition moveToPosition = new MoveToPosition(x, y, theta);
+            Vector pointVector = Drive.purePursuitController(FinalPose.x, FinalPose.y, FinalPose.Yaw, i, points);
+
+            MoveToPosition moveToPosition = new MoveToPosition(pointVector.getI(), pointVector.getJ(), theta);
+
             addCommands(moveToPosition);
         }
 

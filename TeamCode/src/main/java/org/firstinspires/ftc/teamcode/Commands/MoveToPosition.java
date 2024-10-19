@@ -23,9 +23,11 @@ public class MoveToPosition implements Command {
         this.targetY = y;
         this.targetTheta = theta;
 
-        xPID = new PID(7.0, -1, 9);
-        yPID = new PID(7.0, -1, 9);
-        thetaPID = new PID(2.5, 0.0, 2.0);
+        xPID = new PID(6.0, 0.0, 8.0);
+        yPID = new PID(6.0, 0.0, 8.0);
+
+        thetaPID = new PID(3.0, 0.0, 1.5);
+        ;
     }
 
     @Override
@@ -46,18 +48,20 @@ public class MoveToPosition implements Command {
         yPID.updatePID(currentY);
         thetaPID.updatePID(currentTheta);
 
+
         double xVel = xPID.getResult() * 2;
         double yVel = yPID.getResult() * 2;
-        double thetaVel = Math.abs(targetTheta - currentTheta) < Math.toRadians(5) ? thetaPID.getResult() * 0.5 : thetaPID.getResult();
+
+        double thetaVel = Math.abs(targetTheta - currentTheta) < Math.toRadians(5)
+                ? thetaPID.getResult() * 0.5
+                : thetaPID.getResult();
 
         Drive.autoDrive(new Vector(xVel, yVel), thetaVel);
     }
 
     @Override
     public void end() {
-/*
-        Drive.stop();
-*/
+
     }
 
     @Override

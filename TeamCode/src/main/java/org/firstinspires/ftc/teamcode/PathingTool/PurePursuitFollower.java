@@ -1,16 +1,10 @@
 package org.firstinspires.ftc.teamcode.PathingTool;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 
 import org.firstinspires.ftc.teamcode.Commands.Command;
 import org.firstinspires.ftc.teamcode.Subsystems.Drive;
 import org.firstinspires.ftc.teamcode.Subsystems.Peripherals;
-import org.firstinspires.ftc.teamcode.Tools.FieldOfMerit;
 import org.firstinspires.ftc.teamcode.Tools.FinalPose;
 import org.firstinspires.ftc.teamcode.Tools.Vector;
 import org.json.JSONArray;
@@ -32,9 +26,8 @@ public class PurePursuitFollower implements Command {
   private Number[] desiredVelocityArray = new Number[4];
   private double desiredThetaChange = 0;
 
-  private boolean record;
 
-  private ArrayList<double[]> recordedOdometry = new ArrayList<double[]>();
+
   public double pathStartTime;
 
   private boolean pickupNote;
@@ -48,11 +41,9 @@ public class PurePursuitFollower implements Command {
     return currentPathPointIndex;
   }
 
-  public PurePursuitFollower(Drive drive, Peripherals peripherals, JSONArray pathPoints,
-                             boolean record) throws JSONException {
+  public PurePursuitFollower(Drive drive, Peripherals peripherals, JSONArray pathPoints) throws JSONException {
     this.drive = drive;
     this.path = pathPoints;
-    this.record = record;
     pathStartTime = pathPoints.getJSONObject(0).getDouble("time");
     this.peripherals = peripherals;
   }
@@ -83,8 +74,8 @@ public class PurePursuitFollower implements Command {
     currentTime = System.currentTimeMillis() - initTime + pathStartTime;
     // call PIDController function
     currentPathPointIndex = returnPathPointIndex;
-    desiredVelocityArray = drive.purePursuitController(odometryFusedX, odometryFusedY, odometryFusedTheta,
-            currentPathPointIndex, path);
+/*    desiredVelocityArray = drive.purePursuitController(odometryFusedX, odometryFusedY, odometryFusedTheta,
+            currentPathPointIndex, path);*/
 
     returnPathPointIndex = desiredVelocityArray[3].intValue();
     if (returnPathPointIndex == currentPathPointIndex) {

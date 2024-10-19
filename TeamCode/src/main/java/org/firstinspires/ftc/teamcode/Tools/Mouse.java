@@ -1,29 +1,14 @@
+/*
 package org.firstinspires.ftc.teamcode.Tools;
-
 import com.qualcomm.hardware.sparkfun.SparkFunOTOS;
 import com.qualcomm.robotcore.hardware.HardwareMap;
-import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
 public class Mouse {
-    private static Mouse instance;
     private static double fieldX;
     private static double fieldY;
     private static double theta;
     private static SparkFunOTOS mouse;
     private static SparkFunOTOS.Pose2D field;
-
-    // Private constructor to prevent instantiation
-    private Mouse() { }
-
-    // Singleton method to get the only instance of the Mouse class
-    public static Mouse getInstance(HardwareMap hardwareMap) {
-        if (instance == null) {
-            instance = new Mouse();
-            init(hardwareMap);
-        }
-        return instance;
-    }
 
     // Initialize the mouse sensor
     public static void init(HardwareMap hardwareMap) {
@@ -32,18 +17,19 @@ public class Mouse {
 
         // Configure the OTOS sensor settings
         configureOtos();
+
     }
 
     // Configure the SparkFun OTOS settings
     private static void configureOtos() {
-        mouse.setLinearUnit(DistanceUnit.INCH);
-        mouse.setAngularUnit(AngleUnit.DEGREES);
-        // Distance from center of robot
+        mouse.setLinearUnit(SparkFunOTOS.LinearUnit.METERS);
+        mouse.setAngularUnit(SparkFunOTOS.AngularUnit.RADIANS);
+        // distance from center of robot
         SparkFunOTOS.Pose2D offset = new SparkFunOTOS.Pose2D(0, 0, 0);
         mouse.setOffset(offset);
         mouse.calibrateImu();
         mouse.resetTracking();
-        // Camera
+        //camara
         SparkFunOTOS.Pose2D currentPosition = new SparkFunOTOS.Pose2D(0, 0, 0);
         mouse.setPosition(currentPosition);
     }
@@ -77,4 +63,4 @@ public class Mouse {
     public static double getTheta() {
         return theta;
     }
-}
+}*/

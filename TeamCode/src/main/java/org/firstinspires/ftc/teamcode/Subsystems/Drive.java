@@ -61,30 +61,14 @@ public class Drive extends Subsystem {
         lastUpdateTime = System.currentTimeMillis();
     }
 
-    public static void drive(double leftFrontPower, double rightFrontPower, double leftBackPower, double rightBackPower) {
-        frontLeftMotor.setPower(-leftFrontPower);
-        frontRightMotor.setPower(-rightFrontPower);
-        backLeftMotor.setPower(leftBackPower);
-        backRightMotor.setPower(-rightBackPower);
-    }
-
-    public static void stop() {
-    Drive.drive(0,0,0,0);
-
-    backLeftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-    backRightMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-    frontLeftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-    frontRightMotor.setZeroPowerBehavior(
-            DcMotor.ZeroPowerBehavior.BRAKE);
-    }
-    public Number[] purePursuitController(double currentX, double currentY, double currentTheta, int currentIndex,
-                                          JSONArray pathPoints) throws JSONException {
+    public static Vector purePursuitController(double currentX, double currentY, double currentTheta, int currentIndex,
+                                               JSONArray pathPoints) throws JSONException {
         JSONObject targetPoint = pathPoints.getJSONObject(pathPoints.length() - 1);
         int targetIndex = pathPoints.length() - 1;
         for (int i = currentIndex; i < pathPoints.length(); i++) {
             JSONObject point = pathPoints.getJSONObject(i);
             double velocityMag = Math.sqrt((Math.pow(point.getDouble("x_velocity"), 2) + Math.pow(point.getDouble("y_velocity"), 2))
-                            + Math.pow(point.getDouble("angular_velocity"), 2));
+                    + Math.pow(point.getDouble("angular_velocity"), 2));
             double targetTheta = point.getDouble("angle");
             while (Math.abs(targetTheta - currentTheta) > Math.PI) {
                 if (targetTheta - currentTheta > Math.PI) {
@@ -104,8 +88,10 @@ public class Drive extends Subsystem {
                 break;
             }
         }
+
         double targetX = targetPoint.getDouble("x"), targetY = targetPoint.getDouble("y"),
                 targetTheta = targetPoint.getDouble("angle");
+
         while (Math.abs(targetTheta - currentTheta) > Math.PI) {
             if (targetTheta - currentTheta > Math.PI) {
                 targetTheta -= 2 * Math.PI;
@@ -113,6 +99,7 @@ public class Drive extends Subsystem {
                 targetTheta += 2 * Math.PI;
             }
         }
+
         xPID.setSetPoint(targetX);
         yPID.setSetPoint(targetY);
         thetaPID.setSetPoint(targetTheta);
@@ -125,25 +112,34 @@ public class Drive extends Subsystem {
         double yVelNoFF = yPID.getResult();
         double thetaVelNoFF = -thetaPID.getResult();
 
-        double feedForwardX = targetPoint.getDouble("x_velocity")/2;
-        double feedForwardY = targetPoint.getDouble("y_velocity")/2;
-        double feedForwardTheta = -targetPoint.getDouble("angular_velocity")/2;
+        double feedForwardX = targetPoint.getDouble("x_velocity") / 2;
+        double feedForwardY = targetPoint.getDouble("y_velocity") / 2;
+        double feedForwardTheta = -targetPoint.getDouble("angular_velocity") / 2;
 
-        Number[] velocityArray = new Number[] {
-                feedForwardX + xVelNoFF,
-                -(feedForwardY + yVelNoFF),
-                feedForwardTheta + thetaVelNoFF,
-                targetIndex,
-        };
+        Vector velocityVector = new Vector(feedForwardX + xVelNoFF, -(feedForwardY + yVelNoFF));
 
-        double velocityMag = Math
-                .sqrt(Math.pow(targetPoint.getDouble("x_velocity"), 2) + Math.pow(targetPoint.getDouble("y_velocity"), 2));
-
-        return velocityArray;
+        return velocityVector;
     }
 
 
-    private boolean insideRadius(double deltaX, double deltaY, double deltaTheta, double radius) {
+    public static void drive(double leftFrontPower, double rightFrontPower, double leftBackPower, double rightBackPower) {
+        frontLeftMotor.setPower(-leftFrontPower);
+        frontRightMotor.setPower(-rightFrontPower);
+        backLeftMotor.setPower(leftBackPower);
+        backRightMotor.setPower(-rightBackPower);
+    }
+    public static void stop() {
+    Drive.drive(0,0,0,0);
+
+    backLeftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+    backRightMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+    frontLeftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+    frontRightMotor.setZeroPowerBehavior(
+            DcMotor.ZeroPowerBehavior.BRAKE);
+    }
+
+
+    private static boolean insideRadius(double deltaX, double deltaY, double deltaTheta, double radius) {
         return Math.sqrt(Math.pow(deltaX, 2) + Math.pow(deltaY, 2) + Math.pow(deltaTheta, 2)) < radius;
     }
 
