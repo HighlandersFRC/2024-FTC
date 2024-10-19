@@ -19,8 +19,8 @@ public class FieldCentric extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
         // Initialize the robot systems
         Robot.initialize(hardwareMap);
-        SparkFunOTOS myOtos;
-        myOtos = hardwareMap.get(SparkFunOTOS.class, "sensor_otos");
+        SparkFunOTOS mouse;
+        mouse = hardwareMap.get(SparkFunOTOS.class, "mouse");
         waitForStart();
 
         if (isStopRequested()) return;
@@ -57,7 +57,7 @@ public class FieldCentric extends LinearOpMode {
 
 
             // Get robot's current heading
-            double botHeading = -Peripherals.getYaw();
+            double botHeading = Peripherals.getYaw();
 
             // Rotate gamepad inputs to align with the field
             double rotX = x * Math.cos(-botHeading) - y * Math.sin(-botHeading);
@@ -107,6 +107,7 @@ public class FieldCentric extends LinearOpMode {
 
 
         }
-    }
-}
 
+    }
+
+}
