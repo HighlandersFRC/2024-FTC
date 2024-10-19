@@ -84,10 +84,8 @@ public class TestAuto extends LinearOpMode {
                     .setStroke("red")
                     .strokeLine(robotX, robotY, headingX, headingY);
 
-            // Send telemetry packet to FTC Dashboard
             dashboard.sendTelemetryPacket(packet);
-
-            // Regular telemetry for Driver Station*/
+*/
             telemetry.addData("X", robotX);
             telemetry.addData("Y", robotY);
             telemetry.addData("Theta", robotTheta);
