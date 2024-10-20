@@ -36,12 +36,13 @@ public class SensorSparkFunOTOS extends LinearOpMode {
         waitForStart();
 
 
-        scheduler.schedule(new SequentialCommandGroup(scheduler,new MoveToPosition(1,0,0)));
+        scheduler.schedule(new SequentialCommandGroup(scheduler,new MoveToPosition(0.5,0,0)));
 
         while (opModeIsActive()) {
 
             Mouse.update();
             FinalPose.poseUpdate();
+
             try {
                 scheduler.run();
             } catch (JSONException e) {
