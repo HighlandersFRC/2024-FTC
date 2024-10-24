@@ -11,7 +11,7 @@ import java.io.InputStreamReader;
 
 public class PathLoading {
 
-    private JSONObject jsonPathData;
+    private static JSONObject jsonPathData;
 
     public PathLoading(Context context, String pathFileName) {
         loadJSONFromAsset(context, pathFileName);
@@ -19,7 +19,6 @@ public class PathLoading {
 
     private void loadJSONFromAsset(Context context, String pathFileName) {
         try {
-            // Open the JSON file from the assets folder
             InputStream inputStream = context.getAssets().open(pathFileName);
             BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
             StringBuilder sb = new StringBuilder();
@@ -30,14 +29,13 @@ public class PathLoading {
             reader.close();
             inputStream.close();
 
-            // Parse the JSON content into a JSONObject
             jsonPathData = new JSONObject(sb.toString());
         } catch (IOException | JSONException e) {
             e.printStackTrace();
         }
     }
 
-    public JSONObject getJsonPathData() {
+    public static JSONObject getJsonPathData() {
         return jsonPathData;
     }
 }

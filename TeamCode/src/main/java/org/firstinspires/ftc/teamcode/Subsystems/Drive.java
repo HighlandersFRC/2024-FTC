@@ -129,13 +129,13 @@ public class Drive extends Subsystem {
         backRightMotor.setPower(-rightBackPower);
     }
     public static void stop() {
-        Drive.drive(0,0,0,0);
+    Drive.drive(0,0,0,0);
 
-        backLeftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        backRightMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        frontLeftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        frontRightMotor.setZeroPowerBehavior(
-                DcMotor.ZeroPowerBehavior.BRAKE);
+    backLeftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+    backRightMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+    frontLeftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+    frontRightMotor.setZeroPowerBehavior(
+            DcMotor.ZeroPowerBehavior.BRAKE);
     }
 
 
