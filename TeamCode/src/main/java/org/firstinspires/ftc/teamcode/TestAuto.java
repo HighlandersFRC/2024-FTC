@@ -36,7 +36,7 @@ public class TestAuto extends LinearOpMode {
 
         Drive.setPosition(0, 0, 0);
         //just add the autonomous path here in the pathfilename parameter.  the path has to be in assets
-        PathLoading pathLoading = new PathLoading(hardwareMap.appContext, "Straight.polarpath");
+        PathLoading pathLoading = new PathLoading(hardwareMap.appContext, "OneMeter.polarpath");
         CommandScheduler scheduler = new CommandScheduler();
         Drive drive = new Drive();
         Peripherals peripherals = new Peripherals("peripherals");
@@ -46,11 +46,7 @@ public class TestAuto extends LinearOpMode {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
-        try {
-            scheduler.schedule(moveToPosition);
-        } catch (JSONException e) {
-            throw new RuntimeException(e);
-        }
+        scheduler.schedule(moveToPosition);
 
         waitForStart();
 

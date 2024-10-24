@@ -2,38 +2,36 @@ package org.firstinspires.ftc.teamcode.Commands;
 
 import org.json.JSONException;
 
+import java.util.function.BooleanSupplier;
+
 public class ConditionalCommand implements Command {
 
     private Command onTrue;
     private Command onFalse;
     private Command commandToRun;
-    private boolean condition;
+    private BooleanSupplier condition;
 
-    public ConditionalCommand(boolean condition, Command onTrue, Command onFalse) {
+    public ConditionalCommand(BooleanSupplier condition, Command onTrue, Command onFalse) {
         this.condition = condition;
         this.onTrue = onTrue;
         this.onFalse = onFalse;
-        if (condition){
+        if (condition.getAsBoolean()) {
             commandToRun = onTrue;
-        }else{
+        } else {
             commandToRun = onFalse;
         }
     }
 
     @Override
-    public void start() {
-        if (condition) {
+    public void start() throws JSONException {
+        if (condition.getAsBoolean()) {
             commandToRun = onTrue;
         } else {
             commandToRun = onFalse;
         }
 
         if (commandToRun != null) {
-            try {
-                commandToRun.start();
-            } catch (JSONException e) {
-                throw new RuntimeException(e);
-            }
+            commandToRun.start();
         }
     }
 
