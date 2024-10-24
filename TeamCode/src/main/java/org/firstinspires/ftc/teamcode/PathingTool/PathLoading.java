@@ -19,7 +19,6 @@ public class PathLoading {
 
     private void loadJSONFromAsset(Context context, String pathFileName) {
         try {
-            // Open the JSON file from the assets folder
             InputStream inputStream = context.getAssets().open(pathFileName);
             BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
             StringBuilder sb = new StringBuilder();
@@ -30,7 +29,6 @@ public class PathLoading {
             reader.close();
             inputStream.close();
 
-            // Parse the JSON content into a JSONObject
             jsonPathData = new JSONObject(sb.toString());
         } catch (IOException | JSONException e) {
             e.printStackTrace();

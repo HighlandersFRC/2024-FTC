@@ -340,11 +340,11 @@ public class Drive extends Subsystem {
     public static int getCenterEncoder() {
         return frontRightMotor.getCurrentPosition();
     }
-    public static void autoDrive(Vector vector, double omega) {
+    public static void autoDrive(Vector vector, double angle) {
         double vx = vector.getJ();
         double vy = -vector.getI();
 
-        double rotationFactor = omega * (L + W);
+        double rotationFactor = angle * (L + W);
 
         double frontLeftPower = vx + vy + rotationFactor;
         double frontRightPower = vx - vy - rotationFactor;
