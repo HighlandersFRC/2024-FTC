@@ -58,7 +58,7 @@ public class Drive extends SequentialCommandGroup {
     @Override
     public void execute() {
 
-      FieldOfMerit.processTags();
+      //FieldOfMerit.processTags();
         double currentXPos = FinalPose.y;
 
 

@@ -1,13 +1,16 @@
 package org.firstinspires.ftc.teamcode.Tools;
 
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.hardware.sparkfun.SparkFunOTOS;
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
 public class Mouse {
-    private static double fieldX;
-    private static double fieldY;
-    private static double theta;
-    private static SparkFunOTOS mouse;
-    private static SparkFunOTOS.Pose2D field;
+    public static double fieldX;
+    public static double fieldY;
+    public static double theta;
+    public static SparkFunOTOS mouse;
+    public static SparkFunOTOS.Pose2D field;
 
     // Initialize the mouse sensor
     public static void init(HardwareMap hardwareMap) {
@@ -21,8 +24,8 @@ public class Mouse {
 
     // Configure the SparkFun OTOS settings
     private static void configureOtos() {
-        mouse.setLinearUnit(SparkFunOTOS.LinearUnit.METERS);
-        mouse.setAngularUnit(SparkFunOTOS.AngularUnit.DEGREES);
+        mouse.setLinearUnit(DistanceUnit.METER);
+        mouse.setAngularUnit(AngleUnit.DEGREES);
         // distance from center of robot
         SparkFunOTOS.Pose2D offset = new SparkFunOTOS.Pose2D(0, 0, 0);
         mouse.setOffset(offset);

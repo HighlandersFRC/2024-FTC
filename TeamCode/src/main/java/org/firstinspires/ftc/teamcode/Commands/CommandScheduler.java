@@ -5,11 +5,12 @@ import com.qualcomm.robotcore.util.RobotLog;
 import org.json.JSONException;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class CommandScheduler {
     private static CommandScheduler instance;
-    private List<Command> scheduledCommands = new ArrayList<>();
+    private static List<Command> scheduledCommands = new ArrayList<>();
 
     public static CommandScheduler getInstance() {
         if (instance == null) {
@@ -18,19 +19,19 @@ public class CommandScheduler {
         return instance;
     }
 
-    public void schedule(Command command) {
-        try {
-            command.start();
-        } catch (JSONException e) {
-            throw new RuntimeException(e);
-        }
+    public static void add(CommandScheduler scheduler, Command... commands) {
+        scheduledCommands.addAll(Arrays.asList(commands));
+    }
+
+    public void schedule(Command command) throws JSONException {
+        command.start();
         scheduledCommands.add(command);
         RobotLog.d("Command Scheduled: " + command.getClass().getSimpleName());
     }
 
     public void run() throws InterruptedException, JSONException {
         List<Command> finishedCommands = new ArrayList<>();
-        for (Command command : scheduledCommands) {
+        for (Command command : new ArrayList<>(scheduledCommands)) {
             if (command.isFinished()) {
                 command.end();
                 finishedCommands.add(command);
@@ -41,6 +42,7 @@ public class CommandScheduler {
         }
         scheduledCommands.removeAll(finishedCommands);
     }
+
     public void cancel(Command command) {
         command.end();
         scheduledCommands.remove(command);
@@ -48,13 +50,10 @@ public class CommandScheduler {
     }
 
     public void cancelAll() {
-        for (Command command : scheduledCommands) {
+        for (Command command : new ArrayList<>(scheduledCommands)) {
             command.end();
             RobotLog.d("Command Cancelled: " + command.getClass().getSimpleName());
         }
         scheduledCommands.clear();
     }
-    public CommandScheduler() {
-    }
-
 }

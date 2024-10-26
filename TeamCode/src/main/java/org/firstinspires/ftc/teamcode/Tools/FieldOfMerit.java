@@ -24,7 +24,7 @@ public class FieldOfMerit {
 
 
 
-    public static void processTags() {
+   /* public static void processTags() {
 
         double X = Peripherals.getLimelightX();
         double Y = Peripherals.getLimelightY();
@@ -52,7 +52,7 @@ public class FieldOfMerit {
             currentState = "Odometry Pods";
             FinalPose.setFinalPose(fieldX, fieldY, theta);
         }
-    }
+    }*/
 
     public double getFieldX() {
         return fieldX;

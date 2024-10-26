@@ -11,6 +11,7 @@ import org.firstinspires.ftc.teamcode.Commands.Command;
 import org.firstinspires.ftc.teamcode.Commands.CommandScheduler;
 import org.firstinspires.ftc.teamcode.Commands.MoveToPosition;
 import org.firstinspires.ftc.teamcode.PathingTool.PathLoading;
+import org.firstinspires.ftc.teamcode.Tools.Mouse;
 import org.firstinspires.ftc.teamcode.PathingTool.PolarPathFollower;
 import org.firstinspires.ftc.teamcode.Subsystems.Drive;
 import org.firstinspires.ftc.teamcode.Subsystems.Peripherals;
@@ -29,28 +30,35 @@ public class TestAuto extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         FieldOfMerit.initialize(hardwareMap);
-
+        Mouse.init(hardwareMap);
 /*
         dashboard = FtcDashboard.getInstance();
 */
 
         Drive.setPosition(0, 0, 0);
         //just add the autonomous path here in the pathfilename parameter.  the path has to be in assets
-        PathLoading pathLoading = new PathLoading(hardwareMap.appContext, "OneMeter.polarpath");
+        PathLoading pathLoading = new PathLoading(hardwareMap.appContext, "1meter.polarpath");
         CommandScheduler scheduler = new CommandScheduler();
         Drive drive = new Drive();
         Peripherals peripherals = new Peripherals("peripherals");
         Command moveToPosition;
+
         try {
             moveToPosition = new PolarPathFollower(drive, peripherals, PathLoading.getJsonPathData(), Constants.commandMap, Constants.conditionMap, scheduler);
-        } catch (Exception e) {
+        } catch (JSONException e) {
             throw new RuntimeException(e);
         }
-        scheduler.schedule(moveToPosition);
+
+        try {
+            scheduler.schedule(moveToPosition);
+        } catch (JSONException e) {
+            throw new RuntimeException(e);
+        }
 
         waitForStart();
 
         while (opModeIsActive()) {
+            Mouse.update();
             FinalPose.poseUpdate();
             try {
                 scheduler.run();
@@ -85,6 +93,9 @@ public class TestAuto extends LinearOpMode {
             telemetry.addData("X", robotX);
             telemetry.addData("Y", robotY);
             telemetry.addData("Theta", robotTheta);
+            telemetry.addData("mouseX", FinalPose.x);
+            telemetry.addData("mouseY", FinalPose.y);
+            telemetry.addData("mouseYaw", FinalPose.Yaw);
             telemetry.update();
         }
     }
