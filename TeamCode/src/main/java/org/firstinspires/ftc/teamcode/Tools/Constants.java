@@ -65,8 +65,8 @@ public class Constants {
         aprilTagMap.put(16, new AprilTagData(3.048, 0, 0.1016, 0));
     }
 
-    public static final double AUTONOMOUS_LOOKAHEAD_DISTANCE = 10;
-    public static final double AUTONOMOUS_LOOKAHEAD_LINEAR_RADIUS = 10;
+    public static final double AUTONOMOUS_LOOKAHEAD_DISTANCE = 1;
+    public static final double AUTONOMOUS_LOOKAHEAD_LINEAR_RADIUS = 1;
     public static final double AUTONOMOUS_LOOKAHEAD_ANGULAR_RADIUS = Math.PI;
 
 }

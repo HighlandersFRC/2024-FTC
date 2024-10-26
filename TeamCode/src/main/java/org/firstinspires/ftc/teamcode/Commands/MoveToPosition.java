@@ -23,8 +23,8 @@ public class MoveToPosition implements Command {
         this.targetY = y;
         this.targetTheta = theta;
 
-        xPID = new PID(6.0, 0.0, 8.0);
-        yPID = new PID(6.0, 0.0, 8.0);
+        xPID = new PID(8.0, 0.0, 6.0);
+        yPID = new PID(8.0, 0.0, 6.0);
 
         thetaPID = new PID(3.0, 0.0, 1.5);
         ;

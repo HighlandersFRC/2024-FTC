@@ -36,13 +36,17 @@ public class TestAuto extends LinearOpMode {
 
         Drive.setPosition(0, 0, 0);
         //just add the autonomous path here in the pathfilename parameter.  the path has to be in assets
-        PathLoading pathLoading = new PathLoading(hardwareMap.appContext, "Straight.polarpath");
+        PathLoading pathLoading = new PathLoading(hardwareMap.appContext, "Tests.polarpath");
+
         CommandScheduler scheduler = new CommandScheduler();
         Drive drive = new Drive();
         Peripherals peripherals = new Peripherals("peripherals");
         Command moveToPosition;
         try {
+/*
             moveToPosition = new PolarPathFollower(drive, peripherals, PathLoading.getJsonPathData(), Constants.commandMap, Constants.conditionMap, scheduler);
+*/
+            moveToPosition = new MoveToPosition(0, 0.5, 0);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

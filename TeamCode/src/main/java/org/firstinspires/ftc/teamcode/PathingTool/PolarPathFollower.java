@@ -38,9 +38,11 @@ public class PolarPathFollower extends SequentialCommandGroup {
             double theta = point.getDouble("angle");
             System.out.println("x: " + x + " y: " + y);
 
+/*
             Vector pointVector = Drive.purePursuitController(FinalPose.x, FinalPose.y, FinalPose.Yaw, i, points);
+*/
 
-            MoveToPosition moveToPosition = new MoveToPosition(pointVector.getI(), pointVector.getJ(), theta);
+            MoveToPosition moveToPosition = new MoveToPosition(x, y, theta);
 
             addCommands(moveToPosition);
         }

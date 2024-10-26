@@ -25,18 +25,17 @@ public class FieldOfMerit {
 
 
     public static void processTags() {
-/*
+
         double X = Peripherals.getLimelightX();
-        double Y = Peripherals.getLimelightY();*/
+        double Y = Peripherals.getLimelightY();
         double robotYaw = Peripherals.getYaw();
-int X= 0;
-int Y =0;
+
         if (X != 0 || Y != 0) {
 
             currentState = "Vision";
-/*
+
             fieldX = X;
-            fieldY = Y;*/
+            fieldY = Y;
             theta = robotYaw;
 
             Drive.setPosition(fieldX, fieldY, theta);
@@ -44,6 +43,8 @@ int Y =0;
         }
 
         else {
+
+
             fieldX = Drive.getOdometryX();
             fieldY = Drive.getOdometryY();
             theta = Drive.getOdometryTheta();
@@ -67,3 +68,9 @@ int Y =0;
 
 
 }
+
+
+
+
+
+
