@@ -48,10 +48,10 @@ public class MoveToPosition implements Command {
         thetaPID.updatePID(currentTheta);
 
         double xVel = xPID.getResult()*2 ;
-        double yVel = -yPID.getResult()*2 ;
+        double yVel = yPID.getResult()*2 ;
         double thetaVel = Math.abs(targetTheta - currentTheta) < Math.toRadians(5) ? thetaPID.getResult() * 0.5 : thetaPID.getResult();
 
-        Drive.autoDrive(new Vector(yVel, xVel), -thetaVel);
+        Drive.autoDrive(new Vector(yVel, xVel), thetaVel);
 
     }
 
