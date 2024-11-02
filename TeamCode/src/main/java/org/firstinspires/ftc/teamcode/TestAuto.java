@@ -35,7 +35,7 @@ public class TestAuto extends LinearOpMode {
 */
 
         Drive.setPosition(0, 0, 0);
-        PathLoading pathLoading = new PathLoading(hardwareMap.appContext, "Parabola.json");
+        PathLoading pathLoading = new PathLoading(hardwareMap.appContext, "LShape.polarpath");
         CommandScheduler scheduler = new CommandScheduler();
         Drive drive = new Drive();
         Peripherals peripherals = new Peripherals("peripherals");

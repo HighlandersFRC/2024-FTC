@@ -14,17 +14,17 @@ public class MoveToPosition implements Command {
     private final double positionTolerance = 0.02;
     private final double angleTolerance = Math.toRadians(2);
 
-    private PID xPID;
-    private PID yPID;
-    private PID thetaPID;
+    private final PID xPID;
+    private final PID yPID;
+    private final PID thetaPID;
 
     public MoveToPosition(double x, double y, double theta) {
         this.targetX = x;
         this.targetY = y;
         this.targetTheta = theta;
 
-        xPID = new PID(7.0, -1, 9);
-        yPID = new PID(7.0, -1, 9);
+        xPID = new PID(7.3, -1.2, 10.8);
+        yPID = new PID(9.3, -1.2, 10.2);
         thetaPID = new PID(2.5, 0.0, 2.0);
     }
 
@@ -39,8 +39,8 @@ public class MoveToPosition implements Command {
     public void execute() throws InterruptedException {
         FinalPose.poseUpdate();
         double currentX = -FinalPose.x;
-        double currentY = -FinalPose.y;
-        double currentTheta = Math.toRadians(FinalPose.Yaw);
+        double currentY = FinalPose.y;
+        double currentTheta = Math.toRadians(-FinalPose.Yaw);
 
         xPID.updatePID(currentX);
         yPID.updatePID(currentY);
@@ -63,8 +63,8 @@ public class MoveToPosition implements Command {
     @Override
     public boolean isFinished() {
         double currentX = -FinalPose.x;
-        double currentY = -FinalPose.y;
-        double currentTheta = Math.toRadians(FinalPose.Yaw);
+        double currentY = FinalPose.y;
+        double currentTheta = Math.toRadians(-FinalPose.Yaw);
 
         boolean positionReached = Math.abs(targetX - currentX) < positionTolerance
                 && Math.abs(targetY - currentY) < positionTolerance;

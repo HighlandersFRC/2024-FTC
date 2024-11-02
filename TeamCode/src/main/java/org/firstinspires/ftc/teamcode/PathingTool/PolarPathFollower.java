@@ -36,7 +36,7 @@ public class PolarPathFollower extends SequentialCommandGroup {
             double theta = point.getDouble("angle");
             System.out.println("x: " + x + " y: " + y);
 
-            MoveToPosition moveToPosition = new MoveToPosition(x, y, theta);
+            MoveToPosition moveToPosition = new MoveToPosition(-x, y, theta);
             addCommands(moveToPosition);
         }
 
@@ -82,6 +82,7 @@ public class PolarPathFollower extends SequentialCommandGroup {
                 throw new RuntimeException(e);
             }
         };
+
         BooleanSupplier endSupplier = () -> {
             try {
                 return command.getDouble("end") <= getPathTime();

@@ -1,6 +1,8 @@
 package org.firstinspires.ftc.teamcode.Tools;
 
 import org.firstinspires.ftc.teamcode.Commands.Command;
+import org.firstinspires.ftc.teamcode.Commands.TestCommand;
+import org.firstinspires.ftc.teamcode.Commands.TestCommand2;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -38,6 +40,12 @@ public class Constants {
 
     public static HashMap<String, Supplier<Command>> commandMap = new HashMap<>();
     public static HashMap<String, BooleanSupplier> conditionMap = new HashMap<>();
+
+    static {
+        commandMap.put("TestCommand", () -> new TestCommand());
+        commandMap.put("TestCommand2", () -> new TestCommand2());
+    }
+
 
     public static class AprilTagData {
         public double positionX;
