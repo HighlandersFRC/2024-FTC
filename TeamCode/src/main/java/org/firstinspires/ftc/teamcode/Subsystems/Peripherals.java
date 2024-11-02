@@ -77,7 +77,7 @@ public class Peripherals extends Subsystem {
     public static double getLimelightY() {
         LLResult result = getLimelightResult();
         if (result != null && result.isValid()) {
-            return result.getBotpose().getPosition().y + 1.83;  // Adjusted Y
+            return result.getBotpose().getPosition().y + 1.83;
         }
         return 0;
     }
