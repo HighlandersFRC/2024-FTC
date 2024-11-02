@@ -21,4 +21,8 @@ public class FinalPose extends Object {
         y = Mouse.getY();    // Get the updated Y position from Mouse class
         Yaw = Mouse.getTheta();  // Get the updated Yaw (Theta) from Mouse class
     }
+
+    public static void Reset(){
+        Mouse.configureOtos();
+    }
 }

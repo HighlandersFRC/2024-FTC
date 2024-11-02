@@ -1,16 +1,13 @@
 package org.firstinspires.ftc.teamcode.Tools;
 
 import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.qualcomm.hardware.sparkfun.SparkFunOTOS;
-import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
 public class Mouse {
-    public static double fieldX;
-    public static double fieldY;
-    public static double theta;
-    public static SparkFunOTOS mouse;
-    public static SparkFunOTOS.Pose2D field;
+    private static double fieldX;
+    private static double fieldY;
+    private static double theta;
+    private static SparkFunOTOS mouse;
+    private static SparkFunOTOS.Pose2D field;
 
     // Initialize the mouse sensor
     public static void init(HardwareMap hardwareMap) {
@@ -23,12 +20,14 @@ public class Mouse {
     }
 
     // Configure the SparkFun OTOS settings
-    private static void configureOtos() {
-        mouse.setLinearUnit(DistanceUnit.METER);
-        mouse.setAngularUnit(AngleUnit.DEGREES);
+    public static void configureOtos() {
+        mouse.setLinearUnit(SparkFunOTOS.LinearUnit.METERS);
+        mouse.setAngularUnit(SparkFunOTOS.AngularUnit.DEGREES);
         // distance from center of robot
-        SparkFunOTOS.Pose2D offset = new SparkFunOTOS.Pose2D(0, 0, 0);
+        SparkFunOTOS.Pose2D offset = new SparkFunOTOS.Pose2D(0.0889, 0.01905, -90);
         mouse.setOffset(offset);
+        mouse.setLinearScalar(1);
+        mouse.setAngularScalar(0.989932511851);
         mouse.calibrateImu();
         mouse.resetTracking();
         //camara
@@ -39,13 +38,13 @@ public class Mouse {
     // Update the field values by calling getPosition() only once
     public static void update() {
 
-            // Call getPosition() once and store the result in the field object
-            field = mouse.getPosition();
+        // Call getPosition() once and store the result in the field object
+        field = mouse.getPosition();
 
-            // Update global X, Y, and theta (heading) positions from the sensor's field values
-            fieldX = Math.round(field.x * 1000) / 1000.0;
-            fieldY = Math.round(field.y * 1000) / 1000.0;
-            theta = field.h;  // No need to round theta, it’s in radians
+        // Update global X, Y, and theta (heading) positions from the sensor's field values
+        fieldX = field.x;
+        fieldY =field.y;
+        theta = field.h;  // No need to round theta, it’s in radians
 
     }
 
@@ -61,6 +60,6 @@ public class Mouse {
 
     // Get the Theta (heading) (already updated in the update() method)
     public static double getTheta() {
-        return theta;
+        return theta*mouse.getAngularScalar();
     }
 }

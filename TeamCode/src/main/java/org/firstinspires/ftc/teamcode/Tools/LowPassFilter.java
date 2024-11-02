@@ -1,41 +1,33 @@
 package org.firstinspires.ftc.teamcode.Tools;
 
 public class LowPassFilter {
-    private double alpha;  // smoothing factor (0 < alpha < 1)
-    private double previousOutput;  // stores the previous output of the filter
-    private boolean initialized;  // keeps track of whether the filter has been initialized
+    private double alpha;  // Smoothing factor
+    private Double filteredValue = null;  // Filtered value (null initially)
 
-    // Constructor for the low pass filter
+    // Constructor with alpha value (0 < alpha <= 1)
     public LowPassFilter(double alpha) {
-        if (alpha < 0.0 || alpha > 1.0) {
-            throw new IllegalArgumentException("Alpha must be between 0 and 1");
-        }
         this.alpha = alpha;
-        this.initialized = false;
     }
 
-    // Apply the filter to the input value
-    public double filter(double input) {
-        if (!initialized) {
-            // The first time, we initialize the filter with the input value
-            previousOutput = input;
-            initialized = true;
+    // Method to update the filter with a new value
+    public double update(double newValue) {
+        if (filteredValue == null) {
+            // Initialize the filtered value on the first update
+            filteredValue = newValue;
+        } else {
+            // Apply the low-pass filter formula
+            filteredValue = (alpha * newValue) + ((1 - alpha) * filteredValue);
         }
-        // Apply the filter equation: output = alpha * input + (1 - alpha) * previousOutput
-        previousOutput = alpha * input + (1 - alpha) * previousOutput;
-        return previousOutput;
+        return filteredValue;
     }
 
-    // Reset the filter
-    public void reset() {
-        initialized = false;
-    }
-
-    // Optionally set a new alpha value
+    // Setter to adjust alpha if needed
     public void setAlpha(double alpha) {
-        if (alpha < 0.0 || alpha > 1.0) {
-            throw new IllegalArgumentException("Alpha must be between 0 and 1");
-        }
         this.alpha = alpha;
+    }
+
+    // Getter to retrieve the current filtered value
+    public double getFilteredValue() {
+        return filteredValue != null ? filteredValue : 0.0;
     }
 }

@@ -40,7 +40,7 @@ public class MoveToPosition implements Command {
     public void execute() throws InterruptedException {
         FinalPose.poseUpdate();
         double currentX = FinalPose.x;
-        double currentY = -FinalPose.y;
+        double currentY = FinalPose.y;
         double currentTheta = Math.toRadians(FinalPose.Yaw);
 
         xPID.updatePID(currentX);
@@ -51,7 +51,7 @@ public class MoveToPosition implements Command {
         double yVel = yPID.getResult()*2 ;
         double thetaVel = Math.abs(targetTheta - currentTheta) < Math.toRadians(5) ? thetaPID.getResult() * 0.5 : thetaPID.getResult();
 
-        Drive.autoDrive(new Vector(yVel, xVel), thetaVel);
+        Drive.autoDrive(new Vector(xVel, -yVel), thetaVel);
 
     }
 

@@ -4,6 +4,7 @@ import com.qualcomm.hardware.sparkfun.SparkFunOTOS;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
+import org.firstinspires.ftc.teamcode.Tools.LowPassFilter;
 import org.firstinspires.ftc.teamcode.Tools.Mouse;
 import org.firstinspires.ftc.teamcode.Subsystems.Drive;
 import org.firstinspires.ftc.teamcode.Subsystems.Peripherals;
@@ -22,17 +23,19 @@ public class FieldCentric extends LinearOpMode {
         Mouse.init(hardwareMap);
         waitForStart();
 
+
         if (isStopRequested()) return;
 
         while (opModeIsActive()) {
+
             Mouse.update();
             // Update the robot's pose
             FinalPose.poseUpdate();
 
             // Retrieve gamepad inputs
-            double y = -gamepad1.left_stick_y;  // Forward/backward
-            double x = gamepad1.left_stick_x;   // Strafe
-            double rx = gamepad1.right_stick_x; // Rotation
+            double y = gamepad1.left_stick_y;  // Forward/backward
+            double x = -gamepad1.left_stick_x;   // Strafe
+            double rx = -gamepad1.right_stick_x; // Rotation
 
             // Reset the yaw and encoders if the right bumper is pressed
             if (gamepad1.right_bumper) {
@@ -54,10 +57,14 @@ public class FieldCentric extends LinearOpMode {
                 Drive.drive(0,0,0,1);
             }
 
+            if (gamepad1.right_bumper){
+                Mouse.configureOtos();
+
+            }
 
 
             // Get robot's current heading
-            double botHeading = Peripherals.getYaw();
+            double botHeading = Math.toRadians(Mouse.getTheta());
 
             // Rotate gamepad inputs to align with the field
             double rotX = x * Math.cos(-botHeading) - y * Math.sin(-botHeading);
@@ -88,7 +95,7 @@ public class FieldCentric extends LinearOpMode {
             telemetry.addLine("Mouse Sensor Values")
                     .addData("X (m)", "%.2f",Mouse.getX() )
                     .addData("Y (m)", "%.2f", Mouse.getX())
-                    .addData("Theta (deg)", "%.2f", Drive.totalThetaTraveled);
+                    .addData("Theta (deg)", "%.2f",Mouse.getTheta() );
 
             telemetry.addLine("Fused Pose")
                     .addData("X (m)", "%.2f", FinalPose.x)

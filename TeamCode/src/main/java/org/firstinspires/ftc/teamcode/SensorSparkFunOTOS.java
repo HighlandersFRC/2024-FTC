@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
+import org.firstinspires.ftc.teamcode.Commands.Turn;
 import org.firstinspires.ftc.teamcode.Tools.FinalPose;
 import org.firstinspires.ftc.teamcode.Tools.Mouse;
 import org.firstinspires.ftc.teamcode.Commands.MoveToPosition;
@@ -37,7 +38,7 @@ public class SensorSparkFunOTOS extends LinearOpMode {
 
 
         try {
-            scheduler.schedule(new SequentialCommandGroup(scheduler,new MoveToPosition(0.5,0,0)));
+            scheduler.schedule(new SequentialCommandGroup(scheduler,new Turn(90)));
         } catch (JSONException e) {
             throw new RuntimeException(e);
         }
