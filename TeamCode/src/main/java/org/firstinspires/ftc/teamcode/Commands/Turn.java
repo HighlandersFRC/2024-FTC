@@ -8,12 +8,12 @@ import org.firstinspires.ftc.teamcode.Tools.PID;
 public class Turn implements Command {
 
     private double targetAngle;
-    private final double angleTolerance = 2.0; // Tolerance for angle adjustment
+    private final double angleTolerance = 0.1;
     private PID yawPID;
 
     public Turn(double targetAngle) {
         this.targetAngle = targetAngle;
-        yawPID = new PID(0.5, 0.0, 0.0); // Initialize PID constants as needed
+        yawPID = new PID(0.5, 0.0, 1);
         yawPID.setMaxInput(180);
         yawPID.setMinInput(-180);
         yawPID.setContinuous(true);
@@ -23,16 +23,17 @@ public class Turn implements Command {
 
     @Override
     public void start() {
-        FinalPose.Reset(); // Reset yaw to ensure accurate starting point
-        yawPID.setSetPoint(targetAngle); // Set the target angle for PID
+
+        yawPID.setSetPoint(targetAngle);
+
     }
 
     @Override
     public void execute() {
-        double currentAngle = Peripherals.getYawDegrees(); // Get the current yaw angle
-        double correction = -yawPID.updatePID(currentAngle); // Update PID and get correction
+        double currentAngle = FinalPose.Yaw;
+        double correction = yawPID.updatePID(currentAngle);
 
-        // Drive the motors based on the correction for turning
+
         Drive.drive(correction, -correction, correction, -correction);
     }
 
@@ -44,8 +45,21 @@ public class Turn implements Command {
 
     @Override
     public boolean isFinished() {
-        double currentAngle = Peripherals.getYawDegrees(); // Get the current yaw angle
-        // Check if the current angle is within the tolerance of the target angle
-        return Math.abs(currentAngle - targetAngle) <= angleTolerance;
+
+        double currentAngle = FinalPose.Yaw;
+        double angleDifference = targetAngle - currentAngle;
+
+
+        if (angleDifference > 180) {
+            angleDifference -= 360;
+        } else if (angleDifference < -180) {
+            angleDifference += 360;
+        }
+
+        System.out.println("Current Angle: " + currentAngle);
+        System.out.println("Angle Difference: " + angleDifference);
+
+        return Math.abs(angleDifference) <= angleTolerance;
+
     }
 }

@@ -38,7 +38,7 @@ public class SensorSparkFunOTOS extends LinearOpMode {
 
 
         try {
-            scheduler.schedule(new SequentialCommandGroup(scheduler,new Turn(90)));
+            scheduler.schedule(new SequentialCommandGroup(scheduler,new Turn(180)));
         } catch (JSONException e) {
             throw new RuntimeException(e);
         }
