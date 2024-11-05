@@ -8,12 +8,12 @@ import org.firstinspires.ftc.teamcode.Tools.PID;
 public class Turn implements Command {
 
     private double targetAngle;
-    private final double angleTolerance = 0.1;
+    private final double angleTolerance = 1;
     private PID yawPID;
 
     public Turn(double targetAngle) {
         this.targetAngle = targetAngle;
-        yawPID = new PID(0.5, 0.0, 1);
+        yawPID = new PID(0.3, 0.0, 1);
         yawPID.setMaxInput(180);
         yawPID.setMinInput(-180);
         yawPID.setContinuous(true);

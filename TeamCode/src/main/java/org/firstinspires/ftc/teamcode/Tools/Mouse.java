@@ -60,6 +60,6 @@ public class Mouse {
 
     // Get the Theta (heading) (already updated in the update() method)
     public static double getTheta() {
-        return theta*mouse.getAngularScalar();
+        return theta;
     }
 }

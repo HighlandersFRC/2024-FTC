@@ -35,10 +35,10 @@ public class SensorSparkFunOTOS extends LinearOpMode {
         boolean timing = false;
 
         waitForStart();
-
+        Mouse.configureOtos();
 
         try {
-            scheduler.schedule(new SequentialCommandGroup(scheduler,new Turn(180)));
+            scheduler.schedule(new SequentialCommandGroup(scheduler,new Turn(-180)));
         } catch (JSONException e) {
             throw new RuntimeException(e);
         }

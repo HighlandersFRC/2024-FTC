@@ -10,6 +10,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
+import org.firstinspires.ftc.teamcode.Tools.SparkFunOTOS;
 
 
 public class Peripherals extends Subsystem {
@@ -22,6 +23,11 @@ public class Peripherals extends Subsystem {
     private double wheelBase = 0.3; // Distance between the two wheels in meters
     static IMU imu;
     static IMU.Parameters myIMUparameters;
+    private static SparkFunOTOS mouse;
+    private static SparkFunOTOS.Pose2D field;
+    private static double fieldX;
+    private static double fieldY;
+    private static double Theta;
 
     public Peripherals(String name) {
         super();
@@ -50,11 +56,22 @@ public class Peripherals extends Subsystem {
     }
 
     public static double getYawDegrees(){
-        return imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
+        return Theta;
     }
 
     public static double getYaw() {
-        return imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
+       return Math.toRadians(Theta);
+    }
+    //You need to update to get values
+    public static void update() {
+
+
+        field = mouse.getPosition();
+
+
+        fieldX = field.x;
+        fieldY =field.y;
+        Theta = field.h;
     }
 
     public static double getRoll() {
