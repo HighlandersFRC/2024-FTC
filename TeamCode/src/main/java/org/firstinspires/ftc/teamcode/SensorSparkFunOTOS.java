@@ -28,10 +28,9 @@ public class SensorSparkFunOTOS extends LinearOpMode {
         boolean timing = false;
 
         waitForStart();
-        Mouse.configureOtos();
-
+        FinalPose.Reset();
         try {
-            scheduler.schedule(new SequentialCommandGroup(scheduler,new org.firstinspires.ftc.teamcode.Commands.Drive(hardwareMap,0.5,0.5)));
+            scheduler.schedule(new SequentialCommandGroup(scheduler,new org.firstinspires.ftc.teamcode.Commands.Drive(hardwareMap,0.5,.95)));
         } catch (JSONException e) {
             throw new RuntimeException(e);
         }
@@ -51,7 +50,7 @@ public class SensorSparkFunOTOS extends LinearOpMode {
             telemetry.addLine("Press X (square) on Gamepad to calibrate the IMU");
             telemetry.addLine();
             telemetry.addData("Timing", timing);
-            telemetry.addData("X", Mouse.getX()/0.83766124979);
+            telemetry.addData("X", Mouse.getX());
             telemetry.addData("Y", Mouse.getY());
             telemetry.addData("Heading angle",Mouse.getTheta());
             telemetry.update();

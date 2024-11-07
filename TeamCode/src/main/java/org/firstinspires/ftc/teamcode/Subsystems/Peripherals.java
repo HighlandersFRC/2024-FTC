@@ -1,70 +1,63 @@
 package org.firstinspires.ftc.teamcode.Subsystems;
 
-import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.IMU;
-import com.qualcomm.robotcore.hardware.IMU.Parameters;
+import com.qualcomm.hardware.limelightvision.Limelight3A;
+import com.qualcomm.hardware.limelightvision.LLResult;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
-import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
-import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.teamcode.Tools.SparkFunOTOS;
 
-
 public class Peripherals extends Subsystem {
+
+    private static double fieldX;
+    private static double fieldY;
+    private static double Theta;
+    private static SparkFunOTOS mouse;
+    private static SparkFunOTOS.Pose2D field;
 
     private static DcMotor leftMotor;
     private static DcMotor rightMotor;
     private double xPosition = 0, yPosition = 0, theta = 0;
     private int lastLeftPosition = 0, lastRightPosition = 0;
-    private double wheelDiameter = 0.1; // Wheel diameter in meters
-    private double wheelBase = 0.3; // Distance between the two wheels in meters
+    private double wheelDiameter = 0.1;
+    private double wheelBase = 0.3;
     static IMU imu;
-    static IMU.Parameters myIMUparameters;
-    private static SparkFunOTOS mouse;
-    private static SparkFunOTOS.Pose2D field;
-    private static double fieldX;
-    private static double fieldY;
-    private static double Theta;
+    private static Limelight3A limelight;
 
     public Peripherals(String name) {
         super();
     }
 
     public static void initialize(HardwareMap hardwareMap) {
+        mouse = hardwareMap.get(SparkFunOTOS.class, "mouse");
+        configureOtos();
+
         imu = hardwareMap.get(IMU.class, "imu");
 
-        // Set up the IMU parameters
-        myIMUparameters = new IMU.Parameters(
-                new RevHubOrientationOnRobot(
-                        new Orientation(
-                                AxesReference.INTRINSIC,
-                                AxesOrder.ZYX,
-                                AngleUnit.DEGREES,
-                                90,      // Z-axis angle
-                                0,       // Y-axis angle
-                                -90,     // X-axis angle
-                                0        // acquisitionTime, not used
-                        )
-                )
-        );
+        limelight = hardwareMap.get(Limelight3A.class, "limelight");
+        limelight.setPollRateHz(50);
+        limelight.pipelineSwitch(0);
+        limelight.getStatus();
+        limelight.start();
+    }
+    public static void configureOtos() {
+        mouse.setLinearUnit(SparkFunOTOS.LinearUnit.METERS);
+        mouse.setAngularUnit(SparkFunOTOS.AngularUnit.DEGREES);
 
-        // Initialize the IMU with the configured parameters
-        imu.initialize(myIMUparameters);
+        SparkFunOTOS.Pose2D offset = new SparkFunOTOS.Pose2D(0.0889, 0.01905, -90);
+        mouse.setOffset(offset);
+        mouse.setLinearScalar(1.069338135974786);
+        mouse.setAngularScalar(0.989932511851);
+        mouse.calibrateImu();
+        mouse.resetTracking();
+
+        SparkFunOTOS.Pose2D currentPosition = new SparkFunOTOS.Pose2D(0, 0, 0);
+        mouse.setPosition(currentPosition);
     }
 
-    public static double getYawDegrees(){
-        return Theta;
-    }
-
-    public static double getYaw() {
-       return Math.toRadians(Theta);
-    }
-    //You need to update to get values
     public static void update() {
-
 
         field = mouse.getPosition();
 
@@ -72,6 +65,24 @@ public class Peripherals extends Subsystem {
         fieldX = field.x;
         fieldY =field.y;
         Theta = field.h;
+
+    }
+
+
+    public static double getYawDegrees(){
+        return Theta;
+    }
+
+    public static double getYaw() {
+        return Math.toRadians(Theta);
+    }
+    public static double getOtosX() {
+        return fieldX;
+    }
+
+
+    public static double geOtostY() {
+        return fieldY;
     }
 
     public static double getRoll() {
@@ -85,4 +96,35 @@ public class Peripherals extends Subsystem {
     public static void resetYaw() {
         imu.resetYaw();
     }
+
+    public static LLResult getLimelightResult() {
+        return limelight.getLatestResult();
+    }
+
+    public static void updateRobotOrientation(double yaw) {
+        limelight.updateRobotOrientation(yaw);
+    }
+
+    public static void stopLimelight() {
+        limelight.stop();
+    }
+
+    public static double getLimelightX() {
+        LLResult result = getLimelightResult();
+        if (result != null && result.isValid()) {
+            return result.getBotpose().getPosition().x + 1.83;
+        }
+        return 0;
+    }
+
+    public static double getLimelightY() {
+        LLResult result = getLimelightResult();
+        if (result != null && result.isValid()) {
+            return result.getBotpose().getPosition().y + 1.83;
+        }
+        return 0;
+    }
+
+
+
 }

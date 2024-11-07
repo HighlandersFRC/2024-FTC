@@ -10,7 +10,7 @@ import org.firstinspires.ftc.teamcode.Tools.PID;
 public class Drive implements Command {
 
     private final PID yawPID = new PID(0.03, 0.0, 0.0);
-    private final PID drivePID = new PID(0.03, 0.0, 0.0);
+    private final PID drivePID = new PID(0.015, 0.0001, 1);
 
     private final HardwareMap hardwareMap;
 
@@ -67,14 +67,14 @@ public class Drive implements Command {
         currentPos = Peripherals.getYawDegrees();
         yawPID.updatePID(currentPos);
 
-        double correction = -yawPID.getResult();
+        double correction = yawPID.getResult();
 
         double rightFrontPower = Math.max(-1, Math.min(1, speed + correction));
         double leftFrontPower = Math.max(-1, Math.min(1, speed - correction));
         double rightBackPower = -Math.max(-1, Math.min(1, speed + correction));
         double leftBackPower = Math.max(-1, Math.min(1, speed - correction));
 
-        org.firstinspires.ftc.teamcode.Subsystems.Drive.drive(rightFrontPower, leftFrontPower, rightBackPower, leftBackPower);
+        org.firstinspires.ftc.teamcode.Subsystems.Drive.drive(-rightFrontPower, -leftFrontPower, -rightBackPower, -leftBackPower);
 
     }
 
