@@ -3,20 +3,13 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
-import org.firstinspires.ftc.teamcode.Commands.Turn;
 import org.firstinspires.ftc.teamcode.Tools.FinalPose;
 import org.firstinspires.ftc.teamcode.Tools.Mouse;
-import org.firstinspires.ftc.teamcode.Commands.MoveToPosition;
 import org.firstinspires.ftc.teamcode.Commands.SequentialCommandGroup;
 import org.firstinspires.ftc.teamcode.Commands.CommandScheduler;
-import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
-import org.firstinspires.ftc.teamcode.Commands.Strafe;
 import org.firstinspires.ftc.teamcode.Subsystems.Drive;
 import org.firstinspires.ftc.teamcode.Subsystems.Peripherals;
-import org.firstinspires.ftc.teamcode.Tools.LowPassFilter;
 import org.json.JSONException;
-import org.firstinspires.ftc.teamcode.Tools.Mouse;
 
 @Autonomous(name = "Sensor: SparkFun OTOS", group = "Sensor")
 public class SensorSparkFunOTOS extends LinearOpMode {
@@ -38,7 +31,7 @@ public class SensorSparkFunOTOS extends LinearOpMode {
         Mouse.configureOtos();
 
         try {
-            scheduler.schedule(new SequentialCommandGroup(scheduler,new Turn(-180)));
+            scheduler.schedule(new SequentialCommandGroup(scheduler,new org.firstinspires.ftc.teamcode.Commands.Drive(hardwareMap,0.5,0.5)));
         } catch (JSONException e) {
             throw new RuntimeException(e);
         }

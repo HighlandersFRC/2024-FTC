@@ -7,7 +7,7 @@ import org.firstinspires.ftc.teamcode.Tools.FinalPose;
 
 import org.firstinspires.ftc.teamcode.Tools.PID;
 
-public class Drive extends SequentialCommandGroup {
+public class Drive implements Command {
 
     private final PID yawPID = new PID(0.03, 0.0, 0.0);
     private final PID drivePID = new PID(0.03, 0.0, 0.0);
@@ -20,9 +20,9 @@ public class Drive extends SequentialCommandGroup {
     private double currentPos;
     private final double tolerance = 0.035;
 
-    public Drive(HardwareMap hardwareMap, double speed, double distance, CommandScheduler scheduler) {
+    public Drive(HardwareMap hardwareMap, double speed, double distance) {
 
-        super(scheduler);
+
         this.hardwareMap = hardwareMap;
         this.speed = speed;
         this.distance = distance;
