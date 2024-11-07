@@ -93,6 +93,7 @@ public class Drive extends Subsystem {
                     targetTheta += 2 * Math.PI;
                 }
             }
+
             if (!insideRadius(currentX - point.getDouble("x") / Constants.AUTONOMOUS_LOOKAHEAD_LINEAR_RADIUS,
                     currentY - point.getDouble("y") / Constants.AUTONOMOUS_LOOKAHEAD_LINEAR_RADIUS,
                     (currentTheta - targetTheta) / Constants.AUTONOMOUS_LOOKAHEAD_ANGULAR_RADIUS,

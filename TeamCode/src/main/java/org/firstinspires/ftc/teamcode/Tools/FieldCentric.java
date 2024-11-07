@@ -19,8 +19,6 @@ public class FieldCentric extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         Robot.initialize(hardwareMap);
-        SparkFunOTOS mouse;
-        mouse = hardwareMap.get(SparkFunOTOS.class, "mouse");
         waitForStart();
 
         if (isStopRequested()) return;
@@ -30,7 +28,7 @@ public class FieldCentric extends LinearOpMode {
 
             double y = gamepad1.left_stick_y;
             double x = -gamepad1.left_stick_x;
-            double rx = -gamepad1.right_stick_x;
+            double rx = gamepad1.right_stick_x;
 
             if (gamepad1.right_bumper) {
                 Peripherals.resetYaw();
@@ -82,10 +80,7 @@ public class FieldCentric extends LinearOpMode {
                     .addData("Y (m)", "%.2f", Drive.getOdometryY())
                     .addData("Theta (deg)", "%.2f", Drive.getOdometryTheta());
 
-            telemetry.addLine("Mouse Sensor Values")
-                    .addData("X (m)", "%.2f", Drive.getTotalXTraveled())
-                    .addData("Y (m)", "%.2f", Drive.getTotalYTraveled())
-                    .addData("Theta (deg)", "%.2f", Drive.totalThetaTraveled);
+
 
             telemetry.addLine("Fused Pose")
                     .addData("X (m)", "%.2f", FinalPose.x)
