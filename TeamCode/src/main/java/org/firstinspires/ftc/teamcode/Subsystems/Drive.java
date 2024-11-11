@@ -170,7 +170,6 @@ public class Drive extends Subsystem {
         double currentLeftPos = getLeftEncoder();
         double currentRightPos = getRightEncoder();
         double currentCenterPos = getCenterEncoder();
-
         double deltaLeft = currentLeftPos - lastLeftPos;
         double deltaRight = currentRightPos - lastRightPos;
         double deltaCenter = currentCenterPos - lastCenterPos;
