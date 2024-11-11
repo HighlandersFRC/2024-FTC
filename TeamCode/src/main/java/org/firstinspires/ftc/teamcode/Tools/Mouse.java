@@ -26,7 +26,7 @@ public class Mouse {
 
         SparkFunOTOS.Pose2D offset = new SparkFunOTOS.Pose2D(0.0889, 0.01905, -90);
         mouse.setOffset(offset);
-        mouse.setLinearScalar(1.069338135974786);
+        mouse.setLinearScalar(1.005809562240364);
         mouse.setAngularScalar(0.989932511851);
         mouse.calibrateImu();
         mouse.resetTracking();

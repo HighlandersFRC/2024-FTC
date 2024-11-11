@@ -59,7 +59,7 @@ public class Drive implements Command {
     public void execute() {
 
       //FieldOfMerit.processTags();
-        double currentXPos = FinalPose.y;
+        double currentXPos = FinalPose.x;
 
 
    drivePID.updatePID(currentXPos);
@@ -86,7 +86,7 @@ public class Drive implements Command {
   @Override
     public boolean isFinished() {
 
-     double currentXPos = FinalPose.y;
+     double currentXPos = FinalPose.x;
 
  if (Math.abs(currentXPos - targetPos) <= tolerance) {
             org.firstinspires.ftc.teamcode.Subsystems.Drive.stop();

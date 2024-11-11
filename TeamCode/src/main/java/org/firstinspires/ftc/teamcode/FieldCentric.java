@@ -3,15 +3,12 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.hardware.sparkfun.SparkFunOTOS;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-
-import org.firstinspires.ftc.teamcode.Tools.LowPassFilter;
 import org.firstinspires.ftc.teamcode.Tools.Mouse;
 import org.firstinspires.ftc.teamcode.Subsystems.Drive;
 import org.firstinspires.ftc.teamcode.Subsystems.Peripherals;
 import org.firstinspires.ftc.teamcode.Tools.FinalPose;
 import org.firstinspires.ftc.teamcode.Tools.FieldOfMerit;
 import org.firstinspires.ftc.teamcode.Tools.Robot;
-import com.qualcomm.hardware.sparkfun.SparkFunOTOS;
 
 @TeleOp
 public class FieldCentric extends LinearOpMode {
@@ -19,102 +16,77 @@ public class FieldCentric extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
         // Initialize the robot systems
         Robot.initialize(hardwareMap);
-        SparkFunOTOS mouse;
         Mouse.init(hardwareMap);
         waitForStart();
-
 
         if (isStopRequested()) return;
 
         while (opModeIsActive()) {
-
             Mouse.update();
-            // Update the robot's pose
             FinalPose.poseUpdate();
 
             // Retrieve gamepad inputs
-            double y = gamepad1.left_stick_y;  // Forward/backward
-            double x = -gamepad1.left_stick_x;   // Strafe
-            double rx = -gamepad1.right_stick_x; // Rotation
+            double forward = -gamepad1.left_stick_y; // forward and backward
+            double strafe = gamepad1.left_stick_x;   // left and right
+            double rotation = gamepad1.right_stick_x; // rotation
 
-            // Reset the yaw and encoders if the right bumper is pressed
+            // Reset yaw and encoders if the right bumper is pressed
             if (gamepad1.right_bumper) {
                 Peripherals.resetYaw();
                 Drive.resetEncoder();
-            }
-
-            //debug stuff
-            if (gamepad1.a) {
-                Drive.drive(1,0,0,0);
-            }
-            if (gamepad1.b) {
-                Drive.drive(0,1,0,0);
-            }
-            if (gamepad1.y){
-                Drive.drive(0,0,1,0);
-            }
-            if (gamepad1.x){
-                Drive.drive(0,0,0,1);
-            }
-
-            if (gamepad1.right_bumper){
                 Mouse.configureOtos();
-
             }
-
-
-            // Get robot's current heading
+            // Get robot's current heading in radians
             double botHeading = Math.toRadians(Mouse.getTheta());
 
-            // Rotate gamepad inputs to align with the field
-            double rotX = x * Math.cos(-botHeading) - y * Math.sin(-botHeading);
-            double rotY = x * Math.sin(-botHeading) + y * Math.cos(-botHeading);
+            // Rotate joystick inputs to field-centric coordinates
+            double rotX = strafe * Math.cos(-botHeading) - forward * Math.sin(-botHeading);
+            double rotY = strafe * Math.sin(-botHeading) + forward * Math.cos(-botHeading);
 
-            // Slightly boost the strafe power
-            rotX *= 1.1;
+            // Calculate the raw motor powers using your specified logic
+            double frontLeftPower = rotY + rotX + rotation;
+            double frontRightPower = rotY - rotX - rotation;
+            double backLeftPower = rotY - rotX + rotation;
+            double backRightPower = rotY + rotX - rotation;
 
-            // Normalize motor powers
-            double denominator = Math.max(Math.abs(rotY) + Math.abs(rotX) + Math.abs(rx), 1);
-            double frontLeftPower = (rotY + rotX + rx) / denominator;
-            double backLeftPower = (rotY - rotX + rx) / denominator;
-            double frontRightPower = (rotY - rotX - rx) / denominator;
-            double backRightPower = (rotY + rotX - rx) / denominator;
+            // Find the maximum absolute power value among the motors
+            double maxPower = Math.max(1.0, Math.max(
+                    Math.abs(frontLeftPower),
+                    Math.max(Math.abs(frontRightPower),
+                            Math.max(Math.abs(backLeftPower), Math.abs(backRightPower)))
+            ));
+
+            // Scale all motor powers down proportionally if any exceed 1.0
+            frontLeftPower /= maxPower;
+            frontRightPower /= maxPower;
+            backLeftPower /= maxPower;
+            backRightPower /= maxPower;
 
             // Drive the motors
-            Drive.drive(frontLeftPower, frontRightPower, -backLeftPower, backRightPower);
+            Drive.drive(frontLeftPower, frontRightPower, backLeftPower, backRightPower);
 
-            // Clean telemetry
+            // Telemetry display for debugging
             telemetry.addLine("IMU Data")
                     .addData("Yaw (Degrees)", "%.2f", Peripherals.getYawDegrees());
-
             telemetry.addLine("Odometry")
                     .addData("X (m)", "%.2f", Drive.getOdometryX())
                     .addData("Y (m)", "%.2f", Drive.getOdometryY())
                     .addData("Theta (deg)", "%.2f", Drive.getOdometryTheta());
-
             telemetry.addLine("Mouse Sensor Values")
-                    .addData("X (m)", "%.2f",Mouse.getX() )
-                    .addData("Y (m)", "%.2f", Mouse.getX())
-                    .addData("Theta (deg)", "%.2f",Mouse.getTheta() );
-
+                    .addData("X (m)", "%.2f", Mouse.getX())
+                    .addData("Y (m)", "%.2f", Mouse.getY())
+                    .addData("Theta (deg)", "%.2f", Mouse.getTheta());
             telemetry.addLine("Fused Pose")
                     .addData("X (m)", "%.2f", FinalPose.x)
                     .addData("Y (m)", "%.2f", FinalPose.y)
                     .addData("Theta (deg)", "%.2f", FinalPose.Yaw);
-
             telemetry.addLine("Encoders")
                     .addData("Left Encoder", Drive.getLeftEncoder())
                     .addData("Right Encoder", Drive.getRightEncoder())
                     .addData("Center Encoder", Drive.getCenterEncoder());
-
             telemetry.addLine("Sensors")
                     .addData("Current Sensor State", FieldOfMerit.currentState);
-
             telemetry.update();
-
-
         }
-
     }
-
 }
