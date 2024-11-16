@@ -67,7 +67,7 @@ public class Drive implements Command {
         currentPos = Peripherals.getYawDegrees();
         yawPID.updatePID(currentPos);
 
-        double correction = yawPID.getResult();
+        double correction = -yawPID.getResult();
 
         double rightFrontPower = Math.max(-1, Math.min(1, speed + correction));
         double leftFrontPower = Math.max(-1, Math.min(1, speed - correction));
