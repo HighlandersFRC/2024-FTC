@@ -3,7 +3,11 @@ package org.firstinspires.ftc.teamcode.PathingTool;
 import org.firstinspires.ftc.teamcode.Commands.*;
 import org.firstinspires.ftc.teamcode.Subsystems.Drive;
 import org.firstinspires.ftc.teamcode.Subsystems.Peripherals;
+import org.firstinspires.ftc.teamcode.Tools.Constants;
+import org.firstinspires.ftc.teamcode.Tools.FinalPose;
+import org.firstinspires.ftc.teamcode.Tools.PID;
 import org.firstinspires.ftc.teamcode.Tools.Parameters;
+import org.firstinspires.ftc.teamcode.Tools.Vector;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -14,10 +18,15 @@ import java.util.Set;
 import java.util.function.BooleanSupplier;
 import java.util.function.Supplier;
 
+import org.firstinspires.ftc.teamcode.Tools.Mouse;
+
+
 public class PolarPathFollower extends SequentialCommandGroup {
 
     private Set<String> addedCommandKeys = new HashSet<>();
     private CommandScheduler scheduler;
+    private double pathStartTime;
+    private JSONArray points;
 
     public PolarPathFollower(Drive drive, Peripherals peripherals, JSONObject pathJSON,
                              HashMap<String, Supplier<Command>> commandMap,
@@ -25,21 +34,10 @@ public class PolarPathFollower extends SequentialCommandGroup {
                              CommandScheduler scheduler) throws JSONException {
         super(scheduler);
         this.scheduler = scheduler;
+        this.pathStartTime = getPathTime();
+        this.points = pathJSON.getJSONArray("sampled_points");
 
-        JSONArray points = pathJSON.getJSONArray("sampled_points");
         JSONArray commands = pathJSON.getJSONArray("commands");
-
-        for (int i = 0; i < points.length(); i++) {
-            JSONObject point = points.getJSONObject(i);
-            double x = point.getDouble("x");
-            double y = point.getDouble("y");
-            double theta = point.getDouble("angle");
-            System.out.println("x: " + x + " y: " + y);
-
-            MoveToPosition moveToPosition = new MoveToPosition(-x, y, theta);
-            addCommands(moveToPosition);
-        }
-
         for (int i = 0; i < commands.length(); i++) {
             JSONObject command = commands.getJSONObject(i);
             String commandKey = command.toString();
@@ -73,7 +71,6 @@ public class PolarPathFollower extends SequentialCommandGroup {
         }
     }
 
-
     private TriggerCommand createTriggerCommand(JSONObject command, HashMap<String, Supplier<Command>> commandMap) throws JSONException {
         BooleanSupplier startSupplier = () -> {
             try {
@@ -82,7 +79,6 @@ public class PolarPathFollower extends SequentialCommandGroup {
                 throw new RuntimeException(e);
             }
         };
-
         BooleanSupplier endSupplier = () -> {
             try {
                 return command.getDouble("end") <= getPathTime();
@@ -174,4 +170,52 @@ public class PolarPathFollower extends SequentialCommandGroup {
     private double getPathTime() {
         return System.currentTimeMillis() / 1000.0;
     }
+
+
+    private double LOOK_AHEAD_TIME = 0.1;
+    private double TIME_STEP = 0.01;
+
+    private PID positionPID = new PID(0.4, 0.0, 0.0);
+    private PID anglePID = new PID(0.2, 0.0, 0.0);
+
+    public void execute() {
+        Mouse.update();
+        double elapsedTime = getPathTime() - pathStartTime + LOOK_AHEAD_TIME;
+        int index = Math.min((int) (elapsedTime / TIME_STEP), points.length() - 1);
+
+        try {
+            JSONObject currentPoint = points.getJSONObject(index);
+            Constants.nextX = currentPoint.getDouble("x");
+            Constants.nextY = currentPoint.getDouble("y");
+            Constants.nextTheta = currentPoint.getDouble("angle");
+
+            double currentX = FinalPose.getX();
+            double currentY = FinalPose.getY();
+            double currentTheta = FinalPose.getYaw();
+
+            double targetX = Constants.nextX;
+            double targetY = Constants.nextY;
+            double targetTheta = Constants.nextTheta;
+
+            double relativeX = targetX - currentX;
+            double relativeY = targetY - currentY;
+            double positionError = Math.hypot(relativeX, relativeY);
+            double angularError = targetTheta - currentTheta;
+            angularError = Math.atan2(Math.sin(angularError), Math.cos(angularError));
+
+            positionPID.setSetPoint(0);
+            double positionCorrection = positionPID.updatePID(positionError);
+
+            anglePID.setSetPoint(0);
+            double angularCorrection = anglePID.updatePID(angularError);
+
+            Vector direction = new Vector(relativeX, relativeY).normalize().scale(positionCorrection);
+
+            Drive.autoDrive(direction, angularCorrection);
+        } catch (JSONException e) {
+            System.err.println("Error reading point data from JSON: " + e.getMessage());
+        }
+    }
+
+
 }

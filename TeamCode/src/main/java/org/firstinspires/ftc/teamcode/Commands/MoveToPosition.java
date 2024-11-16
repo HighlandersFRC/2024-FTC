@@ -1,31 +1,31 @@
 package org.firstinspires.ftc.teamcode.Commands;
 
 import org.firstinspires.ftc.teamcode.Subsystems.Drive;
+import org.firstinspires.ftc.teamcode.Subsystems.Peripherals;
 import org.firstinspires.ftc.teamcode.Tools.FinalPose;
 import org.firstinspires.ftc.teamcode.Tools.PID;
 import org.firstinspires.ftc.teamcode.Tools.Vector;
 
 public class MoveToPosition implements Command {
 
-    private double targetX;
-    private double targetY;
-    private double targetTheta;
+    private final double targetX;
+    private final double targetY;
+    private final double targetTheta;
 
-    private final double positionTolerance = 0.02;
-    private final double angleTolerance = Math.toRadians(2);
+    private static final double POSITION_TOLERANCE = 0.003;
+    private static final double ANGLE_TOLERANCE = Math.toRadians(2);
 
-    private final PID xPID;
-    private final PID yPID;
-    private final PID thetaPID;
+    private final PID xPID = new PID(96, 0, 0);
+    private final PID yPID = new PID(96, 0.0, 0);
+    private final PID thetaPID = new PID(3.5, 0.0, 0.0);
 
     public MoveToPosition(double x, double y, double theta) {
         this.targetX = x;
         this.targetY = y;
         this.targetTheta = theta;
 
-        xPID = new PID(7.3, -1.2, 10.8);
-        yPID = new PID(9.3, -1.2, 10.2);
-        thetaPID = new PID(2.5, 0.0, 2.0);
+        xPID.clamp(0.3);
+
     }
 
     @Override
@@ -46,18 +46,16 @@ public class MoveToPosition implements Command {
         yPID.updatePID(currentY);
         thetaPID.updatePID(currentTheta);
 
-        double xVel = xPID.getResult() * 2;
-        double yVel = yPID.getResult() * 2;
-        double thetaVel = Math.abs(targetTheta - currentTheta) < Math.toRadians(5) ? thetaPID.getResult() * 0.5 : thetaPID.getResult();
+        double xVel = xPID.getResult() * 1;
+        double yVel = yPID.getResult() * 1;
+        double thetaVel = Math.abs(targetTheta - currentTheta) < Math.toRadians(2)
+                ? thetaPID.getResult() * 0.5 : thetaPID.getResult();
 
         Drive.autoDrive(new Vector(xVel, yVel), thetaVel);
     }
 
     @Override
     public void end() {
-/*
-        Drive.stop();
-*/
     }
 
     @Override
@@ -66,10 +64,15 @@ public class MoveToPosition implements Command {
         double currentY = FinalPose.y;
         double currentTheta = Math.toRadians(-FinalPose.Yaw);
 
-        boolean positionReached = Math.abs(targetX - currentX) < positionTolerance
-                && Math.abs(targetY - currentY) < positionTolerance;
-        boolean angleReached = Math.abs(targetTheta - currentTheta) < angleTolerance;
+        return hasReachedPosition(currentX, currentY) && hasReachedAngle(currentTheta);
+    }
 
-        return positionReached && angleReached;
+    private boolean hasReachedPosition(double currentX, double currentY) {
+        return Math.abs(targetX - currentX) < POSITION_TOLERANCE &&
+                Math.abs(targetY - currentY) < POSITION_TOLERANCE;
+    }
+
+    private boolean hasReachedAngle(double currentTheta) {
+        return Math.abs(targetTheta - currentTheta) < ANGLE_TOLERANCE;
     }
 }

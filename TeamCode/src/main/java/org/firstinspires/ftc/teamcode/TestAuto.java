@@ -19,6 +19,8 @@ import org.firstinspires.ftc.teamcode.Tools.FieldOfMerit;
 import org.firstinspires.ftc.teamcode.Tools.FinalPose;
 import org.json.JSONException;
 
+import org.firstinspires.ftc.teamcode.Tools.Mouse;
+
 @Autonomous
 public class TestAuto extends LinearOpMode {
 
@@ -28,6 +30,8 @@ public class TestAuto extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
+        Mouse.init(hardwareMap);
+        Mouse.configureOtos();
         FieldOfMerit.initialize(hardwareMap);
 
 /*
@@ -35,7 +39,7 @@ public class TestAuto extends LinearOpMode {
 */
 
         Drive.setPosition(0, 0, 0);
-        PathLoading pathLoading = new PathLoading(hardwareMap.appContext, "LShape.polarpath");
+        PathLoading pathLoading = new PathLoading(hardwareMap.appContext, "StraightLine.polarpath");
         CommandScheduler scheduler = new CommandScheduler();
         Drive drive = new Drive();
         Peripherals peripherals = new Peripherals("peripherals");

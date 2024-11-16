@@ -11,12 +11,14 @@ import org.firstinspires.ftc.teamcode.Subsystems.Drive;
 import org.firstinspires.ftc.teamcode.Subsystems.Peripherals;
 import org.firstinspires.ftc.teamcode.Tools.FieldOfMerit;
 import org.firstinspires.ftc.teamcode.Tools.FinalPose;
+import org.firstinspires.ftc.teamcode.Tools.Mouse;
 import org.firstinspires.ftc.teamcode.Tools.Robot;
 
 @TeleOp
 public class FieldCentric extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
+        Mouse.init(hardwareMap);
         Robot.initialize(hardwareMap);
 
         waitForStart();
@@ -26,8 +28,8 @@ public class FieldCentric extends LinearOpMode {
         while (opModeIsActive()) {
             FinalPose.poseUpdate();
 
-            double y = -gamepad1.left_stick_y;
-            double x = gamepad1.left_stick_x;
+            double y = gamepad1.left_stick_y;
+            double x = -gamepad1.left_stick_x;
             double rx = gamepad1.right_stick_x;
 
             if (gamepad1.right_bumper) {

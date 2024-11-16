@@ -27,6 +27,10 @@ public class Constants {
     public static double ArmDownPosition = 200;
     public static Object SetPoints;
 
+    public static double nextX;
+    public static double nextY;
+    public static double nextTheta;
+
     public static double getOffsetFromVoltage(double voltage){
         return 5.03 + -4950*voltage + -4731*Math.pow(voltage, 2) + -2098*Math.pow(voltage, 3) + -286*Math.pow(voltage, 4);
     }

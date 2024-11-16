@@ -77,35 +77,46 @@ public class Drive extends Subsystem {
     frontRightMotor.setZeroPowerBehavior(
             DcMotor.ZeroPowerBehavior.BRAKE);
     }
+
     public Number[] purePursuitController(double currentX, double currentY, double currentTheta, int currentIndex,
                                           JSONArray pathPoints) throws JSONException {
         JSONObject targetPoint = pathPoints.getJSONObject(pathPoints.length() - 1);
         int targetIndex = pathPoints.length() - 1;
+
+        // Find the target point in the lookahead radius
         for (int i = currentIndex; i < pathPoints.length(); i++) {
             JSONObject point = pathPoints.getJSONObject(i);
-            double velocityMag = Math.sqrt((Math.pow(point.getDouble("x_velocity"), 2) + Math.pow(point.getDouble("y_velocity"), 2))
-                            + Math.pow(point.getDouble("angular_velocity"), 2));
-            double targetTheta = point.getDouble("angle");
-            while (Math.abs(targetTheta - currentTheta) > Math.PI) {
-                if (targetTheta - currentTheta > Math.PI) {
-                    targetTheta -= 2 * Math.PI;
-                } else if (targetTheta - currentTheta < -Math.PI) {
-                    targetTheta += 2 * Math.PI;
+            double pointX = point.getDouble("x");
+            double pointY = point.getDouble("y");
+            double pointTheta = point.getDouble("angle");
+
+            // Normalize angle difference
+            while (Math.abs(pointTheta - currentTheta) > Math.PI) {
+                if (pointTheta - currentTheta > Math.PI) {
+                    pointTheta -= 2 * Math.PI;
+                } else if (pointTheta - currentTheta < -Math.PI) {
+                    pointTheta += 2 * Math.PI;
                 }
             }
-            if (!insideRadius(currentX - point.getDouble("x") / Constants.AUTONOMOUS_LOOKAHEAD_LINEAR_RADIUS,
-                    currentY - point.getDouble("y") / Constants.AUTONOMOUS_LOOKAHEAD_LINEAR_RADIUS,
-                    (currentTheta - targetTheta) / Constants.AUTONOMOUS_LOOKAHEAD_ANGULAR_RADIUS,
-                    Constants.AUTONOMOUS_LOOKAHEAD_DISTANCE /* * velocityMag */ + 0.01
-            )) {
 
+            // Check if point is outside the lookahead radius
+            if (!insideRadius(
+                    (currentX - pointX) / Constants.AUTONOMOUS_LOOKAHEAD_LINEAR_RADIUS,
+                    (currentY - pointY) / Constants.AUTONOMOUS_LOOKAHEAD_LINEAR_RADIUS,
+                    (currentTheta - pointTheta) / Constants.AUTONOMOUS_LOOKAHEAD_ANGULAR_RADIUS,
+                    Constants.AUTONOMOUS_LOOKAHEAD_DISTANCE
+            )) {
                 targetIndex = i;
                 targetPoint = pathPoints.getJSONObject(i);
                 break;
             }
         }
-        double targetX = targetPoint.getDouble("x"), targetY = targetPoint.getDouble("y"),
-                targetTheta = targetPoint.getDouble("angle");
+
+        double targetX = targetPoint.getDouble("x");
+        double targetY = targetPoint.getDouble("y");
+        double targetTheta = targetPoint.getDouble("angle");
+
+        // Adjust angle difference again for targetTheta
         while (Math.abs(targetTheta - currentTheta) > Math.PI) {
             if (targetTheta - currentTheta > Math.PI) {
                 targetTheta -= 2 * Math.PI;
@@ -113,36 +124,37 @@ public class Drive extends Subsystem {
                 targetTheta += 2 * Math.PI;
             }
         }
+
+        // Set target points for PID controllers
         xPID.setSetPoint(targetX);
         yPID.setSetPoint(targetY);
         thetaPID.setSetPoint(targetTheta);
 
+        // Update PID controllers based on current position
         xPID.updatePID(currentX);
         yPID.updatePID(currentY);
         thetaPID.updatePID(currentTheta);
 
+        // PID output without feedforward
         double xVelNoFF = xPID.getResult();
         double yVelNoFF = yPID.getResult();
         double thetaVelNoFF = -thetaPID.getResult();
 
-        double feedForwardX = targetPoint.getDouble("x_velocity")/2;
-        double feedForwardY = targetPoint.getDouble("y_velocity")/2;
-        double feedForwardTheta = -targetPoint.getDouble("angular_velocity")/2;
+        // Feedforward terms from velocity in path point
+        double feedForwardX = targetPoint.getDouble("x_velocity") / 2;
+        double feedForwardY = targetPoint.getDouble("y_velocity") / 2;
+        double feedForwardTheta = -targetPoint.getDouble("angular_velocity") / 2;
 
-        Number[] velocityArray = new Number[] {
+        // Calculate final velocities with feedforward
+        Number[] velocityArray = new Number[]{
                 feedForwardX + xVelNoFF,
                 -(feedForwardY + yVelNoFF),
                 feedForwardTheta + thetaVelNoFF,
-                targetIndex,
+                targetIndex
         };
-
-        double velocityMag = Math
-                .sqrt(Math.pow(targetPoint.getDouble("x_velocity"), 2) + Math.pow(targetPoint.getDouble("y_velocity"), 2));
 
         return velocityArray;
     }
-
-
     private boolean insideRadius(double deltaX, double deltaY, double deltaTheta, double radius) {
         return Math.sqrt(Math.pow(deltaX, 2) + Math.pow(deltaY, 2) + Math.pow(deltaTheta, 2)) < radius;
     }
@@ -232,6 +244,7 @@ public class Drive extends Subsystem {
 
         x = Math.round(x * 1000) / 1000.0;
         y = Math.round(y * 1000) / 1000.0;
+
     }
 
     private static double normalizeAngle(double angle) {
@@ -314,9 +327,7 @@ public class Drive extends Subsystem {
     public static int getRightEncoder() {
         return frontLeftMotor.getCurrentPosition();
     }
-    public static int getBackEncoder(){
-        return backLeftMotor.getCurrentPosition();
-    }
+
 
  /*   public static void moveToAprilTag(int ID){
             double tagX = FieldOfMerit.x;
@@ -345,16 +356,20 @@ public class Drive extends Subsystem {
         return frontRightMotor.getCurrentPosition();
     }
     public static void autoDrive(Vector vector, double omega) {
-        double vx = vector.getJ();
-        double vy = -vector.getI();
+        // Tuneable parameters
+        double velocityScale = 1.0; // Adjust overall speed
+        double rotationScale = 1.0; // Adjust rotational impact
+        double vx = vector.getJ() * velocityScale;
+        double vy = -vector.getI() * velocityScale;
 
-        double rotationFactor = omega * (L + W);
+        double rotationFactor = omega * (L + W) * rotationScale;
 
         double frontLeftPower = vx + vy + rotationFactor;
         double frontRightPower = vx - vy - rotationFactor;
         double backLeftPower = vx - vy + rotationFactor;
         double backRightPower = vx + vy - rotationFactor;
 
+        // Normalize powers if any exceeds the range [-1, 1]
         double maxMagnitude = Math.max(Math.max(Math.abs(frontLeftPower), Math.abs(frontRightPower)),
                 Math.max(Math.abs(backLeftPower), Math.abs(backRightPower)));
 
@@ -369,6 +384,11 @@ public class Drive extends Subsystem {
         frontRightMotor.setPower(frontRightPower);
         backLeftMotor.setPower(backLeftPower);
         backRightMotor.setPower(backRightPower);
+    }
+
+    public static void setVelocities(double xVelocity, double yVelocity, double thetaVelocity) {
+        Vector velocityVector = new Vector(yVelocity, xVelocity); // Adjust for coordinate system as in autoDrive
+        autoDrive(velocityVector, thetaVelocity);
     }
 
 }

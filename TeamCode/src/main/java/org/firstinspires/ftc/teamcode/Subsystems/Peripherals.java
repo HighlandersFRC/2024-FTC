@@ -7,8 +7,15 @@ import com.qualcomm.hardware.limelightvision.Limelight3A;
 import com.qualcomm.hardware.limelightvision.LLResult;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.teamcode.Tools.SparkFunOTOS;
 
 public class Peripherals extends Subsystem {
+
+    private static double fieldX;
+    private static double fieldY;
+    private static double Theta;
+    private static SparkFunOTOS mouse;
+    private static SparkFunOTOS.Pose2D field;
 
     private static DcMotor leftMotor;
     private static DcMotor rightMotor;
@@ -24,20 +31,60 @@ public class Peripherals extends Subsystem {
     }
 
     public static void initialize(HardwareMap hardwareMap) {
+        mouse = hardwareMap.get(SparkFunOTOS.class, "mouse");
+        configureOtos();
+
         imu = hardwareMap.get(IMU.class, "imu");
+
+/*
         limelight = hardwareMap.get(Limelight3A.class, "limelight");
-        limelight.setPollRateHz(50);
-        limelight.pipelineSwitch(0);
-        limelight.getStatus();
-        limelight.start();
+*/
+//        limelight.setPollRateHz(50);
+//        limelight.pipelineSwitch(0);
+//        limelight.getStatus();
+//        limelight.start();
+    }
+    public static void configureOtos() {
+        mouse.setLinearUnit(SparkFunOTOS.LinearUnit.METERS);
+        mouse.setAngularUnit(SparkFunOTOS.AngularUnit.DEGREES);
+
+        SparkFunOTOS.Pose2D offset = new SparkFunOTOS.Pose2D(0.0889, 0.01905, -90);
+        mouse.setOffset(offset);
+        mouse.setLinearScalar(1.069338135974786);
+        mouse.setAngularScalar(0.989932511851);
+        mouse.calibrateImu();
+        mouse.resetTracking();
+
+        SparkFunOTOS.Pose2D currentPosition = new SparkFunOTOS.Pose2D(0, 0, 0);
+        mouse.setPosition(currentPosition);
     }
 
+    public static void update() {
+
+        field = mouse.getPosition();
+
+
+        fieldX = field.x;
+        fieldY =field.y;
+        Theta = field.h;
+
+    }
+
+
     public static double getYawDegrees(){
-        return  imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
+        return Theta;
     }
 
     public static double getYaw() {
-        return imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
+        return Math.toRadians(Theta);
+    }
+    public static double getOtosX() {
+        return fieldX;
+    }
+
+
+    public static double geOtostY() {
+        return fieldY;
     }
 
     public static double getRoll() {
@@ -64,7 +111,6 @@ public class Peripherals extends Subsystem {
         limelight.stop();
     }
 
-
     public static double getLimelightX() {
         LLResult result = getLimelightResult();
         if (result != null && result.isValid()) {
@@ -73,7 +119,6 @@ public class Peripherals extends Subsystem {
         return 0;
     }
 
-
     public static double getLimelightY() {
         LLResult result = getLimelightResult();
         if (result != null && result.isValid()) {
@@ -81,4 +126,7 @@ public class Peripherals extends Subsystem {
         }
         return 0;
     }
+
+
+
 }
