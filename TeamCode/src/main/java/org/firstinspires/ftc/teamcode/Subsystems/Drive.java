@@ -4,6 +4,7 @@ package org.firstinspires.ftc.teamcode.Subsystems;
 import  com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 
@@ -96,6 +97,24 @@ public class Drive extends Subsystem {
                 DcMotor.ZeroPowerBehavior.BRAKE);
     }
 
+    public static void teleopDrive(Gamepad gamepad1) {
+        double forward = gamepad1.left_stick_y;  
+        double strafe = gamepad1.left_stick_x;
+        double pivot = gamepad1.right_stick_x;
+
+        double max = Math.max(Math.abs(forward) + Math.abs(strafe) + Math.abs(pivot), 1);
+
+        double frontLeftPower = (forward - strafe - pivot) / max;
+        double backLeftPower = (forward + strafe - pivot) / max;
+        double frontRightPower = (forward - strafe + pivot) / max;
+        double backRightPower = (forward + strafe + pivot) / max;
+
+        drive(frontLeftPower, frontRightPower, backLeftPower, backRightPower);
+
+        if (frontLeftPower==0){
+            Drive.stop();
+        }
+    }
 
     public Number[] purePursuitController(double currentX, double currentY, double currentTheta, int currentIndex,
                                           JSONArray pathPoints) throws JSONException {
