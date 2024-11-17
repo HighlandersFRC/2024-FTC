@@ -16,6 +16,7 @@ public class FieldCentric extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
         // Initialize the robot systems
         Robot.initialize(hardwareMap);
+        Drive.initialize(hardwareMap);
         Mouse.init(hardwareMap);
         waitForStart();
 

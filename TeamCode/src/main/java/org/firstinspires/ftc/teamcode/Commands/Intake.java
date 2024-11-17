@@ -11,12 +11,12 @@ public class Intake implements Command  {
     @Override
     public void execute() throws InterruptedException {
         System.out.println("Intake executing");
-        IntakeSubsystem.start(1);
+        IntakeSubsystem.setPower(1);
     }
 
     @Override
     public void end() {
-        IntakeSubsystem.start(0);
+        IntakeSubsystem.setPower(0);
     }
 
     @Override

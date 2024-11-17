@@ -25,4 +25,14 @@ public class FinalPose extends Object {
     public static void Reset(){
         Mouse.configureOtos();
     }
+
+    public static double getX() {
+        return x;
+    }
+    public static double getY(){
+        return y;
+    }
+    public static double getYaw(){
+        return Yaw;
+    }
 }

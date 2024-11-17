@@ -36,11 +36,11 @@ public class Peripherals extends Subsystem {
 
         imu = hardwareMap.get(IMU.class, "imu");
 
-        limelight = hardwareMap.get(Limelight3A.class, "limelight");
-        limelight.setPollRateHz(50);
-        limelight.pipelineSwitch(0);
-        limelight.getStatus();
-        limelight.start();
+//        limelight = hardwareMap.get(Limelight3A.class, "limelight");
+//        limelight.setPollRateHz(50);
+//        limelight.pipelineSwitch(0);
+//        limelight.getStatus();
+//        limelight.start();
     }
     public static void configureOtos() {
         mouse.setLinearUnit(SparkFunOTOS.LinearUnit.METERS);

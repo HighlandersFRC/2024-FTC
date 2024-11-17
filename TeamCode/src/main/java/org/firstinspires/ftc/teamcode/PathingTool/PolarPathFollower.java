@@ -1,14 +1,18 @@
 package org.firstinspires.ftc.teamcode.PathingTool;
 
+
 import org.firstinspires.ftc.teamcode.Commands.*;
 import org.firstinspires.ftc.teamcode.Subsystems.Drive;
 import org.firstinspires.ftc.teamcode.Subsystems.Peripherals;
+import org.firstinspires.ftc.teamcode.Tools.Constants;
 import org.firstinspires.ftc.teamcode.Tools.FinalPose;
+import org.firstinspires.ftc.teamcode.Tools.PID;
 import org.firstinspires.ftc.teamcode.Tools.Parameters;
 import org.firstinspires.ftc.teamcode.Tools.Vector;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -16,10 +20,20 @@ import java.util.Set;
 import java.util.function.BooleanSupplier;
 import java.util.function.Supplier;
 
+
+import org.firstinspires.ftc.teamcode.Tools.Mouse;
+
+
+
+
 public class PolarPathFollower extends SequentialCommandGroup {
+
 
     private Set<String> addedCommandKeys = new HashSet<>();
     private CommandScheduler scheduler;
+    private double pathStartTime;
+    private JSONArray points;
+
 
     public PolarPathFollower(Drive drive, Peripherals peripherals, JSONObject pathJSON,
                              HashMap<String, Supplier<Command>> commandMap,
@@ -27,27 +41,15 @@ public class PolarPathFollower extends SequentialCommandGroup {
                              CommandScheduler scheduler) throws JSONException {
         super(scheduler);
         this.scheduler = scheduler;
+        this.pathStartTime = getPathTime();
+        this.points = pathJSON.getJSONArray("sampled_points");
 
-        JSONArray points = pathJSON.getJSONArray("sampled_points");
+
         JSONArray commands = pathJSON.getJSONArray("commands");
-
-        for (int i = 0; i < points.length(); i++) {
-            JSONObject point = points.getJSONObject(i);
-            double x = point.getDouble("x");
-            double y = point.getDouble("y");
-            double theta = point.getDouble("angle");
-            System.out.println("x: " + x + " y: " + y);
-
-            Vector pointVector = Drive.purePursuitController(FinalPose.x, FinalPose.y, FinalPose.Yaw, i, points);
-
-            MoveToPosition moveToPosition = new MoveToPosition(pointVector.getI(), pointVector.getJ(), theta);
-
-            addCommands(moveToPosition);
-        }
-
         for (int i = 0; i < commands.length(); i++) {
             JSONObject command = commands.getJSONObject(i);
             String commandKey = command.toString();
+
 
             if (!addedCommandKeys.contains(commandKey)) {
                 Command newCommand = addCommandsFromJSON(command, commandMap, conditionMap);
@@ -58,6 +60,7 @@ public class PolarPathFollower extends SequentialCommandGroup {
             }
         }
     }
+
 
     private Command addCommandsFromJSON(JSONObject command, HashMap<String, Supplier<Command>> commandMap,
                                         HashMap<String, BooleanSupplier> conditionMap) throws JSONException {
@@ -97,6 +100,7 @@ public class PolarPathFollower extends SequentialCommandGroup {
         return new TriggerCommand(scheduler, startSupplier, commandMap.get(command.getJSONObject("command").getString("name")).get(), endSupplier);
     }
 
+
     private Command createBranchedCommand(JSONObject command, HashMap<String, Supplier<Command>> commandMap,
                                           HashMap<String, BooleanSupplier> conditionMap) throws JSONException {
         BooleanSupplier startSupplier = () -> {
@@ -116,6 +120,7 @@ public class PolarPathFollower extends SequentialCommandGroup {
         JSONObject branchedCommand = command.getJSONObject("branched_command");
         BooleanSupplier condition = conditionMap.get(branchedCommand.getString("condition"));
 
+
         return new TriggerCommand(
                 scheduler,
                 startSupplier,
@@ -128,10 +133,12 @@ public class PolarPathFollower extends SequentialCommandGroup {
         );
     }
 
+
     private ParallelCommandGroup createParallelCommandGroup(JSONObject command, HashMap<String, Supplier<Command>> commandMap,
                                                             HashMap<String, BooleanSupplier> conditionMap) throws JSONException {
         ParallelCommandGroup parallelGroup = new ParallelCommandGroup(scheduler, Parameters.ALL);
         JSONArray parallelCommands = command.getJSONObject("parallel_command_group").getJSONArray("commands");
+
 
         for (int i = 0; i < parallelCommands.length(); i++) {
             parallelGroup.addCommands(addCommandsFromJSON(parallelCommands.getJSONObject(i), commandMap, conditionMap));
@@ -139,11 +146,13 @@ public class PolarPathFollower extends SequentialCommandGroup {
         return parallelGroup;
     }
 
+
     private ParallelCommandGroup createParallelDeadlineGroup(JSONObject command, HashMap<String, Supplier<Command>> commandMap,
                                                              HashMap<String, BooleanSupplier> conditionMap) throws JSONException {
         ParallelCommandGroup parallelGroup = new ParallelCommandGroup(scheduler, Parameters.SPECIFIC, addCommandsFromJSON(
                 command.getJSONObject("parallel_deadline_group").getJSONArray("commands").getJSONObject(0),
                 commandMap, conditionMap));
+
 
         for (int i = 1; i < command.getJSONObject("parallel_deadline_group").getJSONArray("commands").length(); i++) {
             parallelGroup.addCommands(addCommandsFromJSON(
@@ -153,10 +162,12 @@ public class PolarPathFollower extends SequentialCommandGroup {
         return parallelGroup;
     }
 
+
     private ParallelCommandGroup createParallelRaceGroup(JSONObject command, HashMap<String, Supplier<Command>> commandMap,
                                                          HashMap<String, BooleanSupplier> conditionMap) throws JSONException {
         ParallelCommandGroup parallelGroup = new ParallelCommandGroup(scheduler, Parameters.ANY);
         JSONArray raceCommands = command.getJSONObject("parallel_race_group").getJSONArray("commands");
+
 
         for (int i = 0; i < raceCommands.length(); i++) {
             parallelGroup.addCommands(addCommandsFromJSON(raceCommands.getJSONObject(i), commandMap, conditionMap));
@@ -164,10 +175,12 @@ public class PolarPathFollower extends SequentialCommandGroup {
         return parallelGroup;
     }
 
+
     private SequentialCommandGroup createSequentialCommandGroup(JSONObject command, HashMap<String, Supplier<Command>> commandMap,
                                                                 HashMap<String, BooleanSupplier> conditionMap) throws JSONException {
         SequentialCommandGroup sequentialGroup = new SequentialCommandGroup(scheduler);
         JSONArray sequentialCommands = command.getJSONObject("sequential_command_group").getJSONArray("commands");
+
 
         for (int i = 0; i < sequentialCommands.length(); i++) {
             sequentialGroup.addCommands(addCommandsFromJSON(sequentialCommands.getJSONObject(i), commandMap, conditionMap));
@@ -175,7 +188,48 @@ public class PolarPathFollower extends SequentialCommandGroup {
         return sequentialGroup;
     }
 
+
     private double getPathTime() {
         return System.currentTimeMillis() / 1000.0;
     }
+
+
+
+
+    private double LOOK_AHEAD_TIME = 0.1;
+    private double TIME_STEP = 0.01;
+
+
+    @Override
+    public void execute() {
+        double elapsedTime = getPathTime() - pathStartTime;
+        int index = (int) (elapsedTime / 0.01);
+        if (index >= points.length()) {
+            index = points.length() - 1;
+        }
+        try {
+            JSONObject currentPoint = points.getJSONObject(index);
+            Constants.nextX = currentPoint.getDouble("x");
+            Constants.nextY = currentPoint.getDouble("y");
+            Constants.nextTheta = currentPoint.getDouble("angle");
+
+            double currentX = FinalPose.getX();
+            double currentY = FinalPose.getY();
+            double currentTheta = FinalPose.getYaw();
+
+            double relativeX = Constants.nextX - currentX;
+            double relativeY = Constants.nextY - currentY;
+            double relativeTheta = Constants.nextTheta - currentTheta;
+
+            Vector relativePos = new Vector(relativeX, relativeY);
+            Drive.autoDrive(relativePos, relativeTheta);
+        } catch (JSONException e) {
+            throw new RuntimeException("Error reading point data from JSON", e);
+        }
+    }
+
+
+
 }
+
+

@@ -1,17 +1,18 @@
 package org.firstinspires.ftc.teamcode.Subsystems;
 
+import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 public class IntakeSubsystem extends Subsystem  {
-    public static DcMotor intakeMotor;
+    public static CRServo intake;
     public IntakeSubsystem(String name) {
         super();
     }
     public static void initialize(HardwareMap hardwareMap) {
-        intakeMotor = hardwareMap.dcMotor.get("intake");
+        intake = hardwareMap.crservo.get("intake");
     }
-    public static void start(double power){
-        intakeMotor.setPower(power);
+    public static void setPower(double power){
+        intake.setPower(power);
     }
 }
