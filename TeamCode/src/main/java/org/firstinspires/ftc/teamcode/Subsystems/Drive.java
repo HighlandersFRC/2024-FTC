@@ -344,10 +344,10 @@ public class Drive extends Subsystem {
         return frontRightMotor.getCurrentPosition();
     }
     public static void autoDrive(Vector vector, double angle) {
-        double vx = vector.getI() * 2;
-        double vy = -vector.getJ() * 2;
+        double vx = vector.getI();
+        double vy = -vector.getJ();
 
-        double rotationFactor = -(angle * 2);
+        double rotationFactor = -(angle);
 
         double botHeading = Math.toRadians(FinalPose.Yaw);
 

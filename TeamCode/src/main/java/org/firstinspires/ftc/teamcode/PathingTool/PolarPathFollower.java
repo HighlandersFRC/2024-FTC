@@ -5,6 +5,7 @@ import org.firstinspires.ftc.teamcode.Subsystems.Drive;
 import org.firstinspires.ftc.teamcode.Subsystems.Peripherals;
 import org.firstinspires.ftc.teamcode.Tools.FinalPose;
 import org.firstinspires.ftc.teamcode.Tools.Mouse;
+import org.firstinspires.ftc.teamcode.Tools.PID;
 import org.firstinspires.ftc.teamcode.Tools.Parameters;
 import org.firstinspires.ftc.teamcode.Tools.Vector;
 import org.json.JSONArray;
@@ -23,6 +24,10 @@ public class PolarPathFollower implements Command {
     private CommandScheduler scheduler;
     private double pathStartTime;
     private JSONArray points;
+
+    private PID xPID = new PID(2, 0, 0);
+    private PID yPID = new PID(2, 0, 0);
+    private PID yawPID = new PID(5, 0, 0);
     double nextX;
     double nextY;
 
@@ -163,6 +168,7 @@ public class PolarPathFollower implements Command {
     @Override
     public void start() {
         this.pathStartTime  = getPathTime();
+
         try{
         JSONObject currentPoint = points.getJSONObject(0);
         nextX = currentPoint.getDouble("x");
@@ -174,9 +180,14 @@ public class PolarPathFollower implements Command {
         }  catch (JSONException e) {
             throw new RuntimeException("Error reading point data from JSON", e);
         }
+
+        yawPID.setMinInput(-180);
+        yawPID.setMinInput(180);
     }
 
     public void execute() {
+
+
         FinalPose.poseUpdate();
         double elapsedTime = getPathTime() - pathStartTime;
         //look ahead distance of 50 ms
@@ -195,8 +206,18 @@ public class PolarPathFollower implements Command {
             double relativeX = nextX - currentX;
             double relativeY = nextY - currentY;
             double relativeTheta = nextTheta - currentTheta;
-            Vector relativePos = new Vector(relativeX, relativeY);
-            Drive.autoDrive(relativePos, relativeTheta);
+
+            xPID.setSetPoint(nextX);
+            xPID.updatePID(currentX);
+
+            yPID.setSetPoint(nextY);
+            yPID.updatePID(currentY);
+
+            yawPID.setSetPoint(nextTheta);
+            yawPID.updatePID(currentTheta);
+
+            Vector relativePos = new Vector(xPID.getResult(), yPID.getResult());
+            Drive.autoDrive(relativePos, yawPID.getResult());
 
             System.out.println("Vector X" + relativePos.getI() + "Vector Y " + relativePos.getJ() + "Theta " + relativeTheta + "Index " + index + "     Current X " + currentX + "    Current Y " + currentY + "    Current Theta " +  currentTheta + "   Next Point X   " + nextX + "      Next Point Y     " + nextY + "    Next Point Theta     " + nextTheta);
 
