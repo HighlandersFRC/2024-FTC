@@ -25,8 +25,8 @@ public class PolarPathFollower implements Command {
     private double pathStartTime;
     private JSONArray points;
 
-    private PID xPID = new PID(9, 0, 4.7);
-    private PID yPID = new PID(9, 0, 4.7);
+    private PID xPID = new PID(9, 0, 3.3);
+    private PID yPID = new PID(9, 0, 3.3);
     private PID yawPID = new PID(5, 0, 0);
     double nextX;
     double nextY;
