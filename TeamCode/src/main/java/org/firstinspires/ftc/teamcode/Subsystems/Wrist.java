@@ -8,7 +8,7 @@ public class Wrist extends Subsystem {
     public static CRServo wrist;
 
     public static void initialize(HardwareMap hardwareMap) {
-        wrist = hardwareMap.crservo.get("intake");
+        wrist = hardwareMap.crservo.get("wrist");
     }
 
     public static void setPower(double power) {
@@ -20,7 +20,7 @@ public class Wrist extends Subsystem {
         if (gamepad1.left_bumper) {
             Wrist.setPower(1);
         } else if (gamepad1.right_bumper) {
-            Wrist.setPower(1);
+            Wrist.setPower(-1);
         } else {
             Wrist.setPower(0);
         }

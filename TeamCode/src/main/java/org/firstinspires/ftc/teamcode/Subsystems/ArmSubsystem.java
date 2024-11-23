@@ -36,6 +36,25 @@ public class ArmSubsystem extends Subsystem {
         pivotMotor.setPower(piviotPID.getResult());
     }
 
+    public static void initializeWithOutLimit(HardwareMap hardwareMap) {
+        pivotMotor = hardwareMap.dcMotor.get("pivotMotor");
+
+        // Set the motor to brake mode
+        pivotMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+        // Reset encoder
+        pivotMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+        // Set to run without encoder for direct power control
+        pivotMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+        piviotPID.updatePID(pivotMotor.getCurrentPosition());
+        piviotPID.setMaxOutput(1);
+        piviotPID.setMinOutput(-1);
+        piviotPID.setSetPoint(armPosition);
+        pivotMotor.setPower(piviotPID.getResult());
+    }
+
     // Set motor power
     public static void setPower(double power) {
         pivotMotor.setPower(power);
@@ -79,7 +98,7 @@ public class ArmSubsystem extends Subsystem {
 
         // Allow manual override for fine control
         if (gamepad1.dpad_up) {
-            armPosition=1736;
+            armPosition=-1736;
         } else if (gamepad1.dpad_down) {
             armPosition=0; // Move arm downward directly
         }

@@ -4,7 +4,6 @@ import static org.firstinspires.ftc.teamcode.Tools.Constants.pivotPID;
 
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.teamcode.Subsystems.ArmSubsystem;
 import org.firstinspires.ftc.teamcode.Subsystems.IntakeSubsystem;
@@ -22,16 +21,17 @@ public class kitbot extends LinearOpMode {
         Drive.initialize(hardwareMap);
         IntakeSubsystem.initialize(hardwareMap);
         Wrist.initialize(hardwareMap);
-        ArmSubsystem.initialize(hardwareMap);
+        ArmSubsystem.initializeWithOutLimit(hardwareMap);
 
         while (opModeIsActive()) {
 
             Wrist.controlWrist(gamepad1);
             IntakeSubsystem.controlIntake(gamepad1);
             Drive.teleopDrive(gamepad1);
-            ArmSubsystem.controlPivot(gamepad1,pivotPID);
+            ArmSubsystem.controlPivotWithoutLimitSwitch(gamepad1,pivotPID);
 
             telemetry.addData("Status", "Running");
+            telemetry.addData("armPos",ArmSubsystem.getCurrentPosition());
             telemetry.update();
         }
     }
