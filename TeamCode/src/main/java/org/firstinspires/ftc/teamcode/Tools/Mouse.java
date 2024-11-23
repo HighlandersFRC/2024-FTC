@@ -28,7 +28,7 @@ public class Mouse {
         mouse.calibrateImu();
         mouse.resetTracking();
 
-      setPosition(0,0,0);
+        setPosition(0,0,0);
     }
 public static void setPosition(double x, double y, double theta){
     SparkFunOTOS.Pose2D currentPosition = new SparkFunOTOS.Pose2D(-x, -y, theta);

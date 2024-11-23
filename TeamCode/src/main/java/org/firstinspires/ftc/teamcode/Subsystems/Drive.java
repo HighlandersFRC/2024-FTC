@@ -7,6 +7,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.teamcode.Tools.Constants;
 import org.firstinspires.ftc.teamcode.Tools.FieldOfMerit;
+import org.firstinspires.ftc.teamcode.Tools.FinalPose;
 import org.firstinspires.ftc.teamcode.Tools.PID;
 
 import org.firstinspires.ftc.teamcode.Tools.Vector;
@@ -346,8 +347,22 @@ public class Drive extends Subsystem {
         double vx = vector.getI() * 2;
         double vy = -vector.getJ() * 2;
 
-        double rotationFactor = (angle * 0.13);
+        double rotationFactor = -(angle * 2);
 
+        double botHeading = Math.toRadians(FinalPose.Yaw);
+
+        double rotX = vx * Math.cos(-botHeading) + vy * Math.sin(-botHeading);
+        double rotY = - vx * Math.sin(-botHeading) + vy * Math.cos(-botHeading);
+
+        rotX *= 1.1;
+
+        double denominator = Math.max(Math.abs(rotY) + Math.abs(rotX) + Math.abs(rotationFactor), 1);
+        double frontLeftPower = (rotX + rotY + rotationFactor) / denominator;
+        double frontRightPower = (rotX - rotY - rotationFactor) / denominator;
+        double backLeftPower = (rotX - rotY + rotationFactor) / denominator;
+        double backRightPower = (rotX + rotY - rotationFactor) / denominator;
+
+/*
         double frontLeftPower = vx + vy + rotationFactor;
         double frontRightPower = vx - vy - rotationFactor;
         double backLeftPower = vx - vy + rotationFactor;
@@ -362,6 +377,7 @@ public class Drive extends Subsystem {
             backLeftPower /= maxMagnitude;
             backRightPower /= maxMagnitude;
         }
+*/
 
         Drive.drive(frontLeftPower, frontRightPower, backLeftPower, backRightPower);
     }

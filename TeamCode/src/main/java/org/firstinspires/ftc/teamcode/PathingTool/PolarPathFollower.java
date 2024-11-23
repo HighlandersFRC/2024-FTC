@@ -33,7 +33,6 @@ public class PolarPathFollower implements Command {
                              CommandScheduler scheduler) throws JSONException {
         super();
         this.scheduler = scheduler;
-        this.pathStartTime = getPathTime();
         this.points = pathJSON.getJSONArray("sampled_points");
         JSONArray commands = pathJSON.getJSONArray("commands");
         for (int i = 0; i < commands.length(); i++) {
@@ -163,13 +162,14 @@ public class PolarPathFollower implements Command {
 
     @Override
     public void start() {
+        this.pathStartTime  = getPathTime();
         try{
         JSONObject currentPoint = points.getJSONObject(0);
         nextX = currentPoint.getDouble("x");
         nextY = currentPoint.getDouble("y");
         double nextTheta = currentPoint.getDouble("angle");
 
-        Mouse.setPosition(nextX, nextY, nextTheta);
+        Mouse.setPosition(nextX, nextY, Math.toDegrees(nextTheta));
 
         }  catch (JSONException e) {
             throw new RuntimeException("Error reading point data from JSON", e);
@@ -191,7 +191,7 @@ public class PolarPathFollower implements Command {
             double nextTheta = currentPoint.getDouble("angle");
             double currentX = FinalPose.x;
             double currentY = FinalPose.y;
-            double currentTheta = -FinalPose.Yaw;
+            double currentTheta = Math.toRadians(FinalPose.Yaw);
             double relativeX = nextX - currentX;
             double relativeY = nextY - currentY;
             double relativeTheta = nextTheta - currentTheta;
@@ -219,8 +219,9 @@ public class PolarPathFollower implements Command {
             JSONObject currentPoint = points.getJSONObject(points.length() - 1);
             double finalX = currentPoint.getDouble("x");
             double finalY = currentPoint.getDouble("y");
+            double finalTheta = currentPoint.getDouble("angle");
 
-            if (index >= points.length() && (findDistance(FinalPose.x, FinalPose.y, finalX, finalY ) <= 0.02)) {
+            if (index >= points.length() && (findDistance(FinalPose.x, FinalPose.y, finalX, finalY ) <= 0.02) && (Math.abs(finalTheta) - Math.abs(FinalPose.Yaw)) <= Math.toRadians(3)) {
                 return true;
             }
         }
