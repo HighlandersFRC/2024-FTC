@@ -23,7 +23,7 @@ public class ConditionalCommand implements Command {
     }
 
     @Override
-    public void start() throws JSONException {
+    public void start() {
         if (condition.getAsBoolean()) {
             commandToRun = onTrue;
         } else {
@@ -36,7 +36,7 @@ public class ConditionalCommand implements Command {
     }
 
     @Override
-    public void execute() throws InterruptedException, JSONException {
+    public void execute() {
         if (commandToRun != null) {
             commandToRun.execute();
         }

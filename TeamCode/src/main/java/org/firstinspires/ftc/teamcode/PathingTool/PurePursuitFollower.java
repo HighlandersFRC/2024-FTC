@@ -1,3 +1,4 @@
+/*
 package org.firstinspires.ftc.teamcode.PathingTool;
 
 import java.util.ArrayList;
@@ -74,8 +75,10 @@ public class PurePursuitFollower implements Command {
     currentTime = System.currentTimeMillis() - initTime + pathStartTime;
     // call PIDController function
     currentPathPointIndex = returnPathPointIndex;
+*/
 /*    desiredVelocityArray = drive.purePursuitController(odometryFusedX, odometryFusedY, odometryFusedTheta,
-            currentPathPointIndex, path);*/
+            currentPathPointIndex, path);*//*
+
 
     returnPathPointIndex = desiredVelocityArray[3].intValue();
     if (returnPathPointIndex == currentPathPointIndex) {
@@ -122,4 +125,4 @@ public class PurePursuitFollower implements Command {
       return false;
     }
   }
-}
+}*/

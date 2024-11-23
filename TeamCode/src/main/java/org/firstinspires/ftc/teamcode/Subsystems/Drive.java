@@ -46,8 +46,8 @@ public class Drive extends Subsystem {
     public static double totalXTraveled = 0.0;
     public static double totalYTraveled = 0.0;
     public static double totalThetaTraveled = 0.0;
-    private static final double L = 0.2;
-    private static final double W = 0.2;
+    private static final double L = 0.4064;
+    private static final double W = 0.4064;
 
     public static void initialize(HardwareMap hardwareMap) {
         frontLeftMotor = hardwareMap.get(DcMotorEx.class, "left_front");
@@ -126,9 +126,10 @@ public class Drive extends Subsystem {
     public static void drive(double leftFrontPower, double rightFrontPower, double leftBackPower, double rightBackPower) {
         frontLeftMotor.setPower(-leftFrontPower);
         frontRightMotor.setPower(-rightFrontPower);
-        backLeftMotor.setPower(leftBackPower);
+        backLeftMotor.setPower(-leftBackPower);
         backRightMotor.setPower(-rightBackPower);
     }
+
     public static void stop() {
     Drive.drive(0,0,0,0);
 
@@ -342,10 +343,10 @@ public class Drive extends Subsystem {
         return frontRightMotor.getCurrentPosition();
     }
     public static void autoDrive(Vector vector, double angle) {
-        double vx = vector.getJ();
-        double vy = -vector.getI();
+        double vx = vector.getI() * 2;
+        double vy = -vector.getJ() * 2;
 
-        double rotationFactor = angle * (L + W);
+        double rotationFactor = (angle * 0.13);
 
         double frontLeftPower = vx + vy + rotationFactor;
         double frontRightPower = vx - vy - rotationFactor;
@@ -362,10 +363,7 @@ public class Drive extends Subsystem {
             backRightPower /= maxMagnitude;
         }
 
-        frontLeftMotor.setPower(frontLeftPower);
-        frontRightMotor.setPower(frontRightPower);
-        backLeftMotor.setPower(backLeftPower);
-        backRightMotor.setPower(backRightPower);
+        Drive.drive(frontLeftPower, frontRightPower, backLeftPower, backRightPower);
     }
 
 }

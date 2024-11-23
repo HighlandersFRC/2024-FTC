@@ -7,6 +7,7 @@ import com.qualcomm.hardware.limelightvision.Limelight3A;
 import com.qualcomm.hardware.limelightvision.LLResult;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.teamcode.Tools.Mouse;
 
 public class Peripherals extends Subsystem {
 
@@ -25,15 +26,16 @@ public class Peripherals extends Subsystem {
 
     public static void initialize(HardwareMap hardwareMap) {
         imu = hardwareMap.get(IMU.class, "imu");
-        limelight = hardwareMap.get(Limelight3A.class, "limelight");
+
+   /*     limelight = hardwareMap.get(Limelight3A.class, "limelight");
         limelight.setPollRateHz(50);
         limelight.pipelineSwitch(0);
         limelight.getStatus();
-        limelight.start();
+        limelight.start();*/
     }
 
     public static double getYawDegrees(){
-        return  imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
+        return Mouse.getTheta();
     }
 
     public static double getYaw() {

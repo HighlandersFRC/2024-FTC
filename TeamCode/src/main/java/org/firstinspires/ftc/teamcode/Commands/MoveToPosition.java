@@ -38,7 +38,7 @@ public class MoveToPosition implements Command {
     }
 
     @Override
-    public void execute() throws InterruptedException {
+    public void execute()  {
         FinalPose.poseUpdate();
         double currentX = -FinalPose.x;
         double currentY = -FinalPose.y;

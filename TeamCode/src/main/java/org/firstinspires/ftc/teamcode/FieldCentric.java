@@ -7,25 +7,34 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.Subsystems.Drive;
+import org.firstinspires.ftc.teamcode.Subsystems.Elevators;
 import org.firstinspires.ftc.teamcode.Subsystems.Peripherals;
+import org.firstinspires.ftc.teamcode.Subsystems.Pivot;
 import org.firstinspires.ftc.teamcode.Tools.FinalPose;
 import org.firstinspires.ftc.teamcode.Tools.FieldOfMerit;
+import org.firstinspires.ftc.teamcode.Tools.Mouse;
 import org.firstinspires.ftc.teamcode.Tools.Robot;
 import com.qualcomm.hardware.sparkfun.SparkFunOTOS;
+import com.qualcomm.robotcore.hardware.CRServo;
 
 @TeleOp
 public class FieldCentric extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
+        CRServo servo;
         // Initialize the robot systems
         Robot.initialize(hardwareMap);
-        SparkFunOTOS myOtos;
-        myOtos = hardwareMap.get(SparkFunOTOS.class, "sensor_otos");
+        Mouse.init(hardwareMap);
+        Pivot.initialize(hardwareMap);
+
         waitForStart();
 
         if (isStopRequested()) return;
 
         while (opModeIsActive()) {
+
+            Elevators.initialize(hardwareMap);
+            Mouse.update();
 
             FinalPose.poseUpdate();
 
@@ -40,19 +49,44 @@ public class FieldCentric extends LinearOpMode {
 
             //debug stuff
             if (gamepad1.a) {
+/*
                 Drive.drive(1,0,0,0);
+*/
+                Pivot.setPower(0.5);
             }
-            if (gamepad1.b) {
+            else if (gamepad1.b) {
+                Pivot.setPower(-1);
+                /*
                 Drive.drive(0,1,0,0);
+*/
+            }else {
+                Pivot.stop();
             }
-            if (gamepad1.y){
+ /*           if (gamepad1.y){
                 Drive.drive(0,0,1,0);
             }
             if (gamepad1.x){
                 Drive.drive(0,0,0,1);
+            }*/
+            if (gamepad1.left_bumper){
+                Elevators.moveDown();
+            }else if (gamepad1.right_bumper){
+                Elevators.moveUp();
+            }else{
+                Elevators.stop();
+            }
+            if (gamepad1.dpad_up){
+                Drive.drive(1,1,1,1);
+            }
+            if (gamepad1.dpad_down){
+                Drive.drive(-1,-1,-1,-1);
             }
 
-            double botHeading = -Peripherals.getYaw();
+/*
+            double botHeading = -Mouse.getTheta();
+*/
+
+            double botHeading = 0;
 
             double rotX = x * Math.cos(-botHeading) - y * Math.sin(-botHeading);
             double rotY = x * Math.sin(-botHeading) + y * Math.cos(-botHeading);
@@ -65,7 +99,7 @@ public class FieldCentric extends LinearOpMode {
             double frontRightPower = (rotY - rotX - rx) / denominator;
             double backRightPower = (rotY + rotX - rx) / denominator;
 
-            Drive.drive(frontLeftPower, frontRightPower, -backLeftPower, backRightPower);
+            Drive.drive(frontLeftPower, frontRightPower, backLeftPower, backRightPower);
 
 
             telemetry.addLine("IMU Data")
@@ -77,9 +111,9 @@ public class FieldCentric extends LinearOpMode {
                     .addData("Theta (deg)", "%.2f", Drive.getOdometryTheta());
 
             telemetry.addLine("Mouse Sensor Values")
-                    .addData("X (m)", "%.2f", Drive.getTotalXTraveled())
-                    .addData("Y (m)", "%.2f", Drive.getTotalYTraveled())
-                    .addData("Theta (deg)", "%.2f", Drive.totalThetaTraveled);
+                    .addData("X (m)", "%.2f", Mouse.getX())
+                    .addData("Y (m)", "%.2f", Mouse.getY())
+                    .addData("Theta (deg)", "%.2f", Mouse.getTheta());
 
             telemetry.addLine("Fused Pose")
                     .addData("X (m)", "%.2f", FinalPose.x)

@@ -8,13 +8,16 @@ public class FinalPose extends Object{
     public static double Yaw;
 
     public static void setfinalPose(double X, double Y, double yaw){
-        x = X;
-        y = Y;
-        Yaw = yaw;
+        x = Mouse.getX();
+        y = Mouse.getY();
+        Yaw = Mouse.getTheta();
     }
     public static void poseUpdate() {
-        FieldOfMerit.processTags();
-        Drive.update();
+Mouse.update();
+x = -Mouse.getX();
+y = -Mouse.getY();
+Yaw = Mouse.getTheta();
+
     }
 
 }
