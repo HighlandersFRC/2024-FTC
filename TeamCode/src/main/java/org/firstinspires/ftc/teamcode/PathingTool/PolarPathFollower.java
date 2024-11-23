@@ -4,6 +4,7 @@ import org.firstinspires.ftc.teamcode.Commands.*;
 import org.firstinspires.ftc.teamcode.Subsystems.Drive;
 import org.firstinspires.ftc.teamcode.Subsystems.Peripherals;
 import org.firstinspires.ftc.teamcode.Tools.FinalPose;
+import org.firstinspires.ftc.teamcode.Tools.Mouse;
 import org.firstinspires.ftc.teamcode.Tools.Parameters;
 import org.firstinspires.ftc.teamcode.Tools.Vector;
 import org.json.JSONArray;
@@ -162,7 +163,17 @@ public class PolarPathFollower implements Command {
 
     @Override
     public void start() {
+        try{
+        JSONObject currentPoint = points.getJSONObject(0);
+        nextX = currentPoint.getDouble("x");
+        nextY = currentPoint.getDouble("y");
+        double nextTheta = currentPoint.getDouble("angle");
 
+        Mouse.setPosition(nextX, nextY, nextTheta);
+
+        }  catch (JSONException e) {
+            throw new RuntimeException("Error reading point data from JSON", e);
+        }
     }
 
     public void execute() {
