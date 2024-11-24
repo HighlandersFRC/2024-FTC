@@ -1,3 +1,4 @@
+/*
 
 package org.firstinspires.ftc.teamcode;
 
@@ -6,7 +7,9 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import org.firstinspires.ftc.teamcode.Subsystems.Drive;
 import org.firstinspires.ftc.teamcode.Subsystems.Peripherals;
-import org.firstinspires.ftc.teamcode.Tools.FinalPose;
+*/
+/*import org.firstinspires.ftc.teamcode.Tools.FinalPose;*//*
+
 import org.firstinspires.ftc.teamcode.Tools.Robot;
 import org.firstinspires.ftc.teamcode.Tools.PID;
 import com.qualcomm.hardware.limelightvision.Limelight3A;
@@ -108,4 +111,4 @@ public class ColorMoveNoPID extends LinearOpMode {
             telemetry.update();
         }
     }
-}
+}*/

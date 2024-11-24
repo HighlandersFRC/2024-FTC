@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.Commands;
 
 import org.firstinspires.ftc.teamcode.Subsystems.Drive;
 import org.firstinspires.ftc.teamcode.Tools.FinalPose;
+
 import org.firstinspires.ftc.teamcode.Tools.PID;
 import org.firstinspires.ftc.teamcode.Tools.Vector;
 
@@ -36,11 +37,12 @@ public class MoveToPosition implements Command {
     }
 
     @Override
-    public void execute() throws InterruptedException {
+public void execute() throws InterruptedException {
         FinalPose.poseUpdate();
         double currentX = -FinalPose.x;
         double currentY = -FinalPose.y;
         double currentTheta = Math.toRadians(FinalPose.Yaw);
+
 
         xPID.updatePID(currentX);
         yPID.updatePID(currentY);
@@ -55,9 +57,9 @@ public class MoveToPosition implements Command {
 
     @Override
     public void end() {
-/*
         Drive.stop();
-*/
+
+
     }
 
     @Override

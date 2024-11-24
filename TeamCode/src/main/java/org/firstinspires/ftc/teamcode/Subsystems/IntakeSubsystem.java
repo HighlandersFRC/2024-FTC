@@ -150,7 +150,7 @@ public class IntakeSubsystem extends Subsystem {
     private NormalizedColorSensor colorSensor = null;
     public static CRServo leftServo;
     public static CRServo rightServo;
-    private final String setColor = "red";  // Color to stop the intake process (set to "red")
+    private final String setColor = "red";
 
     public void Intake(HardwareMap hardwareMap) {
         colorSensor = hardwareMap.get(NormalizedColorSensor.class, "sensor_color");
@@ -209,16 +209,16 @@ public class IntakeSubsystem extends Subsystem {
     }
 
     public void intakeSample() {
-        // Start the intake process
+
         intake();
 
-        // Use a while loop to continue intaking until the detected color matches the setColor
+
         while (!getDetectedColor().equals(setColor)) {
-            // Continue running the intake while the detected color isn't the set color
+
             intake();
         }
 
-        // Stop intake once the set color is detected
+
         stopIntake();
     }
 
@@ -227,38 +227,44 @@ public class IntakeSubsystem extends Subsystem {
         rightServo.setPower(0);
     }
 }
-*/
-package org.firstinspires.ftc.teamcode.Subsystems;
+*/package org.firstinspires.ftc.teamcode.Subsystems;
 
 import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.gamepad1;
+import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.hardwareMap;
 
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.NormalizedColorSensor;
 import com.qualcomm.robotcore.hardware.NormalizedRGBA;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.SwitchableLight;
+
+import org.firstinspires.ftc.teamcode.Tools.CustomServo.NewServo;
 
 public class IntakeSubsystem extends Subsystem {
 
     private NormalizedColorSensor colorSensor = null;
-    public static CRServo leftServo;
+    public static CRServo leftServo ;
     public static CRServo rightServo;
     private final String setColor = "red";
     private boolean intakeStarted = false;
+    private boolean isStopped = false;
 
     public void Intake(HardwareMap hardwareMap) {
         colorSensor = hardwareMap.get(NormalizedColorSensor.class, "sensor_color");
         leftServo = hardwareMap.get(CRServo.class, "left_servo");
         rightServo = hardwareMap.get(CRServo.class, "right_servo");
-
         if (colorSensor instanceof SwitchableLight) {
             ((SwitchableLight) colorSensor).enableLight(true);
         }
+
+
     }
 
     public static void intake() {
         leftServo.setPower(1);
         rightServo.setPower(-1);
+
     }
 
     public static void outtake() {
@@ -303,20 +309,21 @@ public class IntakeSubsystem extends Subsystem {
     }
 
     public void intakeSample() {
-        if (!intakeStarted) {
-            intakeStarted = true;
-            intake();
-        }
+        isStopped = false;
 
         while (!getDetectedColor().equals(setColor) && !getDetectedColor().equals("yellow")) {
+            if (isStopped) {
+                stopIntake();
+                return;
+            }
             intake();
         }
 
         stopIntake();
-
     }
 
     public void stopIntake() {
+        isStopped = true;
         leftServo.setPower(0);
         rightServo.setPower(0);
     }

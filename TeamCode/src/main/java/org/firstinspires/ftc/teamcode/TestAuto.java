@@ -22,17 +22,17 @@ import org.json.JSONException;
 @Autonomous
 public class TestAuto extends LinearOpMode {
 
-/*
     private FtcDashboard dashboard;
-*/
+
+
 
     @Override
     public void runOpMode() throws InterruptedException {
         FieldOfMerit.initialize(hardwareMap);
 
-/*
         dashboard = FtcDashboard.getInstance();
-*/
+
+
 
         Drive.setPosition(0, 0, 0);
         PathLoading pathLoading = new PathLoading(hardwareMap.appContext, "Parabola.json");
@@ -64,11 +64,8 @@ public class TestAuto extends LinearOpMode {
             double robotY = FinalPose.y;
             double robotTheta = Peripherals.getYawDegrees();
 
-  /*          TelemetryPacket packet = new TelemetryPacket();
+          TelemetryPacket packet = new TelemetryPacket();
 
-            double robotX = FinalPose.x;
-            double robotY = FinalPose.y;
-            double robotTheta = Peripherals.getYawDegrees();
 
            packet.fieldOverlay()
                     .setFill("blue")
@@ -86,7 +83,8 @@ public class TestAuto extends LinearOpMode {
             // Send telemetry packet to FTC Dashboard
             dashboard.sendTelemetryPacket(packet);
 
-            // Regular telemetry for Driver Station*/
+            // Regular telemetry for Driver Station
+
             telemetry.addData("X", robotX);
             telemetry.addData("Y", robotY);
             telemetry.addData("Theta", robotTheta);
