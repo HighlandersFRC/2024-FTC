@@ -13,7 +13,7 @@ import org.firstinspires.ftc.teamcode.Subsystems.Drive;
 
 @TeleOp
 public class kitbot extends LinearOpMode {
-    PID piviotPID = new PID(0.15, 0, 1);
+
     @Override
     public void runOpMode() throws InterruptedException {
 
@@ -21,17 +21,19 @@ public class kitbot extends LinearOpMode {
         Drive.initialize(hardwareMap);
         IntakeSubsystem.initialize(hardwareMap);
         Wrist.initialize(hardwareMap);
-        ArmSubsystem.initializeWithOutLimit(hardwareMap);
+        ArmSubsystem.initialize(hardwareMap);
 
         while (opModeIsActive()) {
 
             Wrist.controlWrist(gamepad1);
             IntakeSubsystem.controlIntake(gamepad1);
             Drive.teleopDrive(gamepad1);
-            ArmSubsystem.controlPivotWithoutLimitSwitch(gamepad1,pivotPID);
+            ArmSubsystem.controlPivot(gamepad1,pivotPID);
 
             telemetry.addData("Status", "Running");
             telemetry.addData("armPos",ArmSubsystem.getCurrentPosition());
+            telemetry.addData("armPosWithSwitch",ArmSubsystem.getCurrentPositionWithLimitSwitch());
+            telemetry.addData("limit",ArmSubsystem.limitSwitch());
             telemetry.update();
         }
     }
