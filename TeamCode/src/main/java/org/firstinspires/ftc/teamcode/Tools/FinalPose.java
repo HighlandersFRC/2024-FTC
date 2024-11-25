@@ -17,7 +17,7 @@ public class FinalPose extends Object{
     public static void poseUpdate() {
         FieldOfMerit.processTags();
         Drive.update();
-        Peripherals.update();
+       Mouse.update();
     }
 
 }

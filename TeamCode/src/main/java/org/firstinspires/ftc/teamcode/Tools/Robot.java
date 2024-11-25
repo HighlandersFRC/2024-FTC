@@ -12,5 +12,6 @@ public class Robot {
         Drive.initialize(hardwareMap);
         FieldOfMerit.initialize(hardwareMap);
         Vision.initialize(hardwareMap);
+        Mouse.init(hardwareMap);
     }
 }

@@ -242,7 +242,6 @@ package org.firstinspires.ftc.teamcode.Tools;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import org.firstinspires.ftc.teamcode.Subsystems.Drive;
 import org.firstinspires.ftc.teamcode.Subsystems.Peripherals;
-import org.firstinspires.ftc.teamcode.Tools.SparkFunOTOS;
 
 public class FieldOfMerit {
 
@@ -255,42 +254,40 @@ public class FieldOfMerit {
     public static void initialize(HardwareMap hardwareMap) {
         Drive.initialize(hardwareMap);
         Peripherals.initialize(hardwareMap);
-Peripherals.configureOtos();
+        Mouse.init(hardwareMap);
+Mouse.configureOtos();
         Peripherals.resetYaw();
     }
 
     public static void processTags() {
         double limelightX = Peripherals.getLimelightX();
         double limelightY = Peripherals.getLimelightY();
-        double robotYaw = Peripherals.getYawDegrees();
+        double robotYaw = Mouse.getTheta();
 
         if (isValidLimelightData(limelightX, limelightY)) {
             currentState = "Vision";
             fieldY = limelightX;
             fieldX = limelightY;
             theta = robotYaw;
-            botHeading = Peripherals.getYaw();
             Peripherals.resetYaw();
-            Peripherals.setPosition(fieldX,fieldY,theta);
+            Mouse.setPosition(fieldX,fieldY,theta);
+            Mouse.update();
             FinalPose.setfinalPose(fieldX, fieldY, theta);
+
         } else {
 
             currentState = "Mouse";
-            fieldX = Peripherals.getOtosX();
-            fieldY = Peripherals.getOtosY();
+            fieldX = Mouse.getX();
+            fieldY = Mouse.getY();
             theta = robotYaw;
             botHeading = Peripherals.getYaw();
+            Mouse.update();
             FinalPose.setfinalPose(fieldX, fieldY, theta);
         }
     }
 
     private static boolean isValidLimelightData(double x, double y) {
         return x != 0 || y != 0;
-    }
-
-    private static void resetMousePosition(double x, double y, double yaw) {
-        SparkFunOTOS.Pose2D currentPosition = new SparkFunOTOS.Pose2D(x, y, yaw);
-        Peripherals.mouse.setPosition(currentPosition);
     }
 
     public double getBotHeading() {
