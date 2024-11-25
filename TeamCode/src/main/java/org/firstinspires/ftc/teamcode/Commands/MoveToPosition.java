@@ -23,43 +23,45 @@ public class MoveToPosition implements Command {
         this.targetY = y;
         this.targetTheta = theta;
 
-        xPID = new PID(7, -1, 9);
-        yPID = new PID(7, -1, 9);
-        thetaPID = new PID(2.5, 0.0, 2.0);
+        xPID = new PID(8.0, 0.0, 6.0);
+        yPID = new PID(8.0, 0.0, 6.0);
+
+        thetaPID = new PID(3.0, 0.0, 1.5);
+        ;
     }
 
     @Override
     public void start() {
-        FinalPose.setFinalPose(0,0,0);
         xPID.setSetPoint(targetX);
         yPID.setSetPoint(targetY);
         thetaPID.setSetPoint(targetTheta);
     }
 
     @Override
-    public void execute() throws InterruptedException {
+    public void execute()  {
         FinalPose.poseUpdate();
-        double currentX = FinalPose.x;
-        double currentY = FinalPose.y;
+        double currentX = -FinalPose.x;
+        double currentY = -FinalPose.y;
         double currentTheta = Math.toRadians(FinalPose.Yaw);
 
         xPID.updatePID(currentX);
         yPID.updatePID(currentY);
         thetaPID.updatePID(currentTheta);
 
-        double xVel = xPID.getResult()*2 ;
-        double yVel = yPID.getResult()*2 ;
-        double thetaVel = Math.abs(targetTheta - currentTheta) < Math.toRadians(5) ? thetaPID.getResult() * 0.5 : thetaPID.getResult();
 
-        Drive.autoDrive(new Vector(xVel, -yVel), thetaVel);
+        double xVel = xPID.getResult() * 2;
+        double yVel = yPID.getResult() * 2;
 
+        double thetaVel = Math.abs(targetTheta - currentTheta) < Math.toRadians(5)
+                ? thetaPID.getResult() * 0.5
+                : thetaPID.getResult();
+
+        Drive.autoDrive(new Vector(xVel, yVel), thetaVel);
     }
 
     @Override
     public void end() {
 
-        Drive.stop();
-        System.out.println("end!");
     }
 
     @Override
@@ -73,7 +75,5 @@ public class MoveToPosition implements Command {
         boolean angleReached = Math.abs(targetTheta - currentTheta) < angleTolerance;
 
         return positionReached && angleReached;
-
     }
-
 }

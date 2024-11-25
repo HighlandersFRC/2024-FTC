@@ -23,7 +23,7 @@ public class CommandScheduler {
         scheduledCommands.addAll(Arrays.asList(commands));
     }
 
-    public void schedule(Command command) throws JSONException {
+    public void schedule(Command command) {
         command.start();
         scheduledCommands.add(command);
         RobotLog.d("Command Scheduled: " + command.getClass().getSimpleName());

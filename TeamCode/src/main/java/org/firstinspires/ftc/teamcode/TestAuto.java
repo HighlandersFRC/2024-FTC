@@ -1,18 +1,10 @@
 package org.firstinspires.ftc.teamcode;
 
-
-import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.telemetry;
-
-
-import com.acmerobotics.dashboard.FtcDashboard;
-import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
-
-import org.firstinspires.ftc.teamcode.Commands.Command;
 import org.firstinspires.ftc.teamcode.Commands.CommandScheduler;
-import org.firstinspires.ftc.teamcode.Commands.MoveToPosition;
+import org.firstinspires.ftc.teamcode.Commands.Wait;
 import org.firstinspires.ftc.teamcode.PathingTool.PathLoading;
 import org.firstinspires.ftc.teamcode.PathingTool.PolarPathFollower;
 import org.firstinspires.ftc.teamcode.Subsystems.Drive;
@@ -20,95 +12,54 @@ import org.firstinspires.ftc.teamcode.Subsystems.Peripherals;
 import org.firstinspires.ftc.teamcode.Tools.Constants;
 import org.firstinspires.ftc.teamcode.Tools.FieldOfMerit;
 import org.firstinspires.ftc.teamcode.Tools.FinalPose;
-import org.json.JSONException;
-
-
 import org.firstinspires.ftc.teamcode.Tools.Mouse;
-
+import org.json.JSONException;
 
 @Autonomous
 public class TestAuto extends LinearOpMode {
 
-
-/*
-   private FtcDashboard dashboard;
-*/
-
-
     @Override
     public void runOpMode() throws InterruptedException {
-        Mouse.init(hardwareMap);
-        Mouse.configureOtos();
-        FinalPose.Reset();
         FieldOfMerit.initialize(hardwareMap);
+        Mouse.init(hardwareMap);
 
-
-/*
-       dashboard = FtcDashboard.getInstance();
-*/
-
+        Mouse.configureOtos();
 
         Drive.setPosition(0, 0, 0);
-        PathLoading pathLoading = new PathLoading(hardwareMap.appContext, "StraightLine.polarpath");
+
+        PathLoading pathLoading = new PathLoading(hardwareMap.appContext, "Thing.polarpath");
         CommandScheduler scheduler = new CommandScheduler();
         Drive drive = new Drive();
         Peripherals peripherals = new Peripherals("peripherals");
-        Command moveToPosition;
+        PolarPathFollower moveToPosition;
+
+ /*       try {
+            scheduler.schedule(new Wait(3000));
+        } catch (JSONException e) {
+            throw new RuntimeException(e);
+        }*/
+
         try {
-            moveToPosition = new PolarPathFollower(drive, peripherals, pathLoading.getJsonPathData(), Constants.commandMap, Constants.conditionMap, scheduler);
+            moveToPosition = new PolarPathFollower(drive, peripherals, PathLoading.getJsonPathData(), Constants.commandMap, Constants.conditionMap, scheduler);
+            scheduler.schedule(moveToPosition);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
-        try {
-            scheduler.schedule(moveToPosition);
-        } catch (JSONException e) {
-            throw new RuntimeException(e);
-        }
-
 
         waitForStart();
 
-
         while (opModeIsActive()) {
             FinalPose.poseUpdate();
-            try {
+                        try {
                 scheduler.run();
             } catch (JSONException e) {
                 throw new RuntimeException(e);
             }
+
             double robotX = FinalPose.x;
             double robotY = FinalPose.y;
-            double robotTheta = Peripherals.getYawDegrees();
+            double robotTheta = FinalPose.Yaw;
 
-
- /*          TelemetryPacket packet = new TelemetryPacket();
-
-
-           double robotX = FinalPose.x;
-           double robotY = FinalPose.y;
-           double robotTheta = Peripherals.getYawDegrees();
-
-
-          packet.fieldOverlay()
-                   .setFill("blue")
-                   .fillRect(robotX - 9, robotY - 9, 18, 18)
-                   .setStroke("black")
-                   .strokeRect(robotX - 9, robotY - 9, 18, 18);
-
-
-           double headingLength = 18;
-           double headingX = robotX + headingLength * Math.cos(Math.toRadians(robotTheta));
-           double headingY = robotY + headingLength * Math.sin(Math.toRadians(robotTheta));
-           packet.fieldOverlay()
-                   .setStroke("red")
-                   .strokeLine(robotX, robotY, headingX, headingY);
-
-
-           // Send telemetry packet to FTC Dashboard
-           dashboard.sendTelemetryPacket(packet);
-
-
-           // Regular telemetry for Driver Station*/
             telemetry.addData("X", robotX);
             telemetry.addData("Y", robotY);
             telemetry.addData("Theta", robotTheta);

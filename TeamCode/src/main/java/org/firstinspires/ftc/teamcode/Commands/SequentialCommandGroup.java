@@ -25,7 +25,7 @@ public class SequentialCommandGroup implements Command {
     }
 
     @Override
-    public void start() throws JSONException {
+    public void start() {
         if (!commands.isEmpty()) {
             currentCommandIndex = 0;
             currentCommand = commands.get(currentCommandIndex);
@@ -35,7 +35,7 @@ public class SequentialCommandGroup implements Command {
     }
 
     @Override
-    public void execute() throws InterruptedException, JSONException {
+    public void execute()  {
         if (currentCommand != null && currentCommand.isFinished()) {
             currentCommand.end();
             currentCommandIndex++;
