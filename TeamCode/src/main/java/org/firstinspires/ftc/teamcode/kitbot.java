@@ -26,7 +26,7 @@ public class kitbot extends LinearOpMode {
 
             Wrist.controlWrist(gamepad1);
             IntakeSubsystem.controlIntake(gamepad1);
-            Drive.teleopDrive(gamepad1);
+//            Drive.teleopDrive(gamepad1);
            ArmSubsystem.controlPivot(gamepad1,pivotPID);
 
             telemetry.addData("Status", "Running");
