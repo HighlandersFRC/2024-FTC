@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.Subsystems;
 import  com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.teamcode.Tools.Constants;
@@ -123,7 +124,22 @@ public class Drive extends Subsystem {
         return velocityVector;
     }
 
+    public static void teleopDrive(Gamepad gamepad1) {
+        double forward = -gamepad1.left_stick_y;  // Invert if necessary for correct direction
+        double strafe = gamepad1.left_stick_x*2;
+        double pivot = gamepad1.right_stick_x;
 
+
+
+        double frontLeftPower = (forward - strafe - pivot) ;
+        double backLeftPower = (forward + strafe - pivot) ;
+        double frontRightPower = (forward - strafe + pivot) ;
+        double backRightPower = (forward + strafe + pivot) ;
+
+        drive(frontLeftPower, frontRightPower, backLeftPower, backRightPower);
+        Drive.Float();
+
+    }
     public static void drive(double leftFrontPower, double rightFrontPower, double leftBackPower, double rightBackPower) {
         frontLeftMotor.setPower(-leftFrontPower);
         frontRightMotor.setPower(-rightFrontPower);
@@ -134,11 +150,21 @@ public class Drive extends Subsystem {
     public static void stop() {
     Drive.drive(0,0,0,0);
 
-    backLeftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-    backRightMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-    frontLeftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-    frontRightMotor.setZeroPowerBehavior(
-            DcMotor.ZeroPowerBehavior.BRAKE);
+    backLeftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+    backRightMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+    frontLeftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+    frontRightMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+
+    }
+
+    public static void Float() {
+
+
+        backLeftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        backRightMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        frontLeftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        frontRightMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+
     }
 
 

@@ -29,11 +29,7 @@ public class SensorSparkFunOTOS extends LinearOpMode {
 
         waitForStart();
         FinalPose.Reset();
-        try {
-            scheduler.schedule(new SequentialCommandGroup(scheduler,new org.firstinspires.ftc.teamcode.Commands.Drive(hardwareMap,0.5,.95)));
-        } catch (JSONException e) {
-            throw new RuntimeException(e);
-        }
+
 
         while (opModeIsActive()) {
 

@@ -19,5 +19,6 @@ y = -Mouse.getY();
 Yaw = Mouse.getTheta();
 
     }
+    public static void Reset(){Mouse.configureOtos();}
 
 }

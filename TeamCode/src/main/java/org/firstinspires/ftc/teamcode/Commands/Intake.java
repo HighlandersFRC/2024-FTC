@@ -9,7 +9,7 @@ public class Intake implements Command  {
     }
 
     @Override
-    public void execute() throws InterruptedException {
+    public void execute() {
         System.out.println("Intake executing");
         IntakeSubsystem.setPower(1);
     }
