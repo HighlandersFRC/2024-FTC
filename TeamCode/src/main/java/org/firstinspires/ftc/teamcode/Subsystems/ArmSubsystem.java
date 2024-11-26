@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.Subsystems;
 
+import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.telemetry;
+
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.Gamepad;
@@ -13,6 +15,7 @@ public class ArmSubsystem extends Subsystem {
     private static double armPosition = 0; // Target arm position
     static PID piviotPID = new PID(0.15, 0, 1);
     protected static double pos = 0;
+    protected static int NumberOfTimesPressedB = 0;
     // Initialize the motor and limit switch
     public static void initialize(HardwareMap hardwareMap) {
         pivotMotor = hardwareMap.dcMotor.get("pivotMotor");
@@ -61,15 +64,59 @@ public class ArmSubsystem extends Subsystem {
         pivotMotor.setPower(power);
     }
 
+    // Variables for button state tracking and press count
+    private static boolean previousBState = false;
+    private static long lastProcessedTime = 0;
+    private static final long minDelay = 100; // Minimum delay (in ms)
+    private static final long maxDelay = 500; // Maximum delay (in ms)
+
+    // Integrate the logic into the controlPivot method
     public static void controlPivot(Gamepad gamepad1, PID pivotPID) {
-        // Adjust the arm position based on the limit switch state
-        if (gamepad1.dpad_down) { // Limit switch is pressed
-            armPosition = 0; // Set to a specific target position
-        }else if (gamepad1.dpad_up) { // Limit switch is not pressed
-            armPosition = -1736; // Default or safe position
+        // Calculate a random delay between minDelay and maxDelay
+        long processDelay = minDelay + (long) (Math.random() * (maxDelay - minDelay + 1));
+
+        // Get the current state of button B
+        boolean currentBState = gamepad1.b;
+
+        // Get the current time in milliseconds
+        long currentTime = System.currentTimeMillis();
+
+        // Check if button B has just been pressed and process within the dynamic delay range
+        if (currentBState && !previousBState && (currentTime - lastProcessedTime > processDelay)) {
+            // Update the last processed time to the current time
+            lastProcessedTime = currentTime;
+
+            // Increment the press count
+            NumberOfTimesPressedB++;
+            System.out.println("Button B Pressed! Count: " + NumberOfTimesPressedB);
+
+            // Update arm position based on the number of presses
+            switch (NumberOfTimesPressedB) {
+                case 1:
+                    armPosition = -3176;
+                    System.out.println("Case 1 armPosition: " + armPosition);
+                    break;
+                case 2:
+                    armPosition = -3550;
+                    System.out.println("Case 2 armPosition: " + armPosition);
+                    break;
+                case 3:
+                    armPosition = -3176;
+                    System.out.println("Case 3 armPosition: " + armPosition);
+                    break;
+                case 4:
+                    armPosition = 0;
+                    System.out.println("Case 4 armPosition: " + armPosition);
+                    // Reset press count to 0 after 4 presses
+                    NumberOfTimesPressedB = 0;
+                    break;
+            }
         }
 
-        // Update the PID controller with the target position
+        // Update the previous state of button B for the next iteration
+        previousBState = currentBState;
+
+        // PID control logic for pivoting
         pivotPID.setSetPoint(armPosition);
         pivotPID.setMaxOutput(1);
         pivotPID.setMinOutput(-1);
@@ -77,8 +124,6 @@ public class ArmSubsystem extends Subsystem {
 
         // Set motor power using the PID result
         pivotMotor.setPower(-pivotPID.getResult());
-
-
     }
 
     // Control pivot motor using only gamepad inputs

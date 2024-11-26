@@ -8,7 +8,6 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import org.firstinspires.ftc.teamcode.Subsystems.ArmSubsystem;
 import org.firstinspires.ftc.teamcode.Subsystems.IntakeSubsystem;
 import org.firstinspires.ftc.teamcode.Subsystems.Wrist;
-import org.firstinspires.ftc.teamcode.Tools.PID;
 import org.firstinspires.ftc.teamcode.Subsystems.Drive;
 
 @TeleOp
@@ -28,12 +27,16 @@ public class kitbot extends LinearOpMode {
             Wrist.controlWrist(gamepad1);
             IntakeSubsystem.controlIntake(gamepad1);
             Drive.teleopDrive(gamepad1);
-            ArmSubsystem.controlPivot(gamepad1,pivotPID);
+           ArmSubsystem.controlPivot(gamepad1,pivotPID);
 
             telemetry.addData("Status", "Running");
             telemetry.addData("armPos",ArmSubsystem.getCurrentPosition());
             telemetry.addData("armPosWithSwitch",ArmSubsystem.getCurrentPositionWithLimitSwitch());
             telemetry.addData("limit",ArmSubsystem.limitSwitch());
+            telemetry.addData("driveTrain",Drive.leftFrontPos());
+            telemetry.addData("driveTrain",Drive.RightFrontPos());
+            telemetry.addData("driveTrain",Drive.leftBackPos());
+            telemetry.addData("driveTrain",Drive.RightBackPos());
             telemetry.update();
         }
     }

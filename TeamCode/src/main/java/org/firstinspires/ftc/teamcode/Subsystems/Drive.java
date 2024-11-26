@@ -7,7 +7,6 @@ import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.teamcode.Tools.Constants;
-import org.firstinspires.ftc.teamcode.Tools.FieldOfMerit;
 import org.firstinspires.ftc.teamcode.Tools.FinalPose;
 import org.firstinspires.ftc.teamcode.Tools.PID;
 
@@ -62,6 +61,8 @@ public class Drive extends Subsystem {
 
         resetEncoder();
         lastUpdateTime = System.currentTimeMillis();
+        Drive.Float();
+
     }
 
     public static Vector purePursuitController(double currentX, double currentY, double currentTheta, int currentIndex,
@@ -137,7 +138,7 @@ public class Drive extends Subsystem {
         double backRightPower = (forward + strafe + pivot) ;
 
         drive(frontLeftPower, frontRightPower, backLeftPower, backRightPower);
-        Drive.Float();
+
 
     }
     public static void drive(double leftFrontPower, double rightFrontPower, double leftBackPower, double rightBackPower) {
@@ -160,10 +161,10 @@ public class Drive extends Subsystem {
     public static void Float() {
 
 
-        backLeftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
-        backRightMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
-        frontLeftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
-        frontRightMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        backLeftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        backRightMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        frontLeftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        frontRightMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
     }
 
@@ -407,5 +408,19 @@ public class Drive extends Subsystem {
 
         Drive.drive(frontLeftPower, frontRightPower, backLeftPower, backRightPower);
     }
+
+    public static double leftFrontPos(){
+        return frontLeftMotor.getCurrentPosition();
+    }
+    public static double RightFrontPos(){
+        return frontRightMotor.getCurrentPosition();
+    }
+    public static double leftBackPos(){
+        return backLeftMotor.getCurrentPosition();
+    }
+    public static double RightBackPos(){
+        return backRightMotor.getCurrentPosition();
+    }
+
 
 }
