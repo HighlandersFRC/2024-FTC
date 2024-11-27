@@ -39,7 +39,7 @@ public class Peripherals extends Subsystem {
     }
 
     public static double getYaw() {
-        return imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
+        return Math.toRadians(Mouse.getTheta());
     }
 
     public static double getRoll() {
