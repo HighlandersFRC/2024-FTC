@@ -72,7 +72,7 @@ public class ArmSubsystem extends Subsystem {
     private static final long minDelay = 100; // Minimum delay (in ms)
     private static final long maxDelay = 500; // Maximum delay (in ms)
 
-    private static final boolean previousStartState = false;
+    private static boolean previousStartState = false;
     private static long lastStartTime = 0;
     private static final long min_delay = 100; // Minimum delay (in ms)
     private static final long max_delay = 500; // Maximum delay (in ms)
@@ -151,6 +151,8 @@ public class ArmSubsystem extends Subsystem {
 
 
             }
+            previousStartState = currentStartState;
+
         if (gamepad1.a&&NumberOfTimesPressedStart==0) {
             armPosition = -3176;
         } else if (gamepad1.b&&NumberOfTimesPressedStart==0) {
