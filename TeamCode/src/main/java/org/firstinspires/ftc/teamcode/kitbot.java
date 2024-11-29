@@ -30,10 +30,11 @@ public class kitbot extends LinearOpMode {
             ArmSubsystem.controlPivot(gamepad1,piviotPID);
             Mouse.update();
 
-            telemetry.addData("Drive train back left", Drive.leftBackPos());
-            telemetry.addData("Drive train front left", Drive.leftFrontPos());
-            telemetry.addData("Drive train back right", Drive.RightBackPos());
-            telemetry.addData("Drive train front right", Drive.RightFrontPos());
+            telemetry.addData("DriveCommand train back left", Drive.leftBackPos());
+            telemetry.addData("DriveCommand train front left", Drive.leftFrontPos());
+            telemetry.addData("DriveCommand train back right", Drive.RightBackPos());
+            telemetry.addData("DriveCommand train front right", Drive.RightFrontPos());
+            telemetry.addData("Piviot arm current position: ", ArmSubsystem.pivotMotor.getCurrentPosition());
             telemetry.addData("Mouse sensor X", Mouse.getX());
             telemetry.addData("Mouse sensor Y", Mouse.getY());
             telemetry.update();

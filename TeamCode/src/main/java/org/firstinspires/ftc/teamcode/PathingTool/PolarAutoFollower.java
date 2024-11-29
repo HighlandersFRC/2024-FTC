@@ -9,7 +9,7 @@ import org.firstinspires.ftc.teamcode.Commands.Command;
 import org.firstinspires.ftc.teamcode.Commands.CommandScheduler;
 import org.firstinspires.ftc.teamcode.Commands.ConditionalCommand;
 import org.firstinspires.ftc.teamcode.Commands.SequentialCommandGroup;
-import org.firstinspires.ftc.teamcode.Subsystems.Drive;
+import org.firstinspires.ftc.teamcode.Subsystems.DriveCommand;
 import org.firstinspires.ftc.teamcode.Subsystems.Peripherals;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -26,7 +26,7 @@ import org.json.JSONArray;
 public class PolarAutoFollower extends SequentialCommandGroup {
 
 
-    public PolarAutoFollower(CommandScheduler scheduler, JSONObject polarAutoJSON, Drive drive, Peripherals peripherals, HashMap<String, Supplier<Command>> commandMap, HashMap<String, BooleanSupplier> conditionMap) throws Exception {
+    public PolarAutoFollower(CommandScheduler scheduler, JSONObject polarAutoJSON, DriveCommand drive, Peripherals peripherals, HashMap<String, Supplier<Command>> commandMap, HashMap<String, BooleanSupplier> conditionMap) throws Exception {
         super(scheduler);
         JSONArray schedule = polarAutoJSON.getJSONArray("schedule");
         JSONArray paths = polarAutoJSON.getJSONArray("paths");

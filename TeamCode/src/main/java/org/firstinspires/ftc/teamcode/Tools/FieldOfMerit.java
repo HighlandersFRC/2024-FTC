@@ -41,16 +41,16 @@ public class FieldOfMerit {
             fieldY = Y;
             theta = robotYaw;
 
-            Drive.setPosition(fieldX, fieldY, theta);
+            DriveCommand.setPosition(fieldX, fieldY, theta);
             FinalPose.setfinalPose(fieldX, fieldY, theta);
         }
 
         else {
 
 
-            fieldX = Drive.getOdometryX();
-            fieldY = Drive.getOdometryY();
-            theta = Drive.getOdometryTheta();
+            fieldX = DriveCommand.getOdometryX();
+            fieldY = DriveCommand.getOdometryY();
+            theta = DriveCommand.getOdometryTheta();
 
             currentState = "Odometry Pods";
             FinalPose.setfinalPose(fieldX, fieldY, theta);

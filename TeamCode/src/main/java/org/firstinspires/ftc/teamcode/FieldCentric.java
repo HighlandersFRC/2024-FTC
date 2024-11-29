@@ -50,23 +50,23 @@ public class FieldCentric extends LinearOpMode {
             //debug stuff
             if (gamepad1.a) {
 /*
-                Drive.drive(1,0,0,0);
+                DriveCommand.drive(1,0,0,0);
 */
                 Pivot.setPower(0.5);
             }
             else if (gamepad1.b) {
                 Pivot.setPower(-1);
                 /*
-                Drive.drive(0,1,0,0);
+                DriveCommand.drive(0,1,0,0);
 */
             }else {
                 Pivot.stop();
             }
  /*           if (gamepad1.y){
-                Drive.drive(0,0,1,0);
+                DriveCommand.drive(0,0,1,0);
             }
             if (gamepad1.x){
-                Drive.drive(0,0,0,1);
+                DriveCommand.drive(0,0,0,1);
             }*/
             if (gamepad1.left_bumper){
                 Elevators.moveDown();

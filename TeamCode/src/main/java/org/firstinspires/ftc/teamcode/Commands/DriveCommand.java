@@ -2,14 +2,14 @@ package org.firstinspires.ftc.teamcode.Commands;
 
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import org.firstinspires.ftc.teamcode.Subsystems.Peripherals;
-import org.firstinspires.ftc.teamcode.Tools.FieldOfMerit;
 import org.firstinspires.ftc.teamcode.Tools.FinalPose;
 
+import org.firstinspires.ftc.teamcode.Tools.Mouse;
 import org.firstinspires.ftc.teamcode.Tools.PID;
 
-public class Drive implements Command {
+public class DriveCommand implements Command {
 
-    private final PID yawPID = new PID(0.03, 0.0, 0.0);
+    private final PID yawPID = new PID(0.00, 0.0, 0.0);
     private final PID drivePID = new PID(0.015, 0.0001, 1);
 
     private final HardwareMap hardwareMap;
@@ -20,7 +20,7 @@ public class Drive implements Command {
     private double currentPos;
     private final double tolerance = 0.035;
 
-    public Drive(HardwareMap hardwareMap, double speed, double distance) {
+    public DriveCommand(HardwareMap hardwareMap, double speed, double distance) {
 
 
         this.hardwareMap = hardwareMap;
@@ -36,6 +36,7 @@ public class Drive implements Command {
         yawPID.setMinOutput(-0.25);
         yawPID.setMaxOutput(0.25);
 
+
     }
 
     public String getSubsystem() {
@@ -48,7 +49,7 @@ public class Drive implements Command {
 
 
 
-        Peripherals.resetYaw();
+        FinalPose.Reset();
 
         targetPos = distance;
         drivePID.setSetPoint(targetPos);
@@ -60,11 +61,12 @@ public class Drive implements Command {
 
       //FieldOfMerit.processTags();
         double currentXPos = FinalPose.x;
+        FinalPose.poseUpdate();
 
 
    drivePID.updatePID(currentXPos);
 
-        currentPos = Peripherals.getYawDegrees();
+        currentPos = FinalPose.x;
         yawPID.updatePID(currentPos);
 
         double correction = yawPID.getResult();
@@ -74,13 +76,13 @@ public class Drive implements Command {
         double rightBackPower = -Math.max(-1, Math.min(1, speed + correction));
         double leftBackPower = Math.max(-1, Math.min(1, speed - correction));
 
-        org.firstinspires.ftc.teamcode.Subsystems.Drive.drive(-rightFrontPower, -leftFrontPower, -rightBackPower, -leftBackPower);
+        org.firstinspires.ftc.teamcode.Subsystems.Drive.drive(rightFrontPower, -leftFrontPower, -rightBackPower, -leftBackPower);
 
     }
 
     @Override
     public void end() {
-        org.firstinspires.ftc.teamcode.Subsystems.Drive.drive(0, 0, 0, 0);
+        org.firstinspires.ftc.teamcode.Subsystems.Drive.Float();
     }
 
   @Override

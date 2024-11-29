@@ -110,7 +110,7 @@ public class DriveSubsystem {
         leftBack.setPower(leftBackPower);
         rightBack.setPower(rightBackPower);
 
-        System.out.println("Drive Powers: FL=" + leftFrontPower + ", FR=" + rightFrontPower +
+        System.out.println("DriveCommand Powers: FL=" + leftFrontPower + ", FR=" + rightFrontPower +
                 ", BL=" + leftBackPower + ", BR=" + rightBackPower);
     }
 

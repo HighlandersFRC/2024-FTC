@@ -396,13 +396,13 @@ public class Drive extends Subsystem {
                 if (Math.abs(turnPID.getError()) < 2) {
                     double distance = Math.sqrt(x * x + y * y);
                     if ((distance < 0.1)){
-                        Drive.drive(0.5,0.5,0.5,0.5);
+                        DriveCommand.drive(0.5,0.5,0.5,0.5);
                     }else {
-                        Drive.stop();
+                        DriveCommand.stop();
                     }
                 }else {
                     double power = turnPID.getResult();
-                    Drive.drive(power, -power, power, -power);
+                    DriveCommand.drive(power, -power, power, -power);
                 }
 
         }

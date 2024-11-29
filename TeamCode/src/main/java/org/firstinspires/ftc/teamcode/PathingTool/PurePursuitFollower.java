@@ -4,7 +4,7 @@ package org.firstinspires.ftc.teamcode.PathingTool;
 import java.util.ArrayList;
 
 import org.firstinspires.ftc.teamcode.Commands.Command;
-import org.firstinspires.ftc.teamcode.Subsystems.Drive;
+import org.firstinspires.ftc.teamcode.Subsystems.DriveCommand;
 import org.firstinspires.ftc.teamcode.Subsystems.Peripherals;
 import org.firstinspires.ftc.teamcode.Tools.FinalPose;
 import org.firstinspires.ftc.teamcode.Tools.Vector;
@@ -12,7 +12,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 
 public class PurePursuitFollower implements Command {
-  private Drive drive;
+  private DriveCommand drive;
   private Peripherals peripherals;
 
   private JSONArray path;
@@ -42,7 +42,7 @@ public class PurePursuitFollower implements Command {
     return currentPathPointIndex;
   }
 
-  public PurePursuitFollower(Drive drive, Peripherals peripherals, JSONArray pathPoints) throws JSONException {
+  public PurePursuitFollower(DriveCommand drive, Peripherals peripherals, JSONArray pathPoints) throws JSONException {
     this.drive = drive;
     this.path = pathPoints;
     pathStartTime = pathPoints.getJSONObject(0).getDouble("time");

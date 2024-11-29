@@ -81,7 +81,7 @@ public class ArmSubsystem extends Subsystem {
     private static final long max_delay = 500; // Maximum delay (in ms)
 //Underscore is for changing options
     // Integrate the logic into the controlPivot method
-    public static void controlPivot(Gamepad gamepad1, PID pivotPID) {
+    public static void controlPivot(Gamepad gamepad1, PID piviotPID) {
         long process_delay = min_delay + (long) (Math.random() * (max_delay - min_delay + 1));
 
         boolean currentStartState = gamepad1.start;
@@ -129,7 +129,7 @@ public class ArmSubsystem extends Subsystem {
                             System.out.println("Case 0 armPosition: " + armPosition);
                             break;
                         case 1:
-                            armPosition = -3176;
+                            armPosition = -3090;
                             System.out.println("Case 1 armPosition: " + armPosition);
                             break;
                         case 2:
@@ -137,7 +137,7 @@ public class ArmSubsystem extends Subsystem {
                             System.out.println("Case 2 armPosition: " + armPosition);
                             break;
                         case 3:
-                            armPosition = -3176;
+                            armPosition = -3090;
                             System.out.println("Case 3 armPosition: " + armPosition);
                             break;
                         case 4:
@@ -155,28 +155,41 @@ public class ArmSubsystem extends Subsystem {
 
             }
         if (gamepad1.y&&NumberOfTimesPressedStart==0) {
-            armPosition = -3176;
+            piviotPID.setPID(0.015, 0, 0.01);
+            armPosition = -2000;
         } else if (gamepad1.b&&NumberOfTimesPressedStart==0) {
+            piviotPID.setPID(0.015, 0, 0.01);
             armPosition = 0;
         } else if (gamepad1.x&&NumberOfTimesPressedStart==0) {
+            piviotPID.setPID(0.015, 0, 0.01);
             armPosition = -3550;
         }
 
         if (gamepad1.a) {
+            piviotPID.setPID(0.015, 0, 0.01);
             armPosition=-1736;
         }
 
         if (gamepad1.dpad_right) {
-            pivotMotor.setPower(1);
+            piviotPID.setPID(0.00005, 0, 0.0000000001);
+          pivotMotor.setPower(1);
+          armPosition = pivotMotor.getCurrentPosition();
+        }else if (gamepad1.dpad_left) {
+            piviotPID.setPID(0.00005,0,0.000000000001);
+            pivotMotor.setPower(-1);
+            armPosition = pivotMotor.getCurrentPosition();
         }
+        System.out.println("Current Position" + armPosition);
         // PID control logic for pivoting
-        pivotPID.setSetPoint(armPosition);
-        pivotPID.setMaxOutput(1);
-        pivotPID.setMinOutput(-1);
-        pivotPID.updatePID(ArmSubsystem.getCurrentPositionWithLimitSwitch());
+        if(!gamepad1.dpad_right && !gamepad1.dpad_left) {
+            piviotPID.setSetPoint(armPosition);
+            piviotPID.setMaxOutput(1);
+            piviotPID.setMinOutput(-1);
+            piviotPID.updatePID(ArmSubsystem.getCurrentPositionWithLimitSwitch());
 
-        // Set motor power using the PID result
-        pivotMotor.setPower(-pivotPID.getResult());
+            // Set motor power using the PID result
+            pivotMotor.setPower(-piviotPID.getResult());
+        }
 
 
 
