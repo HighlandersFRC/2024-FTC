@@ -144,11 +144,11 @@ public class Drive extends Subsystem {
     }
 
     public static void FeildCentric(Gamepad gamepad1) {
-        double x = -gamepad1.left_stick_y;  // Invert if necessary for correct direction
-        double y = gamepad1.left_stick_x*2;
-        double rx = gamepad1.right_stick_x;
+        double x = gamepad1.left_stick_x*2;  // Invert if necessary for correct direction
+        double y = gamepad1.left_stick_y;
+        double rx = -gamepad1.right_stick_x;
 
-        double botHeading = Math.toRadians(Mouse.getTheta());
+        double botHeading = -Math.toRadians(Mouse.getTheta());
         Mouse.update();
 
         if (gamepad1.dpad_up) {
@@ -158,14 +158,20 @@ public class Drive extends Subsystem {
         double rotX = x * Math.cos(-botHeading) - y * Math.sin(-botHeading);
         double rotY = x * Math.sin(-botHeading) + y * Math.cos(-botHeading);
 
+        double frontLeftPower = (rotY - rotX - rx);
+        double backLeftPower = (rotY + rotX - rx);
+        double frontRightPower = (rotY - rotX + rx);
+        double backRightPower = (rotY + rotX + rx);
 
-        double frontLeftPower = (rotY + rotX + rx);
-        double backLeftPower = (rotY - rotX + rx);
-        double frontRightPower = (rotY - rotX - rx);
-        double backRightPower = (rotY + rotX - rx);
+
+        /*double frontLeftPower = (forward - strafe - pivot) ;
+        double backLeftPower = (forward + strafe - pivot) ;
+        double frontRightPower = (forward - strafe + pivot) ;
+        double backRightPower = (forward + strafe + pivot) ;*/
+
+        Drive.drive(frontLeftPower, -frontRightPower, backLeftPower, backRightPower);
 
 
-        Drive.drive(-frontLeftPower, -frontRightPower, -backLeftPower, backRightPower);
 
         Drive.Float();
 

@@ -9,6 +9,7 @@ import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
+
 import org.firstinspires.ftc.teamcode.Tools.PID;
 
 public class ArmSubsystem extends Subsystem {
@@ -29,8 +30,7 @@ public class ArmSubsystem extends Subsystem {
 
         // Set the motor to brake mode
         pivotMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-
-        // Reset encoder
+// Reset encoder
         pivotMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
         // Set to run without encoder for direct power control
@@ -162,6 +162,8 @@ public class ArmSubsystem extends Subsystem {
         if (gamepad1.a) {
             armPosition=-1736;
         }
+
+
         // PID control logic for pivoting
         pivotPID.setSetPoint(armPosition);
         pivotPID.setMaxOutput(1);

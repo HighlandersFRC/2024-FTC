@@ -26,14 +26,14 @@ public class kitbot extends LinearOpMode {
 
             Wrist.controlWrist(gamepad1);
             IntakeSubsystem.controlIntake(gamepad1);
-            Drive.teleopDrive(gamepad1);
+            Drive.FeildCentric(gamepad1);
             ArmSubsystem.controlPivot(gamepad1,pivotPID);
             Mouse.update();
 
-            telemetry.addData("Drive train back left", Drive.backLeftMotor.getCurrentPosition());
-            telemetry.addData("Drive train front left", Drive.frontLeftMotor.getCurrentPosition());
-            telemetry.addData("Drive train back right", Drive.backRightMotor.getCurrentPosition());
-            telemetry.addData("Drive train front right", Drive.frontRightMotor.getCurrentPosition());
+            telemetry.addData("Drive train back left", Drive.leftBackPos());
+            telemetry.addData("Drive train front left", Drive.leftFrontPos());
+            telemetry.addData("Drive train back right", Drive.RightBackPos());
+            telemetry.addData("Drive train front right", Drive.RightFrontPos());
             telemetry.addData("Mouse sensor X", Mouse.getX());
             telemetry.addData("Mouse sensor Y", Mouse.getY());
             telemetry.update();
