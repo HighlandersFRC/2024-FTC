@@ -1,3 +1,4 @@
+
 package org.firstinspires.ftc.teamcode.Subsystems;
 
 import com.qualcomm.robotcore.hardware.CRServo;
@@ -30,4 +31,5 @@ public class IntakeSubsystem extends Subsystem {
             IntakeSubsystem.setPower(0);
         }
     }
+
 }

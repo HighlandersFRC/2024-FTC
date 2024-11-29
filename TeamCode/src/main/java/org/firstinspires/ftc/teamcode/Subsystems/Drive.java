@@ -8,6 +8,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.teamcode.Tools.Constants;
 import org.firstinspires.ftc.teamcode.Tools.FinalPose;
+import org.firstinspires.ftc.teamcode.Tools.Mouse;
 import org.firstinspires.ftc.teamcode.Tools.PID;
 
 import org.firstinspires.ftc.teamcode.Tools.Vector;
@@ -137,7 +138,36 @@ public class Drive extends Subsystem {
         double frontRightPower = (forward - strafe + pivot) ;
         double backRightPower = (forward + strafe + pivot) ;
 
-        drive(frontLeftPower, frontRightPower, backLeftPower, backRightPower);
+        drive(frontLeftPower, -frontRightPower, backLeftPower, backRightPower);
+
+
+    }
+
+    public static void FeildCentric(Gamepad gamepad1) {
+        double x = -gamepad1.left_stick_y;  // Invert if necessary for correct direction
+        double y = gamepad1.left_stick_x*2;
+        double rx = gamepad1.right_stick_x;
+
+        double botHeading = Math.toRadians(Mouse.getTheta());
+        Mouse.update();
+
+        if (gamepad1.dpad_up) {
+            Mouse.configureOtos();
+        }
+
+        double rotX = x * Math.cos(-botHeading) - y * Math.sin(-botHeading);
+        double rotY = x * Math.sin(-botHeading) + y * Math.cos(-botHeading);
+
+
+        double frontLeftPower = (rotY + rotX + rx);
+        double backLeftPower = (rotY - rotX + rx);
+        double frontRightPower = (rotY - rotX - rx);
+        double backRightPower = (rotY + rotX - rx);
+
+
+        Drive.drive(-frontLeftPower, -frontRightPower, -backLeftPower, backRightPower);
+
+        Drive.Float();
 
 
     }
@@ -146,15 +176,16 @@ public class Drive extends Subsystem {
         frontRightMotor.setPower(-rightFrontPower);
         backLeftMotor.setPower(-leftBackPower);
         backRightMotor.setPower(-rightBackPower);
+
     }
 
     public static void stop() {
-    Drive.drive(0,0,0,0);
+        Drive.drive(0,0,0,0);
 
-    backLeftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
-    backRightMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
-    frontLeftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
-    frontRightMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        backLeftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        backRightMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        frontLeftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        frontRightMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
     }
 
@@ -187,6 +218,10 @@ public class Drive extends Subsystem {
 
     public static double getVelocityFrontRight() {
         return frontRightMotor.getVelocity();
+    }
+
+    public static double direction() {
+        return direction();
     }
 
 /*    public static void update() {

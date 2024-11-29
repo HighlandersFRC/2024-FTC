@@ -72,7 +72,7 @@ public class ArmSubsystem extends Subsystem {
     private static final long minDelay = 100; // Minimum delay (in ms)
     private static final long maxDelay = 500; // Maximum delay (in ms)
 
-    private static boolean previousStartState = false;
+    private static final boolean previousStartState = false;
     private static long lastStartTime = 0;
     private static final long min_delay = 100; // Minimum delay (in ms)
     private static final long max_delay = 500; // Maximum delay (in ms)
@@ -151,9 +151,7 @@ public class ArmSubsystem extends Subsystem {
 
 
             }
-            previousStartState = currentStartState;
-
-        if (gamepad1.a&&NumberOfTimesPressedStart==0) {
+        if (gamepad1.y&&NumberOfTimesPressedStart==0) {
             armPosition = -3176;
         } else if (gamepad1.b&&NumberOfTimesPressedStart==0) {
             armPosition = 0;
@@ -161,7 +159,9 @@ public class ArmSubsystem extends Subsystem {
             armPosition = -3550;
         }
 
-
+        if (gamepad1.a) {
+            armPosition=-1736;
+        }
         // PID control logic for pivoting
         pivotPID.setSetPoint(armPosition);
         pivotPID.setMaxOutput(1);
@@ -188,11 +188,7 @@ public class ArmSubsystem extends Subsystem {
         pivotMotor.setPower(-pivotPID.getResult());
 
         // Allow manual override for fine control
-        if (gamepad1.dpad_up) {
-            armPosition=-1736;
-        } else if (gamepad1.dpad_down) {
-            armPosition=0; // Move arm downward directly
-        }
+
     }
 
 
