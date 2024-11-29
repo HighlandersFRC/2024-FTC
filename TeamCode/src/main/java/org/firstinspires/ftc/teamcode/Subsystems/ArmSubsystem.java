@@ -3,6 +3,8 @@ package org.firstinspires.ftc.teamcode.Subsystems;
 import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.gamepad1;
 import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.gamepad2;
 import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.telemetry;
+import static org.firstinspires.ftc.teamcode.Tools.Constants.piviotPID;
+
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
@@ -15,8 +17,9 @@ import org.firstinspires.ftc.teamcode.Tools.PID;
 public class ArmSubsystem extends Subsystem {
     public static DcMotor pivotMotor;
     public static DigitalChannel limitSwitch; // Limit switch for arm position
+
     private static double armPosition = 0; // Target arm position
-    static PID piviotPID = new PID(0.15, 0, 1);
+
     protected static double pos = 0;
     protected static int NumberOfTimesPressedB = 0;
     protected static int NumberOfTimesPressedStart = 0;
@@ -24,7 +27,7 @@ public class ArmSubsystem extends Subsystem {
     public static void initialize(HardwareMap hardwareMap) {
         pivotMotor = hardwareMap.dcMotor.get("pivotMotor");
         limitSwitch = hardwareMap.get(DigitalChannel.class, "limitSwitch");
-
+        IntakeSubsystem.initialize(hardwareMap);
         // Configure the limit switch
         limitSwitch.setMode(DigitalChannel.Mode.INPUT);
 
@@ -163,7 +166,9 @@ public class ArmSubsystem extends Subsystem {
             armPosition=-1736;
         }
 
-
+        if (gamepad1.dpad_right) {
+            pivotMotor.setPower(1);
+        }
         // PID control logic for pivoting
         pivotPID.setSetPoint(armPosition);
         pivotPID.setMaxOutput(1);

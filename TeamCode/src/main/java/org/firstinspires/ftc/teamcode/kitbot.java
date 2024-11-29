@@ -1,6 +1,6 @@
 package org.firstinspires.ftc.teamcode;
 
-import static org.firstinspires.ftc.teamcode.Tools.Constants.pivotPID;
+import static org.firstinspires.ftc.teamcode.Tools.Constants.piviotPID;
 
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -27,7 +27,7 @@ public class kitbot extends LinearOpMode {
             Wrist.controlWrist(gamepad1);
             IntakeSubsystem.controlIntake(gamepad1);
             Drive.FeildCentric(gamepad1);
-            ArmSubsystem.controlPivot(gamepad1,pivotPID);
+            ArmSubsystem.controlPivot(gamepad1,piviotPID);
             Mouse.update();
 
             telemetry.addData("Drive train back left", Drive.leftBackPos());
