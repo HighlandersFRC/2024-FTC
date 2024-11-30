@@ -14,6 +14,9 @@ public class Mouse {
 
         mouse = hardwareMap.get(SparkFunOTOS.class, "mouse");
 
+        configureOtos();
+
+
     }
 
 

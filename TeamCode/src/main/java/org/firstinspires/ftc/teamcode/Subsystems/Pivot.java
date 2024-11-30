@@ -1,8 +1,10 @@
 package org.firstinspires.ftc.teamcode.Subsystems;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
+import org.firstinspires.ftc.teamcode.Tools.Constants;
 import org.firstinspires.ftc.teamcode.Tools.PID;
 
 public class Pivot extends Subsystem{
@@ -11,6 +13,8 @@ public class Pivot extends Subsystem{
 
     public static void initialize(HardwareMap hardwareMap) {
         pivotMotor = hardwareMap.get(DcMotor.class, "pivot");
+        pivotMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+        resetEncoder();
     }
 
     public static void setPower(double power) {
@@ -22,7 +26,7 @@ public class Pivot extends Subsystem{
         pivotMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
     }
 
-    public void resetEncoder() {
+    public static void resetEncoder() {
         pivotMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         pivotMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
@@ -39,5 +43,12 @@ public class Pivot extends Subsystem{
         pid.updatePID(getEncoderPosition());
 
         setPower(pid.getResult());
+    }
+    public static double ticksToDegrees(double ticks) {
+        double degrees = (ticks / Constants.PIVOT_TICKS_PER_ROTATION) * 360.0;
+        return degrees + Constants.PIVOT_STARTING_ANGLE;
+    }
+    public static double getAngle(){
+     return ((getEncoderPosition()) / (678 / 90.8)) - 14.8;
     }
 }

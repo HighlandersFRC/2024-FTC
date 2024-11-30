@@ -11,7 +11,7 @@ public class ConditionalCommand implements Command {
     private Command commandToRun;
     private BooleanSupplier condition;
 
-    public ConditionalCommand(BooleanSupplier condition, Command onTrue, Command onFalse) {
+    public ConditionalCommand(Command onTrue, Command onFalse, BooleanSupplier condition) {
         this.condition = condition;
         this.onTrue = onTrue;
         this.onFalse = onFalse;

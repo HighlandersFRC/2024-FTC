@@ -27,11 +27,11 @@ public class Peripherals extends Subsystem {
     public static void initialize(HardwareMap hardwareMap) {
         imu = hardwareMap.get(IMU.class, "imu");
 
-   /*     limelight = hardwareMap.get(Limelight3A.class, "limelight");
-        limelight.setPollRateHz(50);
+     limelight = hardwareMap.get(Limelight3A.class, "limelight");
+        limelight.setPollRateHz(60);
         limelight.pipelineSwitch(0);
         limelight.getStatus();
-        limelight.start();*/
+        limelight.start();
     }
 
     public static double getYawDegrees(){
