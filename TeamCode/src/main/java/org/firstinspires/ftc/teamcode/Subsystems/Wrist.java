@@ -7,7 +7,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 public class Wrist extends Subsystem {
     public static Servo wrist;
-public static double position = 0.5;
+public static double position = 0.49;
     public static void initialize(HardwareMap hardwareMap) {
         wrist = hardwareMap.servo.get("wrist");
     }
@@ -16,10 +16,10 @@ public static double position = 0.5;
     public static void controlWrist (Gamepad gamepad1) {
 
 if (gamepad1.left_bumper && gamepad1.right_bumper) {
-    position = 0.5;
-    } else if (gamepad1.left_bumper) {
+    position = 0.49;
+    } else if (gamepad1.right_bumper) {
             position = 0.8;
-        } else if (gamepad1.right_bumper) {
+        } else if (gamepad1.left_bumper) {
            position = 0.2;
         }
 
@@ -27,7 +27,15 @@ if (gamepad1.left_bumper && gamepad1.right_bumper) {
 
         wrist.setPosition(position);
     }
-
+public static void contolWristWithOperator(Gamepad gamepad2) {
+    if (gamepad2.left_bumper && gamepad2.right_bumper) {
+        position = 0.49;
+    } else if (gamepad2.right_bumper) {
+        position = 0.8;
+    } else if (gamepad2.left_bumper) {
+        position = 0.2;
+    }
+}
     public static double getPosition() {
         return wrist.getPosition();
     }

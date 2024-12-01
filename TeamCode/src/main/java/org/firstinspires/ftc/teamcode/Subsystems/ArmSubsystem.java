@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.Subsystems;
 
 import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.gamepad1;
 import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.gamepad2;
+import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.gamepad2;
 import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.telemetry;
 import static org.firstinspires.ftc.teamcode.Tools.Constants.piviotPID;
 
@@ -19,7 +20,6 @@ public class ArmSubsystem extends Subsystem {
     public static DigitalChannel limitSwitch; // Limit switch for arm position
 
     private static double armPosition = 0; // Target arm position
-
     protected static double pos = 0;
     protected static int NumberOfTimesPressedB = 0;
     protected static int NumberOfTimesPressedStart = 0;
@@ -30,6 +30,7 @@ public class ArmSubsystem extends Subsystem {
         IntakeSubsystem.initialize(hardwareMap);
         // Configure the limit switch
         limitSwitch.setMode(DigitalChannel.Mode.INPUT);
+        IntakeSubsystem.initialize(hardwareMap);
 
         // Set the motor to brake mode
         pivotMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -82,6 +83,7 @@ public class ArmSubsystem extends Subsystem {
 //Underscore is for changing options
     // Integrate the logic into the controlPivot method
     public static void controlPivot(Gamepad gamepad1, PID piviotPID) {
+
         long process_delay = min_delay + (long) (Math.random() * (max_delay - min_delay + 1));
 
         boolean currentStartState = gamepad1.start;
@@ -127,22 +129,27 @@ public class ArmSubsystem extends Subsystem {
                         case 0:
                             armPosition = 0;
                             System.out.println("Case 0 armPosition: " + armPosition);
+
                             break;
                         case 1:
-                            armPosition = -3090;
+                            armPosition = -3365;
                             System.out.println("Case 1 armPosition: " + armPosition);
+
                             break;
                         case 2:
-                            armPosition = -3550;
+                            armPosition = -3000;
                             System.out.println("Case 2 armPosition: " + armPosition);
+
                             break;
                         case 3:
-                            armPosition = -3090;
+                            armPosition = -3365;
                             System.out.println("Case 3 armPosition: " + armPosition);
+
                             break;
                         case 4:
                             armPosition = 0;
                             System.out.println("Case 4 armPosition: " + armPosition);
+
                             // Reset press count to 0 after 4 presses
                             NumberOfTimesPressedB = 0;
                             break;
@@ -154,20 +161,30 @@ public class ArmSubsystem extends Subsystem {
 
 
             }
+
+
         if (gamepad1.y&&NumberOfTimesPressedStart==0) {
             piviotPID.setPID(0.015, 0, 0.01);
-            armPosition = -2000;
+            armPosition = -3000;
+
         } else if (gamepad1.b&&NumberOfTimesPressedStart==0) {
             piviotPID.setPID(0.015, 0, 0.01);
             armPosition = 0;
+
         } else if (gamepad1.x&&NumberOfTimesPressedStart==0) {
             piviotPID.setPID(0.015, 0, 0.01);
-            armPosition = -3550;
+            armPosition = -3365;
+
         }
+if (!gamepad1.dpad_down) {
+    if (armPosition == -3365) {
+        IntakeSubsystem.intake.setPower(-1);
+    }
+}
 
         if (gamepad1.a) {
             piviotPID.setPID(0.015, 0, 0.01);
-            armPosition=-1736;
+            armPosition=-1936;
         }
 
         if (gamepad1.dpad_right) {
@@ -190,13 +207,156 @@ public class ArmSubsystem extends Subsystem {
             // Set motor power using the PID result
             pivotMotor.setPower(-piviotPID.getResult());
         }
+        }
+    public static void gamepad1Climb(Gamepad gamepad1, PID piviotPID) {
+        if (gamepad1.dpad_right) {
+            piviotPID.setPID(0.00005, 0, 0.0000000001);
+            pivotMotor.setPower(1);
+            armPosition = pivotMotor.getCurrentPosition();
+        }else if (gamepad1.dpad_left) {
+            piviotPID.setPID(0.00005, 0, 0.0000000001);
+            pivotMotor.setPower(-1);
+            armPosition = pivotMotor.getCurrentPosition();
+        }
+        System.out.println("Current Position" + armPosition);
+        // PID control logic for pivoting
+        if(!gamepad1.dpad_right && !gamepad1.dpad_left) {
+            piviotPID.setSetPoint(armPosition);
+            piviotPID.setMaxOutput(1);
+            piviotPID.setMinOutput(-1);
+            piviotPID.updatePID(ArmSubsystem.getCurrentPositionWithLimitSwitch());
 
-
-
-
-
+            // Set motor power using the PID result
+            pivotMotor.setPower(-piviotPID.getResult());
+        }
     }
-    // Control pivot motor using only gamepad inputs
+    //Control pivot motor using only gamepad inputs
+    public static void contorlPivotDriverOperator(Gamepad gamepad2, PID piviotPID) {
+
+        long process_delay = min_delay + (long) (Math.random() * (max_delay - min_delay + 1));
+
+        boolean currentStartState = gamepad2.start;
+
+
+        long currentScedule = System.currentTimeMillis();
+
+
+        if (currentStartState && !previousStartState && (currentScedule - lastStartTime > process_delay)) {
+            lastStartTime = currentScedule;
+
+            NumberOfTimesPressedStart++;
+            System.out.println(NumberOfTimesPressedStart + "here");
+
+        }
+
+        if (NumberOfTimesPressedStart == 2) {
+            NumberOfTimesPressedStart = 0;
+        }
+
+        if (NumberOfTimesPressedStart == 1) {
+
+            // Calculate a random delay between minDelay and maxDelay
+            long processDelay = minDelay + (long) (Math.random() * (maxDelay - minDelay + 1));
+
+            // Get the current state of button B
+            boolean currentBState = gamepad2.b;
+
+            // Get the current time in milliseconds
+            long currentTime = System.currentTimeMillis();
+
+            // Check if button B has just been pressed and process within the dynamic delay range
+            if (currentBState && !previousBState && (currentTime - lastProcessedTime > processDelay)) {
+                // Update the last processed time to the current time
+                lastProcessedTime = currentTime;
+
+                // Increment the press count
+                NumberOfTimesPressedB++;
+                System.out.println("Button B Pressed! Count: " + NumberOfTimesPressedB);
+
+                // Update arm position based on the number of presses
+                switch (NumberOfTimesPressedB) {
+                    case 0:
+                        armPosition = 0;
+                        System.out.println("Case 0 armPosition: " + armPosition);
+
+                        break;
+                    case 1:
+                        armPosition = -3365;
+                        System.out.println("Case 1 armPosition: " + armPosition);
+
+                        break;
+                    case 2:
+                        armPosition = -3000;
+                        System.out.println("Case 2 armPosition: " + armPosition);
+
+                        break;
+                    case 3:
+                        armPosition = -3365;
+                        System.out.println("Case 3 armPosition: " + armPosition);
+
+                        break;
+                    case 4:
+                        armPosition = 0;
+                        System.out.println("Case 4 armPosition: " + armPosition);
+
+                        // Reset press count to 0 after 4 presses
+                        NumberOfTimesPressedB = 0;
+                        break;
+                }
+            }
+
+            // Update the previous state of button B for the next iteration
+            previousBState = currentBState;
+
+
+        }
+
+
+        if (gamepad2.y&&NumberOfTimesPressedStart==0) {
+            piviotPID.setPID(0.015, 0, 0.01);
+            armPosition = -3000;
+
+        } else if (gamepad2.b&&NumberOfTimesPressedStart==0) {
+            piviotPID.setPID(0.015, 0, 0.01);
+            armPosition = 0;
+
+        } else if (gamepad2.x&&NumberOfTimesPressedStart==0) {
+            piviotPID.setPID(0.015, 0, 0.01);
+            armPosition = -3365;
+
+        }
+        if (!gamepad2.dpad_down) {
+            if (armPosition == -3365) {
+                IntakeSubsystem.intake.setPower(-1);
+            }
+        }
+
+        if (gamepad2.a) {
+            piviotPID.setPID(0.015, 0, 0.01);
+            armPosition=-1936;
+        }
+
+        if (gamepad2.dpad_right) {
+            piviotPID.setPID(0.00005, 0, 0.0000000001);
+            pivotMotor.setPower(1);
+            armPosition = pivotMotor.getCurrentPosition();
+        }else if (gamepad2.dpad_left) {
+            piviotPID.setPID(0.00005,0,0.000000000001);
+            pivotMotor.setPower(-1);
+            armPosition = pivotMotor.getCurrentPosition();
+        }
+        System.out.println("Current Position" + armPosition);
+        // PID control logic for pivoting
+        if(!gamepad1.dpad_right && !gamepad1.dpad_left) {
+            piviotPID.setSetPoint(armPosition);
+            piviotPID.setMaxOutput(1);
+            piviotPID.setMinOutput(-1);
+            piviotPID.updatePID(ArmSubsystem.getCurrentPositionWithLimitSwitch());
+
+            // Set motor power using the PID result
+            pivotMotor.setPower(-piviotPID.getResult());
+        }
+    }
     public static void controlPivotWithoutLimitSwitch(Gamepad gamepad1, PID pivotPID ) {
         // Control the motor based on gamepad input
         pivotPID.setSetPoint(armPosition);
