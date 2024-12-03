@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
@@ -10,6 +11,7 @@ import org.firstinspires.ftc.teamcode.Subsystems.Peripherals;
 import org.firstinspires.ftc.teamcode.Subsystems.Pivot;
 import org.firstinspires.ftc.teamcode.Subsystems.Wrist;
 import org.firstinspires.ftc.teamcode.Tools.Constants;
+import org.firstinspires.ftc.teamcode.Tools.FieldOfMerit;
 import org.firstinspires.ftc.teamcode.Tools.FinalPose;
 import org.firstinspires.ftc.teamcode.Tools.Mouse;
 import org.firstinspires.ftc.teamcode.Tools.PID;
@@ -19,7 +21,7 @@ import org.firstinspires.ftc.teamcode.Tools.Robot;
 public class FieldCentric extends LinearOpMode {
 
     private final PID pivotPID = new PID(0.0065, 0.004, 0.0092);
-    private final PID elevatorPID = new PID(0.008, 0.0, 0.005);
+    private final PID elevatorPID = new PID(0.012, 0.0, 0.005);
 
     private static final double PIVOT_LOW_POSITION = 100;
     private static final double PIVOT_HIGH_POSITION = 700;
@@ -43,7 +45,7 @@ public class FieldCentric extends LinearOpMode {
         pivotPID.setMinInput(180);
         pivotPID.setMaxInput(-180);
 
-        elevatorPID.setMaxOutput(0.3);
+        elevatorPID.setMaxOutput(0.5);
         waitForStart();
         pivotPID.setSetPoint(-14);
 
@@ -73,7 +75,9 @@ public class FieldCentric extends LinearOpMode {
 
             double pivotPower = pivotPID.updatePID(Pivot.getAngle());
 
+/*
             Pivot.setPower(pivotPower + (Constants.PIVOT_FEED_FORWARD * Math.cos(Pivot.getAngle() + Constants.ARM_BALANCE_OFFSET)));
+*/
 
             if (gamepad1.left_bumper) {
                 elevatorPID.setSetPoint(Elevators.getLeftEncoder() - ELEVATOR_INCREMENT);
@@ -88,16 +92,19 @@ public class FieldCentric extends LinearOpMode {
             if (gamepad1.left_trigger > 0.1) {
                 Intake.outtake();
             } else if (gamepad1.right_trigger > 0.1) {
-                Intake.intake();
+                Intake.intakeSample();
             } else  {
                 Intake.stopIntake();
             }
 
             if (gamepad1.dpad_up){
-                Wrist.move(0);
+                Wrist.move(1);
             }
             if (gamepad1.dpad_down){
-                Wrist.move(1);
+                Wrist.move(0);
+            }
+            if (gamepad1.dpad_left){
+                Wrist.move(0.5);
             }
             if (gamepad1.x) {
                 elevatorPID.setSetPoint(1000);
@@ -107,6 +114,10 @@ public class FieldCentric extends LinearOpMode {
                 elevatorPID.setSetPoint(0);
                 pivotPID.setSetPoint(-5);
             }
+
+/*
+            Pivot.checkForZero();
+*/
 
             double botHeading = 0;
             double rotX = x * Math.cos(-botHeading) - y * Math.sin(-botHeading);
@@ -136,7 +147,11 @@ public class FieldCentric extends LinearOpMode {
                     .addData("Left Encoder", Elevators.getLeftEncoder())
                     .addData("Right Encoder", Elevators.getRightEncoder())
                     .addData("Set Point", elevatorPID.getSetPoint());
-
+            telemetry.addLine("Pose")
+                    .addData("x", FinalPose.x)
+                    .addData("y", FinalPose.y)
+                    .addData("current", FieldOfMerit.currentState)
+                    .addData("yaw", FinalPose.yaw);
             telemetry.update();
         }
     }

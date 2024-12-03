@@ -42,7 +42,7 @@ public class MoveToPosition implements Command {
         FinalPose.poseUpdate();
         double currentX = -FinalPose.x;
         double currentY = -FinalPose.y;
-        double currentTheta = Math.toRadians(FinalPose.Yaw);
+        double currentTheta = Math.toRadians(FinalPose.yaw);
 
         xPID.updatePID(currentX);
         yPID.updatePID(currentY);
@@ -68,7 +68,7 @@ public class MoveToPosition implements Command {
     public boolean isFinished() {
         double currentX = -FinalPose.x;
         double currentY = -FinalPose.y;
-        double currentTheta = Math.toRadians(FinalPose.Yaw);
+        double currentTheta = Math.toRadians(FinalPose.yaw);
 
         boolean positionReached = Math.abs(targetX - currentX) < positionTolerance
                 && Math.abs(targetY - currentY) < positionTolerance;

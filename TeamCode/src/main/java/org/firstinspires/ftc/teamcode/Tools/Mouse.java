@@ -14,9 +14,6 @@ public class Mouse {
 
         mouse = hardwareMap.get(SparkFunOTOS.class, "mouse");
 
-        configureOtos();
-
-
     }
 
 
@@ -24,7 +21,7 @@ public class Mouse {
         mouse.setLinearUnit(SparkFunOTOS.LinearUnit.METERS);
         mouse.setAngularUnit(SparkFunOTOS.AngularUnit.DEGREES);
 
-        SparkFunOTOS.Pose2D offset = new SparkFunOTOS.Pose2D(0, 0, -90);
+        SparkFunOTOS.Pose2D offset = new SparkFunOTOS.Pose2D(0, 0, 90);
         mouse.setOffset(offset);
         mouse.setLinearScalar(1.005809562240364);
         mouse.setAngularScalar(0.989932511851);
@@ -33,10 +30,10 @@ public class Mouse {
 
         setPosition(0,0,0);
     }
-public static void setPosition(double x, double y, double theta){
-    SparkFunOTOS.Pose2D currentPosition = new SparkFunOTOS.Pose2D(-x, -y, theta);
-    mouse.setPosition(currentPosition);
-}
+    public static void setPosition(double x, double y, double theta){
+        SparkFunOTOS.Pose2D currentPosition = new SparkFunOTOS.Pose2D(x, y, theta);
+        mouse.setPosition(currentPosition);
+    }
 
     public static void update() {
 

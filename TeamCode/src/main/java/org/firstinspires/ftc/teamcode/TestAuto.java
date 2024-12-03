@@ -58,7 +58,7 @@ public class TestAuto extends LinearOpMode {
 
             double robotX = FinalPose.x;
             double robotY = FinalPose.y;
-            double robotTheta = FinalPose.Yaw;
+            double robotTheta = FinalPose.yaw;
 
             telemetry.addData("X", robotX);
             telemetry.addData("Y", robotY);

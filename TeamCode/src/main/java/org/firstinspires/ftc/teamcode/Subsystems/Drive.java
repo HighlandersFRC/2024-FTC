@@ -349,7 +349,7 @@ public class Drive extends Subsystem {
 
         double rotationFactor = -(angle);
 
-        double botHeading = Math.toRadians(FinalPose.Yaw);
+        double botHeading = Math.toRadians(FinalPose.yaw);
 
         double rotX = vx * Math.cos(-botHeading) + vy * Math.sin(-botHeading);
         double rotY = - vx * Math.sin(-botHeading) + vy * Math.cos(-botHeading);

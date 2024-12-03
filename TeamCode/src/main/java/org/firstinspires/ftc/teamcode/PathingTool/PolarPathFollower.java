@@ -87,7 +87,7 @@ public class PolarPathFollower implements Command {
 
             double currentX = FinalPose.x;
             double currentY = FinalPose.y;
-            double currentTheta = Math.toRadians(FinalPose.Yaw);
+            double currentTheta = Math.toRadians(FinalPose.yaw);
 
             xPID.setSetPoint(nextX);
             xPID.updatePID(currentX);
