@@ -6,6 +6,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.teamcode.Subsystems.ArmSubsystem;
+import org.firstinspires.ftc.teamcode.Subsystems.ColorSensorSubsystem;
 import org.firstinspires.ftc.teamcode.Subsystems.Drive;
 import org.firstinspires.ftc.teamcode.Subsystems.IntakeSubsystem;
 import org.firstinspires.ftc.teamcode.Subsystems.Wrist;
@@ -20,6 +21,7 @@ public class kitbot extends LinearOpMode {
         IntakeSubsystem.initialize(hardwareMap);
         Wrist.initialize(hardwareMap);
         Drive.initialize(hardwareMap);
+        ColorSensorSubsystem.initialize(hardwareMap);
         Mouse.init(hardwareMap);
 
         while (opModeIsActive()) {
@@ -32,6 +34,9 @@ public class kitbot extends LinearOpMode {
             telemetry.addData("Mouse X", Mouse.getX());
             telemetry.addData("Mouse Y", Mouse.getY());
             telemetry.addData("Mouse θ", Mouse.getTheta());
+            telemetry.addData("Color Sensor Red", ColorSensorSubsystem.getRed());
+            telemetry.addData("Color Sensor Green", ColorSensorSubsystem.getGreen());
+            telemetry.addData("Color Sensor Blue", ColorSensorSubsystem.getBlue());
             telemetry.addData("Drive train left front", Drive.leftFrontPos());
             telemetry.addData("Drive train right front", Drive.RightFrontPos());
             telemetry.addData("Drive train left back", Drive.leftBackPos());
