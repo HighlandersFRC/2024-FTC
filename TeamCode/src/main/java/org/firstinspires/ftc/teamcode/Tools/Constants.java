@@ -8,6 +8,9 @@ import java.util.function.BooleanSupplier;
 import java.util.function.Supplier;
 
 public class Constants {
+    public static final double PIVOT_TICKS_PER_ROTATION = 537.6 / 5;
+    public static final double PIVOT_STARTING_ANGLE = -14.85;
+    public static final double PIVOT_FEED_FORWARD = 0.32;
     public static final double PID_X_P = 0.1;
     public static final double PID_X_I = 1;
     public static final double PID_X_D = 1;
@@ -24,6 +27,11 @@ public class Constants {
     public static double ElevatorsDownPosition = 200;
     public static double ArmDownPosition = 200;
     public static Object SetPoints;
+
+    public static double nextX;
+    public static double nextY;
+    public static double nextTheta;
+    public static double ARM_BALANCE_OFFSET = 22;
 
     public static double getOffsetFromVoltage(double voltage){
         return 5.03 + -4950*voltage + -4731*Math.pow(voltage, 2) + -2098*Math.pow(voltage, 3) + -286*Math.pow(voltage, 4);
@@ -46,7 +54,7 @@ public class Constants {
         public double tagangle;
 
         public AprilTagData(double positionX, double positionY, double size, double tagangle) {
-            this.positionX = positionX;
+
             this.positionY = positionY;
             this.size = size;
             this.tagangle = tagangle;
@@ -65,8 +73,8 @@ public class Constants {
         aprilTagMap.put(16, new AprilTagData(3.048, 0, 0.1016, 0));
     }
 
-    public static final double AUTONOMOUS_LOOKAHEAD_DISTANCE = 10;
-    public static final double AUTONOMOUS_LOOKAHEAD_LINEAR_RADIUS = 10;
+    public static final double AUTONOMOUS_LOOKAHEAD_DISTANCE = 1;
+    public static final double AUTONOMOUS_LOOKAHEAD_LINEAR_RADIUS = 1;
     public static final double AUTONOMOUS_LOOKAHEAD_ANGULAR_RADIUS = Math.PI;
 
 }

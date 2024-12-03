@@ -7,6 +7,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.teamcode.Tools.Constants;
 import org.firstinspires.ftc.teamcode.Tools.FieldOfMerit;
+import org.firstinspires.ftc.teamcode.Tools.FinalPose;
 import org.firstinspires.ftc.teamcode.Tools.PID;
 
 import org.firstinspires.ftc.teamcode.Tools.Vector;
@@ -28,6 +29,7 @@ public class Drive extends Subsystem {
 
     public static double x = 0.0;
     public static double y = 0.0;
+
     public static double theta = 0.0;
 
     public static double lastLeftPos = 0;
@@ -45,8 +47,8 @@ public class Drive extends Subsystem {
     public static double totalXTraveled = 0.0;
     public static double totalYTraveled = 0.0;
     public static double totalThetaTraveled = 0.0;
-    private static final double L = 0.2;
-    private static final double W = 0.2;
+    private static final double L = 0.4064;
+    private static final double W = 0.4064;
 
     public static void initialize(HardwareMap hardwareMap) {
         frontLeftMotor = hardwareMap.get(DcMotorEx.class, "left_front");
@@ -61,30 +63,14 @@ public class Drive extends Subsystem {
         lastUpdateTime = System.currentTimeMillis();
     }
 
-    public static void drive(double leftFrontPower, double rightFrontPower, double leftBackPower, double rightBackPower) {
-        frontLeftMotor.setPower(-leftFrontPower);
-        frontRightMotor.setPower(-rightFrontPower);
-        backLeftMotor.setPower(leftBackPower);
-        backRightMotor.setPower(-rightBackPower);
-    }
-
-    public static void stop() {
-    Drive.drive(0,0,0,0);
-
-    backLeftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-    backRightMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-    frontLeftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-    frontRightMotor.setZeroPowerBehavior(
-            DcMotor.ZeroPowerBehavior.BRAKE);
-    }
-    public Number[] purePursuitController(double currentX, double currentY, double currentTheta, int currentIndex,
-                                          JSONArray pathPoints) throws JSONException {
+    public static Vector purePursuitController(double currentX, double currentY, double currentTheta, int currentIndex,
+                                               JSONArray pathPoints) throws JSONException {
         JSONObject targetPoint = pathPoints.getJSONObject(pathPoints.length() - 1);
         int targetIndex = pathPoints.length() - 1;
         for (int i = currentIndex; i < pathPoints.length(); i++) {
             JSONObject point = pathPoints.getJSONObject(i);
             double velocityMag = Math.sqrt((Math.pow(point.getDouble("x_velocity"), 2) + Math.pow(point.getDouble("y_velocity"), 2))
-                            + Math.pow(point.getDouble("angular_velocity"), 2));
+                    + Math.pow(point.getDouble("angular_velocity"), 2));
             double targetTheta = point.getDouble("angle");
             while (Math.abs(targetTheta - currentTheta) > Math.PI) {
                 if (targetTheta - currentTheta > Math.PI) {
@@ -93,7 +79,6 @@ public class Drive extends Subsystem {
                     targetTheta += 2 * Math.PI;
                 }
             }
-
             if (!insideRadius(currentX - point.getDouble("x") / Constants.AUTONOMOUS_LOOKAHEAD_LINEAR_RADIUS,
                     currentY - point.getDouble("y") / Constants.AUTONOMOUS_LOOKAHEAD_LINEAR_RADIUS,
                     (currentTheta - targetTheta) / Constants.AUTONOMOUS_LOOKAHEAD_ANGULAR_RADIUS,
@@ -105,8 +90,10 @@ public class Drive extends Subsystem {
                 break;
             }
         }
+
         double targetX = targetPoint.getDouble("x"), targetY = targetPoint.getDouble("y"),
                 targetTheta = targetPoint.getDouble("angle");
+
         while (Math.abs(targetTheta - currentTheta) > Math.PI) {
             if (targetTheta - currentTheta > Math.PI) {
                 targetTheta -= 2 * Math.PI;
@@ -114,6 +101,7 @@ public class Drive extends Subsystem {
                 targetTheta += 2 * Math.PI;
             }
         }
+
         xPID.setSetPoint(targetX);
         yPID.setSetPoint(targetY);
         thetaPID.setSetPoint(targetTheta);
@@ -126,25 +114,35 @@ public class Drive extends Subsystem {
         double yVelNoFF = yPID.getResult();
         double thetaVelNoFF = -thetaPID.getResult();
 
-        double feedForwardX = targetPoint.getDouble("x_velocity")/2;
-        double feedForwardY = targetPoint.getDouble("y_velocity")/2;
-        double feedForwardTheta = -targetPoint.getDouble("angular_velocity")/2;
+        double feedForwardX = targetPoint.getDouble("x_velocity") / 2;
+        double feedForwardY = targetPoint.getDouble("y_velocity") / 2;
+        double feedForwardTheta = -targetPoint.getDouble("angular_velocity") / 2;
 
-        Number[] velocityArray = new Number[] {
-                feedForwardX + xVelNoFF,
-                -(feedForwardY + yVelNoFF),
-                feedForwardTheta + thetaVelNoFF,
-                targetIndex,
-        };
+        Vector velocityVector = new Vector(feedForwardX + xVelNoFF, -(feedForwardY + yVelNoFF));
 
-        double velocityMag = Math
-                .sqrt(Math.pow(targetPoint.getDouble("x_velocity"), 2) + Math.pow(targetPoint.getDouble("y_velocity"), 2));
-
-        return velocityArray;
+        return velocityVector;
     }
 
 
-    private boolean insideRadius(double deltaX, double deltaY, double deltaTheta, double radius) {
+    public static void drive(double leftFrontPower, double rightFrontPower, double leftBackPower, double rightBackPower) {
+        frontLeftMotor.setPower(-leftFrontPower);
+        frontRightMotor.setPower(-rightFrontPower);
+        backLeftMotor.setPower(-leftBackPower);
+        backRightMotor.setPower(-rightBackPower);
+    }
+
+    public static void stop() {
+        Drive.drive(0,0,0,0);
+
+        backLeftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        backRightMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        frontLeftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        frontRightMotor.setZeroPowerBehavior(
+                DcMotor.ZeroPowerBehavior.BRAKE);
+    }
+
+
+    private static boolean insideRadius(double deltaX, double deltaY, double deltaTheta, double radius) {
         return Math.sqrt(Math.pow(deltaX, 2) + Math.pow(deltaY, 2) + Math.pow(deltaTheta, 2)) < radius;
     }
 
@@ -170,6 +168,7 @@ public class Drive extends Subsystem {
         double currentLeftPos = getLeftEncoder();
         double currentRightPos = getRightEncoder();
         double currentCenterPos = getCenterEncoder();
+
         double deltaLeft = currentLeftPos - lastLeftPos;
         double deltaRight = currentRightPos - lastRightPos;
         double deltaCenter = currentCenterPos - lastCenterPos;
@@ -344,12 +343,26 @@ public class Drive extends Subsystem {
     public static int getCenterEncoder() {
         return frontRightMotor.getCurrentPosition();
     }
-    public static void autoDrive(Vector vector, double omega) {
-        double vx = vector.getJ();
-        double vy = -vector.getI();
+    public static void autoDrive(Vector vector, double angle) {
+        double vx = vector.getI();
+        double vy = -vector.getJ();
 
-        double rotationFactor = omega * (L + W);
+        double rotationFactor = -(angle);
 
+        double botHeading = Math.toRadians(FinalPose.yaw);
+
+        double rotX = vx * Math.cos(-botHeading) + vy * Math.sin(-botHeading);
+        double rotY = - vx * Math.sin(-botHeading) + vy * Math.cos(-botHeading);
+
+        rotX *= 1.1;
+
+        double denominator = Math.max(Math.abs(rotY) + Math.abs(rotX) + Math.abs(rotationFactor), 1);
+        double frontLeftPower = (rotX + rotY + rotationFactor) / denominator;
+        double frontRightPower = (rotX - rotY - rotationFactor) / denominator;
+        double backLeftPower = (rotX - rotY + rotationFactor) / denominator;
+        double backRightPower = (rotX + rotY - rotationFactor) / denominator;
+
+/*
         double frontLeftPower = vx + vy + rotationFactor;
         double frontRightPower = vx - vy - rotationFactor;
         double backLeftPower = vx - vy + rotationFactor;
@@ -364,11 +377,9 @@ public class Drive extends Subsystem {
             backLeftPower /= maxMagnitude;
             backRightPower /= maxMagnitude;
         }
+*/
 
-        frontLeftMotor.setPower(frontLeftPower);
-        frontRightMotor.setPower(frontRightPower);
-        backLeftMotor.setPower(backLeftPower);
-        backRightMotor.setPower(backRightPower);
+        Drive.drive(frontLeftPower, frontRightPower, backLeftPower, backRightPower);
     }
 
 }

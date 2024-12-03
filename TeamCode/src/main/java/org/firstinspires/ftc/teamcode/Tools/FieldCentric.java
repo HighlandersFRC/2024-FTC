@@ -1,104 +1,114 @@
 package org.firstinspires.ftc.teamcode.Tools;
 
-import com.qualcomm.hardware.sparkfun.SparkFunOTOS;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.Subsystems.Drive;
-import org.firstinspires.ftc.teamcode.Subsystems.Elevator;
-import org.firstinspires.ftc.teamcode.Subsystems.Elevator;
-import org.firstinspires.ftc.teamcode.Subsystems.IntakeSubsystem;
+import org.firstinspires.ftc.teamcode.Subsystems.Elevators;
+import org.firstinspires.ftc.teamcode.Subsystems.Intake;
 import org.firstinspires.ftc.teamcode.Subsystems.Peripherals;
-
 import org.firstinspires.ftc.teamcode.Subsystems.Pivot;
 import org.firstinspires.ftc.teamcode.Subsystems.Wrist;
+import org.firstinspires.ftc.teamcode.Tools.Constants;
 import org.firstinspires.ftc.teamcode.Tools.FinalPose;
-import org.firstinspires.ftc.teamcode.Tools.FieldOfMerit;
 import org.firstinspires.ftc.teamcode.Tools.Mouse;
+import org.firstinspires.ftc.teamcode.Tools.PID;
 import org.firstinspires.ftc.teamcode.Tools.Robot;
-import com.qualcomm.hardware.sparkfun.SparkFunOTOS;
-import com.qualcomm.robotcore.hardware.CRServo;
 
 @TeleOp
 public class FieldCentric extends LinearOpMode {
+
+    private final PID pivotPID = new PID(0.0065, 0.004, 0.0092);
+    private final PID elevatorPID = new PID(0.008, 0.0, 0.005);
+
+    private static final double PIVOT_LOW_POSITION = 100;
+    private static final double PIVOT_HIGH_POSITION = 700;
+
+    private static final double ELEVATOR_INCREMENT = 200;
+    private static final double ELEVATOR_SUBMERSIBLE_DISTANCE = 10;
+
     @Override
     public void runOpMode() throws InterruptedException {
-        CRServo servo;
-        Wrist.initialize(hardwareMap);
-        IntakeSubsystem.initialize(hardwareMap);
-        Elevator.initialize(hardwareMap);
-        Pivot.initialize(hardwareMap);
+
         Robot.initialize(hardwareMap);
         Mouse.init(hardwareMap);
+        Pivot.initialize(hardwareMap);
+        Intake.initialize(hardwareMap);
+        Elevators.initialize(hardwareMap);
+        Wrist.initialize(hardwareMap);
 
+        elevatorPID.setSetPoint(0);
 
+        pivotPID.setMaxOutput(0.5);
+        pivotPID.setMinInput(180);
+        pivotPID.setMaxInput(-180);
+
+        elevatorPID.setMaxOutput(0.3);
         waitForStart();
+        pivotPID.setSetPoint(-14);
 
         if (isStopRequested()) return;
 
         while (opModeIsActive()) {
 
+            Mouse.update();
+            FinalPose.poseUpdate();
 
+            double y = -gamepad1.left_stick_y;
+            double x = gamepad1.left_stick_x;
+            double rx = gamepad1.right_stick_x;
 
+            if (gamepad1.start) {
+                Peripherals.resetYaw();
+                Drive.resetEncoder();
+            }
 
-           FinalPose.poseUpdate();
+            if (gamepad1.b) {
+                pivotPID.setSetPoint(7);
+            } else if (gamepad1.y) {
+                pivotPID.setSetPoint(90);
+            }else if (gamepad1.a){
+                pivotPID.setSetPoint(-30);
+            }
 
-            double y = gamepad1.left_stick_y;
-            double x = -gamepad1.left_stick_x;
-            double rx = -gamepad1.right_stick_x;
+            double pivotPower = pivotPID.updatePID(Pivot.getAngle());
 
-           if(gamepad1.a){
-               Pivot.runUsingPID(700);
-           }
+            Pivot.setPower(pivotPower + (Constants.PIVOT_FEED_FORWARD * Math.cos(Pivot.getAngle() + Constants.ARM_BALANCE_OFFSET)));
 
-           if(gamepad1.b){
-               Pivot.runUsingPID(30);
-           }
-           Pivot.run();
+            if (gamepad1.left_bumper) {
+                elevatorPID.setSetPoint(Elevators.getLeftEncoder() - ELEVATOR_INCREMENT);
+            }
+            else if (gamepad1.right_bumper) {
+                elevatorPID.setSetPoint(Elevators.getLeftEncoder() + ELEVATOR_INCREMENT);
+            }
 
+            Elevators.moveLeftElevator(elevatorPID.updatePID((Elevators.getLeftEncoder() + Elevators.getRightEncoder()) / 2));
+            Elevators.moveRightElevator(elevatorPID.updatePID((Elevators.getLeftEncoder() + Elevators.getRightEncoder()) / 2));
 
-           if(gamepad1.x){
-               Elevator.runUsingPID(800,800);
-           }
-           if(gamepad1.right_bumper){
-               Elevator.extendUp();
-           }else if(gamepad1.left_bumper){
-               Elevator.extendDown();
-           }else{
-               Elevator.stop();
-           }
-           Elevator.run();
+            if (gamepad1.left_trigger > 0.1) {
+                Intake.outtake();
+            } else if (gamepad1.right_trigger > 0.1) {
+                Intake.intake();
+            } else  {
+                Intake.stopIntake();
+            }
 
-          if(gamepad1.right_trigger > 0.1){
-              IntakeSubsystem.intakeSample();
-          }else if(gamepad1.left_trigger>0.1){
-              IntakeSubsystem.outtake();
-          }else{
-              IntakeSubsystem.stopIntake();
-          }
-          if(gamepad1.y){
-              IntakeSubsystem.intake();
-          }
+            if (gamepad1.dpad_up){
+                Wrist.move(0);
+            }
+            if (gamepad1.dpad_down){
+                Wrist.move(1);
+            }
+            if (gamepad1.x) {
+                elevatorPID.setSetPoint(1000);
+                pivotPID.setSetPoint(90);
+            }
+            if (gamepad1.dpad_right){
+                elevatorPID.setSetPoint(0);
+                pivotPID.setSetPoint(-5);
+            }
 
-
-
-          if(gamepad1.dpad_up){
-              Wrist.setPositionPlace();
-          } else if (gamepad1.dpad_right) {
-              Wrist.setPositionSpecimen();
-          }else if(gamepad1.dpad_down){
-              Wrist.setPositionPlace();
-          }else if (gamepad1.dpad_left){
-              Wrist.setPositionSpecimenPlace();
-          }
-
-
-            double botHeading = -Mouse.getTheta();
-
-           /* double botHeading = 0;*/
-
+            double botHeading = 0;
             double rotX = x * Math.cos(-botHeading) - y * Math.sin(-botHeading);
             double rotY = x * Math.sin(-botHeading) + y * Math.cos(-botHeading);
 
@@ -110,46 +120,29 @@ public class FieldCentric extends LinearOpMode {
             double frontRightPower = (rotY - rotX - rx) / denominator;
             double backRightPower = (rotY + rotX - rx) / denominator;
 
-            Drive.drive(-frontLeftPower, -frontRightPower, backLeftPower, -backRightPower);
+            Drive.drive(frontLeftPower, frontRightPower, backLeftPower, backRightPower);
 
+            // Telemetry
+            telemetry.addData("Yaw", botHeading);
 
+            telemetry.addLine("Pivot")
+                    .addData("Encoder", Pivot.getEncoderPosition())
+                    .addData("Set Point", pivotPID.getSetPoint())
+                    .addData("Pivot Angle", Pivot.getAngle())
+                    .addData("Power", (pivotPower + (Constants.PIVOT_FEED_FORWARD * Math.cos(Pivot.getAngle() + 22))))
+                    .addData("PID Output", pivotPID.getResult());
 
-            telemetry.addLine("pivot Encoder")
-                            .addData("pivot",Pivot.getEncoderPosition());
-            telemetry.addLine("Elevators")
-                            .addData("left",Elevator.getLeftEncoderPosition())
-                            .addData("right", Elevator.getRightEncoderPosition());
-            telemetry.addLine("IMU Data")
-                    .addData("Yaw (Degrees)", "%.2f", Peripherals.getYawDegrees());
-
-            telemetry.addLine("Odometry")
-                    .addData("X (m)", "%.2f", Drive.getOdometryX())
-                    .addData("Y (m)", "%.2f", Drive.getOdometryY())
-                    .addData("Theta (deg)", "%.2f", Drive.getOdometryTheta());
-
-            telemetry.addLine("Mouse Sensor Values")
-                    .addData("X (m)", "%.2f", Mouse.getX())
-                    .addData("Y (m)", "%.2f", Mouse.getY())
-                    .addData("Theta (deg)", "%.2f", Mouse.getTheta());
-            telemetry.addLine("Limelight Values")
-                            .addData("x", Peripherals.getLimelightX())
-                                    .addData("y", Peripherals.getLimelightY());
-            telemetry.addLine("Fused Pose")
-                    .addData("X (m)", "%.2f", FinalPose.x)
-                    .addData("Y (m)", "%.2f", FinalPose.y)
-                    .addData("Theta (deg)", "%.2f", FinalPose.yaw);
-
-            telemetry.addLine("Encoders")
-                    .addData("Left Encoder", Drive.getLeftEncoder())
-                    .addData("Right Encoder", Drive.getRightEncoder())
-                    .addData("Center Encoder", Drive.getCenterEncoder());
-
-            telemetry.addLine("Sensors")
-                    .addData("Current Sensor State", FieldOfMerit.currentState);
+            telemetry.addLine("Elevator")
+                    .addData("Left Encoder", Elevators.getLeftEncoder())
+                    .addData("Right Encoder", Elevators.getRightEncoder())
+                    .addData("Set Point", elevatorPID.getSetPoint());
+            telemetry.addLine("Pose")
+                            .addData("x", FinalPose.x)
+                                    .addData("y", FinalPose.y)
+                    .addData("current", FieldOfMerit.currentState)
+                                            .addData("yaw", FinalPose.yaw);
 
             telemetry.update();
-
-
         }
     }
 }

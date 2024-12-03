@@ -104,7 +104,7 @@ public class TurnToTag extends LinearOpMode {
             telemetry.addLine("Fused Pose")
                     .addData("X (m)", "%.2f", FinalPose.x)
                     .addData("Y (m)", "%.2f", FinalPose.y)
-                    .addData("Theta (deg)", "%.2f", FinalPose.Yaw);
+                    .addData("Theta (deg)", "%.2f", FinalPose.yaw);
             telemetry.addLine("Encoders")
                     .addData("Left Encoder", Drive.getLeftEncoder())
                     .addData("Right Encoder", Drive.getRightEncoder())
