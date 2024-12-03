@@ -1,8 +1,5 @@
 package org.firstinspires.ftc.teamcode;
 
-
-import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.gamepad1;
-import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.gamepad2;
 import static org.firstinspires.ftc.teamcode.Tools.Constants.piviotPID;
 
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -26,12 +23,21 @@ public class kitbot extends LinearOpMode {
         Mouse.init(hardwareMap);
 
         while (opModeIsActive()) {
-            ArmSubsystem.controlPivot(gamepad1,piviotPID);
+            ArmSubsystem.controlPivot(gamepad1, piviotPID);
             IntakeSubsystem.controlIntake(gamepad1);
             Wrist.controlWrist(gamepad1);
             Drive.FeildCentric(gamepad1);
-            ArmSubsystem.gamepad1Climb(gamepad1, piviotPID);
             Mouse.update();
+
+            telemetry.addData("Mouse X", Mouse.getX());
+            telemetry.addData("Mouse Y", Mouse.getY());
+            telemetry.addData("Mouse θ", Mouse.getTheta());
+            telemetry.addData("Drive train left front", Drive.leftFrontPos());
+            telemetry.addData("Drive train right front", Drive.RightFrontPos());
+            telemetry.addData("Drive train left back", Drive.leftBackPos());
+            telemetry.addData("Drive train right back", Drive.RightBackPos());
+            telemetry.addData("Piviot Arm Current Pos", ArmSubsystem.getCurrentPosition());
+            telemetry.update();
         }
     }
 }

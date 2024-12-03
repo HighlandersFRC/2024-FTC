@@ -15,11 +15,11 @@ public static double position = 0.49;
     // Add this method to handle gamepad inputs for wrist control
     public static void controlWrist (Gamepad gamepad1) {
 
-if (gamepad1.left_bumper && gamepad1.right_bumper) {
+if (gamepad1.dpad_left) {
     position = 0.49;
-    } else if (gamepad1.right_bumper) {
+    } else if (gamepad1.dpad_up) {
             position = 0.8;
-        } else if (gamepad1.left_bumper) {
+        } else if (gamepad1.dpad_down) {
            position = 0.2;
         }
 

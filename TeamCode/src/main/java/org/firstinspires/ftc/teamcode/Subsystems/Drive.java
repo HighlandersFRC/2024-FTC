@@ -151,7 +151,7 @@ public class Drive extends Subsystem {
         double botHeading = -Math.toRadians(Mouse.getTheta());
         Mouse.update();
 
-        if (gamepad1.dpad_up) {
+        if (gamepad1.options) {
             Mouse.configureOtos();
         }
 
