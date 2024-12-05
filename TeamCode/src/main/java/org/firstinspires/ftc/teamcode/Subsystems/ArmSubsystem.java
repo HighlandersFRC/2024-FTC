@@ -1,9 +1,5 @@
 package org.firstinspires.ftc.teamcode.Subsystems;
 
-import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.gamepad1;
-import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.gamepad2;
-import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.gamepad2;
-import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.telemetry;
 import static org.firstinspires.ftc.teamcode.Tools.Constants.piviotPID;
 
 
@@ -81,23 +77,30 @@ public class ArmSubsystem extends Subsystem {
     //Underscore is for changing options
     // Integrate the logic into the controlPivot method
     public static void controlPivot(Gamepad gamepad1, PID piviotPID) {
-        if (gamepad1.y) {
+        if (gamepad1.square) {
             piviotPID.setPID(0.015, 0, 0.01);
             armPosition = -3000;
 
-        } else if (gamepad1.b) {
+        } else if (gamepad1.circle) {
             piviotPID.setPID(0.015, 0, 0.01);
             armPosition = 0;
 
-        } else if (gamepad1.x) {
+        } else if (gamepad1.dpad_right) {
             piviotPID.setPID(0.015, 0, 0.01);
             armPosition = -3365;
-
         }
 
         if (gamepad1.triangle) {
             piviotPID.setPID(0.015, 0, 0.01);
             armPosition = -1936;
+        }
+
+        if (gamepad1.dpad_right) {
+            Wrist.wrist.setPosition(0.49);
+        }
+
+        if(gamepad1.dpad_right) {
+            IntakeSubsystem.intake.setPower(-1);
         }
 
         if (gamepad1.right_bumper) {
@@ -177,7 +180,7 @@ public class ArmSubsystem extends Subsystem {
         }
         if (gamepad2.dpad_right) {
             Wrist.wrist.setPosition(0.49);
-
+        }
             if (gamepad2.triangle) {
                 Wrist.wrist.setPosition(0.8);
             }
@@ -208,4 +211,3 @@ public class ArmSubsystem extends Subsystem {
             }
         }
     }
-}
