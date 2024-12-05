@@ -18,7 +18,7 @@ import org.firstinspires.ftc.teamcode.Tools.Robot;
 @TeleOp
 public class FieldCentric extends LinearOpMode {
 
-    private final PID pivotPID = new PID(0.0065, 0.004, 0.0092);
+    private final PID pivotPID = new PID(0.0063, 0.004, 0.0092);
     private final PID elevatorPID = new PID(0.008, 0.0, 0.005);
 
     private static final double PIVOT_LOW_POSITION = 100;
@@ -43,7 +43,7 @@ public class FieldCentric extends LinearOpMode {
         pivotPID.setMinInput(180);
         pivotPID.setMaxInput(-180);
 
-        elevatorPID.setMaxOutput(0.3);
+        elevatorPID.setMaxOutput(0.7);
         waitForStart();
         pivotPID.setSetPoint(-14);
 
@@ -76,22 +76,28 @@ public class FieldCentric extends LinearOpMode {
             Pivot.setPower(pivotPower + (Constants.PIVOT_FEED_FORWARD * Math.cos(Pivot.getAngle() + Constants.ARM_BALANCE_OFFSET)));
 
             if (gamepad1.left_bumper) {
-                elevatorPID.setSetPoint(Elevators.getLeftEncoder() - ELEVATOR_INCREMENT);
+                Intake.intake();
+                telemetry.addData("state", 1);
             }
             else if (gamepad1.right_bumper) {
-                elevatorPID.setSetPoint(Elevators.getLeftEncoder() + ELEVATOR_INCREMENT);
+               Intake.outtake();
+                telemetry.addData("state", 2);
+            }else{
+                Intake.stopIntake();
+                telemetry.addData("state", 0);
             }
 
             Elevators.moveLeftElevator(elevatorPID.updatePID((Elevators.getLeftEncoder() + Elevators.getRightEncoder()) / 2));
             Elevators.moveRightElevator(elevatorPID.updatePID((Elevators.getLeftEncoder() + Elevators.getRightEncoder()) / 2));
 
-            if (gamepad1.left_trigger > 0.1) {
-                Intake.outtake();
-            } else if (gamepad1.right_trigger > 0.1) {
-                Intake.intake();
-            } else  {
-                Intake.stopIntake();
-            }
+       if(gamepad1.right_trigger > 0){
+           elevatorPID.setSetPoint(Elevators.getRightEncoder()-ELEVATOR_INCREMENT);
+       }
+       else if (gamepad1.left_trigger > 0){
+           elevatorPID.setSetPoint(Elevators.getLeftEncoder() + ELEVATOR_INCREMENT);
+       }
+
+
 
             if (gamepad1.dpad_up){
                 Wrist.move(0);
