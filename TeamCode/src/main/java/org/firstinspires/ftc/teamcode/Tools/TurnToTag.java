@@ -34,7 +34,7 @@ public class TurnToTag extends LinearOpMode {
         telemetry.update();
         waitForStart();
 
-        if (isStopRequested()) return;
+        if (isStopRequested()) return null;
 
         pid = new PID(Kp, Ki, Kd);
         pid.setMaxOutput(1.0);
@@ -113,5 +113,6 @@ public class TurnToTag extends LinearOpMode {
                     .addData("Current Sensor State", FieldOfMerit.currentState);
             telemetry.update();
         }
+        return null;
     }
 }

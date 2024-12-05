@@ -105,7 +105,7 @@ public class UtilityOctoQuadConfigMenu extends LinearOpMode
         if(error)
         {
             waitForStart();
-            return;
+            return null;
         }
 
         telemetry.addLine("Retrieving current configuration from OctoQuad");
@@ -252,6 +252,7 @@ public class UtilityOctoQuadConfigMenu extends LinearOpMode
             telemetry.update();
             sleep(20);
         }
+        return null;
     }
 
     void sendSettingsToRam()

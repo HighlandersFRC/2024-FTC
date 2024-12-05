@@ -10,9 +10,10 @@ public class LimelightTest extends LinearOpMode {
         Robot.initialize(hardwareMap);
 
         waitForStart();
-        if (isStopRequested()) return;
+        if (isStopRequested()) return null;
 
 
+        return null;
     }
 
 

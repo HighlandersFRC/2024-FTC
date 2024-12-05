@@ -18,7 +18,7 @@ import org.firstinspires.ftc.teamcode.Tools.Robot;
 @TeleOp
 public class FieldCentric extends LinearOpMode {
 
-    private final PID pivotPID = new PID(0.0063, 0.004, 0.0092);
+    private final PID pivotPID = new PID(0.0065, 0.004, 0.0092);
     private final PID elevatorPID = new PID(0.008, 0.0, 0.005);
 
     private static final double PIVOT_LOW_POSITION = 100;
@@ -43,7 +43,7 @@ public class FieldCentric extends LinearOpMode {
         pivotPID.setMinInput(180);
         pivotPID.setMaxInput(-180);
 
-        elevatorPID.setMaxOutput(0.7);
+        elevatorPID.setMaxOutput(0.3);
         waitForStart();
         pivotPID.setSetPoint(-14);
 
@@ -76,28 +76,41 @@ public class FieldCentric extends LinearOpMode {
             Pivot.setPower(pivotPower + (Constants.PIVOT_FEED_FORWARD * Math.cos(Pivot.getAngle() + Constants.ARM_BALANCE_OFFSET)));
 
             if (gamepad1.left_bumper) {
-                Intake.intake();
-                telemetry.addData("state", 1);
+                elevatorPID.setSetPoint(Elevators.getLeftEncoder() - ELEVATOR_INCREMENT);
             }
             else if (gamepad1.right_bumper) {
-               Intake.outtake();
+<<<<<<< HEAD
+                Intake.outtake();
                 telemetry.addData("state", 2);
             }else{
                 Intake.stopIntake();
                 telemetry.addData("state", 0);
+=======
+                elevatorPID.setSetPoint(Elevators.getLeftEncoder() + ELEVATOR_INCREMENT);
+>>>>>>> parent of 16bad62 (Changes for drive including elevators, pivot, and intake. Still debugging)
             }
 
             Elevators.moveLeftElevator(elevatorPID.updatePID((Elevators.getLeftEncoder() + Elevators.getRightEncoder()) / 2));
             Elevators.moveRightElevator(elevatorPID.updatePID((Elevators.getLeftEncoder() + Elevators.getRightEncoder()) / 2));
 
-       if(gamepad1.right_trigger > 0){
-           elevatorPID.setSetPoint(Elevators.getRightEncoder()-ELEVATOR_INCREMENT);
-       }
-       else if (gamepad1.left_trigger > 0){
-           elevatorPID.setSetPoint(Elevators.getLeftEncoder() + ELEVATOR_INCREMENT);
-       }
+<<<<<<< HEAD
+            if(gamepad1.right_trigger > 0){
+                elevatorPID.setSetPoint(Elevators.getRightEncoder()-ELEVATOR_INCREMENT);
+            }
+            else if (gamepad1.left_trigger > 0){
+                elevatorPID.setSetPoint(Elevators.getLeftEncoder() + ELEVATOR_INCREMENT);
+            }
 
 
+=======
+            if (gamepad1.left_trigger > 0.1) {
+                Intake.outtake();
+            } else if (gamepad1.right_trigger > 0.1) {
+                Intake.intake();
+            } else  {
+                Intake.stopIntake();
+            }
+>>>>>>> parent of 16bad62 (Changes for drive including elevators, pivot, and intake. Still debugging)
 
             if (gamepad1.dpad_up){
                 Wrist.move(0);
@@ -143,10 +156,10 @@ public class FieldCentric extends LinearOpMode {
                     .addData("Right Encoder", Elevators.getRightEncoder())
                     .addData("Set Point", elevatorPID.getSetPoint());
             telemetry.addLine("Pose")
-                            .addData("x", FinalPose.x)
-                                    .addData("y", FinalPose.y)
+                    .addData("x", FinalPose.x)
+                    .addData("y", FinalPose.y)
                     .addData("current", FieldOfMerit.currentState)
-                                            .addData("yaw", FinalPose.yaw);
+                    .addData("yaw", FinalPose.yaw);
 
             telemetry.update();
         }

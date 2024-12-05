@@ -26,7 +26,7 @@ public class MecanumTeleOp extends LinearOpMode {
 
         waitForStart();
 
-        if (isStopRequested()) return;
+        if (isStopRequested()) return null;
 
         while (opModeIsActive()) {
             double y = -gamepad1.left_stick_y;
@@ -68,5 +68,6 @@ public class MecanumTeleOp extends LinearOpMode {
                 armMotor.setPower(0);
             }
         }
+        return null;
     }
 }

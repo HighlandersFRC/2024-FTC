@@ -29,5 +29,6 @@ public class CommandSchedulerTester extends LinearOpMode {
                 throw new RuntimeException(e);
             }
         }
+        return null;
     }
 }

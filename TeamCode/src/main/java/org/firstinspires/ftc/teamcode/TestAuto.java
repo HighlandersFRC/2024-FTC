@@ -90,5 +90,6 @@ public class TestAuto extends LinearOpMode {
             telemetry.addData("Theta", robotTheta);
             telemetry.update();
         }
+        return null;
     }
 }

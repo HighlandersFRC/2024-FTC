@@ -77,4 +77,30 @@ public class Constants {
     public static final double AUTONOMOUS_LOOKAHEAD_LINEAR_RADIUS = 1;
     public static final double AUTONOMOUS_LOOKAHEAD_ANGULAR_RADIUS = Math.PI;
 
+    public static class ElevatorPivotLookupTableEntry {
+        public int elevatorEncoderTicks;
+        public int pivotEncoderTicks;
+
+
+        public ElevatorPivotLookupTableEntry(int elevatorEncoderTicks, int pivotEncoderTicks) {
+            this.elevatorEncoderTicks = elevatorEncoderTicks;
+            this.pivotEncoderTicks = pivotEncoderTicks;
+        }
+    }
+
+
+    public static final Map<Integer, ElevatorPivotLookupTableEntry> elevatorPivotLookupTable = new HashMap<>();
+
+    static {
+
+        elevatorPivotLookupTable.put(1000, new ElevatorPivotLookupTableEntry(1000, -20));
+        elevatorPivotLookupTable.put(2000, new ElevatorPivotLookupTableEntry(2000, -10));
+        elevatorPivotLookupTable.put(3000, new ElevatorPivotLookupTableEntry(3000, 0));
+        elevatorPivotLookupTable.put(4000, new ElevatorPivotLookupTableEntry(4000, 10));
+        elevatorPivotLookupTable.put(5000, new ElevatorPivotLookupTableEntry(5000, 20));
+    }
+
+    public static final int ELEVATOR_MAX_TICKS = 5000;
+
+
 }

@@ -923,7 +923,7 @@ public class MoveToColor extends LinearOpMode {
         telemetry.update();
         waitForStart();
 
-        if (isStopRequested()) return;
+        if (isStopRequested()) return null;
 
         pid = new PID(Kp, Ki, Kd);
         pid.setMaxOutput(1.0);
@@ -1000,5 +1000,6 @@ public class MoveToColor extends LinearOpMode {
                     .addData("Theta (deg)", "%.2f", FinalPose.yaw);
             telemetry.update();
         }
+        return null;
     }
 }

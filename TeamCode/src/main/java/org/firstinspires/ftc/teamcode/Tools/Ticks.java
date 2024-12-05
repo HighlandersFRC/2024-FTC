@@ -19,5 +19,6 @@ public class Ticks extends LinearOpMode {
             telemetry.addData("Encoder Ticks", motor.getCurrentPosition());
             telemetry.update();
         }
+        return null;
     }
 }

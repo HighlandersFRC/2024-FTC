@@ -39,6 +39,7 @@ public class colorSensor extends LinearOpMode {
         }
       });
       }
+      return null;
   }
 
   protected void runSample() {
