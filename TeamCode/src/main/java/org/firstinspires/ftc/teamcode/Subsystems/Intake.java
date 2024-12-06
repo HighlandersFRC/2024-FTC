@@ -21,12 +21,14 @@ public class Intake extends Subsystem {
     private static boolean isStopped = false;
 
     public static void initialize(HardwareMap hardwareMap) {
+/*
         colorSensor = hardwareMap.get(NormalizedColorSensor.class, "sensor_color");
+*/
         leftServo = hardwareMap.get(CRServo.class, "left_servo");
         rightServo = hardwareMap.get(CRServo.class, "right_servo");
-        if (colorSensor instanceof SwitchableLight) {
+        /*if (colorSensor instanceof SwitchableLight) {
             ((SwitchableLight) colorSensor).enableLight(true);
-        }
+        }*/
 
 
     }

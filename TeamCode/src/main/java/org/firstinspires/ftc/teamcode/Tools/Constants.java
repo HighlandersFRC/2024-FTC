@@ -10,9 +10,9 @@ import java.util.function.Supplier;
 public class Constants {
     public static final double PIVOT_TICKS_PER_ROTATION = 537.6 / 5;
     public static final double PIVOT_STARTING_ANGLE = -14.85;
-    public static final double PIVOT_FEED_FORWARD = 0.32;
+    public static final double PIVOT_FEED_FORWARD = 0.6;
 
-    public static double ARM_BALANCE_OFFSET = 22;
+    public static double ARM_BALANCE_OFFSET = 68;
 
     public static double getOffsetFromVoltage(double voltage){
         return 5.03 + -4950*voltage + -4731*Math.pow(voltage, 2) + -2098*Math.pow(voltage, 3) + -286*Math.pow(voltage, 4);

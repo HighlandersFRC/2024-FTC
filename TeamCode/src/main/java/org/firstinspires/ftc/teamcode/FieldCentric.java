@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.teamcode.Subsystems.Drive;
 import org.firstinspires.ftc.teamcode.Subsystems.Elevators;
@@ -20,7 +21,7 @@ import org.firstinspires.ftc.teamcode.Tools.Robot;
 @TeleOp
 public class FieldCentric extends LinearOpMode {
 
-    private final PID pivotPID = new PID(0.0065, 0.004, 0.0092);
+    private final PID pivotPID = new PID(0.1, 0.004, 0.095);
     private final PID elevatorPID = new PID(0.012, 0.0, 0.005);
 
     private static final double PIVOT_LOW_POSITION = 100;
@@ -65,19 +66,24 @@ public class FieldCentric extends LinearOpMode {
                 Drive.resetEncoder();
             }
 
+            double pivotPower = pivotPID.updatePID(Pivot.getAngle());
+
             if (gamepad1.b) {
-                pivotPID.setSetPoint(7);
+                pivotPID.setSetPoint(45);
             } else if (gamepad1.y) {
                 pivotPID.setSetPoint(90);
             }else if (gamepad1.a){
-                pivotPID.setSetPoint(-30);
+                pivotPID.setSetPoint(-10);
+            }
+            if (Pivot.getAngle()< 15 && pivotPID.getSetPoint() < 0){
+                Pivot.setPower(0);
+                Pivot.pivotMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+            }else {
+                Pivot.setPower(pivotPower + (Constants.PIVOT_FEED_FORWARD * Math.cos(Math.toRadians(Pivot.getAngle()) + Constants.ARM_BALANCE_OFFSET)));
+
             }
 
-            double pivotPower = pivotPID.updatePID(Pivot.getAngle());
 
-/*
-            Pivot.setPower(pivotPower + (Constants.PIVOT_FEED_FORWARD * Math.cos(Pivot.getAngle() + Constants.ARM_BALANCE_OFFSET)));
-*/
 
             if (gamepad1.left_bumper) {
                 elevatorPID.setSetPoint(Elevators.getLeftEncoder() - ELEVATOR_INCREMENT);
@@ -92,7 +98,7 @@ public class FieldCentric extends LinearOpMode {
             if (gamepad1.left_trigger > 0.1) {
                 Intake.outtake();
             } else if (gamepad1.right_trigger > 0.1) {
-                Intake.intakeSample();
+                Intake.intake();
             } else  {
                 Intake.stopIntake();
             }
