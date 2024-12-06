@@ -1,4 +1,3 @@
-/*
 package org.firstinspires.ftc.teamcode.Subsystems;
 
 import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.gamepad1;
@@ -22,7 +21,7 @@ public class Intake extends Subsystem {
     private static boolean isStopped = false;
 
     public static void initialize(HardwareMap hardwareMap) {
-        colorSensor = hardwareMap.get(NormalizedColorSensor.class, "sensor_color");
+        colorSensor = hardwareMap.get(NormalizedColorSensor.class, "colorSensor");
         leftServo = hardwareMap.get(CRServo.class, "left_servo");
         rightServo = hardwareMap.get(CRServo.class, "right_servo");
         if (colorSensor instanceof SwitchableLight) {
@@ -80,25 +79,22 @@ public class Intake extends Subsystem {
     }
 
     public static void intakeSample() {
-        isStopped = false;
+
 
         while (!getDetectedColor().equals(setColor) && !getDetectedColor().equals("yellow")) {
-            if (isStopped) {
-                stopIntake();
-                return;
-            }
+
             intake();
         }
-        gamepad1.rumble(4);
+
         stopIntake();
     }
 
     public static void stopIntake() {
-        isStopped = true;
+
         leftServo.setPower(0);
         rightServo.setPower(0);
     }
-}*/
+}/*
 package org.firstinspires.ftc.teamcode.Subsystems;
 
 import com.qualcomm.robotcore.hardware.CRServo;
@@ -110,8 +106,8 @@ import com.qualcomm.robotcore.hardware.SwitchableLight;
 public class Intake extends Subsystem {
 
     private static NormalizedColorSensor colorSensor = null;
-    private static CRServo leftServo;
-    private static CRServo rightServo;
+    public static CRServo leftServo;
+    public static CRServo rightServo;
     private static final String setColor = "red";
     private static boolean isIntaking = false;
 
@@ -127,6 +123,7 @@ public class Intake extends Subsystem {
     public static void intake() {
         leftServo.setPower(1);
         rightServo.setPower(-1);
+
     }
 
     public static void outtake() {
@@ -176,3 +173,4 @@ public class Intake extends Subsystem {
         rightServo.setPower(0);
     }
 }
+*/

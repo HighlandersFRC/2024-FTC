@@ -10,28 +10,9 @@ import java.util.function.Supplier;
 public class Constants {
     public static final double PIVOT_TICKS_PER_ROTATION = 537.6 / 5;
     public static final double PIVOT_STARTING_ANGLE = -14.85;
-    public static final double PIVOT_FEED_FORWARD = 0.32;
-    public static final double PID_X_P = 0.1;
-    public static final double PID_X_I = 1;
-    public static final double PID_X_D = 1;
-    public static final double PID_Y_P = 0.1;
-    public static final double PID_Y_I = 1;
-    public static final double PID_Y_D = 1;
-    public static final double PID_THETA_P = 0.1;
-    public static final double PID_THETA_I = 1;
-    public static final double PID_THETA_D = 1;
-    public static double absoluteArmZero =0.306;
-    public static double armOffset;
-    public static double ArmUpPosition = 4000;
-    public static double ElevatorsUpPosition = 2000;
-    public static double ElevatorsDownPosition = 200;
-    public static double ArmDownPosition = 200;
-    public static Object SetPoints;
+    public static final double PIVOT_FEED_FORWARD = 0.6;
 
-    public static double nextX;
-    public static double nextY;
-    public static double nextTheta;
-    public static double ARM_BALANCE_OFFSET = 22;
+    public static double ARM_BALANCE_OFFSET = 68;
 
     public static double getOffsetFromVoltage(double voltage){
         return 5.03 + -4950*voltage + -4731*Math.pow(voltage, 2) + -2098*Math.pow(voltage, 3) + -286*Math.pow(voltage, 4);
@@ -46,7 +27,22 @@ public class Constants {
 
     public static HashMap<String, Supplier<Command>> commandMap = new HashMap<>();
     public static HashMap<String, BooleanSupplier> conditionMap = new HashMap<>();
+public static class PickupData{
+    public int elevatorPose;
+    public int pivotPose;
 
+    public PickupData(int elevatorPose, int pivotPose){
+        this.elevatorPose = elevatorPose;
+        this.pivotPose = pivotPose;
+    }
+}
+
+public static final Map<Integer, PickupData> pickupMap = new HashMap<>();
+static {
+    pickupMap.put(300, new PickupData(959, -12));
+    pickupMap.put(500, new PickupData(1370, -10));
+
+}
     public static class AprilTagData {
         public double positionX;
         public double positionY;
