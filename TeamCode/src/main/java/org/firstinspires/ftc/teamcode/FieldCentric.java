@@ -71,7 +71,7 @@ public class FieldCentric extends LinearOpMode {
             if (gamepad1.b) {
                 pivotPID.setSetPoint(45);
             } else if (gamepad1.y) {
-                pivotPID.setSetPoint(90);
+                pivotPID.setSetPoint(88);
             }else if (gamepad1.a){
                 pivotPID.setSetPoint(-10);
             }

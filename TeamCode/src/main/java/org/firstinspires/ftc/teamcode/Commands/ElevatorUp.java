@@ -1,13 +1,10 @@
 package org.firstinspires.ftc.teamcode.Commands;
 
-
-import org.firstinspires.ftc.teamcode.Subsystems.Wrist;
-
-public class WristMove implements Command {
-
-    public WristMove(double pos){
-        Wrist.move(pos);
+public class ElevatorUp implements Command{
+    public ElevatorUp(double pos){
+        
     }
+
     @Override
     public void start() {
 
@@ -25,6 +22,6 @@ public class WristMove implements Command {
 
     @Override
     public boolean isFinished() {
-        return true;
+        return false;
     }
 }
