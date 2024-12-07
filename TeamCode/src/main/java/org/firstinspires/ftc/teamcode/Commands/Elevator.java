@@ -3,12 +3,13 @@ package org.firstinspires.ftc.teamcode.Commands;
 import org.firstinspires.ftc.teamcode.Subsystems.Elevators;
 import org.firstinspires.ftc.teamcode.Subsystems.Pivot;
 import org.firstinspires.ftc.teamcode.Tools.PID;
+import org.firstinspires.ftc.teamcode.Tools.Robot;
 
 public class Elevator implements Command{
-    private final PID elevatorPID = new PID(0.012, 0.0, 0.005);
+    private final PID elevatorPID = new PID(0.01, 0.0, 0.008);
 
-    public Elevator(double pos){
-        elevatorPID.setSetPoint(pos);
+    public Elevator(){
+        elevatorPID.setSetPoint(Robot.CURRENT_ELEVATOR);
     }
 
     @Override

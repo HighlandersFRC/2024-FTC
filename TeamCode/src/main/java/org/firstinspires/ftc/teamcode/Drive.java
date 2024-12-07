@@ -65,6 +65,13 @@ public class Drive extends LinearOpMode {
             if (gamepad1.dpad_left){
                 scheduler.schedule(new WristMove(1));
             }
+            if (gamepad1.left_bumper){
+                Robot.CURRENT_ELEVATOR = Elevators.getLeftEncoder() - 200;
+                scheduler.schedule(new Elevator());
+            }else if (gamepad1.right_bumper){
+                Robot.CURRENT_ELEVATOR = Elevators.getLeftEncoder() + 200;
+                scheduler.schedule(new Elevator());
+            }
 
 
             double y = -gamepad1.left_stick_y;
