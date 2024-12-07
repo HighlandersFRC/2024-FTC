@@ -4,6 +4,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.Subsystems.Drive;
 import org.firstinspires.ftc.teamcode.Subsystems.Elevators;
@@ -22,7 +23,7 @@ import org.firstinspires.ftc.teamcode.Tools.Robot;
 public class FieldCentric extends LinearOpMode {
 
     private final PID pivotPID = new PID(0.1, 0.004, 0.095);
-    private final PID elevatorPID = new PID(0.012, 0.0, 0.005);
+    private final PID elevatorPID = new PID(0.01, 0.0, 0.008);
 
     private static final double PIVOT_LOW_POSITION = 100;
     private static final double PIVOT_HIGH_POSITION = 700;
@@ -95,30 +96,32 @@ public class FieldCentric extends LinearOpMode {
             Elevators.moveLeftElevator(elevatorPID.updatePID((Elevators.getLeftEncoder() + Elevators.getRightEncoder()) / 2));
             Elevators.moveRightElevator(elevatorPID.updatePID((Elevators.getLeftEncoder() + Elevators.getRightEncoder()) / 2));
 
-            if (gamepad1.left_trigger > 0.1) {
-                Intake.outtake();
-            } else if (gamepad1.right_trigger > 0.1) {
-                Intake.intake();
-            } else  {
-                Intake.stopIntake();
-            }
+           double intakePower = gamepad1.left_trigger - gamepad1.right_trigger;
+           if (!(intakePower == 1) || !(intakePower == -1)){
+               Intake.move(intakePower);
+           }else {
+               Intake.stopIntake();
+           }
 
-            if (gamepad1.dpad_up){
+            if (gamepad1.dpad_down){
                 Wrist.move(1);
             }
-            if (gamepad1.dpad_down){
-                Wrist.move(0);
+            if (gamepad1.dpad_up){
+                Wrist.move(0.1);
             }
-            if (gamepad1.dpad_left){
-                Wrist.move(0.5);
-            }
+
             if (gamepad1.x) {
-                elevatorPID.setSetPoint(1000);
                 pivotPID.setSetPoint(90);
+                waitFor(0.5);
+                Wrist.move(0.1);
+                elevatorPID.setSetPoint(1000);
             }
             if (gamepad1.dpad_right){
                 elevatorPID.setSetPoint(0);
+                waitFor(0.5);
                 pivotPID.setSetPoint(-5);
+                waitFor(0.5);
+                Wrist.move(1);
             }
 
 /*
@@ -137,7 +140,7 @@ public class FieldCentric extends LinearOpMode {
             double frontRightPower = (rotY - rotX - rx) / denominator;
             double backRightPower = (rotY + rotX - rx) / denominator;
 
-            Drive.drive(frontLeftPower, frontRightPower, backLeftPower, backRightPower);
+            Drive.drive(frontLeftPower, frontRightPower, -backLeftPower, backRightPower);
 
             // Telemetry
             telemetry.addData("Yaw", botHeading);
@@ -158,6 +161,14 @@ public class FieldCentric extends LinearOpMode {
                     .addData("y", FinalPose.y)
                     .addData("current", FieldOfMerit.currentState)
                     .addData("yaw", FinalPose.yaw);
+            telemetry.update();
+        }
+    }
+    public void waitFor(double seconds) {
+        ElapsedTime timer = new ElapsedTime();
+        timer.reset();
+        while (opModeIsActive() && timer.seconds() < seconds) {
+            telemetry.addData("Waiting", "%.1f seconds left", seconds - timer.seconds());
             telemetry.update();
         }
     }

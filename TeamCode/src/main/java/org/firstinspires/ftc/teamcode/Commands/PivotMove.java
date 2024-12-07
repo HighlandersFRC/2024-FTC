@@ -1,38 +1,42 @@
 package org.firstinspires.ftc.teamcode.Commands;
 
 import org.firstinspires.ftc.teamcode.Subsystems.Pivot;
+import org.firstinspires.ftc.teamcode.Tools.Constants;
 import org.firstinspires.ftc.teamcode.Tools.PID;
 
 public class PivotMove implements Command {
-    private final PID pivotPID = new PID(0.0065, 0.004, 0.0092);
+    public static final PID pivotPID = new PID(0.1, 0.004, 0.095);
     public static double setPos;
+    public static double pivotPower;
+
+
 
     public PivotMove(double targetPos) {
         setPos = targetPos;
         pivotPID.setSetPoint(targetPos);
+        pivotPID.setMaxOutput(0.5);
+        pivotPID.setMinInput(180);
+        pivotPID.setMaxInput(-180);
     }
 
     @Override
     public void start() {
-        // Initialization logic if needed before command execution starts
-        Pivot.resetEncoder();
+
     }
 
     @Override
     public void execute() {
-        double power = pivotPID.updatePID(Pivot.getEncoderPosition());
-        Pivot.setPower(power);
+        pivotPower = pivotPID.updatePID(Pivot.getAngle());
+        Pivot.setPower(pivotPower + (Constants.PIVOT_FEED_FORWARD * Math.cos(Math.toRadians(Pivot.getAngle()) + Constants.ARM_BALANCE_OFFSET)));
     }
 
     @Override
     public void end() {
-        // Logic to stop the Pivot when the command ends
         Pivot.setPower(0);
     }
 
     @Override
     public boolean isFinished() {
-        // Check if the Pivot has reached the target position within a tolerance
-        return Math.abs(Pivot.getEncoderPosition() - setPos) <= 10;
+        return Math.abs(Pivot.getAngle() - setPos) <= (1);
     }
 }

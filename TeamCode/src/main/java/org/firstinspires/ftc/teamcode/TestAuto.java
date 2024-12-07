@@ -50,11 +50,9 @@ public class TestAuto extends LinearOpMode {
 
         while (opModeIsActive()) {
             FinalPose.poseUpdate();
-                        try {
-                scheduler.run();
-            } catch (JSONException e) {
-                throw new RuntimeException(e);
-            }
+
+            scheduler.run();
+
 
             double robotX = FinalPose.x;
             double robotY = FinalPose.y;

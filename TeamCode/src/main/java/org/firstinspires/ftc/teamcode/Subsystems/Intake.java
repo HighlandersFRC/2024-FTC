@@ -62,6 +62,11 @@ public class Intake extends Subsystem {
         return mainColor;
     }
 
+    public static void move(double intakePower) {
+        leftServo.setPower(intakePower);
+        rightServo.setPower(-intakePower);
+    }
+
     public boolean isCorrectColor() {
         NormalizedRGBA colors = colorSensor.getNormalizedColors();
         double red = colors.red;
@@ -95,7 +100,6 @@ public class Intake extends Subsystem {
     }
 
     public static void stopIntake() {
-        isStopped = true;
         leftServo.setPower(0);
         rightServo.setPower(0);
     }

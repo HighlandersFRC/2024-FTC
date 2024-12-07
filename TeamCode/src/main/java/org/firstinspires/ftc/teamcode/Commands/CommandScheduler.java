@@ -29,7 +29,7 @@ public class CommandScheduler {
         RobotLog.d("Command Scheduled: " + command.getClass().getSimpleName());
     }
 
-    public void run() throws InterruptedException, JSONException {
+    public void run()  {
         List<Command> finishedCommands = new ArrayList<>();
         for (Command command : new ArrayList<>(scheduledCommands)) {
             if (command.isFinished()) {

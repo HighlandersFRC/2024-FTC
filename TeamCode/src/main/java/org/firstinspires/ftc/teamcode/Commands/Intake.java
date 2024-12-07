@@ -1,9 +1,12 @@
 package org.firstinspires.ftc.teamcode.Commands;
 
-public class ElevatorUp implements Command{
-    public ElevatorUp(double pos){
-        
-    }
+public class Intake implements Command{
+    public double time;
+    public double startTime;
+
+    public Intake(double timeInMillis, double speed){
+        this.time = timeInMillis;
+     }
 
     @Override
     public void start() {
