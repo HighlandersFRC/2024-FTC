@@ -9,6 +9,7 @@ public class Wait implements Command {
     private boolean isStarted;
 
     public Wait(long waitTime) {
+        reset();
         this.waitTime = waitTime;
         this.elapsedTime = 0;
         this.isStarted = false;

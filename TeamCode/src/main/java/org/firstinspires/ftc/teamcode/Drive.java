@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
 import android.content.res.Resources;
+import android.text.style.WrapTogetherSpan;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -9,6 +10,8 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import org.firstinspires.ftc.teamcode.Commands.CommandScheduler;
 import org.firstinspires.ftc.teamcode.Commands.Elevator;
 import org.firstinspires.ftc.teamcode.Commands.PivotMove;
+import org.firstinspires.ftc.teamcode.Commands.SequentialCommandGroup;
+import org.firstinspires.ftc.teamcode.Commands.Wait;
 import org.firstinspires.ftc.teamcode.Commands.WristMove;
 import org.firstinspires.ftc.teamcode.Subsystems.Elevators;
 import org.firstinspires.ftc.teamcode.Subsystems.Intake;
@@ -45,11 +48,11 @@ public class Drive extends LinearOpMode {
                 scheduler.schedule(new PivotMove(88));
             }
             else if (gamepad1.a){
-                scheduler.schedule(new PivotMove(-5));
+                scheduler.schedule(new PivotMove(-10));
             }else if (gamepad1.b){
                 scheduler.schedule(new PivotMove(45));
             }else {
-                if (Pivot.getAngle()< 15 && PivotMove.pivotPID.getSetPoint() < 0){
+                if (Pivot.getAngle() < 20 && PivotMove.pivotPID.getSetPoint() < 0){
                     Pivot.setPower(0);
                     Pivot.pivotMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
                 }else {
@@ -59,12 +62,23 @@ public class Drive extends LinearOpMode {
             }
 
 
-            if (gamepad1.dpad_right){
-                scheduler.schedule(new WristMove(0.1));
+            if (gamepad1.dpad_right) {
+                Robot.CURRENT_ELEVATOR = 0;
+                scheduler.schedule(new SequentialCommandGroup(scheduler, new Elevator(), new Wait(750), new PivotMove(-10)));
             }
-            if (gamepad1.dpad_left){
+
+            if (gamepad1.x) {
+                Robot.CURRENT_ELEVATOR = 1000;
+                scheduler.schedule(new SequentialCommandGroup(scheduler, new PivotMove(90), new Wait(750), new Elevator()));
+            }
+
+            if (gamepad1.dpad_down){
                 scheduler.schedule(new WristMove(1));
             }
+            if (gamepad1.dpad_up){
+                scheduler.schedule(new WristMove(0.4));
+            }
+
             if (gamepad1.left_bumper){
                 Robot.CURRENT_ELEVATOR = Elevators.getLeftEncoder() - 200;
                 scheduler.schedule(new Elevator());
@@ -72,6 +86,7 @@ public class Drive extends LinearOpMode {
                 Robot.CURRENT_ELEVATOR = Elevators.getLeftEncoder() + 200;
                 scheduler.schedule(new Elevator());
             }
+
 
 
             double y = -gamepad1.left_stick_y;

@@ -112,15 +112,19 @@ public class FieldCentric extends LinearOpMode {
 
             if (gamepad1.x) {
                 pivotPID.setSetPoint(90);
+/*
                 waitFor(0.5);
+*/
                 Wrist.move(0.1);
                 elevatorPID.setSetPoint(1000);
             }
             if (gamepad1.dpad_right){
                 elevatorPID.setSetPoint(0);
-                waitFor(0.5);
+                waitFor(1);
                 pivotPID.setSetPoint(-5);
+/*
                 waitFor(0.5);
+*/
                 Wrist.move(1);
             }
 
