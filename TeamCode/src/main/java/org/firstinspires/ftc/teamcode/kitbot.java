@@ -23,7 +23,7 @@ public class kitbot extends LinearOpMode {
         Mouse.init(hardwareMap);
 
         while (opModeIsActive()) {
-           ArmSubsystem.controlPivot(gamepad1, piviotPID);
+           //ArmSubsystem.controlPivot(gamepad1, piviotPID);
           IntakeSubsystem.contolIntakeBlueAlliance(gamepad1);
             Wrist.controlWrist(gamepad1);
             Drive.FeildCentric(gamepad1);
@@ -37,6 +37,7 @@ public class kitbot extends LinearOpMode {
             telemetry.addData("Drive train left back", Drive.leftBackPos());
             telemetry.addData("Drive train right back", Drive.RightBackPos());
             telemetry.addData("Piviot Arm Current Pos", ArmSubsystem.getCurrentPosition());
+            telemetry.addData("limit",ArmSubsystem.limitSwitch());
             telemetry.update();
         }
     }

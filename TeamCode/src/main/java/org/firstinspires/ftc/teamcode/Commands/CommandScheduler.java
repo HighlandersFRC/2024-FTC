@@ -24,10 +24,15 @@ public class CommandScheduler {
     }
 
     public void schedule(Command command) {
-        command.start();
-        scheduledCommands.add(command);
-        RobotLog.d("Command Scheduled: " + command.getClass().getSimpleName());
+        if (!scheduledCommands.contains(command)) { // Check for duplicates
+            command.start();
+            scheduledCommands.add(command);
+            RobotLog.d("Command Scheduled: " + command.getClass().getSimpleName());
+        } else {
+            RobotLog.d("Command Already Scheduled: " + command.getClass().getSimpleName());
+        }
     }
+
 
     public void run() throws InterruptedException, JSONException {
         List<Command> finishedCommands = new ArrayList<>();

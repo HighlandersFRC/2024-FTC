@@ -2,6 +2,8 @@ package org.firstinspires.ftc.teamcode.Commands;
 
 import org.firstinspires.ftc.teamcode.Subsystems.IntakeSubsystem;
 
+import static org.firstinspires.ftc.teamcode.Commands.StopIntake.StopTheIntake;
+
 public class Intake implements Command  {
     @Override
     public void start() {
@@ -21,6 +23,6 @@ public class Intake implements Command  {
 
     @Override
     public boolean isFinished() {
-        return false;
+        return StopTheIntake;
     }
 }

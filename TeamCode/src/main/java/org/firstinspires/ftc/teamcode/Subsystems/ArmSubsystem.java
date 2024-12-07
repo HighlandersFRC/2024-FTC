@@ -85,7 +85,7 @@ public class ArmSubsystem extends Subsystem {
             piviotPID.setPID(0.015, 0, 0.01);
             armPosition = 0;
 
-        } else if (gamepad1.dpad_right) {
+        } else if (gamepad1.dpad_down) {
             piviotPID.setPID(0.015, 0, 0.01);
             armPosition = -3365;
         }
@@ -95,11 +95,11 @@ public class ArmSubsystem extends Subsystem {
             armPosition = -1936;
         }
 
-        if (gamepad1.dpad_right) {
+        if (gamepad1.dpad_down) {
             Wrist.wrist.setPosition(0.49);
         }
 
-        if(gamepad1.dpad_right) {
+        if(gamepad1.dpad_down) {
             IntakeSubsystem.intake.setPower(-1);
         }
 
@@ -135,7 +135,7 @@ public class ArmSubsystem extends Subsystem {
 
         if (!limitSwitch.getState()) {
             pos = ArmSubsystem.getCurrentPosition();
-            ;
+
 
 
         }
@@ -174,11 +174,11 @@ public class ArmSubsystem extends Subsystem {
             piviotPID.setPID(0.015, 0, 0.01);
             armPosition = 0;
 
-        } else if (gamepad2.dpad_right) {
+        } else if (gamepad2.dpad_down) {
             piviotPID.setPID(0.015, 0, 0.01);
             armPosition = -3365;
         }
-        if (gamepad2.dpad_right) {
+        if (gamepad2.dpad_down) {
             Wrist.wrist.setPosition(0.49);
         }
             if (gamepad2.triangle) {
