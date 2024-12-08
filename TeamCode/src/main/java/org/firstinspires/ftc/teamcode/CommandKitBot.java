@@ -16,16 +16,14 @@ public class CommandKitBot extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
 double toto = 7;
         ArmSubsystem.initialize(hardwareMap);
-
         CommandScheduler scheduler = new CommandScheduler();
         waitForStart();
         while (opModeIsActive()) {
-
-if(gamepad1.b) {
-    scheduler.schedule(new ArmCommmandDown());
-} else if(gamepad1.y) {
-    scheduler.schedule(new ArmCommandUp());
-}
+            if(gamepad1.y) {
+                scheduler.schedule(new ArmCommandUp(-1936));
+            } else if(gamepad1.b) {
+                scheduler.schedule(new ArmCommandUp(0));
+            }
 
                   //                  if(gamepad1.right_trigger!=0) {
 //                    StopTheIntake=false;
@@ -43,7 +41,9 @@ if(gamepad1.b) {
             } catch (JSONException e) {
                 throw new RuntimeException(e);
             }
-            telemetry.addData("Current Arm Pos", ArmSubsystem.getCurrentPosition());
+            //boolean skibidi =  Math.abs(ArmSubsystem.getCurrentPositionWithLimitSwitch() + toto) >= Math.abs(-1936);
+            //System.out.println("Current Pos" + skibidi);
+            telemetry.update();
 
         }
     }
