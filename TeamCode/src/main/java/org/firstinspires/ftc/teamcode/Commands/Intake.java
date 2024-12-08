@@ -4,6 +4,9 @@ public class Intake implements Command{
     public double time;
     public double startTime;
 
+    String name = "Intake";
+
+
     public Intake(double timeInMillis, double speed){
         this.time = timeInMillis;
      }

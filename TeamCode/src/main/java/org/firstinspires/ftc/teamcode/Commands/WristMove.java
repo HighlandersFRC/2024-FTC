@@ -5,6 +5,8 @@ import org.firstinspires.ftc.teamcode.Subsystems.Wrist;
 
 public class WristMove implements Command {
 
+    String name = "Wrist";
+
     public WristMove(double pos){
         Wrist.move(pos);
     }
