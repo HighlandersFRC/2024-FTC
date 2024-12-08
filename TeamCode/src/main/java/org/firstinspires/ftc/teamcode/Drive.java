@@ -50,7 +50,7 @@ public class Drive extends LinearOpMode {
             else if (gamepad1.a){
                 scheduler.schedule(new PivotMove(-10));
             }else if (gamepad1.b){
-                scheduler.schedule(new PivotMove(45));
+                scheduler.schedule(new PivotMove(0));
             }else {
                 if (Pivot.getAngle() < 20 && PivotMove.pivotPID.getSetPoint() < 0){
                     Pivot.setPower(0);

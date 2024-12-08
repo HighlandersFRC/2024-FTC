@@ -22,7 +22,9 @@ import org.firstinspires.ftc.teamcode.Tools.Robot;
 @TeleOp
 public class FieldCentric extends LinearOpMode {
 
-    private final PID pivotPID = new PID(0.1, 0.004, 0.095);
+    private final PID pivotPID = new PID(0.15, 0.0, 0.3);
+    /*private final PID pivotPID = new PID(0.0, 0.0, 0.0);*/
+
     private final PID elevatorPID = new PID(0.01, 0.0, 0.008);
 
     private static final double PIVOT_LOW_POSITION = 100;
@@ -43,7 +45,8 @@ public class FieldCentric extends LinearOpMode {
 
         elevatorPID.setSetPoint(0);
 
-        pivotPID.setMaxOutput(0.5);
+        pivotPID.setMaxOutput(0.01);
+        pivotPID.setMinOutput(0.001);
         pivotPID.setMinInput(180);
         pivotPID.setMaxInput(-180);
 
@@ -81,8 +84,11 @@ public class FieldCentric extends LinearOpMode {
                 Pivot.pivotMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
             }else {
                 Pivot.setPower(pivotPower + (Constants.PIVOT_FEED_FORWARD * Math.cos(Math.toRadians(Pivot.getAngle()) + Constants.ARM_BALANCE_OFFSET)));
-
             }
+/*
+            Pivot.setPower(pivotPower + (Constants.PIVOT_FEED_FORWARD * Math.cos(Math.toRadians(Pivot.getAngle()) + Constants.ARM_BALANCE_OFFSET)));
+*/
+
 
 
 
