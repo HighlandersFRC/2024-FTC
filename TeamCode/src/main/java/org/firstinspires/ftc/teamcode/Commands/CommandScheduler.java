@@ -23,13 +23,13 @@ public class CommandScheduler {
         scheduledCommands.addAll(Arrays.asList(commands));
     }
 
-    public void schedule(Command command) throws JSONException {
+    public void schedule(Command command)  {
         command.start();
         scheduledCommands.add(command);
         RobotLog.d("Command Scheduled: " + command.getClass().getSimpleName());
     }
 
-    public void run() throws InterruptedException, JSONException {
+    public void run()  {
         List<Command> finishedCommands = new ArrayList<>();
         for (Command command : new ArrayList<>(scheduledCommands)) {
             if (command.isFinished()) {

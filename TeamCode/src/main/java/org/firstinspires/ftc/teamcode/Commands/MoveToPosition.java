@@ -30,6 +30,11 @@ public class MoveToPosition implements Command {
     }
 
     @Override
+    public String getSubsystem() {
+        return "";
+    }
+
+    @Override
     public void start() {
         xPID.setSetPoint(targetX);
         yPID.setSetPoint(targetY);
@@ -37,7 +42,7 @@ public class MoveToPosition implements Command {
     }
 
     @Override
-public void execute() throws InterruptedException {
+public void execute()  {
         FinalPose.poseUpdate();
         double currentX = -FinalPose.x;
         double currentY = -FinalPose.y;

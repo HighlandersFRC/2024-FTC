@@ -45,21 +45,17 @@ public class TestAuto extends LinearOpMode {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
-        try {
+
             scheduler.schedule(moveToPosition);
-        } catch (JSONException e) {
-            throw new RuntimeException(e);
-        }
+
 
         waitForStart();
 
         while (opModeIsActive()) {
             FinalPose.poseUpdate();
-            try {
+
                 scheduler.run();
-            } catch (JSONException e) {
-                throw new RuntimeException(e);
-            }
+
             double robotX = FinalPose.x;
             double robotY = FinalPose.y;
             double robotTheta = Peripherals.getYawDegrees();

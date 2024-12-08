@@ -28,20 +28,19 @@ public class Constants {
     public static HashMap<String, Supplier<Command>> commandMap = new HashMap<>();
     public static HashMap<String, BooleanSupplier> conditionMap = new HashMap<>();
 public static class PickupData{
-    public int elevatorPose;
     public int pivotPose;
 
     public PickupData(int elevatorPose, int pivotPose){
-        this.elevatorPose = elevatorPose;
+
         this.pivotPose = pivotPose;
     }
 }
 
 public static final Map<Integer, PickupData> pickupMap = new HashMap<>();
 static {
-    pickupMap.put(300, new PickupData(959, -12));
-    pickupMap.put(500, new PickupData(1370, -10));
 
+//959 -12
+    //1370 -10
 }
     public static class AprilTagData {
         public double positionX;

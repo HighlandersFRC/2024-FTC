@@ -152,13 +152,16 @@ public class FieldCentric extends LinearOpMode {
         }
     }
 }*/
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.Tools;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
+import org.firstinspires.ftc.teamcode.Commands.CommandScheduler;
+import org.firstinspires.ftc.teamcode.Commands.IntakeCommand;
+import org.firstinspires.ftc.teamcode.Commands.OuttakeCommand;
 import org.firstinspires.ftc.teamcode.Subsystems.Drive;
 import org.firstinspires.ftc.teamcode.Subsystems.Elevators;
 import org.firstinspires.ftc.teamcode.Subsystems.Intake;
@@ -175,6 +178,9 @@ import org.firstinspires.ftc.teamcode.Tools.Robot;
 @TeleOp
 public class FieldCentric extends LinearOpMode {
 
+
+
+
     private final PID pivotPID = new PID(0.1, 0.004, 0.095);
     private final PID elevatorPID = new PID(0.012, 0.0, 0.005);
 
@@ -190,12 +196,14 @@ public class FieldCentric extends LinearOpMode {
         Robot.initialize(hardwareMap);
         Mouse.init(hardwareMap);
         Pivot.initialize(hardwareMap);
-        Intake.initialize(hardwareMap);
+
         Elevators.initialize(hardwareMap);
         Wrist.initialize(hardwareMap);
-
+       CommandScheduler commandScheduler = CommandScheduler.getInstance();
         elevatorPID.setSetPoint(0);
-
+   IntakeCommand IntakeCommand = new IntakeCommand(hardwareMap);
+        OuttakeCommand OuttakeCommand = new OuttakeCommand(hardwareMap);
+   Intake.initialize(hardwareMap);
         pivotPID.setMaxOutput(0.5);
         pivotPID.setMinInput(180);
         pivotPID.setMaxInput(-180);
@@ -237,7 +245,12 @@ public class FieldCentric extends LinearOpMode {
 
             }
 
-
+            if (gamepad1.right_trigger > 0.1) {
+              commandScheduler.schedule(IntakeCommand);
+            }
+            if (gamepad1.left_trigger > 0.1){
+                commandScheduler.schedule(OuttakeCommand);
+            }
 
             if (gamepad1.left_bumper) {
                 elevatorPID.setSetPoint(Elevators.getLeftEncoder() - ELEVATOR_INCREMENT);
@@ -249,11 +262,8 @@ public class FieldCentric extends LinearOpMode {
             Elevators.moveLeftElevator(elevatorPID.updatePID((Elevators.getLeftEncoder() + Elevators.getRightEncoder()) / 2));
             Elevators.moveRightElevator(elevatorPID.updatePID((Elevators.getLeftEncoder() + Elevators.getRightEncoder()) / 2));
 
-           if(gamepad1.right_trigger > 0){
-               Intake.intakeSample();
-           }else if (gamepad1.left_trigger > 0){
-               Intake.outtake();
-           }
+
+
 
             if (gamepad1.dpad_up){
                 Wrist.move(1);
@@ -289,9 +299,9 @@ public class FieldCentric extends LinearOpMode {
             double frontRightPower = (rotY - rotX - rx) / denominator;
             double backRightPower = (rotY + rotX - rx) / denominator;
 
-            Drive.drive(frontLeftPower, frontRightPower, backLeftPower, backRightPower);
+            Drive.drive(frontLeftPower, frontRightPower, -backLeftPower, backRightPower);
 
-            // Telemetry
+
             telemetry.addData("Yaw", botHeading);
 
             telemetry.addLine("Pivot")
@@ -310,6 +320,7 @@ public class FieldCentric extends LinearOpMode {
                     .addData("y", FinalPose.y)
                     .addData("current", FieldOfMerit.currentState)
                     .addData("yaw", FinalPose.yaw);
+            commandScheduler.run();
             telemetry.update();
         }
     }

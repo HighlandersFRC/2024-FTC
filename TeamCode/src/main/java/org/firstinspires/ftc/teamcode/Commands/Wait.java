@@ -15,6 +15,11 @@ public class Wait implements Command {
     }
 
     @Override
+    public String getSubsystem() {
+        return "";
+    }
+
+    @Override
     public void start() {
         RobotLog.d("Wait Command Started: " + waitTime + "ms");
         startTime = System.currentTimeMillis();

@@ -11,6 +11,11 @@ public class WaitForCondition implements Command {
     }
 
     @Override
+    public String getSubsystem() {
+        return "";
+    }
+
+    @Override
     public void start() {
         hasStarted = true;
     }

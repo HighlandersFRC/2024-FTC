@@ -1,3 +1,5 @@
+/*
+
 package org.firstinspires.ftc.teamcode.Subsystems;
 
 import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.gamepad1;
@@ -32,14 +34,14 @@ public class Intake extends Subsystem {
     }
 
     public static void intake() {
-        leftServo.setPower(1);
-        rightServo.setPower(-1);
+        leftServo.setPower(-1);
+        rightServo.setPower(1);
 
     }
 
     public static void outtake() {
-        leftServo.setPower(-1);
-        rightServo.setPower(1);
+        leftServo.setPower(1);
+        rightServo.setPower(-1);
     }
 
     public static String getDetectedColor() {
@@ -81,7 +83,8 @@ public class Intake extends Subsystem {
     public static void intakeSample() {
 
 
-        while (!getDetectedColor().equals(setColor) && !getDetectedColor().equals("yellow")) {
+
+        if(!getDetectedColor().equals(setColor) && !getDetectedColor().equals("yellow")) {
 
             intake();
         }
@@ -94,7 +97,13 @@ public class Intake extends Subsystem {
         leftServo.setPower(0);
         rightServo.setPower(0);
     }
-}/*
+}*/
+/*
+
+*//*
+
+*/
+/*
 package org.firstinspires.ftc.teamcode.Subsystems;
 
 import com.qualcomm.robotcore.hardware.CRServo;
@@ -173,4 +182,136 @@ public class Intake extends Subsystem {
         rightServo.setPower(0);
     }
 }
+*//*
 */
+/*
+
+package org.firstinspires.ftc.teamcode.Subsystems;
+
+import com.qualcomm.robotcore.hardware.CRServo;
+import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.NormalizedColorSensor;
+import com.qualcomm.robotcore.hardware.NormalizedRGBA;
+import com.qualcomm.robotcore.hardware.SwitchableLight;
+
+public class Intake extends Subsystem {
+
+    private static NormalizedColorSensor colorSensor = null;
+    public static CRServo leftServo;
+    public static CRServo rightServo;
+    private static final String setColor = "red";
+    private static boolean isIntaking = false;
+
+    public static void initialize(HardwareMap hardwareMap) {
+        colorSensor = hardwareMap.get(NormalizedColorSensor.class, "colorSensor");
+        leftServo = hardwareMap.get(CRServo.class, "left_servo");
+        rightServo = hardwareMap.get(CRServo.class, "right_servo");
+        if (colorSensor instanceof SwitchableLight) {
+            ((SwitchableLight) colorSensor).enableLight(true);
+        }
+    }
+
+    public static void intake() {
+        leftServo.setPower(-1);
+        rightServo.setPower(1);
+    }
+
+    public static void outtake() {
+        leftServo.setPower(1);
+        rightServo.setPower(-1);
+    }
+
+    public static void stopIntake() {
+        isIntaking = false;
+        leftServo.setPower(0);
+        rightServo.setPower(0);
+    }
+
+    public static String getDetectedColor() {
+        NormalizedRGBA colors = colorSensor.getNormalizedColors();
+        double red = colors.red;
+        double blue = colors.blue;
+        double green = colors.green;
+
+        if (red > blue && red > green && red > 0.01) {
+            return "red";
+        } else if (blue > red && blue > green && blue > 0.01) {
+            return "blue";
+        } else if (red > blue && green > blue && red > 0.01 && green > 0.01) {
+            return "yellow";
+        }
+        return "";
+    }
+
+    public static void startIntakeSample() {
+        isIntaking = true;
+        intake();
+
+    }
+
+    public static void update() {
+        if (isIntaking) {
+            String detectedColor = getDetectedColor();
+            if (detectedColor.equals(setColor) || detectedColor.equals("yellow")) {
+                stopIntake();
+            }
+        }
+    }
+}
+
+*/
+package org.firstinspires.ftc.teamcode.Subsystems;
+
+import com.qualcomm.robotcore.hardware.CRServo;
+import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.NormalizedColorSensor;
+import com.qualcomm.robotcore.hardware.NormalizedRGBA;
+
+public class Intake {
+
+    private static NormalizedColorSensor colorSensor;
+    private static CRServo leftServo;
+    private static CRServo rightServo;
+    private static final String setColor = "blue";
+
+
+
+    public static void initialize(HardwareMap hardwareMap) {
+        colorSensor = hardwareMap.get(NormalizedColorSensor.class, "colorSensor");
+        leftServo = hardwareMap.get(CRServo.class, "left_servo");
+        rightServo = hardwareMap.get(CRServo.class, "right_servo");
+    }
+
+    public void intake() {
+        leftServo.setPower(-1);
+        rightServo.setPower(1);
+    }
+
+    public void outtake() {
+        leftServo.setPower(1);
+        rightServo.setPower(-1);
+    }
+
+    public void stopIntake() {
+        leftServo.setPower(0);
+        rightServo.setPower(0);
+    }
+
+    public boolean getCorrectColor() {
+        NormalizedRGBA colors = colorSensor.getNormalizedColors();
+        double red = colors.red;
+        double blue = colors.blue;
+        double green = colors.green;
+
+        String mainColor = "";
+        if (red > blue && red > green && red > 0.01) {
+            mainColor = "red";
+        } else if (blue > red && blue > green && blue > 0.01) {
+            mainColor = "blue";
+        } else if (red > blue && green > blue && red > 0.01 && green > 0.01) {
+            mainColor = "yellow";
+        }
+
+        return mainColor.equals(setColor) || mainColor.equals("yellow");
+    }
+}

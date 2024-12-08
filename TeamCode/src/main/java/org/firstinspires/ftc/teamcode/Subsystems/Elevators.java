@@ -62,7 +62,7 @@ public class Elevators extends Subsystem {
         rightElevator.setPower(power);
     }
 
-    private static void setBrakeMode() {
+    public static void setBrakeMode() {
         leftElevator.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         rightElevator.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
     }
@@ -89,4 +89,5 @@ public class Elevators extends Subsystem {
             }
         }).start();
     }
+
 }
