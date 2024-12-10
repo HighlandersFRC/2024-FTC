@@ -35,7 +35,7 @@ System.out.println("Down Executing");
     @Override
     public boolean isFinished() {
         // Must Get the == to >= to work
-        if (Math.abs(ArmSubsystem.getCurrentPositionWithLimitSwitch() + tolerance) <= Math.abs(armPosition)) {
+        if (Math.abs(ArmSubsystem.getCurrentPositionWithLimitSwitch() + tolerance) == Math.abs(armPosition)) {
             return true;
         }
         return false;
