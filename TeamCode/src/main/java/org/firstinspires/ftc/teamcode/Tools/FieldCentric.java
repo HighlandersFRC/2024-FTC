@@ -154,6 +154,7 @@ public class FieldCentric extends LinearOpMode {
 }*/
 package org.firstinspires.ftc.teamcode.Tools;
 
+
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -199,11 +200,10 @@ public class FieldCentric extends LinearOpMode {
 
         Elevators.initialize(hardwareMap);
         Wrist.initialize(hardwareMap);
+        Intake.initialize(hardwareMap);
        CommandScheduler commandScheduler = CommandScheduler.getInstance();
         elevatorPID.setSetPoint(0);
-   IntakeCommand IntakeCommand = new IntakeCommand(hardwareMap);
-        OuttakeCommand OuttakeCommand = new OuttakeCommand(hardwareMap);
-   Intake.initialize(hardwareMap);
+
         pivotPID.setMaxOutput(0.5);
         pivotPID.setMinInput(180);
         pivotPID.setMaxInput(-180);
@@ -246,11 +246,18 @@ public class FieldCentric extends LinearOpMode {
             }
 
             if (gamepad1.right_trigger > 0.1) {
-              commandScheduler.schedule(IntakeCommand);
+
+                commandScheduler.schedule(new IntakeCommand(hardwareMap));
             }
-            if (gamepad1.left_trigger > 0.1){
-                commandScheduler.schedule(OuttakeCommand);
+            if (gamepad1.left_trigger > 0.1) {
+
+                Intake.leftServo.setPower(1);
+                Intake.rightServo.setPower(-1);
+/*
+                commandScheduler.schedule(new IntakeCommand(hardwareMap, OUTTAKE));
+*/
             }
+
 
             if (gamepad1.left_bumper) {
                 elevatorPID.setSetPoint(Elevators.getLeftEncoder() - ELEVATOR_INCREMENT);
@@ -259,9 +266,9 @@ public class FieldCentric extends LinearOpMode {
                 elevatorPID.setSetPoint(Elevators.getLeftEncoder() + ELEVATOR_INCREMENT);
             }
 
-            Elevators.moveLeftElevator(elevatorPID.updatePID((Elevators.getLeftEncoder() + Elevators.getRightEncoder()) / 2));
+         /*   Elevators.moveLeftElevator(elevatorPID.updatePID((Elevators.getLeftEncoder() + Elevators.getRightEncoder()) / 2));
             Elevators.moveRightElevator(elevatorPID.updatePID((Elevators.getLeftEncoder() + Elevators.getRightEncoder()) / 2));
-
+*/
 
 
 
@@ -269,7 +276,7 @@ public class FieldCentric extends LinearOpMode {
                 Wrist.move(1);
             }
             if (gamepad1.dpad_down){
-                Wrist.move(0);
+                Wrist.move(0.1);
             }
             if (gamepad1.dpad_left){
                 Wrist.move(0.5);

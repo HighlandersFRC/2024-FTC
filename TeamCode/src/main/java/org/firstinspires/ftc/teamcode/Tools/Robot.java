@@ -12,6 +12,7 @@ public class Robot {
     public static double CURRENT_WRIST;
     public static double CURRENT_INTAKE_POWER;
     public static double CURRENT_ELEVATOR;
+    public static boolean IS_INTAKING = false;
     public static void initialize(HardwareMap hardwareMap) {
         Peripherals.initialize(hardwareMap);
         Drive.initialize(hardwareMap);

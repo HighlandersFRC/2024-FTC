@@ -3,16 +3,14 @@ package org.firstinspires.ftc.teamcode.Subsystems;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
-import org.firstinspires.ftc.teamcode.Tools.PID;
+import org.firstinspires.ftc.teamcode.Tools.Constants;
 
 public class Elevators extends Subsystem {
     private static DcMotor leftElevator;
     private static DcMotor rightElevator;
-    private static PID leftElevatorPID = new PID(0.3, 0.0, 0.0);
-    private static PID rightElevatorPID = new PID(0.3, 0.0, 0.0);
 
-    private static final int STALL_THRESHOLD = 10; // Encoder ticks below this are considered no movement
-    private static final long MONITOR_INTERVAL_MS = 100; // Time between encoder checks in milliseconds
+    private static final int STALL_THRESHOLD = 10;
+    private static final long MONITOR_INTERVAL_MS = 100;
 
     public static void initialize(HardwareMap hardwareMap) {
         leftElevator = hardwareMap.get(DcMotor.class, "left_elevator");
@@ -22,24 +20,24 @@ public class Elevators extends Subsystem {
     }
 
     public static void moveUp() {
-        setPower(1.0);
+       if(Pivot.getAngle() <= 0){
+           if(getAverage() <= Constants.ELEVATOR_MAX){
+               setPower(0.8);
+           }else {
+               stop();
+           }
+       }else{
+           setPower(0.8);
+       }
     }
 
     public static void moveDown() {
-        setPower(-0.4);
-        monitorDownMovement();
-    }
-
-    public static void moveLeftElevator(double power) {
-        leftElevator.setPower(power);
-    }
-
-    public static void moveRightElevator(double power) {
-        rightElevator.setPower(power);
+        setPower(-0.65);
     }
 
     public static void stop() {
         setPower(0.0);
+        setBrakeMode();
     }
 
     public static void resetEncoders() {
@@ -56,7 +54,9 @@ public class Elevators extends Subsystem {
     public static double getRightEncoder() {
         return rightElevator.getCurrentPosition();
     }
-
+public static double getAverage(){
+        return (leftElevator.getCurrentPosition() + rightElevator.getCurrentPosition())/2;
+}
     private static void setPower(double power) {
         leftElevator.setPower(power);
         rightElevator.setPower(power);
@@ -66,28 +66,4 @@ public class Elevators extends Subsystem {
         leftElevator.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         rightElevator.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
     }
-
-    private static void monitorDownMovement() {
-        new Thread(() -> {
-            double initialLeftPosition = getLeftEncoder();
-            double initialRightPosition = getRightEncoder();
-
-            try {
-                Thread.sleep(MONITOR_INTERVAL_MS);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-
-            double currentLeftPosition = getLeftEncoder();
-            double currentRightPosition = getRightEncoder();
-
-            boolean leftStalled = Math.abs(currentLeftPosition - initialLeftPosition) < STALL_THRESHOLD;
-            boolean rightStalled = Math.abs(currentRightPosition - initialRightPosition) < STALL_THRESHOLD;
-
-            if (leftStalled || rightStalled) {
-                stop();
-            }
-        }).start();
-    }
-
 }

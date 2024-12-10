@@ -23,13 +23,15 @@ public class CommandScheduler {
         scheduledCommands.addAll(Arrays.asList(commands));
     }
 
-    public void schedule(Command command)  {
+    public void schedule(Command command) {
         command.start();
         scheduledCommands.add(command);
         RobotLog.d("Command Scheduled: " + command.getClass().getSimpleName());
     }
 
-    public void run()  {
+    public void run() {
+        removeDuplicateCommands();
+
         List<Command> finishedCommands = new ArrayList<>();
         for (Command command : new ArrayList<>(scheduledCommands)) {
             if (command.isFinished()) {
@@ -42,6 +44,7 @@ public class CommandScheduler {
         }
         scheduledCommands.removeAll(finishedCommands);
     }
+
 
     public void cancel(Command command) {
         command.end();
@@ -56,4 +59,17 @@ public class CommandScheduler {
         }
         scheduledCommands.clear();
     }
+
+    public void removeDuplicateCommands() {
+        List<Command> uniqueCommands = new ArrayList<>();
+
+        for (Command command : new ArrayList<>(scheduledCommands)) {
+            String name = command.getClass().getSimpleName();
+            scheduledCommands.removeIf(c -> c.getClass().getSimpleName().equalsIgnoreCase(name));
+            uniqueCommands.add(command);
+        }
+
+        scheduledCommands.addAll(uniqueCommands);
+    }
+
 }

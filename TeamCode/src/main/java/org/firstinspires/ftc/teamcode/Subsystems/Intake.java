@@ -270,8 +270,8 @@ import com.qualcomm.robotcore.hardware.NormalizedRGBA;
 public class Intake {
 
     private static NormalizedColorSensor colorSensor;
-    private static CRServo leftServo;
-    private static CRServo rightServo;
+    public static CRServo leftServo;
+    public static CRServo rightServo;
     private static final String setColor = "blue";
 
 

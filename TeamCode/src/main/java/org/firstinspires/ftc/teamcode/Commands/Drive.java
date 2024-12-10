@@ -8,6 +8,9 @@ import org.firstinspires.ftc.teamcode.Tools.PID;
 
 public class Drive extends SequentialCommandGroup {
 
+    String name = "Drive";
+
+
     private final PID yawPID = new PID(0.03, 0.0, 0.0);
     private final PID drivePID = new PID(0.03, 0.0, 0.0);
 
@@ -49,7 +52,7 @@ public class Drive extends SequentialCommandGroup {
         Peripherals.resetYaw();
 
         targetPos = distance;
-            drivePID.setSetPoint(targetPos);
+        drivePID.setSetPoint(targetPos);
 
     }
 

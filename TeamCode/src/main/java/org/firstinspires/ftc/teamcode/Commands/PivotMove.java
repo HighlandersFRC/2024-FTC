@@ -8,7 +8,7 @@ public class PivotMove implements Command {
     public static final PID pivotPID = new PID(0.1, 0.004, 0.095);
     public static double setPos;
     public static double pivotPower;
-
+    String name = "Pivot";
 
 
     public PivotMove(double targetPos) {
