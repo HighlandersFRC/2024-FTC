@@ -36,7 +36,7 @@ public class kitbot extends LinearOpMode {
             telemetry.addData("Drive train right front", Drive.RightFrontPos());
             telemetry.addData("Drive train left back", Drive.leftBackPos());
             telemetry.addData("Drive train right back", Drive.RightBackPos());
-            telemetry.addData("Piviot Arm Current Pos", ArmSubsystem.getCurrentPosition());
+            telemetry.addData("Pivot Arm Current Pos", ArmSubsystem.getCurrentPosition());
             telemetry.addData("limit",ArmSubsystem.limitSwitch());
             telemetry.update();
         }
