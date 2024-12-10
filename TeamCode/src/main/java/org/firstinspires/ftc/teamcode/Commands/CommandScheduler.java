@@ -61,4 +61,39 @@ public class CommandScheduler {
         }
         scheduledCommands.clear();
     }
+
+    public void overrideSpecificCommand(Command newCommand, Class<? extends Command> targetCommandClass) {
+        Command toCancel = null;
+
+        for (Command command : scheduledCommands) {
+            if (targetCommandClass.isInstance(command)) {
+                toCancel = command;
+                break;
+            }
+        }
+
+        if (toCancel != null) {
+            toCancel.end();
+            scheduledCommands.remove(toCancel);
+            RobotLog.d("Command Cancelled: " + toCancel.getClass().getSimpleName());
+        }
+
+        schedule(newCommand);
+        RobotLog.d("Command Overridden with: " + newCommand.getClass().getSimpleName());
+    }
+    public void RunAfterSpecificCommandIsFinished(Command newCommand, Class<? extends Command> targetCommandClass){
+        Command IsFinished = null;
+
+        for (Command command : scheduledCommands) {
+            if (targetCommandClass.isInstance(command)) {
+                IsFinished = command;
+                break;
+            }
+        }
+
+        if(IsFinished.isFinished()){
+            schedule(newCommand);
+        }
+    }
+
 }
