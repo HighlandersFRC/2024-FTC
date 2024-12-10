@@ -27,6 +27,7 @@ if(gamepad1.b) {
     scheduler.schedule(new ArmCommandUp());
 }
 
+
                   //                  if(gamepad1.right_trigger!=0) {
 //                    StopTheIntake=false;
 //                    scheduler.schedule(new Intake());

@@ -96,4 +96,16 @@ public class CommandScheduler {
         }
     }
 
+    public void removeDuplicateCommands() {
+        List<Command> uniqueCommands = new ArrayList<>();
+
+        for (Command command : new ArrayList<>(scheduledCommands)) {
+            String name = command.getClass().getSimpleName();
+            scheduledCommands.removeIf(c -> c.getClass().getSimpleName().equalsIgnoreCase(name));
+            uniqueCommands.add(command);
+        }
+
+        scheduledCommands.addAll(uniqueCommands);
+    }
+
 }
