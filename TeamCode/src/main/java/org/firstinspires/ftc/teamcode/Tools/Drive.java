@@ -61,16 +61,21 @@ public class Drive extends LinearOpMode {
 
             if (gamepad1.right_bumper) {
                 scheduler.schedule(new Elevator(true));
+
                 if (Pivot.getAngle() <= 10) {
                     for (Map.Entry<Integer, Constants.PickupData> entry : Constants.pickupMap.entrySet()) {
-                        if (Elevators.getAverage() == entry.getKey()) {
+                        int targetPosition = entry.getKey();
+                        double currentPosition = Elevators.getAverage();
+                        int tolerance = 15;
+
+
+                        if (Math.abs(currentPosition - targetPosition) <= tolerance) {
                             scheduler.schedule(new PivotMove(entry.getValue().pivotPose));
                         }
                     }
                 }
-            } else {
-                scheduler.cancel(new Elevator(true));
             }
+
 
 
             if (gamepad1.left_bumper) {
