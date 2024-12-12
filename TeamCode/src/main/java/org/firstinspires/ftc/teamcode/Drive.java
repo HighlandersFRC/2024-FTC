@@ -49,7 +49,7 @@ public class Drive extends LinearOpMode {
             FinalPose.poseUpdate();
 
             if (gamepad1.y){
-                scheduler.schedule(new PivotMove(94));
+                scheduler.schedule(new PivotMove(102));
             }
             else if (gamepad1.a){
                 scheduler.schedule(new PivotMove(-10));

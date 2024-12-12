@@ -9,7 +9,7 @@ import org.firstinspires.ftc.teamcode.Tools.Constants;
 import org.firstinspires.ftc.teamcode.Tools.PID;
 
 public class Pivot extends Subsystem{
-    private static final PID pid = new PID(0.0065, 0.004, 0.0092);
+    private static final PID pid = new PID(0.0135, 0.0, 0.0092);
     public static DcMotor pivotMotor;
     public static DigitalChannel limitSwitch;
 

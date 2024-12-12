@@ -4,6 +4,11 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.teamcode.Commands.CommandScheduler;
+import org.firstinspires.ftc.teamcode.Commands.Elevator;
+import org.firstinspires.ftc.teamcode.Commands.IntakeCommand;
+import org.firstinspires.ftc.teamcode.Commands.OuttakeCommand;
+import org.firstinspires.ftc.teamcode.Commands.PivotMove;
+import org.firstinspires.ftc.teamcode.Commands.SequentialCommandGroup;
 import org.firstinspires.ftc.teamcode.Commands.Wait;
 import org.firstinspires.ftc.teamcode.PathingTool.PathLoading;
 import org.firstinspires.ftc.teamcode.PathingTool.PolarPathFollower;
@@ -27,7 +32,7 @@ public class TestAuto extends LinearOpMode {
 
         Drive.setPosition(0, 0, 0);
 
-        PathLoading pathLoading = new PathLoading(hardwareMap.appContext, "StrafeOneMeter.polarpath");
+        PathLoading pathLoading = new PathLoading(hardwareMap.appContext, "1PreBasket.polarpath");
         CommandScheduler scheduler = new CommandScheduler();
         Drive drive = new Drive();
         Peripherals peripherals = new Peripherals("peripherals");
@@ -41,7 +46,7 @@ public class TestAuto extends LinearOpMode {
 
         try {
             moveToPosition = new PolarPathFollower(drive, peripherals, PathLoading.getJsonPathData(), Constants.commandMap, Constants.conditionMap, scheduler);
-            scheduler.schedule(moveToPosition);
+            scheduler.schedule(new SequentialCommandGroup(scheduler, moveToPosition, new PivotMove(100), new Elevator(), new OuttakeCommand()));
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

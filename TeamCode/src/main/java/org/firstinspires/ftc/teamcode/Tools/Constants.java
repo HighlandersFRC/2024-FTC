@@ -14,9 +14,6 @@ public class Constants {
 
     public static double ARM_BALANCE_OFFSET = 18.9;
 
-    public static double getOffsetFromVoltage(double voltage){
-        return 5.03 + -4950*voltage + -4731*Math.pow(voltage, 2) + -2098*Math.pow(voltage, 3) + -286*Math.pow(voltage, 4);
-    }
     public static double yCorrected(double AY) {
         return AY - ((0.172 * AY) + 0.00307);
     }
