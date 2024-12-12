@@ -24,7 +24,7 @@ public class CommandKitBot extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
-        double toto = 7;
+double toto = 7;
         ArmSubsystem.initialize(hardwareMap);
         Wrist.initialize(hardwareMap);
         IntakeSubsystem.initialize(hardwareMap);
@@ -44,25 +44,25 @@ public class CommandKitBot extends LinearOpMode {
 
 
             if(gamepad1.right_trigger != 0) {
-                StopIntake.StopTheIntake =false;
-                scheduler.overrideSpecificCommand(new Intake(), Outtake.class);
-            } else if(gamepad1.left_trigger != 0) {
-                StopIntake.StopTheIntake=false;
-                scheduler.overrideSpecificCommand(new Outtake(), Intake.class);
-            } else {
-                StopIntake.StopTheIntake=true;
-            }
+                    StopIntake.StopTheIntake =false;
+                    scheduler.overrideSpecificCommand(new Intake(), Outtake.class);
+                } else if(gamepad1.left_trigger != 0) {
+                    StopIntake.StopTheIntake=false;
+                    scheduler.overrideSpecificCommand(new Outtake(), Intake.class);
+                } else {
+                      StopIntake.StopTheIntake=true;
+                  }
 
             double tarPos = 0.6;
-            if(gamepad1.dpad_right) {
-                tarPos = 0.8;
-                scheduler.overrideSpecificCommand(new WristCommands(tarPos), WristCommands.class);
-            } else if(gamepad1.dpad_left) {
-                tarPos = 0.2;
-                scheduler.schedule(new WristCommands(tarPos));
-            } else if(gamepad1.dpad_up) {
-                scheduler.overrideSpecificCommand(new WristCommands(tarPos), WristCommands.class);
-            }
+                  if(gamepad1.dpad_right) {
+                      tarPos = 0.8;
+                      scheduler.overrideSpecificCommand(new WristCommands(tarPos), WristCommands.class);
+                  } else if(gamepad1.dpad_left) {
+                          tarPos = 0.2;
+                      scheduler.schedule(new WristCommands(tarPos));
+                  } else if(gamepad1.dpad_up) {
+                      scheduler.overrideSpecificCommand(new WristCommands(tarPos), WristCommands.class);
+                  }
 
 
 

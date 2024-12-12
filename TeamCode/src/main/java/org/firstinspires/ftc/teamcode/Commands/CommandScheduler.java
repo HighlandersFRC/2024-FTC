@@ -72,7 +72,7 @@ public class CommandScheduler {
             }
         }
 
-        if (toCancel != null) {
+        if (toCancel != null &&  toCancel != newCommand) {
             toCancel.end();
             scheduledCommands.remove(toCancel);
             RobotLog.d("Command Cancelled: " + toCancel.getClass().getSimpleName());

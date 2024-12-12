@@ -64,11 +64,9 @@ public class IntakeSubsystem extends Subsystem {
         }
         if (gamepad1.right_trigger != 1 && gamepad1.left_trigger != 1) {
             if (red > blue && red > green && red > 0.01) {
+                gamepad1.rumble(100);
                 System.out.println("Red");
                 IntakeSubsystem.intake.setPower(-1);
-            } else {
-                System.out.println("None");
-                IntakeSubsystem.intake.setPower(0);
             }
         }
     }
@@ -95,11 +93,9 @@ public class IntakeSubsystem extends Subsystem {
         }
         if (gamepad1.right_trigger != 1 && gamepad1.left_trigger != 1) {
             if (blue > red && blue > green && blue > 0.01) {
+                gamepad1.rumble(100);
                 System.out.println("Blue");
                 IntakeSubsystem.intake.setPower(1);
-            } else {
-                System.out.println("None");
-                IntakeSubsystem.intake.setPower(0);
             }
         }
 
@@ -125,13 +121,12 @@ public class IntakeSubsystem extends Subsystem {
         } else {
             IntakeSubsystem.setPower(0);
         }
-
-        if (red > blue && red > green && red > 0.01) {
-            System.out.println("Red");
-            IntakeSubsystem.intake.setPower(1);
-        } else {
-            System.out.println("None");
-            IntakeSubsystem.intake.setPower(0);
+        if (gamepad1.right_trigger != 1 && gamepad1.left_trigger != 1) {
+            if (red > blue && red > green && red > 0.01) {
+                gamepad1.rumble(100);
+                System.out.println("Red");
+                IntakeSubsystem.intake.setPower(1);
+            }
         }
     }
 }

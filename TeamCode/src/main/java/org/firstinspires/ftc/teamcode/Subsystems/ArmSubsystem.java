@@ -83,7 +83,7 @@ public class ArmSubsystem extends Subsystem {
 
         } else if (gamepad1.circle) {
             piviotPID.setPID(0.015, 0, 0.01);
-            armPosition = 0;
+            armPosition = 10;
 
         } else if (gamepad1.dpad_down) {
             piviotPID.setPID(0.015, 0, 0.01);
@@ -96,7 +96,7 @@ public class ArmSubsystem extends Subsystem {
         }
 
         if (gamepad1.dpad_down) {
-            Wrist.wrist.setPosition(0.49);
+            Wrist.wrist.setPosition(0.62);
         }
 
         if(gamepad1.dpad_down) {
