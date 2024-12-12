@@ -4,6 +4,7 @@ import com.qualcomm.robotcore.util.RobotLog;
 
 import org.json.JSONException;
 
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -11,6 +12,11 @@ import java.util.List;
 public class CommandScheduler {
     private static CommandScheduler instance;
     private static List<Command> scheduledCommands = new ArrayList<>();
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        return o != null && getClass() == o.getClass();
+    }
 
     public static CommandScheduler getInstance() {
         if (instance == null) {
@@ -67,12 +73,16 @@ public class CommandScheduler {
 
         for (Command command : scheduledCommands) {
             if (targetCommandClass.isInstance(command)) {
+                if (command.getClass().equals(newCommand.getClass())) {
+                    RobotLog.d("No override performed; the same class is already scheduled: " + command.getClass().getSimpleName());
+                    return;
+                }
                 toCancel = command;
                 break;
             }
         }
 
-        if (toCancel != null &&  toCancel != newCommand) {
+        if (toCancel != null) {
             toCancel.end();
             scheduledCommands.remove(toCancel);
             RobotLog.d("Command Cancelled: " + toCancel.getClass().getSimpleName());
@@ -81,6 +91,7 @@ public class CommandScheduler {
         schedule(newCommand);
         RobotLog.d("Command Overridden with: " + newCommand.getClass().getSimpleName());
     }
+
     public void RunAfterSpecificCommandIsFinished(Command newCommand, Class<? extends Command> targetCommandClass){
         Command IsFinished = null;
 
@@ -106,6 +117,34 @@ public class CommandScheduler {
         }
 
         scheduledCommands.addAll(uniqueCommands);
+    }
+
+
+    private boolean compareCommandProperties(Command command1, Command command2) {
+        if (command1.getClass().equals(command2.getClass())) {
+            try {
+                for (Field field : command1.getClass().getDeclaredFields()) {
+                    field.setAccessible(true);
+                    Object value1 = field.get(command1);
+                    Object value2 = field.get(command2);
+
+                    // Compare values, considering null values and object equality
+                    if (value1 != null && value2 != null) {
+                        if (!value1.equals(value2)) {
+                            return false;
+                        }
+                    } else if (value1 != value2) {
+                        return false;
+                    }
+                }
+                return true;
+            } catch (IllegalAccessException e) {
+                e.printStackTrace();
+                // Consider logging an error or taking other appropriate actions
+                return false;
+            }
+        }
+        return false;
     }
 
 }

@@ -1,24 +1,25 @@
 package org.firstinspires.ftc.teamcode.Commands;
 
+import static org.firstinspires.ftc.teamcode.Tools.Constants.piviotPID;
+
 import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.teamcode.Subsystems.ArmSubsystem;
-import org.firstinspires.ftc.teamcode.Subsystems.Pivot;
 import org.firstinspires.ftc.teamcode.Tools.PID;
 
-public class ArmCommandDown implements Command {
-    public static final PID pivotPID = new PID(0.1, 0.004, 0.095);
+public class ArmCommand implements Command {
+
     public static double setPos ;
     public static double pivotPower;
 
 
 
-    public ArmCommandDown(double targetPos) {
+    public ArmCommand(double targetPos) {
         setPos = targetPos;
-        pivotPID.setSetPoint(targetPos);
-        pivotPID.setMaxOutput(0.5);
-        pivotPID.setMinInput(180);
-        pivotPID.setMaxInput(-180);
+        piviotPID.setSetPoint(targetPos);
+        piviotPID.setMaxOutput(0.5);
+        piviotPID.setMinInput(180);
+        piviotPID.setMaxInput(-180);
     }
 
     @Override
@@ -28,7 +29,7 @@ public class ArmCommandDown implements Command {
 
     @Override
     public void execute() {
-        pivotPower = pivotPID.updatePID(ArmSubsystem.getCurrentPositionWithLimitSwitch());
+        pivotPower = piviotPID.updatePID(ArmSubsystem.getCurrentPositionWithLimitSwitch());
         ArmSubsystem.setPower(-pivotPower);
     }
 

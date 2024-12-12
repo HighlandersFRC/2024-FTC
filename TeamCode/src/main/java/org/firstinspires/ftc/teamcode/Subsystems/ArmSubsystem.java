@@ -15,7 +15,7 @@ public class ArmSubsystem extends Subsystem {
     public static DcMotor pivotMotor;
     public static DigitalChannel limitSwitch; // Limit switch for arm position
 
-    private static double armPosition = 0; // Target arm position
+    private static double armPosition = 10; // Target arm position
     protected static double pos = 0;
 
     // Initialize the motor and limit switch
