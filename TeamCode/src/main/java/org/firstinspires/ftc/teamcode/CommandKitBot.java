@@ -31,6 +31,7 @@ public static double pos;
         IntakeSubsystem.initialize(hardwareMap);
         Drive.initialize(hardwareMap);
         CommandScheduler scheduler = new CommandScheduler();
+        new ArmCommandDown(ArmSubsystem.getCurrentPositionWithLimitSwitch());
         waitForStart();
         while (opModeIsActive()) {
             if (gamepad1.b) {
