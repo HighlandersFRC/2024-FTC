@@ -42,6 +42,7 @@ public class ArmCommandDown implements Command {
     @Override
     public boolean isFinished() {
         double tolerance = 7;
-        return -Math.abs(ArmSubsystem.getCurrentPositionWithLimitSwitch() + tolerance) >= Math.abs(setPos);
+        double currentPosition = ArmSubsystem.getCurrentPositionWithLimitSwitch();
+        return Math.abs(currentPosition - setPos) <= tolerance;
     }
 }
