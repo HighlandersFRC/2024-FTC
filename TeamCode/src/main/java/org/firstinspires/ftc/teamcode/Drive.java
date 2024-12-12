@@ -27,6 +27,7 @@ import org.firstinspires.ftc.teamcode.Tools.Mouse;
 import org.firstinspires.ftc.teamcode.Tools.Robot;
 import org.json.JSONException;
 
+import java.util.Map;
 import java.util.Scanner;
 
 @TeleOp
@@ -99,6 +100,18 @@ public class Drive extends LinearOpMode {
                     Robot.CURRENT_ELEVATOR = Elevators.getLeftEncoder();
                     Elevators.moveRightElevator(-1);
                     Elevators.moveLeftElevator(-1);
+                    if (Pivot.getAngle() <= 10) {
+                        for (Map.Entry<Integer, Constants.PickupData> entry : Constants.pickupMap.entrySet()) {
+                            int targetPosition = entry.getKey();
+                            double currentPosition = Elevators.getLeftEncoder();
+                            int tolerance = 30;
+
+
+                            if (Math.abs(currentPosition - targetPosition) <= tolerance) {
+                                scheduler.schedule(new PivotMove(entry.getValue().pivotPose));
+                            }
+                        }
+                    }
                 }else {
                     Robot.CURRENT_ELEVATOR = Elevators.getLeftEncoder();
                     Elevators.moveLeftElevator(0);

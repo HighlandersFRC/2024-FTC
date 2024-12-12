@@ -24,7 +24,20 @@ public class Constants {
 
     public static HashMap<String, Supplier<Command>> commandMap = new HashMap<>();
     public static HashMap<String, BooleanSupplier> conditionMap = new HashMap<>();
+    public static class PickupData{
+        public int pivotPose;
 
+        public PickupData( int pivotPose){
+            this.pivotPose = pivotPose;
+        }
+    }
+
+    public static final Map<Integer, PickupData> pickupMap = new HashMap<>();
+    static {
+        pickupMap.put(959, new PickupData( -12));
+        pickupMap.put(1370, new PickupData( -10));
+
+    }
     public static class AprilTagData {
         public double positionX;
         public double positionY;
