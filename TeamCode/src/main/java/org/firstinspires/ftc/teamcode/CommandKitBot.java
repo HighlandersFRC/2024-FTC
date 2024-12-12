@@ -24,7 +24,6 @@ public class CommandKitBot extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
-double toto = 7;
         ArmSubsystem.initialize(hardwareMap);
         Wrist.initialize(hardwareMap);
         IntakeSubsystem.initialize(hardwareMap);
@@ -32,40 +31,36 @@ double toto = 7;
         CommandScheduler scheduler = new CommandScheduler();
         waitForStart();
         while (opModeIsActive()) {
-            if(gamepad1.y) {
+            if (gamepad1.y) {
                 scheduler.overrideSpecificCommand(new ArmCommandUp(-1964), ArmCommandDown.class);
-            } else if(gamepad1.b) {
+            } else if (gamepad1.b) {
                 scheduler.overrideSpecificCommand(new ArmCommandDown(10), ArmCommandUp.class);
-            } else if(gamepad1.x) {
+            } else if (gamepad1.x) {
                 scheduler.overrideSpecificCommand(new ArmCommandUp(-3000), ArmCommandDown.class);
-            } else if(gamepad1.dpad_down) {
+            } else if (gamepad1.dpad_down) {
                 scheduler.overrideSpecificCommand(new ArmCommandUp(-3365), ArmCommandDown.class);
             }
 
 
-            if(gamepad1.right_trigger != 0) {
-                    StopIntake.StopTheIntake =false;
-                    scheduler.overrideSpecificCommand(new Intake(), Outtake.class);
-                } else if(gamepad1.left_trigger != 0) {
-                    StopIntake.StopTheIntake=false;
-                    scheduler.overrideSpecificCommand(new Outtake(), Intake.class);
-                } else {
-                      StopIntake.StopTheIntake=true;
-                  }
-
-            double tarPos = 0.6;
-                  if(gamepad1.dpad_right) {
-                      tarPos = 0.8;
-                      scheduler.overrideSpecificCommand(new WristCommands(tarPos), WristCommands.class);
-                  } else if(gamepad1.dpad_left) {
-                          tarPos = 0.2;
-                      scheduler.schedule(new WristCommands(tarPos));
-                  } else if(gamepad1.dpad_up) {
-                      scheduler.overrideSpecificCommand(new WristCommands(tarPos), WristCommands.class);
-                  }
-
-
-
+            if (gamepad1.right_trigger != 0) {
+                StopIntake.StopTheIntake = false;
+                scheduler.overrideSpecificCommand(new Intake(), Outtake.class);
+            } else if (gamepad1.left_trigger != 0) {
+                StopIntake.StopTheIntake = false;
+                scheduler.overrideSpecificCommand(new Outtake(), Intake.class);
+            } else {
+                StopIntake.StopTheIntake = true;
+            }
+            double pos = 0.4;
+            if (gamepad1.dpad_up) {
+                pos = 0.4;
+        }else if(gamepad1.dpad_right) {
+                pos = 0.8;
+            } else if(gamepad1.dpad_left) {
+                pos = 0;
+            }
+           scheduler.overrideSpecificCommand(new WristCommands(pos), WristCommands.class);
+            ArmSubsystem.gamepad1Climb(gamepad1);
             Drive.FeildCentric(gamepad1);
 
             try {
