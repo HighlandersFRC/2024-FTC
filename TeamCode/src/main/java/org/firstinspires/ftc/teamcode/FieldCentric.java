@@ -1,3 +1,4 @@
+/*
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
@@ -23,7 +24,9 @@ import org.firstinspires.ftc.teamcode.Tools.Robot;
 public class FieldCentric extends LinearOpMode {
 
     private final PID pivotPID = new PID(0.15, 0.0, 0.3);
-    /*private final PID pivotPID = new PID(0.0, 0.0, 0.0);*/
+    */
+/*private final PID pivotPID = new PID(0.0, 0.0, 0.0);*//*
+
 
     private final PID elevatorPID = new PID(0.01, 0.0, 0.008);
 
@@ -85,9 +88,11 @@ public class FieldCentric extends LinearOpMode {
             }else {
                 Pivot.setPower(pivotPower + (Constants.PIVOT_FEED_FORWARD * Math.cos(Math.toRadians(Pivot.getAngle()) + Constants.ARM_BALANCE_OFFSET)));
             }
+*/
 /*
             Pivot.setPower(pivotPower + (Constants.PIVOT_FEED_FORWARD * Math.cos(Math.toRadians(Pivot.getAngle()) + Constants.ARM_BALANCE_OFFSET)));
-*/
+*//*
+
 
 
 
@@ -118,9 +123,11 @@ public class FieldCentric extends LinearOpMode {
 
             if (gamepad1.x) {
                 pivotPID.setSetPoint(90);
+*/
 /*
                 waitFor(0.5);
-*/
+*//*
+
                 Wrist.move(0.1);
                 elevatorPID.setSetPoint(1000);
             }
@@ -128,15 +135,19 @@ public class FieldCentric extends LinearOpMode {
                 elevatorPID.setSetPoint(0);
                 waitFor(1);
                 pivotPID.setSetPoint(-5);
+*/
 /*
                 waitFor(0.5);
-*/
+*//*
+
                 Wrist.move(1);
             }
 
+*/
 /*
             Pivot.checkForZero();
-*/
+*//*
+
 
             double botHeading = 0;
             double rotX = x * Math.cos(-botHeading) - y * Math.sin(-botHeading);
@@ -182,4 +193,4 @@ public class FieldCentric extends LinearOpMode {
             telemetry.update();
         }
     }
-}
+}*/

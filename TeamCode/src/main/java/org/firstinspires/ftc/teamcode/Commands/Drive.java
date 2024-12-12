@@ -73,7 +73,7 @@ public class Drive extends SequentialCommandGroup {
         double rightBackPower = -Math.max(-1, Math.min(1, speed + correction));
         double leftBackPower = Math.max(-1, Math.min(1, speed - correction));
 
-        org.firstinspires.ftc.teamcode.Subsystems.Drive.drive(rightFrontPower, leftFrontPower, rightBackPower, leftBackPower);
+        org.firstinspires.ftc.teamcode.Subsystems.Drive.drive(leftFrontPower, rightFrontPower, -leftBackPower, rightBackPower);
 
     }
 

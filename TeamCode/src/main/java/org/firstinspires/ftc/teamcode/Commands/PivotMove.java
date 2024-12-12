@@ -5,7 +5,7 @@ import org.firstinspires.ftc.teamcode.Tools.Constants;
 import org.firstinspires.ftc.teamcode.Tools.PID;
 
 public class PivotMove implements Command {
-    public static final PID pivotPID = new PID(0.1, 0.004, 0.095);
+    public static final PID pivotPID = new PID(0.13, 0.0, 0.095);
     public static double setPos;
     public static double pivotPower;
     String name = "Pivot";
@@ -37,6 +37,6 @@ public class PivotMove implements Command {
 
     @Override
     public boolean isFinished() {
-        return Math.abs(Pivot.getAngle() - setPos) <= (1);
+        return Math.abs(Pivot.getAngle() - setPos) <= (0.5);
     }
 }

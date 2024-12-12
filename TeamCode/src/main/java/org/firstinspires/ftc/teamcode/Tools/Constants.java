@@ -10,7 +10,7 @@ import java.util.function.Supplier;
 public class Constants {
     public static final double PIVOT_TICKS_PER_ROTATION = 537.6 / 5;
     public static final double PIVOT_STARTING_ANGLE = -16.1;
-    public static final double PIVOT_FEED_FORWARD = 0.6;
+    public static final double PIVOT_FEED_FORWARD = 0.7;
 
     public static double ARM_BALANCE_OFFSET = 18.9;
 
