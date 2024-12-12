@@ -6,5 +6,5 @@ public interface Command {
     void start();
     void execute() ;
     void end();
-    boolean isFinished();
-}
+    boolean isFinished();}
+
