@@ -379,7 +379,7 @@ public class Drive extends Subsystem {
         }
 */
 
-        Drive.drive(frontLeftPower, frontRightPower, backLeftPower, backRightPower);
+        Drive.drive(frontLeftPower, frontRightPower, -backLeftPower, backRightPower);
     }
 
 }

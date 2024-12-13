@@ -77,11 +77,13 @@ public class Drive extends LinearOpMode {
             }
 
             if (gamepad1.dpad_down){
-                scheduler.schedule(new WristMove(0.2));
+                scheduler.schedule(new WristMove(0.05));
             }
+
             if (gamepad1.dpad_up){
-                scheduler.schedule(new WristMove(1));
+                scheduler.schedule(new WristMove(0.9));
             }
+
           /*  if (Pivot.getAngle() > 10){
             if (gamepad1.left_bumper){
                 Robot.CURRENT_ELEVATOR = Elevators.getLeftEncoder() - 200;

@@ -35,7 +35,7 @@ public class Elevator implements Command{
     @Override
     public boolean isFinished() {
         double averageEncoderPosition = (Elevators.getLeftEncoder() + Elevators.getRightEncoder()) / 2;
-        if (Math.abs(elevatorPID.getSetPoint() - averageEncoderPosition) < 10) {
+        if (Math.abs(elevatorPID.getSetPoint() - averageEncoderPosition) < 50) {
             return true;
         }
         return false;

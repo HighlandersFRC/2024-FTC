@@ -5,11 +5,10 @@ import org.firstinspires.ftc.teamcode.Subsystems.Intake;
 
 public class OuttakeCommand implements Command {
 
-    private Intake intakeSubsystem;
 
 
     public OuttakeCommand() {
-        this.intakeSubsystem = new Intake();
+
     }
 
     public String getSubsystem() {
@@ -18,24 +17,23 @@ public class OuttakeCommand implements Command {
 
     @Override
     public void start() {
-        intakeSubsystem.stopIntake();
+
     }
 
     @Override
     public void execute() {
-
-        intakeSubsystem.outtake();
+        Intake.rightServo.setPower(-1);
+        Intake.leftServo.setPower(1);
     }
 
     @Override
     public void end() {
 
-        intakeSubsystem.stopIntake();
     }
 
     @Override
     public boolean isFinished() {
 
-        return true;
+        return false;
     }
 }
