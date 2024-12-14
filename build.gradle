@@ -11,16 +11,19 @@ buildscript {
     }
     dependencies {
         // Note for FTC Teams: Do not modify this yourself.
-        classpath 'com.android.tools.build:gradle:7.2.0'
+        classpath 'com.android.tools.build:gradle:8.7.0'
     }
 }
 
-// Required for aapt2 to be downloaded from the google() repository
+// This is now required because aapt2 has to be downloaded from the
+// google() repository beginning with version 3.2 of the Android Gradle Plugin
 allprojects {
     repositories {
         mavenCentral()
         google()
-        maven { url 'https://jitpack.io' }
-        maven { url = 'https://maven.brott.dev/' }
     }
+}
+
+repositories {
+    mavenCentral()
 }
