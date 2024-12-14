@@ -8,6 +8,7 @@ import com.qualcomm.robotcore.util.RobotLog;
 import org.firstinspires.ftc.teamcode.Commands.ArmCommand;
 
 import org.firstinspires.ftc.teamcode.Commands.CommandScheduler;
+import org.firstinspires.ftc.teamcode.Commands.Gamepad1Climb;
 import org.firstinspires.ftc.teamcode.Commands.Intake;
 import org.firstinspires.ftc.teamcode.Commands.Outtake;
 import org.firstinspires.ftc.teamcode.Commands.StopIntake;
@@ -31,8 +32,16 @@ public static double pos;
         IntakeSubsystem.initialize(hardwareMap);
         Drive.initialize(hardwareMap);
         CommandScheduler scheduler = new CommandScheduler();
+        Mouse.init(hardwareMap);
+
 
         waitForStart();
+        scheduler.schedule(new Gamepad1Climb(0));
+        try {
+            scheduler.run();
+        } catch (JSONException e) {
+            throw new RuntimeException(e);
+        }
         while (opModeIsActive()) {
             if (gamepad2.b) {
                 armPos = 0;
@@ -46,10 +55,9 @@ public static double pos;
 
 
             if (gamepad2.dpad_down || gamepad2.b || gamepad2.x || gamepad2.a) {
-                scheduler.overrideSpecificCommand(new ArmCommand(armPos),ArmCommand.class);
-            } else {
-                ArmSubsystem.gamepad1Climb(gamepad1);
+                scheduler.overrideSpecificCommand(new ArmCommand(armPos), ArmCommand.class);
             }
+
 
 //            if(!gamepad1.dpad_down || !gamepad1.b || !gamepad1.x || !gamepad1.a){
 //                ArmSubsystem.gamepad1Climb(gamepad1);
@@ -65,6 +73,16 @@ public static double pos;
             } else {
                 StopIntake.StopTheIntake = true;
             }
+            double power;
+            if(gamepad1.left_bumper) {
+                power = 1;
+            } else if(gamepad1.right_bumper) {
+                power = -1;
+            } else {
+                power = 0;
+            }
+
+                scheduler.schedule(new Gamepad1Climb(power));
 
             if (gamepad1.right_trigger != 0) {
                 StopIntake.StopTheIntake = false;
@@ -76,18 +94,17 @@ public static double pos;
                 StopIntake.StopTheIntake = true;
             }
             if (gamepad2.dpad_up) {
-                pos = 0.4;
+                pos = 0.49;
         }else if(gamepad2.dpad_right) {
                 pos = 0.8;
             } else if(gamepad2.dpad_left) {
-                pos = 0;
+                pos = 0.2;
             }
             if(gamepad2.dpad_up || gamepad2.dpad_left || gamepad2.dpad_right) {
                 scheduler.schedule(new WristCommands(pos));
             }
 
             Drive.FeildCentric(gamepad1);
-
             try {
                 scheduler.removeDuplicateCommands();
                 scheduler.run();
