@@ -24,110 +24,17 @@ public class IntakeSubsystem extends Subsystem {
         intake.setPower(power);
     }
 
-    // Add this method to handle gamepad inputs for intake control
-    public static void controlIntakeRedAlliance(Gamepad gamepad1) {
-        NormalizedRGBA color = colorSensor.getNormalizedColors();
-        double red = color.red;
-        double blue = color.blue;
-        double green = color.green;
-
-        if (gamepad1.left_trigger != 0) {
+    public static void contolIntake(Gamepad gamepad1) {
+           if (gamepad1.left_trigger != 0) {
             IntakeSubsystem.setPower(gamepad1.left_trigger);
         } else if (gamepad1.right_trigger != 0) {
             IntakeSubsystem.setPower(-gamepad1.right_trigger);
         } else {
             IntakeSubsystem.setPower(0);
         }
-
-         if (blue > red && blue > green && blue > 0.01) {
-            System.out.println("Blue");
-            IntakeSubsystem.intake.setPower(-1);
-        } else {
-            System.out.println("None");
-            IntakeSubsystem.intake.setPower(0);
-        }
-
     }
-
-    public static void contolIntakeBlueAlliance(Gamepad gamepad1) {
-        NormalizedRGBA color = colorSensor.getNormalizedColors();
-        double red = color.red;
-        double blue = color.blue;
-        double green = color.green;
-
-        if (gamepad1.left_trigger != 0) {
-            IntakeSubsystem.setPower(gamepad1.left_trigger);
-        } else if (gamepad1.right_trigger != 0) {
-            IntakeSubsystem.setPower(-gamepad1.right_trigger);
-        } else {
-            IntakeSubsystem.setPower(0);
-        }
-        if (gamepad1.right_trigger != 1 && gamepad1.left_trigger != 1) {
-            if (red > blue && red > green && red > 0.01) {
-                gamepad1.rumble(100);
-                System.out.println("Red");
-                IntakeSubsystem.intake.setPower(-1);
-            }
-        }
-    }
-
-    public static void contolIntakeWithDriveOperatorRedAlliance(Gamepad gamepad2, Gamepad gamepad1) {
-        NormalizedRGBA color = colorSensor.getNormalizedColors();
-        double red = color.red;
-        double blue = color.blue;
-        double green = color.green;
-
-        if (gamepad2.left_trigger != 0) {
-            IntakeSubsystem.setPower(gamepad2.left_trigger);
-        } else if (gamepad2.right_trigger != 0) {
-            IntakeSubsystem.setPower(-gamepad2.right_trigger);
-        } else {
-            IntakeSubsystem.setPower(0);
-        }
-        if (gamepad1.left_trigger != 0) {
-            IntakeSubsystem.setPower(gamepad1.left_trigger);
-        } else if (gamepad1.right_trigger != 0) {
-            IntakeSubsystem.setPower(-gamepad1.right_trigger);
-        } else {
-            IntakeSubsystem.setPower(0);
-        }
-        if (gamepad1.right_trigger != 1 && gamepad1.left_trigger != 1) {
-            if (blue > red && blue > green && blue > 0.01) {
-                gamepad1.rumble(100);
-                System.out.println("Blue");
-                IntakeSubsystem.intake.setPower(1);
-            }
         }
 
-    }
 
-    public static void contolIntakeWithDriverOperatorBlueAlliance(Gamepad gamepad2, Gamepad gamepad1) {
-        NormalizedRGBA color = colorSensor.getNormalizedColors();
-        double red = color.red;
-        double blue = color.blue;
-        double green = color.green;
 
-        if (gamepad2.left_trigger != 0) {
-            IntakeSubsystem.setPower(gamepad2.left_trigger);
-        } else if (gamepad2.right_trigger != 0) {
-            IntakeSubsystem.setPower(-gamepad2.right_trigger);
-        } else {
-            IntakeSubsystem.setPower(0);
-        }
-        if (gamepad1.left_trigger != 0) {
-            IntakeSubsystem.setPower(gamepad1.left_trigger);
-        } else if (gamepad1.right_trigger != 0) {
-            IntakeSubsystem.setPower(-gamepad1.right_trigger);
-        } else {
-            IntakeSubsystem.setPower(0);
-        }
-        if (gamepad1.right_trigger != 1 && gamepad1.left_trigger != 1) {
-            if (red > blue && red > green && red > 0.01) {
-                gamepad1.rumble(100);
-                System.out.println("Red");
-                IntakeSubsystem.intake.setPower(1);
-            }
-        }
-    }
-}
 

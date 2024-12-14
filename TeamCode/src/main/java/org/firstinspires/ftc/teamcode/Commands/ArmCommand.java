@@ -5,11 +5,10 @@ import static org.firstinspires.ftc.teamcode.Tools.Constants.piviotPID;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.teamcode.Subsystems.ArmSubsystem;
-import org.firstinspires.ftc.teamcode.Tools.PID;
 
 public class ArmCommand implements Command {
 
-    public static double setPos ;
+    public static double setPos;
     public static double pivotPower;
 
 
@@ -24,7 +23,7 @@ public class ArmCommand implements Command {
 
     @Override
     public void start() {
-
+System.out.println("Arm Executing");
     }
 
     @Override
@@ -44,6 +43,7 @@ public class ArmCommand implements Command {
     public boolean isFinished() {
         double tolerance = 7;
         double currentPosition = ArmSubsystem.getCurrentPositionWithLimitSwitch();
+
         return Math.abs(currentPosition - setPos) <= tolerance;
     }
 }

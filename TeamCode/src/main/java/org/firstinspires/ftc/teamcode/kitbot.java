@@ -24,7 +24,7 @@ public class kitbot extends LinearOpMode {
 
         while (opModeIsActive()) {
            ArmSubsystem.controlPivot(gamepad1, piviotPID);
-          IntakeSubsystem.contolIntakeBlueAlliance(gamepad1);
+          IntakeSubsystem.contolIntake(gamepad1);
             Wrist.controlWrist(gamepad1);
             Drive.FeildCentric(gamepad1);
             Mouse.update();

@@ -7,7 +7,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 public class Wrist extends Subsystem {
     public static Servo wrist;
-public static double position = 0.4;
+public static double position = 0.5;
     public static void initialize(HardwareMap hardwareMap) {
         wrist = hardwareMap.servo.get("wrist");
     }
@@ -18,7 +18,7 @@ public static double position = 0.4;
 if (gamepad1.dpad_up) {
     position = 0.4;
     } else if (gamepad1.dpad_left) {
-            position = 0.8;
+            position = 1;
         } else if (gamepad1.dpad_right) {
            position = 0;
         }

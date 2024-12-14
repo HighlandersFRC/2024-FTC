@@ -164,7 +164,7 @@ public class ArmSubsystem extends Subsystem {
         }
     }
 
-    public static void controlPiviotwithOperator(Gamepad gamepad2, PID piviotPID) {
+    public static void controlPivotWithOperator(Gamepad gamepad2, PID piviotPID) {
 
         if (gamepad2.square) {
             piviotPID.setPID(0.015, 0, 0.01);

@@ -34,19 +34,37 @@ public static double pos;
 
         waitForStart();
         while (opModeIsActive()) {
-            if (gamepad1.b) {
+            if (gamepad2.b) {
                 armPos = 0;
-            } else if (gamepad1.x) {
+            } else if (gamepad2.x) {
                 armPos= -1964;
-            } else if (gamepad1.dpad_down) {
+            } else if (gamepad2.dpad_down) {
                 armPos = -3365;
-          } else if (gamepad1.a){
+          } else if (gamepad2.a){
                 armPos = -3000;
             }
-            if (gamepad1.dpad_down || gamepad1.b || gamepad1.x || gamepad1.a) {
+
+
+            if (gamepad2.dpad_down || gamepad2.b || gamepad2.x || gamepad2.a) {
                 scheduler.overrideSpecificCommand(new ArmCommand(armPos),ArmCommand.class);
+            } else {
+                ArmSubsystem.gamepad1Climb(gamepad1);
             }
 
+//            if(!gamepad1.dpad_down || !gamepad1.b || !gamepad1.x || !gamepad1.a){
+//                ArmSubsystem.gamepad1Climb(gamepad1);
+//            }
+
+
+            if (gamepad2.right_trigger != 0) {
+                StopIntake.StopTheIntake = false;
+                scheduler.overrideSpecificCommand(new Intake(), Outtake.class);
+            } else if (gamepad2.left_trigger != 0) {
+                StopIntake.StopTheIntake = false;
+                scheduler.overrideSpecificCommand(new Outtake(), Intake.class);
+            } else {
+                StopIntake.StopTheIntake = true;
+            }
 
             if (gamepad1.right_trigger != 0) {
                 StopIntake.StopTheIntake = false;
@@ -57,14 +75,14 @@ public static double pos;
             } else {
                 StopIntake.StopTheIntake = true;
             }
-            if (gamepad1.dpad_up) {
+            if (gamepad2.dpad_up) {
                 pos = 0.4;
-        }else if(gamepad1.dpad_right) {
+        }else if(gamepad2.dpad_right) {
                 pos = 0.8;
-            } else if(gamepad1.dpad_left) {
+            } else if(gamepad2.dpad_left) {
                 pos = 0;
             }
-            if(gamepad1.dpad_up || gamepad1.dpad_left || gamepad1.dpad_right) {
+            if(gamepad2.dpad_up || gamepad2.dpad_left || gamepad2.dpad_right) {
                 scheduler.schedule(new WristCommands(pos));
             }
 
