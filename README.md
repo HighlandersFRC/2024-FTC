@@ -1,13 +1,14 @@
 # FTC Team 23477 - The Moon Landers
 
 Welcome to the official repository of **FTC Team 23477 - The Moon Landers**!
+
 ---
 
 ## **Technologies We Use**
 
 - **Programming Languages:** Java
-- **Frameworks & Libraries:** FTC SDK, FTCLib
-- **Development Tools:** Android Studio, GitHub, FTC Dashboard
+- **Frameworks & Libraries:** FTC SDK, FTCLib, OpenCV
+- **Development Tools:** Android Studio, GitHub, FTC Dashboard, [Polar Pathing](https://github.com/HighlandersFRC/2024-Pathing-Tool)
 - **Hardware:**
   - REV Robotics Control Hub
   - Expansion Hub
@@ -32,4 +33,14 @@ Welcome to the official repository of **FTC Team 23477 - The Moon Landers**!
 ```
 
 ---
+
+## **Driver Controls**
+![Movement; Strafing, Forwards, Backwards (1)](https://github.com/user-attachments/assets/37ce0dbb-85a6-4a0a-9c8e-dff717f842f9)
+---
+
+## **Operator Controls**
+![Arm Down + Wrist Down](https://github.com/user-attachments/assets/e178b9d7-7a54-4a95-a679-a1196faae38b)
+---
+
+
 
