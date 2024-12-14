@@ -37,6 +37,6 @@ public class PivotMove implements Command {
 
     @Override
     public boolean isFinished() {
-        return Math.abs(Pivot.getAngle() - setPos) <= (0.5);
+        return Math.abs(Pivot.getAngle() - setPos) <= (1);
     }
 }

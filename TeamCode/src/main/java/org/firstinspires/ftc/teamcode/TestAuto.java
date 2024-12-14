@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
+import org.firstinspires.ftc.teamcode.Commands.Command;
 import org.firstinspires.ftc.teamcode.Commands.CommandScheduler;
 import org.firstinspires.ftc.teamcode.Commands.Elevator;
 import org.firstinspires.ftc.teamcode.Commands.IntakeCommand;
@@ -41,7 +42,6 @@ public class TestAuto extends LinearOpMode {
         Wrist.initialize(hardwareMap);
 
         Mouse.configureOtos();
-
         Drive.setPosition(0, 0, 0);
 
 
@@ -51,24 +51,25 @@ public class TestAuto extends LinearOpMode {
         Peripherals peripherals = new Peripherals("peripherals");
         PolarPathFollower moveToPosition;
 
-        scheduler.cancelAll();
 
-
- /*       try {
+ /*       try {9[
             scheduler.schedule(new Wait(3000));
         } catch (JSONException e) {
             throw new RuntimeException(e);
         }*/
 
         try {
+            Elevator elevator = new Elevator(3000);
+            OuttakeCommand outtakeCommand = new OuttakeCommand();
             moveToPosition = new PolarPathFollower(drive, peripherals, PathLoading.getJsonPathData(), Constants.commandMap, Constants.conditionMap, scheduler);
-            Robot.CURRENT_ELEVATOR = 2400;
-            scheduler.schedule(new WristMove(0.05));
-            scheduler.schedule(new SequentialCommandGroup(scheduler, new ParallelCommandGroup(scheduler, Parameters.ALL, moveToPosition, new SequentialCommandGroup(scheduler, new PivotMove(100)), new Wait(1000), new Elevator()), new OuttakeCommand()));
+            scheduler.schedule(new WristMove(0.6));
+            scheduler.schedule(new SequentialCommandGroup(scheduler, new ParallelCommandGroup(scheduler, Parameters.ALL, moveToPosition, new SequentialCommandGroup(scheduler, new PivotMove(100), elevator), outtakeCommand)));
+
 
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
+
 
         waitForStart();
 
@@ -77,7 +78,10 @@ public class TestAuto extends LinearOpMode {
 
             FinalPose.poseUpdate();
 
+
+
             scheduler.run();
+
 
 
             double robotX = FinalPose.x;

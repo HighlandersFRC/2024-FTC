@@ -19,6 +19,8 @@ public class Intake {
         colorSensor = hardwareMap.get(NormalizedColorSensor.class, "colorSensor");
         leftServo = hardwareMap.get(CRServo.class, "left_servo");
         rightServo = hardwareMap.get(CRServo.class, "right_servo");
+
+        Intake.stopIntake();
     }
 
     public void intake() {
@@ -31,7 +33,7 @@ public class Intake {
         rightServo.setPower(-1);
     }
 
-    public void stopIntake() {
+    public static void stopIntake() {
         leftServo.setPower(0);
         rightServo.setPower(0);
     }

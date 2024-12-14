@@ -29,6 +29,10 @@ public class OuttakeCommand implements Command {
     @Override
     public void end() {
 
+        Intake.rightServo.setPower(0);
+        Intake.leftServo.setPower(0);
+        Intake.stopIntake();
+
     }
 
     @Override

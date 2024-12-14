@@ -12,6 +12,7 @@ public class Wrist extends Subsystem{
 
         wrist.setDirection(Servo.Direction.REVERSE);
 
+
     }
     public static void move(double position){
         wrist.setPosition(position);

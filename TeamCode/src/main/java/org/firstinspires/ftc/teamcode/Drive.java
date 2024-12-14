@@ -31,6 +31,7 @@ import java.util.Scanner;
 
 @TeleOp
 public class Drive extends LinearOpMode {
+
     @Override
     public void runOpMode() throws InterruptedException {
         waitForStart();
@@ -44,16 +45,18 @@ public class Drive extends LinearOpMode {
 
         CommandScheduler scheduler = new CommandScheduler();
 
+        scheduler.cancelAll();
+
         while (opModeIsActive()){
             Mouse.update();
             FinalPose.poseUpdate();
 
-            if (gamepad1.y){
+            if (gamepad2.y){
                 scheduler.schedule(new PivotMove(102));
             }
-            else if (gamepad1.a){
+            else if (gamepad2.a){
                 scheduler.schedule(new PivotMove(-10));
-            }else if (gamepad1.b){
+            }else if (gamepad2.b){
                 scheduler.schedule(new PivotMove(0));
             }else {
                 if (Pivot.getAngle() < 20 && PivotMove.pivotPID.getSetPoint() < 0){
@@ -66,22 +69,22 @@ public class Drive extends LinearOpMode {
             }
 
 
-            if (gamepad1.dpad_right) {
+            if (gamepad2.dpad_right) {
                 Robot.CURRENT_ELEVATOR = 0;
-                scheduler.schedule(new SequentialCommandGroup(scheduler, new Elevator(), new Wait(350), new PivotMove(-10)));
+                scheduler.schedule(new SequentialCommandGroup(scheduler, new Elevator(0), new Wait(350), new PivotMove(-10)));
             }
 
-            if (gamepad1.x) {
+            if (gamepad2.x) {
                 Robot.CURRENT_ELEVATOR = 1000;
-                scheduler.schedule(new SequentialCommandGroup(scheduler, new PivotMove(90), new Wait(350), new Elevator()));
+                scheduler.schedule(new SequentialCommandGroup(scheduler, new PivotMove(90), new Wait(350), new Elevator(1000)));
             }
 
-            if (gamepad1.dpad_down){
-                scheduler.schedule(new WristMove(0.05));
+            if (gamepad2.dpad_down){
+                scheduler.schedule(new WristMove(0));
             }
 
-            if (gamepad1.dpad_up){
-                scheduler.schedule(new WristMove(0.9));
+            if (gamepad2.dpad_up){
+                scheduler.schedule(new WristMove(1));
             }
 
           /*  if (Pivot.getAngle() > 10){
@@ -92,12 +95,12 @@ public class Drive extends LinearOpMode {
                 Robot.CURRENT_ELEVATOR = Elevators.getLeftEncoder() + 200;
                 scheduler.schedule(new Elevator());
             }}else{*/
-                if (gamepad1.right_bumper){
+                if (gamepad2.right_bumper){
                     Robot.CURRENT_ELEVATOR = Elevators.getLeftEncoder();
                     Elevators.moveLeftElevator(1);
                     Elevators.moveRightElevator(1);
                 }
-                else if (gamepad1.left_bumper){
+                else if (gamepad2.left_bumper){
                     Robot.CURRENT_ELEVATOR = Elevators.getLeftEncoder();
                     Elevators.moveRightElevator(-1);
                     Elevators.moveLeftElevator(-1);

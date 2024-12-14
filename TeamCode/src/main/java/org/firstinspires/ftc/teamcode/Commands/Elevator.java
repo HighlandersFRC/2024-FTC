@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.Commands;
 
+import com.qualcomm.robotcore.util.RobotLog;
+
 import org.firstinspires.ftc.teamcode.Subsystems.Elevators;
 import org.firstinspires.ftc.teamcode.Subsystems.Pivot;
 import org.firstinspires.ftc.teamcode.Tools.PID;
@@ -10,17 +12,18 @@ public class Elevator implements Command{
 
     String name = "Elevator";
 
-    public Elevator(){
-        elevatorPID.setSetPoint(Robot.CURRENT_ELEVATOR);
+    public Elevator(double pos){
+        elevatorPID.setSetPoint(pos);
     }
 
     @Override
     public void start() {
-
+        RobotLog.d("Starting Elevator Command");
     }
 
     @Override
     public void execute() {
+        Pivot.setPower(1);
         Elevators.moveLeftElevator(elevatorPID.updatePID(Elevators.getLeftEncoder()));
         Elevators.moveRightElevator(elevatorPID.updatePID(Elevators.getLeftEncoder()));
     }

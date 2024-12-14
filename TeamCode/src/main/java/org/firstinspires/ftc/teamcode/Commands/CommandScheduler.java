@@ -1,13 +1,16 @@
 package org.firstinspires.ftc.teamcode.Commands;
 
 import com.qualcomm.robotcore.util.RobotLog;
+
+import org.json.JSONException;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 public class CommandScheduler {
     private static CommandScheduler instance;
-    private final List<Command> scheduledCommands = new ArrayList<>();
+    private static List<Command> scheduledCommands = new ArrayList<>();
 
     public static CommandScheduler getInstance() {
         if (instance == null) {
@@ -16,15 +19,19 @@ public class CommandScheduler {
         return instance;
     }
 
+    public static void add(CommandScheduler scheduler, Command... commands) {
+        scheduledCommands.addAll(Arrays.asList(commands));
+    }
+
     public void schedule(Command command) {
-        if (!scheduledCommands.contains(command)) {
-            command.start();
-            scheduledCommands.add(command);
-            RobotLog.d("Command Scheduled: " + command.getClass().getSimpleName());
-        }
+        command.start();
+        scheduledCommands.add(command);
+        RobotLog.d("Command Scheduled: " + command.getClass().getSimpleName());
     }
 
     public void run() {
+        removeDuplicateCommands();
+
         List<Command> finishedCommands = new ArrayList<>();
         for (Command command : new ArrayList<>(scheduledCommands)) {
             if (command.isFinished()) {
@@ -38,12 +45,11 @@ public class CommandScheduler {
         scheduledCommands.removeAll(finishedCommands);
     }
 
+
     public void cancel(Command command) {
-        if (scheduledCommands.contains(command)) {
-            command.end();
-            scheduledCommands.remove(command);
-            RobotLog.d("Command Cancelled: " + command.getClass().getSimpleName());
-        }
+        command.end();
+        scheduledCommands.remove(command);
+        RobotLog.d("Command Cancelled: " + command.getClass().getSimpleName());
     }
 
     public void cancelAll() {
@@ -53,4 +59,17 @@ public class CommandScheduler {
         }
         scheduledCommands.clear();
     }
+
+    public void removeDuplicateCommands() {
+        List<Command> uniqueCommands = new ArrayList<>();
+
+        for (Command command : new ArrayList<>(scheduledCommands)) {
+            String name = command.getClass().getSimpleName();
+            scheduledCommands.removeIf(c -> c.getClass().getSimpleName().equalsIgnoreCase(name));
+            uniqueCommands.add(command);
+        }
+
+        scheduledCommands.addAll(uniqueCommands);
+    }
+
 }
