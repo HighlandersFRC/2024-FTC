@@ -153,18 +153,27 @@ public class ArmSubsystem extends Subsystem {
     }
 
     public static void gamepad1Climb(Gamepad gamepad1) {
-        if (!gamepad1.right_bumper && !gamepad1.left_bumper) {
-            piviotPID.setSetPoint(armPosition);
-            piviotPID.setMaxOutput(1);
-            piviotPID.setMinOutput(-1);
-            piviotPID.updatePID(ArmSubsystem.getCurrentPositionWithLimitSwitch());
+//        if (!gamepad1.right_bumper && !gamepad1.left_bumper) {
+//            piviotPID.setSetPoint(armPosition);
+//            piviotPID.setMaxOutput(1);
+//            piviotPID.setMinOutput(-1);
+//            piviotPID.updatePID(ArmSubsystem.getCurrentPositionWithLimitSwitch());
+//
+//            // Set motor power using the PID result
+//            pivotMotor.setPower(-piviotPID.getResult());
+//        }
 
-            // Set motor power using the PID result
-            pivotMotor.setPower(-piviotPID.getResult());
+        if(gamepad1.right_bumper) {
+            pivotMotor.setPower(1);
+        } else if(gamepad1.left_bumper) {
+            pivotMotor.setPower(-1);
+        } else {
+            pivotMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+            pivotMotor.setPower(0);
         }
-    }
+     }
 
-    public static void controlPivotWithOperator(Gamepad gamepad2, PID piviotPID) {
+    public static void controlPiviotwithOperator(Gamepad gamepad2, PID piviotPID) {
 
         if (gamepad2.square) {
             piviotPID.setPID(0.015, 0, 0.01);

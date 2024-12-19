@@ -15,6 +15,7 @@ import org.firstinspires.ftc.teamcode.Tools.FinalPose;
 import org.firstinspires.ftc.teamcode.Tools.Mouse;
 import org.json.JSONException;
 
+
 @Autonomous
 public class TestAuto extends LinearOpMode {
 
@@ -38,7 +39,7 @@ public class TestAuto extends LinearOpMode {
         } catch (JSONException e) {
             throw new RuntimeException(e);
         }*/
-
+        waitForStart();
         try {
             moveToPosition = new PolarPathFollower(drive, peripherals, PathLoading.getJsonPathData(), Constants.commandMap, Constants.conditionMap, scheduler);
             scheduler.schedule(moveToPosition);
@@ -46,7 +47,6 @@ public class TestAuto extends LinearOpMode {
             throw new RuntimeException(e);
         }
 
-        waitForStart();
 
         while (opModeIsActive()) {
             FinalPose.poseUpdate();
