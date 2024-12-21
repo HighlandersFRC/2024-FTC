@@ -19,14 +19,14 @@ public class TestDegToCon extends LinearOpMode {
 
         while (opModeIsActive()) {
 
-            piviotPID.setSetPoint(encodersToDeg(90));
+            piviotPID.setSetPoint(encodersToDeg(180));
             piviotPID.updatePID(ArmSubsystem.getCurrentPositionWithLimitSwitch());
             piviotPID.setMaxOutput(1);
             piviotPID.setMinOutput(-1);
             ArmSubsystem.setPower(-piviotPID.getResult());
 
             telemetry.addData("ArmCurrentPos", ArmSubsystem.getCurrentPositionWithLimitSwitch());
-            telemetry.addData("ArmCurrentPos Deg", getDegrees());
+            telemetry.addData("ArmCurrentPos Deg", getDegrees() + "°");
             telemetry.update();
 
         }
