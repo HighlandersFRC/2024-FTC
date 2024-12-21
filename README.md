@@ -1,3 +1,4 @@
+![Team_23477_The_Moonlanders__8_-removebg-preview](https://github.com/user-attachments/assets/adfb17e2-8aad-4eaf-8457-2bea6a5e874f)
 # FTC Team 23477 - The Moon Landers
 
 Welcome to the official repository of **FTC Team 23477 - The Moon Landers**!
