@@ -6,13 +6,20 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.NormalizedColorSensor;
 import com.qualcomm.robotcore.hardware.NormalizedRGBA;
 
-public class Intake {
+import org.firstinspires.ftc.teamcode.Commands.Command;
+import org.firstinspires.ftc.teamcode.Commands.DefaultCommands.ElevatorDefault;
+import org.firstinspires.ftc.teamcode.Commands.DefaultCommands.IntakeDefault;
+
+public class Intake extends Subsystem{
 
     private static NormalizedColorSensor colorSensor;
     public static CRServo leftServo;
     public static CRServo rightServo;
-    private static final String setColor = "red";
+    private static final String setColor = "blue";
 
+    public Intake(String name) {
+        super(name);
+    }
 
 
     public static void initialize(HardwareMap hardwareMap) {
@@ -54,5 +61,14 @@ public class Intake {
         }
 
         return mainColor.equals(setColor) || mainColor.equals("yellow");
+    }
+    @Override
+    public void setDefaultCommand(Command command) {
+        super.setDefaultCommand(new IntakeDefault());
+    }
+
+    @Override
+    public Command getDefaultCommand() {
+        return new IntakeDefault();
     }
 }

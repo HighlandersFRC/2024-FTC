@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.Commands;
 import com.qualcomm.robotcore.util.RobotLog;
 
 import org.firstinspires.ftc.teamcode.Commands.Command;
+import org.firstinspires.ftc.teamcode.Subsystems.Subsystem;
 
 public class Wait implements Command {
     private final long waitTime;
@@ -39,5 +40,10 @@ public class Wait implements Command {
     @Override
     public boolean isFinished() {
         return elapsed >= waitTime;
+    }
+
+    @Override
+    public Subsystem getRequiredSubsystem() {
+        return null;
     }
 } 

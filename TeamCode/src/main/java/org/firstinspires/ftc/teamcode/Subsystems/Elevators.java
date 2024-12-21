@@ -3,6 +3,8 @@ package org.firstinspires.ftc.teamcode.Subsystems;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
+import org.firstinspires.ftc.teamcode.Commands.Command;
+import org.firstinspires.ftc.teamcode.Commands.DefaultCommands.ElevatorDefault;
 import org.firstinspires.ftc.teamcode.Tools.PID;
 
 public class Elevators extends Subsystem {
@@ -11,12 +13,17 @@ public class Elevators extends Subsystem {
     private static PID leftElevatorPID = new PID(0.3, 0.0, 0.0);
     private static PID rightElevatorPID = new PID(0.3, 0.0, 0.0);
 
-    private static final int STALL_THRESHOLD = 10; // Encoder ticks below this are considered no movement
-    private static final long MONITOR_INTERVAL_MS = 100; // Time between encoder checks in milliseconds
+    private static final int STALL_THRESHOLD = 10;
+    private static final long MONITOR_INTERVAL_MS = 100;
+
+    public Elevators(String name) {
+        super(name);
+    }
 
     public static void initialize(HardwareMap hardwareMap) {
-        leftElevator = hardwareMap.get(DcMotor.class, "left_elevator");
-        rightElevator = hardwareMap.get(DcMotor.class, "right_elevator");
+        leftElevator = hardwareMap.get(DcMotor.class, "leftElevator");
+        rightElevator = hardwareMap.get(DcMotor.class, "rightElevator");
+
         resetEncoders();
         setBrakeMode();
     }
@@ -90,4 +97,13 @@ public class Elevators extends Subsystem {
         }).start();
     }
 
+    @Override
+    public void setDefaultCommand(Command command) {
+        super.setDefaultCommand(new ElevatorDefault());
+    }
+
+    @Override
+    public Command getDefaultCommand() {
+        return new ElevatorDefault();
+    }
 }

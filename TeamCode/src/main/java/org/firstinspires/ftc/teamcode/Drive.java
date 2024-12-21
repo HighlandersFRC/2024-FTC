@@ -1,5 +1,11 @@
 package org.firstinspires.ftc.teamcode;
 
+import static org.firstinspires.ftc.teamcode.Tools.Robot.elevatorPower;
+import static org.firstinspires.ftc.teamcode.Tools.Robot.elevators;
+import static org.firstinspires.ftc.teamcode.Tools.Robot.intake;
+import static org.firstinspires.ftc.teamcode.Tools.Robot.pivot;
+import static org.firstinspires.ftc.teamcode.Tools.Robot.wrist;
+
 import android.content.res.Resources;
 import android.text.style.WrapTogetherSpan;
 
@@ -10,8 +16,8 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.teamcode.Commands.CommandScheduler;
 import org.firstinspires.ftc.teamcode.Commands.Elevator;
+import org.firstinspires.ftc.teamcode.Commands.ElevatorWithPower;
 import org.firstinspires.ftc.teamcode.Commands.IntakeCommand;
-import org.firstinspires.ftc.teamcode.Commands.OuttakeCommand;
 import org.firstinspires.ftc.teamcode.Commands.PivotMove;
 import org.firstinspires.ftc.teamcode.Commands.SequentialCommandGroup;
 import org.firstinspires.ftc.teamcode.Commands.Wait;
@@ -37,28 +43,27 @@ public class Drive extends LinearOpMode {
         waitForStart();
 
         Robot.initialize(hardwareMap);
-        Mouse.init(hardwareMap);
-        Pivot.initialize(hardwareMap);
-        Intake.initialize(hardwareMap);
-        Elevators.initialize(hardwareMap);
-        Wrist.initialize(hardwareMap);
 
         CommandScheduler scheduler = new CommandScheduler();
 
+
         scheduler.cancelAll();
 
-        while (opModeIsActive()){
+        while (opModeIsActive()) {
             Mouse.update();
             FinalPose.poseUpdate();
-
-            if (gamepad2.y){
-                scheduler.schedule(new PivotMove(102));
-            }
-            else if (gamepad2.a){
-                scheduler.schedule(new PivotMove(-10));
-            }else if (gamepad2.b){
-                scheduler.schedule(new PivotMove(0));
-            }else {
+       /*     if (gamepad1.a) {
+                Pivot.setPower(-1);
+            } else if (gamepad1.start) {
+                Pivot.resetEncoder();
+            }*/
+            if (gamepad2.y) {
+                scheduler.schedule(new PivotMove(pivot, 102));
+            } else if (gamepad2.a) {
+                scheduler.schedule(new PivotMove(pivot, -10));
+            } else if (gamepad2.b) {
+                scheduler.schedule(new PivotMove(pivot, 0));
+            }/*else {
                 if (Pivot.getAngle() < 20 && PivotMove.pivotPID.getSetPoint() < 0){
                     Pivot.setPower(0);
                     Pivot.pivotMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -66,99 +71,53 @@ public class Drive extends LinearOpMode {
                     Pivot.setPower(PivotMove.pivotPower + (Constants.PIVOT_FEED_FORWARD * Math.cos(Math.toRadians(Pivot.getAngle()) + Constants.ARM_BALANCE_OFFSET)));
 
                 }
-            }
+            }*/
 
-
+/*            if (gamepad1.left_bumper) {
+                Pivot.setPower(1);
+            } else if (gamepad1.right_bumper) {
+                Pivot.setPower(-1);
+            }*/
             if (gamepad2.dpad_right) {
-                Robot.CURRENT_ELEVATOR = 0;
-                scheduler.schedule(new SequentialCommandGroup(scheduler, new Elevator(0), new Wait(350), new PivotMove(-10)));
+                scheduler.schedule(new SequentialCommandGroup(scheduler, new Elevator(elevators, 0), new Wait(50), new PivotMove(pivot, -10)));
             }
 
             if (gamepad2.x) {
-                Robot.CURRENT_ELEVATOR = 1000;
-                scheduler.schedule(new SequentialCommandGroup(scheduler, new PivotMove(90), new Wait(350), new Elevator(1000)));
+                scheduler.schedule(new SequentialCommandGroup(scheduler, new PivotMove(pivot, 90), new Wait(50), new Elevator(elevators, 1000)));
             }
 
-            if (gamepad2.dpad_down){
-                scheduler.schedule(new WristMove(0));
+            if (gamepad1.dpad_down) {
+                scheduler.schedule(new WristMove(wrist, 0.1));
             }
 
-            if (gamepad2.dpad_up){
-                scheduler.schedule(new WristMove(1));
+            if (gamepad1.dpad_up) {
+                scheduler.schedule(new WristMove(wrist, 0.8));
             }
-
-          /*  if (Pivot.getAngle() > 10){
-            if (gamepad1.left_bumper){
-                Robot.CURRENT_ELEVATOR = Elevators.getLeftEncoder() - 200;
-                scheduler.schedule(new Elevator());
-            }else if (gamepad1.right_bumper){
-                Robot.CURRENT_ELEVATOR = Elevators.getLeftEncoder() + 200;
-                scheduler.schedule(new Elevator());
-            }}else{*/
-                if (gamepad2.right_bumper){
-                    Robot.CURRENT_ELEVATOR = Elevators.getLeftEncoder();
-                    Elevators.moveLeftElevator(1);
-                    Elevators.moveRightElevator(1);
-                }
-                else if (gamepad2.left_bumper){
-                    Robot.CURRENT_ELEVATOR = Elevators.getLeftEncoder();
-                    Elevators.moveRightElevator(-1);
-                    Elevators.moveLeftElevator(-1);
-                }else {
-                    Robot.CURRENT_ELEVATOR = Elevators.getLeftEncoder();
-                    Elevators.moveLeftElevator(0);
-                    Elevators.moveRightElevator(0);
-                    Elevators.setBrakeMode();
-                }
 
 
             if (gamepad1.right_trigger > 0.1) {
 
-                scheduler.schedule(new IntakeCommand(hardwareMap));
+                scheduler.schedule(new IntakeCommand(intake));
             }
             if (gamepad1.left_trigger > 0.1) {
 
                 Intake.leftServo.setPower(1);
                 Intake.rightServo.setPower(-1);
-/*
-                commandScheduler.schedule(new IntakeCommand(hardwareMap, OUTTAKE));
-*/
+
             }
 
-            double y = -gamepad1.left_stick_y;
-            double x = gamepad1.left_stick_x;
-            double rx = gamepad1.right_stick_x;
+            org.firstinspires.ftc.teamcode.Subsystems.Drive.RobotCentric(gamepad1.left_stick_x, gamepad1.left_stick_y, gamepad1.right_stick_x);
 
-            double botHeading = 0;
-            double rotX = x * Math.cos(-botHeading) - y * Math.sin(-botHeading);
-            double rotY = x * Math.sin(-botHeading) + y * Math.cos(-botHeading);
-
-            rotX *= 1.1;
-
-            double denominator = Math.max(Math.abs(rotY) + Math.abs(rotX) + Math.abs(rx), 1);
-            double frontLeftPower = (rotY + rotX + rx) / denominator;
-            double backLeftPower = (rotY - rotX + rx) / denominator;
-            double frontRightPower = (rotY - rotX - rx) / denominator;
-            double backRightPower = (rotY + rotX - rx) / denominator;
-
-            org.firstinspires.ftc.teamcode.Subsystems.Drive.drive(frontLeftPower, frontRightPower, -backLeftPower, backRightPower);
-
-                scheduler.run();
-            telemetry.addLine("Pivot")
-                    .addData("Encoder", Pivot.getEncoderPosition())
-                    .addData("Pivot Angle", Pivot.getAngle());
-
-
-            telemetry.addLine("Elevator")
-                    .addData("Left Encoder", Elevators.getLeftEncoder())
-                    .addData("Right Encoder", Elevators.getRightEncoder());
-            telemetry.addLine("Pose")
-                    .addData("x", FinalPose.x)
-                    .addData("y", FinalPose.y)
-                    .addData("current", FieldOfMerit.currentState)
-                    .addData("yaw", FinalPose.yaw);
+            scheduler.run();
+            telemetry.addLine("Pivot").addData("Encoder", Pivot.getEncoderPosition()).addData("Pivot Angle", Pivot.getAngle());
+            telemetry.addLine("Elevator").addData("Left Encoder", Elevators.getLeftEncoder()).addData("Right Encoder", Elevators.getRightEncoder());
+            telemetry.addLine("Pose").addData("x", FinalPose.x).addData("y", FinalPose.y).addData("current", FieldOfMerit.currentState).addData("yaw", FinalPose.yaw);
             telemetry.update();
 
+            Robot.elevatorPower = Robot.elevatorPowerCalc(gamepad2.right_bumper, gamepad2.left_bumper);
+            if (!(elevatorPower == 0)){
+                scheduler.schedule(new ElevatorWithPower());
+            }
         }
     }
 }

@@ -50,6 +50,10 @@ public class Drive extends Subsystem {
     private static final double L = 0.4064;
     private static final double W = 0.4064;
 
+    public Drive(String name) {
+        super(name);
+    }
+
     public static void initialize(HardwareMap hardwareMap) {
         frontLeftMotor = hardwareMap.get(DcMotorEx.class, "left_front");
         backLeftMotor = hardwareMap.get(DcMotorEx.class, "left_back");
@@ -61,6 +65,22 @@ public class Drive extends Subsystem {
 
         resetEncoder();
         lastUpdateTime = System.currentTimeMillis();
+    }
+
+    public static void RobotCentric(double x, double y, double rx){
+        double botHeading = 0;
+        double rotX = x * Math.cos(-botHeading) - y * Math.sin(-botHeading);
+        double rotY = x * Math.sin(-botHeading) + y * Math.cos(-botHeading);
+
+        rotX *= 1.1;
+
+        double denominator = Math.max(Math.abs(rotY) + Math.abs(rotX) + Math.abs(rx), 1);
+        double frontLeftPower = (rotY + rotX + rx) / denominator;
+        double backLeftPower = (rotY - rotX + rx) / denominator;
+        double frontRightPower = (rotY - rotX - rx) / denominator;
+        double backRightPower = (rotY + rotX - rx) / denominator;
+
+        drive(frontLeftPower, frontRightPower, -backLeftPower, backRightPower);
     }
 
     public static Vector purePursuitController(double currentX, double currentY, double currentTheta, int currentIndex,

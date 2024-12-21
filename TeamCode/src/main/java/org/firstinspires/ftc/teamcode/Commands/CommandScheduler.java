@@ -1,16 +1,15 @@
 package org.firstinspires.ftc.teamcode.Commands;
 
 import com.qualcomm.robotcore.util.RobotLog;
+import org.firstinspires.ftc.teamcode.Subsystems.Subsystem;
+import org.firstinspires.ftc.teamcode.Tools.Robot;
 
-import org.json.JSONException;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
 public class CommandScheduler {
     private static CommandScheduler instance;
-    private static List<Command> scheduledCommands = new ArrayList<>();
+    private final List<Command> scheduledCommands = new ArrayList<>();
+    private final Map<Subsystem, Command> activeSubsystemCommands = new HashMap<>();
 
     public static CommandScheduler getInstance() {
         if (instance == null) {
@@ -19,20 +18,25 @@ public class CommandScheduler {
         return instance;
     }
 
-    public static void add(CommandScheduler scheduler, Command... commands) {
-        scheduledCommands.addAll(Arrays.asList(commands));
-    }
-
     public void schedule(Command command) {
+        Subsystem requiredSubsystem = command.getRequiredSubsystem();
+
+        if (requiredSubsystem != null) {
+            Command activeCommand = activeSubsystemCommands.get(requiredSubsystem);
+            if (activeCommand != null && !isDefaultCommand(activeCommand)) {
+                cancel(activeCommand);
+            }
+            activeSubsystemCommands.put(requiredSubsystem, command);
+        }
+
         command.start();
         scheduledCommands.add(command);
         RobotLog.d("Command Scheduled: " + command.getClass().getSimpleName());
     }
 
     public void run() {
-        removeDuplicateCommands();
-
         List<Command> finishedCommands = new ArrayList<>();
+
         for (Command command : new ArrayList<>(scheduledCommands)) {
             if (command.isFinished()) {
                 command.end();
@@ -42,11 +46,25 @@ public class CommandScheduler {
                 command.execute();
             }
         }
+
         scheduledCommands.removeAll(finishedCommands);
+
+        for (Subsystem subsystem : getAllSubsystems()) {
+            if (!activeSubsystemCommands.containsKey(subsystem)) {
+                Command defaultCommand = subsystem.getDefaultCommand();
+                if (defaultCommand != null && !scheduledCommands.contains(defaultCommand) && !isDefaultCommand(defaultCommand)) {
+                    schedule(defaultCommand);
+                }
+            }
+        }
     }
 
-
     public void cancel(Command command) {
+        Subsystem requiredSubsystem = command.getRequiredSubsystem();
+        if (requiredSubsystem != null) {
+            activeSubsystemCommands.remove(requiredSubsystem);
+        }
+
         command.end();
         scheduledCommands.remove(command);
         RobotLog.d("Command Cancelled: " + command.getClass().getSimpleName());
@@ -54,22 +72,22 @@ public class CommandScheduler {
 
     public void cancelAll() {
         for (Command command : new ArrayList<>(scheduledCommands)) {
-            command.end();
-            RobotLog.d("Command Cancelled: " + command.getClass().getSimpleName());
+            cancel(command);
         }
-        scheduledCommands.clear();
     }
 
-    public void removeDuplicateCommands() {
-        List<Command> uniqueCommands = new ArrayList<>();
+    private Set<Subsystem> getAllSubsystems() {
+        Set<Subsystem> subsystems = new HashSet<>();
 
-        for (Command command : new ArrayList<>(scheduledCommands)) {
-            String name = command.getClass().getSimpleName();
-            scheduledCommands.removeIf(c -> c.getClass().getSimpleName().equalsIgnoreCase(name));
-            uniqueCommands.add(command);
-        }
+        subsystems.add(Robot.elevators);
+        subsystems.add(Robot.pivot);
+        subsystems.add(Robot.intake);
+        subsystems.add(Robot.wrist);
 
-        scheduledCommands.addAll(uniqueCommands);
+        return subsystems;
     }
 
+    private boolean isDefaultCommand(Command command) {
+        return command.getClass().getSimpleName().contains("Default");
+    }
 }

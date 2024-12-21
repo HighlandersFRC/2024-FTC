@@ -2,15 +2,14 @@ package org.firstinspires.ftc.teamcode.Commands;
 
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import org.firstinspires.ftc.teamcode.Subsystems.Intake;
+import org.firstinspires.ftc.teamcode.Subsystems.Subsystem;
 
 public class IntakeCommand implements Command {
 
-    private Intake intakeSubsystem;
 
-
-    public IntakeCommand(HardwareMap hardwareMap) {
-        this.intakeSubsystem = new Intake();
-        Intake.initialize(hardwareMap);
+Intake intakeSubsystem;
+    public IntakeCommand(Intake intake) {
+        intakeSubsystem = intake;
     }
 
     public String getSubsystem() {
@@ -43,5 +42,10 @@ public class IntakeCommand implements Command {
     public boolean isFinished() {
 
         return intakeSubsystem.getCorrectColor();
+    }
+
+    @Override
+    public Subsystem getRequiredSubsystem() {
+        return intakeSubsystem;
     }
 }

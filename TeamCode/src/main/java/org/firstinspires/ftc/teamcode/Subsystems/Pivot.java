@@ -5,6 +5,9 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
+import org.firstinspires.ftc.teamcode.Commands.Command;
+import org.firstinspires.ftc.teamcode.Commands.DefaultCommands.ElevatorDefault;
+import org.firstinspires.ftc.teamcode.Commands.DefaultCommands.WristDefault;
 import org.firstinspires.ftc.teamcode.Tools.Constants;
 import org.firstinspires.ftc.teamcode.Tools.PID;
 
@@ -12,6 +15,10 @@ public class Pivot extends Subsystem{
     private static final PID pid = new PID(0.009, 0.0, 0.0092);
     public static DcMotor pivotMotor;
     public static DigitalChannel limitSwitch;
+
+    public Pivot(String name) {
+        super(name);
+    }
 
     public static void initialize(HardwareMap hardwareMap) {
         pivotMotor = hardwareMap.get(DcMotor.class, "pivot");
@@ -62,5 +69,14 @@ public class Pivot extends Subsystem{
     }
     public static double getAngle(){
      return ((getEncoderPosition()) / (678 / 90.8)) - 14.8;
+    }
+    @Override
+    public void setDefaultCommand(Command command) {
+        super.setDefaultCommand(new WristDefault());
+    }
+
+    @Override
+    public Command getDefaultCommand() {
+        return new WristDefault();
     }
 }

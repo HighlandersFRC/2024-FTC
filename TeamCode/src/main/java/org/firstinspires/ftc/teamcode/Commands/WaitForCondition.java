@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.Commands;
 
+import org.firstinspires.ftc.teamcode.Subsystems.Subsystem;
+
 import java.util.function.BooleanSupplier;
 
 public class WaitForCondition implements Command {
@@ -26,5 +28,10 @@ public class WaitForCondition implements Command {
     @Override
     public boolean isFinished() {
         return condition.getAsBoolean();
+    }
+
+    @Override
+    public Subsystem getRequiredSubsystem() {
+        return null;
     }
 }

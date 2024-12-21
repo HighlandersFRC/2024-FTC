@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.Commands;
 
 import com.qualcomm.robotcore.util.RobotLog;
 
+import org.firstinspires.ftc.teamcode.Subsystems.Subsystem;
 import org.json.JSONException;
 
 import java.util.ArrayList;
@@ -71,5 +72,10 @@ public class SequentialCommandGroup implements Command {
     @Override
     public boolean isFinished() {
         return currentCommand == null || currentCommandIndex >= commands.size();
+    }
+
+    @Override
+    public Subsystem getRequiredSubsystem() {
+        return null;
     }
 }

@@ -1,22 +1,26 @@
 package org.firstinspires.ftc.teamcode.Commands;
 
 import org.firstinspires.ftc.teamcode.Subsystems.Pivot;
+import org.firstinspires.ftc.teamcode.Subsystems.Subsystem;
 import org.firstinspires.ftc.teamcode.Tools.Constants;
 import org.firstinspires.ftc.teamcode.Tools.PID;
+import org.firstinspires.ftc.teamcode.Tools.Robot;
 
 public class PivotMove implements Command {
     public static final PID pivotPID = new PID(0.13, 0.0, 0.095);
     public static double setPos;
     public static double pivotPower;
     String name = "Pivot";
+    Pivot pivotSubsystem;
 
-
-    public PivotMove(double targetPos) {
+    public PivotMove(Pivot pivot, double targetPos) {
+        pivotSubsystem = pivot;
         setPos = targetPos;
         pivotPID.setSetPoint(targetPos);
         pivotPID.setMaxOutput(0.5);
         pivotPID.setMinInput(180);
         pivotPID.setMaxInput(-180);
+        Robot.CURRENT_ELEVATOR = setPos;
     }
 
     @Override
@@ -38,5 +42,10 @@ public class PivotMove implements Command {
     @Override
     public boolean isFinished() {
         return Math.abs(Pivot.getAngle() - setPos) <= (1);
+    }
+
+    @Override
+    public Subsystem getRequiredSubsystem() {
+        return pivotSubsystem;
     }
 }
