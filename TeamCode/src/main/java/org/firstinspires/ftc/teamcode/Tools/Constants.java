@@ -27,7 +27,7 @@ public class Constants {
     public static double ElevatorsDownPosition = 200;
     public static double ArmDownPosition = 200;
     public static Object SetPoints;
-    public static PID piviotPID = new PID(0.015, 0, 0);
+    public static PID piviotPID = new PID(0.01, 0, 0.01);
 
     public static double nextX;
     public static double nextY;

@@ -118,7 +118,7 @@ public class PoseMerging extends LinearOpMode {
                     double tagyaw = tagData != null ? tagData.tagangle : 0;
                     double theta = (tagyaw + 180) - pose.yaw;
 
-                    // Reset encoders to the detected position
+                    // Reset encodersToDeg to the detected position
                     DriveSubsystem.setCurrentPositionAndResetEncoders(FieldX, FieldY, theta);
 
 

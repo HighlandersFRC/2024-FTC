@@ -56,6 +56,7 @@ public class Drive extends Subsystem {
         backLeftMotor = hardwareMap.get(DcMotorEx.class, "left_back");
         frontRightMotor = hardwareMap.get(DcMotorEx.class, "right_front");
         backRightMotor = hardwareMap.get(DcMotorEx.class, "right_back");
+        Mouse.init(hardwareMap);
 
         frontRightMotor.setDirection(DcMotorSimple.Direction.REVERSE);
         backRightMotor.setDirection(DcMotorSimple.Direction.REVERSE);
@@ -447,7 +448,7 @@ public class Drive extends Subsystem {
         }
 */
 
-        Drive.drive(frontLeftPower, -frontRightPower, backLeftPower, backRightPower);
+        Drive.drive(-frontLeftPower, frontRightPower, -backLeftPower, -backRightPower);
     }
 
     public static double leftFrontPos(){
