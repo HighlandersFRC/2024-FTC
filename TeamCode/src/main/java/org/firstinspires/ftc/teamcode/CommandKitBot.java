@@ -1,26 +1,27 @@
 package org.firstinspires.ftc.teamcode;
 
 import static org.firstinspires.ftc.teamcode.Commands.StopIntake.StopTheIntake;
+import static org.firstinspires.ftc.teamcode.Commands.HoldArm.HOLD;
+import static org.firstinspires.ftc.teamcode.Tools.Constants.getDegrees;
+
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.util.RobotLog;
 
 
-import org.firstinspires.ftc.teamcode.Commands.ArmCommand;
+//import org.firstinspires.ftc.teamcode.Commands.ArmCommand;
 
 import org.firstinspires.ftc.teamcode.Commands.CommandScheduler;
 import org.firstinspires.ftc.teamcode.Commands.Gamepad1Climb;
 import org.firstinspires.ftc.teamcode.Commands.Intake;
 import org.firstinspires.ftc.teamcode.Commands.Outtake;
-import org.firstinspires.ftc.teamcode.Commands.StopIntake;
 import org.firstinspires.ftc.teamcode.Commands.WristCommands;
 import org.firstinspires.ftc.teamcode.Subsystems.ArmSubsystem;
 import org.firstinspires.ftc.teamcode.Subsystems.Drive;
 import org.firstinspires.ftc.teamcode.Subsystems.IntakeSubsystem;
 import org.firstinspires.ftc.teamcode.Subsystems.Wrist;
 import org.firstinspires.ftc.teamcode.Tools.Mouse;
-import static org.firstinspires.ftc.teamcode.Commands.StopIntake.StopTheIntake;
+
 
 import org.json.JSONException;
 
@@ -42,17 +43,24 @@ public static double pos;
 
         scheduler = new CommandScheduler();
 
-        ArmCommand Score = new ArmCommand(-1964);
-        ArmCommand Zero= new ArmCommand(0);
+//        ArmCommand Score = new ArmCommand(30);
+//        ArmCommand Zero= new ArmCommand(0);
+//        ArmCommand PickUp = new ArmCommand(-3350);
+//        ArmCommand Enter = new ArmCommand (-3000);
 
         Intake intakeCommand = new Intake();
         Outtake outtakeCommand = new Outtake();
-        StopIntake stopIntakeCommand = new StopIntake();
         WristCommands leftWrist = new WristCommands(0.4);
         WristCommands rightWrist = new WristCommands(0.8);
         WristCommands zeroWrist = new WristCommands(0);
 
         scheduler.schedule(new Gamepad1Climb(0));
+//        scheduler.schedule(Zero);
+        try {
+            scheduler.run();
+        } catch (JSONException e) {
+            throw new RuntimeException(e);
+        }
         while(opModeIsActive()) {
             if (gamepad1.right_trigger != 0) {
                 StopTheIntake = false;
@@ -64,13 +72,31 @@ public static double pos;
                 StopTheIntake = true;
             }
 
-            if (gamepad1.y) {
-                scheduler.schedule(Score);
-            } else if (gamepad1.b) {
-                scheduler.schedule(Zero);
+            if(gamepad1.dpad_up) {
+                scheduler.schedule(zeroWrist);
+                } else if(gamepad1.dpad_right) {
+                scheduler.schedule(leftWrist);
+             } else if(gamepad1.dpad_left) {
+                scheduler.schedule(rightWrist);
             }
 
-            Drive.FeildCentric(gamepad1);
+//            if (gamepad1.y) {
+//                HOLD = false;
+//                scheduler.schedule(Score);
+//            } else if (gamepad1.b) {
+//                HOLD = false;
+//                scheduler.schedule(Zero);
+//            } else if (gamepad1.dpad_down) {
+//                HOLD =  false;
+//                scheduler.schedule(PickUp);
+//            } else if(gamepad1.x) {
+//                HOLD = false;
+//                scheduler.schedule(Enter);
+//            } else {
+//                HOLD = true;
+//            }
+
+//            Drive.FeildCentric(gamepad1);
             try {
                 scheduler.run();
             } catch (JSONException e) {
@@ -79,6 +105,7 @@ public static double pos;
             telemetry.addData("Mouse Sensor Y:", Mouse.getX());
             telemetry.addData("Mouse Sensor X:", Mouse.getY());
             telemetry.addData("Piviot Arm Posiotion:", ArmSubsystem.getCurrentPositionWithLimitSwitch());
+            telemetry.addData("Piviot Arm Posiotion Deg:", getDegrees());
             telemetry.update();
         }
 
