@@ -32,10 +32,11 @@ public class IntakeSubsystem extends Subsystem {
         double green = color.green;
 
         if (gamepad1.left_trigger != 0) {
-            IntakeSubsystem.setPower(gamepad1.left_trigger);
+            IntakeSubsystem.setPower(1);
         } else if (gamepad1.right_trigger != 0) {
-            IntakeSubsystem.setPower(-gamepad1.right_trigger);
+            IntakeSubsystem.setPower(-1);
         } else {
+            System.out.println("ran");
             IntakeSubsystem.setPower(0);
         }
 

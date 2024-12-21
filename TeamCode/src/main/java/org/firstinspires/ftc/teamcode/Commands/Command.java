@@ -7,4 +7,3 @@ public interface Command {
     void execute() ;
     void end();
     boolean isFinished();}
-

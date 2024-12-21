@@ -15,7 +15,7 @@ public class ArmSubsystem extends Subsystem {
     public static DcMotor pivotMotor;
     public static DigitalChannel limitSwitch; // Limit switch for arm position
 
-    private static double armPosition = 0; // Target arm position
+    private static double armPosition = 10; // Target arm position
     protected static double pos = 0;
 
     // Initialize the motor and limit switch
@@ -153,16 +153,25 @@ public class ArmSubsystem extends Subsystem {
     }
 
     public static void gamepad1Climb(Gamepad gamepad1) {
-        if (!gamepad1.right_bumper && !gamepad1.left_bumper) {
-            piviotPID.setSetPoint(armPosition);
-            piviotPID.setMaxOutput(1);
-            piviotPID.setMinOutput(-1);
-            piviotPID.updatePID(ArmSubsystem.getCurrentPositionWithLimitSwitch());
+//        if (!gamepad1.right_bumper && !gamepad1.left_bumper) {
+//            piviotPID.setSetPoint(armPosition);
+//            piviotPID.setMaxOutput(1);
+//            piviotPID.setMinOutput(-1);
+//            piviotPID.updatePID(ArmSubsystem.getCurrentPositionWithLimitSwitch());
+//
+//            // Set motor power using the PID result
+//            pivotMotor.setPower(-piviotPID.getResult());
+//        }
 
-            // Set motor power using the PID result
-            pivotMotor.setPower(-piviotPID.getResult());
+        if(gamepad1.right_bumper) {
+            pivotMotor.setPower(1);
+        } else if(gamepad1.left_bumper) {
+            pivotMotor.setPower(-1);
+        } else {
+            pivotMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+            pivotMotor.setPower(0);
         }
-    }
+     }
 
     public static void controlPiviotwithOperator(Gamepad gamepad2, PID piviotPID) {
 

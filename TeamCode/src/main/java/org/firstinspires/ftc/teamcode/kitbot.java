@@ -23,10 +23,12 @@ public class kitbot extends LinearOpMode {
         Mouse.init(hardwareMap);
 
         while (opModeIsActive()) {
-           ArmSubsystem.controlPivot(gamepad1, piviotPID);
+
+//           ArmSubsystem.controlPivot(gamepad1, piviotPID);
           IntakeSubsystem.contolIntakeBlueAlliance(gamepad1);
             Wrist.controlWrist(gamepad1);
             Drive.FeildCentric(gamepad1);
+            ArmSubsystem.gamepad1Climb(gamepad1);
             Mouse.update();
 
             telemetry.addData("Mouse X", Mouse.getX());
