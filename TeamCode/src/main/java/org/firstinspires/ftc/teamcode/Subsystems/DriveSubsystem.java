@@ -14,7 +14,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 
-public class DriveSubsystem {
+public class DriveSubsystem extends Subsystem {
 
     public static DcMotor leftBack, leftFront, rightBack, rightFront, leftEncoderMotor, rightEncoderMotor, centerEncoderMotor;
     private PID turnPID = new PID(1, 0, 0);
@@ -42,8 +42,8 @@ public class DriveSubsystem {
     private static final double KP = 0.3;
     private static final double KA = 0.1;
 
-    public DriveSubsystem(HardwareMap hardwareMap) {
-        initialize(hardwareMap);
+    public DriveSubsystem(String name) {
+        super(name);
     }
 
     public static void initialize(HardwareMap hardwareMap) {

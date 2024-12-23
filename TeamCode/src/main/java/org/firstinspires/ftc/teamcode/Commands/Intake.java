@@ -1,10 +1,21 @@
 package org.firstinspires.ftc.teamcode.Commands;
 
 import org.firstinspires.ftc.teamcode.Subsystems.IntakeSubsystem;
+import org.firstinspires.ftc.teamcode.Subsystems.Subsystem;
 
 import static org.firstinspires.ftc.teamcode.Commands.StopIntake.StopTheIntake;
 
 public class Intake implements Command  {
+
+    IntakeSubsystem intakeSubsystem;
+
+    public Intake(IntakeSubsystem intake) {
+        intakeSubsystem = intake;
+    }
+
+    public String getSubsystem() {
+        return "Intake";
+    }
     @Override
     public void start() {
         System.out.println("Intake started");
@@ -24,5 +35,9 @@ public class Intake implements Command  {
     @Override
     public boolean isFinished() {
         return StopTheIntake;
+    }
+
+    public Subsystem getRequiredSubsystem() {
+        return intakeSubsystem;
     }
 }

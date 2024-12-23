@@ -9,9 +9,15 @@ public class Pivot extends Subsystem{
     public static PID pid = new PID(0.3, 0.0, 0.0);
     public static DcMotor pivotMotor;
 
+    public Pivot(String name) {
+        super(name);
+    }
+
     public static void initialize(HardwareMap hardwareMap) {
         pivotMotor = hardwareMap.get(DcMotor.class, "pivot");
     }
+
+
 
     public static void setPower(double power) {
         pivotMotor.setPower(power);

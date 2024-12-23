@@ -21,7 +21,7 @@ public class Peripherals extends Subsystem {
     private static Limelight3A limelight;
 
     public Peripherals(String name) {
-        super();
+        super(name);
     }
 
     public static void initialize(HardwareMap hardwareMap) {

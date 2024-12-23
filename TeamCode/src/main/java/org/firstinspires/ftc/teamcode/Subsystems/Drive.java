@@ -65,6 +65,9 @@ public class Drive extends Subsystem {
         Drive.Float();
 
     }
+    public Drive(String name) {
+        super(name);
+    }
 
     public static Vector purePursuitController(double currentX, double currentY, double currentTheta, int currentIndex,
                                                JSONArray pathPoints) throws JSONException {

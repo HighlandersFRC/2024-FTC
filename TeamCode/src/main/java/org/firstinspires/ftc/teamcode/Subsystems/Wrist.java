@@ -12,6 +12,10 @@ public static double position = 0.4;
         wrist = hardwareMap.servo.get("wrist");
     }
 
+    public Wrist(String name) {
+        super(name);
+    }
+
     // Add this method to handle gamepad inputs for wrist control
     public static void controlWrist (Gamepad gamepad1) {
 

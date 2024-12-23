@@ -1,13 +1,18 @@
 package org.firstinspires.ftc.teamcode.Commands;
 
+import org.firstinspires.ftc.teamcode.Subsystems.Subsystem;
 import org.firstinspires.ftc.teamcode.Subsystems.Wrist;
 
 public class WristCommands implements Command {
     public static double pos;
 
-    public WristCommands(double tarPos) {
-        pos = tarPos;
+    String name = "Wrist";
+    Wrist wristSubsystem;
+    public WristCommands(Wrist wrist, double pos) {
+       Wrist.wrist.setPosition(pos);
+        this.wristSubsystem = wrist;
     }
+
     @Override
     public void start() {
         System.out.println("Wrist Command Started");
@@ -26,5 +31,10 @@ public class WristCommands implements Command {
     @Override
     public boolean isFinished() {
        return Wrist.getPosition() == pos;
+    }
+
+    @Override
+    public Subsystem getRequiredSubsystem() {
+        return wristSubsystem;
     }
 }

@@ -1,23 +1,15 @@
 package org.firstinspires.ftc.teamcode.Commands;
 
 import com.qualcomm.robotcore.util.RobotLog;
+import org.firstinspires.ftc.teamcode.Subsystems.Subsystem;
+import org.firstinspires.ftc.teamcode.Tools.Robot;
 
-import org.json.JSONException;
-
-import java.lang.reflect.Field;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
 public class CommandScheduler {
     private static CommandScheduler instance;
-    private static List<Command> scheduledCommands = new ArrayList<>();
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        return o != null && getClass() == o.getClass();
-    }
+    private final List<Command> scheduledCommands = new ArrayList<>();
+    private final Map<Subsystem, Command> activeSubsystemCommands = new HashMap<>();
 
     public static CommandScheduler getInstance() {
         if (instance == null) {
@@ -26,23 +18,25 @@ public class CommandScheduler {
         return instance;
     }
 
-    public static void add(CommandScheduler scheduler, Command... commands) {
-        scheduledCommands.addAll(Arrays.asList(commands));
-    }
-
     public void schedule(Command command) {
-        if (!scheduledCommands.contains(command)) { // Check for duplicates
-            command.start();
-            scheduledCommands.add(command);
-            RobotLog.d("Command Scheduled: " + command.getClass().getSimpleName());
-        } else {
-            RobotLog.d("Command Already Scheduled: " + command.getClass().getSimpleName());
+        Subsystem requiredSubsystem = command.getRequiredSubsystem();
+
+        if (requiredSubsystem != null) {
+            Command activeCommand = activeSubsystemCommands.get(requiredSubsystem);
+            if (activeCommand != null && !isDefaultCommand(activeCommand)) {
+                cancel(activeCommand);
+            }
+            activeSubsystemCommands.put(requiredSubsystem, command);
         }
+
+        command.start();
+        scheduledCommands.add(command);
+        RobotLog.d("Command Scheduled: " + command.getClass().getSimpleName());
     }
 
-
-    public void run() throws InterruptedException, JSONException {
+    public void run() {
         List<Command> finishedCommands = new ArrayList<>();
+
         for (Command command : new ArrayList<>(scheduledCommands)) {
             if (command.isFinished()) {
                 command.end();
@@ -52,10 +46,25 @@ public class CommandScheduler {
                 command.execute();
             }
         }
+
         scheduledCommands.removeAll(finishedCommands);
+
+        for (Subsystem subsystem : getAllSubsystems()) {
+            if (!activeSubsystemCommands.containsKey(subsystem)) {
+                Command defaultCommand = subsystem.getDefaultCommand();
+                if (defaultCommand != null && !scheduledCommands.contains(defaultCommand) && !isDefaultCommand(defaultCommand)) {
+                    schedule(defaultCommand);
+                }
+            }
+        }
     }
 
     public void cancel(Command command) {
+        Subsystem requiredSubsystem = command.getRequiredSubsystem();
+        if (requiredSubsystem != null) {
+            activeSubsystemCommands.remove(requiredSubsystem);
+        }
+
         command.end();
         scheduledCommands.remove(command);
         RobotLog.d("Command Cancelled: " + command.getClass().getSimpleName());
@@ -63,132 +72,22 @@ public class CommandScheduler {
 
     public void cancelAll() {
         for (Command command : new ArrayList<>(scheduledCommands)) {
-            command.end();
-            RobotLog.d("Command Cancelled: " + command.getClass().getSimpleName());
-        }
-        scheduledCommands.clear();
-    }
-
-    public boolean compareParameters(Command command1, Command command2) {
-        if (command1.getClass() != command2.getClass()) {
-            return false;
-        }
-
-
-        Field[] fields1 = command1.getClass().getDeclaredFields();
-        Field[] fields2 = command2.getClass().getDeclaredFields();
-
-
-        if (fields1.length != fields2.length) {
-            return false;
-        }
-
-        try {
-
-            for (int i = 0; i < fields1.length; i++) {
-                fields1[i].setAccessible(true);
-                fields2[i].setAccessible(true);
-
-                Object value1 = fields1[i].get(command1);
-                Object value2 = fields2[i].get(command2);
-
-
-                if (value1 == null ? value2 != null : !value1.equals(value2)) {
-                    return false;
-                }
-            }
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-            return false;
-        }
-
-
-        return true;
-    }
-
-
-    public void overrideSpecificCommand(Command newCommand, Class<? extends Command> targetCommandClass) {
-        Command toCancel = null;
-
-
-        for (Command command : scheduledCommands) {
-            if (targetCommandClass.isInstance(command)) {
-                toCancel = command;
-                break;
-            }
-        }
-
-
-        if (toCancel != null && compareParameters(newCommand, toCancel)) {
-            RobotLog.d("Override prevented: Parameters match the existing command.");
-            return; // Prevent override
-        }
-
-
-        if (toCancel != null) {
-            toCancel.end();
-            scheduledCommands.remove(toCancel);
-            RobotLog.d("Command Cancelled: " + toCancel.getClass().getSimpleName());
-        }
-
-
-        scheduledCommands.add(newCommand);
-        newCommand.start();
-    }
-
-    public void RunAfterSpecificCommandIsFinished(Command newCommand, Class<? extends Command> targetCommandClass){
-        Command IsFinished = null;
-
-        for (Command command : scheduledCommands) {
-            if (targetCommandClass.isInstance(command)) {
-                IsFinished = command;
-                break;
-            }
-        }
-
-        if(IsFinished.isFinished()){
-            schedule(newCommand);
+            cancel(command);
         }
     }
 
-    public void removeDuplicateCommands() {
-        List<Command> uniqueCommands = new ArrayList<>();
+    private Set<Subsystem> getAllSubsystems() {
+        Set<Subsystem> subsystems = new HashSet<>();
 
-        for (Command command : new ArrayList<>(scheduledCommands)) {
-            String name = command.getClass().getSimpleName();
-            scheduledCommands.removeIf(c -> c.getClass().getSimpleName().equalsIgnoreCase(name));
-            uniqueCommands.add(command);
-        }
+        subsystems.add(Robot.drive);
+        subsystems.add(Robot.pivot);
+        subsystems.add(Robot.intakeSubsystem);
+        subsystems.add(Robot.wrist);
 
-        scheduledCommands.addAll(uniqueCommands);
+        return subsystems;
     }
 
-
-    private boolean compareCommandProperties(Command command1, Command command2) {
-        if (command1.getClass().equals(command2.getClass())) {
-            try {
-                for (Field field : command1.getClass().getDeclaredFields()) {
-                    field.setAccessible(true);
-                    Object value1 = field.get(command1);
-                    Object value2 = field.get(command2);
-
-                    // Compare values, considering null values and object equality
-                    if (value1 != null && value2 != null) {
-                        if (!value1.equals(value2)) {
-                            return false;
-                        }
-                    } else if (value1 != value2) {
-                        return false;
-                    }
-                }
-                return true;
-            } catch (IllegalAccessException e) {
-                e.printStackTrace();
-                // Consider logging an error or taking other appropriate actions
-                return false;
-            }
-        }
-        return false;
+    private boolean isDefaultCommand(Command command) {
+        return command.getClass().getSimpleName().contains("Default");
     }
-
 }

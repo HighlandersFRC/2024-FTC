@@ -1,33 +1,39 @@
 package org.firstinspires.ftc.teamcode.Commands;
-
-import static org.firstinspires.ftc.teamcode.Tools.Constants.piviotPID;
+import static org.firstinspires.ftc.teamcode.Tools.Robot.pivot;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
-
 import org.firstinspires.ftc.teamcode.Subsystems.ArmSubsystem;
+import org.firstinspires.ftc.teamcode.Subsystems.Pivot;
+import org.firstinspires.ftc.teamcode.Subsystems.Subsystem;
 import org.firstinspires.ftc.teamcode.Tools.PID;
 
 public class ArmCommand implements Command {
 
     private double setPos;
     private double pivotPower;
+    private PID pivotPID;
+    String name = "Pivot";
+    Pivot pivotSubsystem;
 
     public ArmCommand(double targetPos) {
-        this.setPos = targetPos; // Use instance variable
-        piviotPID.setSetPoint(targetPos);
-        piviotPID.setMaxOutput(0.5);
-        piviotPID.setMinInput(180);
-        piviotPID.setMaxInput(-180);
+        pivotSubsystem = pivot;
+        this.setPos = targetPos;
+        this.pivotPID = new PID(0.015, 0, 0);
+        this.pivotPID.setSetPoint(targetPos);
+        this.pivotPID.setMaxOutput(0.5);
+        this.pivotPID.setMinInput(-180);
+        this.pivotPID.setMaxInput(180);
+        System.out.println("Created ArmCommand with TargetPos: " + targetPos);
     }
 
     @Override
     public void start() {
-
+        // Initialization code if needed
     }
 
     @Override
     public void execute() {
-        pivotPower = piviotPID.updatePID(ArmSubsystem.getCurrentPositionWithLimitSwitch());
+        pivotPower = pivotPID.updatePID(ArmSubsystem.getCurrentPositionWithLimitSwitch());
         ArmSubsystem.setPower(-pivotPower);
     }
 
@@ -42,5 +48,10 @@ public class ArmCommand implements Command {
         double tolerance = 7;
         double currentPosition = ArmSubsystem.getCurrentPositionWithLimitSwitch();
         return Math.abs(currentPosition - setPos) <= tolerance;
+    }
+
+    @Override
+    public Subsystem getRequiredSubsystem() {
+        return pivotSubsystem;
     }
 }

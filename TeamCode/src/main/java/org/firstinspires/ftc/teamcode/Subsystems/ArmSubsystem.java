@@ -40,6 +40,10 @@ public class ArmSubsystem extends Subsystem {
         pivotMotor.setPower(piviotPID.getResult());
     }
 
+    public ArmSubsystem(String name) {
+        super(name);
+    }
+
     public static void initializeWithOutLimit(HardwareMap hardwareMap) {
         pivotMotor = hardwareMap.dcMotor.get("pivotMotor");
 

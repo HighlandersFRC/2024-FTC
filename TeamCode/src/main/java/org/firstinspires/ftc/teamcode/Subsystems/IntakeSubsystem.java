@@ -12,7 +12,7 @@ public class IntakeSubsystem extends Subsystem {
     public static CRServo intake;
     public static NormalizedColorSensor colorSensor;
     public IntakeSubsystem(String name) {
-        super();
+        super(name);
     }
 
     public static void initialize(HardwareMap hardwareMap) {
@@ -23,6 +23,8 @@ public class IntakeSubsystem extends Subsystem {
     public static void setPower(double power) {
         intake.setPower(power);
     }
+
+
 
     // Add this method to handle gamepad inputs for intake control
     public static void controlIntakeRedAlliance(Gamepad gamepad1) {
@@ -128,7 +130,9 @@ public class IntakeSubsystem extends Subsystem {
                 System.out.println("Red");
                 IntakeSubsystem.intake.setPower(1);
             }
+
         }
     }
+
 }
 
