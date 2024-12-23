@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.Commands;
 
+import org.firstinspires.ftc.teamcode.Subsystems.Subsystem;
 import org.json.JSONException;
 
 import java.util.function.BooleanSupplier;
@@ -11,7 +12,7 @@ public class ConditionalCommand implements Command {
     private Command commandToRun;
     private BooleanSupplier condition;
 
-    public ConditionalCommand(BooleanSupplier condition, Command onTrue, Command onFalse) {
+    public ConditionalCommand(Command onTrue, Command onFalse, BooleanSupplier condition) {
         this.condition = condition;
         this.onTrue = onTrue;
         this.onFalse = onFalse;
@@ -52,6 +53,11 @@ public class ConditionalCommand implements Command {
     @Override
     public boolean isFinished() {
         return commandToRun != null && commandToRun.isFinished();
+    }
+
+    @Override
+    public Subsystem getRequiredSubsystem() {
+        return null;
     }
 
     public String getSubsystem() {

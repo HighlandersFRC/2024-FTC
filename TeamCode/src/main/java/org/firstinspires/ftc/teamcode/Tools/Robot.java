@@ -4,7 +4,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.teamcode.Subsystems.Drive;
 import org.firstinspires.ftc.teamcode.Subsystems.Elevators;
-import org.firstinspires.ftc.teamcode.Subsystems.IntakeSubsystem;
+import org.firstinspires.ftc.teamcode.Subsystems.Intake;
 import org.firstinspires.ftc.teamcode.Subsystems.Peripherals;
 import org.firstinspires.ftc.teamcode.Subsystems.Pivot;
 import org.firstinspires.ftc.teamcode.Subsystems.Wrist;
@@ -22,11 +22,12 @@ public class Robot {
         FieldOfMerit.initialize(hardwareMap);
         Wrist.initialize(hardwareMap);
         Pivot.initialize(hardwareMap);
-       ;
+        Intake.initialize(hardwareMap);
         Elevators.initialize(hardwareMap);
     }
-    public static IntakeSubsystem intakeSubsystem = new IntakeSubsystem("intake");
-    public static Drive drive = new Drive("drive");
+
+    public static Elevators elevators = new Elevators("elevators");
+    public static Intake intake = new Intake("intake");
     public static Wrist wrist = new Wrist("wrist");
     public static Pivot pivot = new Pivot("pivot");
 

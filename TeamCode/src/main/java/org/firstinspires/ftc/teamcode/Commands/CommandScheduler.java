@@ -79,9 +79,9 @@ public class CommandScheduler {
     private Set<Subsystem> getAllSubsystems() {
         Set<Subsystem> subsystems = new HashSet<>();
 
-        subsystems.add(Robot.drive);
+        subsystems.add(Robot.elevators);
         subsystems.add(Robot.pivot);
-        subsystems.add(Robot.intakeSubsystem);
+        subsystems.add(Robot.intake);
         subsystems.add(Robot.wrist);
 
         return subsystems;
