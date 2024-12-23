@@ -19,15 +19,7 @@ public class ElevatorWithPower implements Command {
     @Override
     public void execute() {
         power = Robot.elevatorPower;
-        if (power > 0) {
-            elevators.moveLeftElevator(1);
-            elevators.moveRightElevator(1);
-        } else if (power < 0) {
-            elevators.moveLeftElevator(-1);
-            elevators.moveRightElevator(-1);
-        } else {
-            Elevators.stop();
-        }
+
     }
 
     @Override

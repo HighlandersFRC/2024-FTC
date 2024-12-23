@@ -23,9 +23,13 @@ public class CommandScheduler {
 
         if (requiredSubsystem != null) {
             Command activeCommand = activeSubsystemCommands.get(requiredSubsystem);
+
+            // Cancel the currently active command only if it is not a default command
             if (activeCommand != null && !isDefaultCommand(activeCommand)) {
                 cancel(activeCommand);
             }
+
+            // Schedule the new command
             activeSubsystemCommands.put(requiredSubsystem, command);
         }
 
@@ -37,11 +41,26 @@ public class CommandScheduler {
     public void run() {
         List<Command> finishedCommands = new ArrayList<>();
 
+        // Iterate through all scheduled commands and check if they have finished
         for (Command command : new ArrayList<>(scheduledCommands)) {
             if (command.isFinished()) {
                 command.end();
                 finishedCommands.add(command);
                 RobotLog.d("Command Finished and Ended: " + command.getClass().getSimpleName());
+
+                Subsystem subsystem = command.getRequiredSubsystem();
+                if (subsystem != null) {
+                    activeSubsystemCommands.remove(subsystem);
+
+                    // Only reschedule default command if no higher-priority command is active
+                    if (subsystem.getDefaultCommand() != null && !activeSubsystemCommands.containsKey(subsystem)) {
+                        Command defaultCommand = subsystem.getDefaultCommand();
+                        if (!scheduledCommands.contains(defaultCommand)) {
+                            RobotLog.d("Scheduling Default Command: " + defaultCommand.getClass().getSimpleName());
+                            schedule(defaultCommand);
+                        }
+                    }
+                }
             } else {
                 command.execute();
             }
@@ -49,17 +68,30 @@ public class CommandScheduler {
 
         scheduledCommands.removeAll(finishedCommands);
 
+        // Ensure that default commands are scheduled only when no other commands are active
         for (Subsystem subsystem : getAllSubsystems()) {
             if (!activeSubsystemCommands.containsKey(subsystem)) {
                 Command defaultCommand = subsystem.getDefaultCommand();
-                if (defaultCommand != null && !scheduledCommands.contains(defaultCommand) && !isDefaultCommand(defaultCommand)) {
+                if (defaultCommand != null && !scheduledCommands.contains(defaultCommand)) {
+                    RobotLog.d("Default Command Triggered for Subsystem: " + subsystem.getClass().getSimpleName());
                     schedule(defaultCommand);
                 }
             }
         }
     }
 
-    public void cancel(Command command) {
+    public void printCurrentCommands() {
+        RobotLog.d("===== Current Commands =====");
+        for (Map.Entry<Subsystem, Command> entry : activeSubsystemCommands.entrySet()) {
+            Subsystem subsystem = entry.getKey();
+            Command command = entry.getValue();
+            RobotLog.d("Subsystem: " + subsystem.getClass().getSimpleName() +
+                    ", Command: " + command.getClass().getSimpleName());
+        }
+        RobotLog.d("============================");
+    }
+
+    private void cancel(Command command) {
         Subsystem requiredSubsystem = command.getRequiredSubsystem();
         if (requiredSubsystem != null) {
             activeSubsystemCommands.remove(requiredSubsystem);
@@ -70,20 +102,12 @@ public class CommandScheduler {
         RobotLog.d("Command Cancelled: " + command.getClass().getSimpleName());
     }
 
-    public void cancelAll() {
-        for (Command command : new ArrayList<>(scheduledCommands)) {
-            cancel(command);
-        }
-    }
-
     private Set<Subsystem> getAllSubsystems() {
         Set<Subsystem> subsystems = new HashSet<>();
-
         subsystems.add(Robot.elevators);
         subsystems.add(Robot.pivot);
         subsystems.add(Robot.intake);
         subsystems.add(Robot.wrist);
-
         return subsystems;
     }
 

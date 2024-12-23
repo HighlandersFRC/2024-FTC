@@ -14,13 +14,13 @@ public class PivotMove implements Command {
     Pivot pivotSubsystem;
 
     public PivotMove(Pivot pivot, double targetPos) {
+        Robot.CURRENT_PIVOT = setPos;
         pivotSubsystem = pivot;
         setPos = targetPos;
         pivotPID.setSetPoint(targetPos);
         pivotPID.setMaxOutput(0.5);
         pivotPID.setMinInput(180);
         pivotPID.setMaxInput(-180);
-        Robot.CURRENT_ELEVATOR = setPos;
     }
 
     @Override

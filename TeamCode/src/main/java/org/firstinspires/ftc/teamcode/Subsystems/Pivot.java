@@ -7,11 +7,12 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.teamcode.Commands.Command;
 import org.firstinspires.ftc.teamcode.Commands.DefaultCommands.ElevatorDefault;
+import org.firstinspires.ftc.teamcode.Commands.DefaultCommands.PivotDefault;
 import org.firstinspires.ftc.teamcode.Commands.DefaultCommands.WristDefault;
 import org.firstinspires.ftc.teamcode.Tools.Constants;
 import org.firstinspires.ftc.teamcode.Tools.PID;
 
-public class Pivot extends Subsystem{
+public class Pivot extends Subsystem {
     private static final PID pid = new PID(0.009, 0.0, 0.0092);
     public static DcMotor pivotMotor;
     public static DigitalChannel limitSwitch;
@@ -54,29 +55,32 @@ public class Pivot extends Subsystem{
         return pivotMotor.getCurrentPosition();
     }
 
-    public static void runUsingPID(double offsetPosition){
+    public static void runUsingPID(double offsetPosition) {
         pid.setSetPoint(offsetPosition);
     }
 
-    public static void run(){
+    public static void run() {
         double pivotPower = pid.updatePID(Pivot.getAngle());
 
         setPower(pivotPower + (Constants.PIVOT_FEED_FORWARD * Math.cos(Pivot.getAngle() + Constants.ARM_BALANCE_OFFSET)));
     }
+
     public static double ticksToDegrees(double ticks) {
         double degrees = (ticks / Constants.PIVOT_TICKS_PER_ROTATION) * 360.0;
         return degrees + Constants.PIVOT_STARTING_ANGLE;
     }
-    public static double getAngle(){
-     return ((getEncoderPosition()) / (678 / 90.8)) - 14.8;
+
+    public static double getAngle() {
+        return ((getEncoderPosition()) / (678 / 90.8)) - 14.8;
     }
+
     @Override
     public void setDefaultCommand(Command command) {
-        super.setDefaultCommand(new WristDefault());
+        super.setDefaultCommand(new PivotDefault());
     }
 
     @Override
     public Command getDefaultCommand() {
-        return new WristDefault();
+        return new PivotDefault();
     }
 }

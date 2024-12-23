@@ -47,7 +47,7 @@ public class Drive extends LinearOpMode {
         CommandScheduler scheduler = new CommandScheduler();
 
 
-        scheduler.cancelAll();
+
 
         while (opModeIsActive()) {
             Mouse.update();
@@ -58,7 +58,7 @@ public class Drive extends LinearOpMode {
                 Pivot.resetEncoder();
             }*/
             if (gamepad2.y) {
-                scheduler.schedule(new PivotMove(pivot, 102));
+                scheduler.schedule(new PivotMove(pivot, 100));
             } else if (gamepad2.a) {
                 scheduler.schedule(new PivotMove(pivot, -10));
             } else if (gamepad2.b) {
@@ -115,9 +115,8 @@ public class Drive extends LinearOpMode {
             telemetry.update();
 
             Robot.elevatorPower = Robot.elevatorPowerCalc(gamepad2.right_bumper, gamepad2.left_bumper);
-            if (!(elevatorPower == 0)){
-                scheduler.schedule(new ElevatorWithPower());
-            }
+
+            scheduler.printCurrentCommands();
         }
     }
 }

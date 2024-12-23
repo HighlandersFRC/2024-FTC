@@ -37,6 +37,8 @@ public class Elevator implements Command {
         elevators.moveLeftElevator(0);
         elevators.moveRightElevator(0);
         elevators.setBrakeMode();
+
+        Robot.CURRENT_ELEVATOR = (Elevators.getLeftEncoder() + Elevators.getRightEncoder()) / 2;
     }
 
     @Override
