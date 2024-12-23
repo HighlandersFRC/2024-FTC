@@ -3,6 +3,7 @@
 package org.firstinspires.ftc.teamcode.Tools;
 
 import org.firstinspires.ftc.teamcode.Commands.Command;
+import org.firstinspires.ftc.teamcode.Subsystems.ArmSubsystem;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -26,12 +27,19 @@ public class Constants {
     public static double ElevatorsDownPosition = 200;
     public static double ArmDownPosition = 200;
     public static Object SetPoints;
-    public static PID piviotPID = new PID(0.015, 0, 0);
+    public static PID piviotPID = new PID(0.01, 0, 0.01);
 
     public static double nextX;
     public static double nextY;
     public static double nextTheta;
 
+    public static double encodersToDeg(double degrees) {
+        return -(degrees / (360) * 5700.4);
+    }
+
+    public static double getDegrees() {
+        return -((ArmSubsystem.getCurrentPositionWithLimitSwitch() / (1333/90) + 21));
+    }
     public static double getOffsetFromVoltage(double voltage){
         return 5.03 + -4950*voltage + -4731*Math.pow(voltage, 2) + -2098*Math.pow(voltage, 3) + -286*Math.pow(voltage, 4);
     }
