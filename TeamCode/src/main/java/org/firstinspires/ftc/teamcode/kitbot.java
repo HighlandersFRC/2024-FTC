@@ -34,30 +34,43 @@ public class kitbot extends LinearOpMode {
             }
 
             if (armControlToggle) {
+             if (!gamepad2.y || !gamepad2.x || !gamepad2.dpad_down || !gamepad2.b) {
+
+                 pos = ArmSubsystem.getCurrentPositionWithLimitSwitch();
+             }
+                 // Use PID for preset positions
+                 if (gamepad2.y) {
+                     pos = encodersToDeg(120);
+                     telemetry.addData("Control Mode", "PID (Preset Y)");
+                 } else if (gamepad2.x) {
+                     pos = encodersToDeg(190);
+                     telemetry.addData("Control Mode", "PID (Preset X)");
+                 } else if (gamepad2.dpad_down) {
+                     pos = encodersToDeg(215);
+                     telemetry.addData("Control Mode", "PID (Preset Down)");
+                 } else if (gamepad2.b) {
+                     pos = encodersToDeg(0);
+                     telemetry.addData("Control Mode", "PID (Preset B)");
+                 }
+
+                 // Update PID
+                 piviotPID.setSetPoint(pos);
+                 piviotPID.updatePID(ArmSubsystem.getCurrentPositionWithLimitSwitch());
+                 piviotPID.setMaxOutput(0.7);
+                 piviotPID.setMinOutput(-0.7);
+                 ArmSubsystem.setPower(-piviotPID.getResult());
+
+                // Handle manual movement
                 ArmSubsystem.ArmMovement(gamepad2);
                 IntakeSubsystem.contolIntakeBlueAlliance(gamepad2);
                 Wrist.controlWrist(gamepad2);
-                if (!gamepad2.right_bumper || !gamepad2.left_bumper) {
-                    if (gamepad2.y) {
-                        pos = encodersToDeg(120);
-                    } else if (gamepad2.x) {
-                        pos = encodersToDeg(190);
-                    } else if (gamepad2.dpad_down) {
-                        pos = encodersToDeg(215);
-                    } else if (gamepad2.b) {
-                        pos = encodersToDeg(0);
-                    }
 
-                    piviotPID.setSetPoint(pos);
-                    piviotPID.updatePID(ArmSubsystem.getCurrentPositionWithLimitSwitch());
-                    piviotPID.setMaxOutput(0.7);
-                    piviotPID.setMinOutput(-0.7);
-                    ArmSubsystem.setPower(-piviotPID.getResult());
-                }
             } else {
+                // Gamepad2 control (unchanged)
                 ArmSubsystem.ArmMovement(gamepad1);
                 IntakeSubsystem.contolIntakeBlueAlliance(gamepad1);
                 Wrist.controlWrist(gamepad1);
+
                 if (!gamepad1.right_bumper || !gamepad1.left_bumper) {
                     if (gamepad1.y) {
                         pos = encodersToDeg(120);
@@ -75,21 +88,16 @@ public class kitbot extends LinearOpMode {
                     piviotPID.setMinOutput(-0.7);
                     ArmSubsystem.setPower(-piviotPID.getResult());
                 }
-                gamepad2.rumble(1000);
+
+                gamepad2.rumble(1);
             }
 
 
             Drive.FeildCentric(gamepad1);
             Mouse.update();
 
-//            telemetry.addData("Mouse X", Mouse.getX());
-//            telemetry.addData("Mouse Y", Mouse.getY());
-//            telemetry.addData("Mouse θ", Mouse.getTheta());
-//            telemetry.addData("Drive Left Front Pos", Drive.leftFrontPos());
-//            telemetry.addData("Drive Right Front Pos", Drive.RightFrontPos());
-//            telemetry.addData("Drive Left Back Pos", Drive.leftBackPos());
-//            telemetry.addData("Drive Right Back Pos", Drive.RightBackPos());
-//            telemetry.addData("Arm Current Position", getDegrees());
+            telemetry.addData("Gamepad Toggle State", armControlToggle ? "Gamepad1" : "Gamepad2");
+            telemetry.addData("Degrees", getDegrees(ArmSubsystem.getCurrentPositionWithLimitSwitch()));
 
             telemetry.update();
         }

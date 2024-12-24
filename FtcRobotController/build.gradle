@@ -25,8 +25,12 @@ android {
         targetCompatibility JavaVersion.VERSION_21
     }
     namespace = 'com.qualcomm.ftcrobotcontroller'
+    kotlinOptions {
+        jvmTarget = '1.8'
+    }
 }
 dependencies {
     implementation files("C:\\Drive\\FTC Robotics\\NAVX-MXP\\navxmxp-master.zip")
 }
 apply from: '../build.dependencies.gradle'
+apply plugin: 'org.jetbrains.kotlin.android'

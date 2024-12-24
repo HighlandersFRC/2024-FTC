@@ -105,7 +105,7 @@ public static double pos;
             telemetry.addData("Mouse Sensor Y:", Mouse.getX());
             telemetry.addData("Mouse Sensor X:", Mouse.getY());
             telemetry.addData("Piviot Arm Posiotion:", ArmSubsystem.getCurrentPositionWithLimitSwitch());
-            telemetry.addData("Piviot Arm Posiotion Deg:", getDegrees());
+            telemetry.addData("Piviot Arm Posiotion Deg:", getDegrees(ArmSubsystem.getCurrentPositionWithLimitSwitch()));
             telemetry.update();
         }
 

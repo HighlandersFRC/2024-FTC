@@ -37,7 +37,7 @@ public class TestDegToCon extends LinearOpMode {
             ArmSubsystem.setPower(-piviotPID.getResult());
 
             telemetry.addData("ArmCurrentPos", ArmSubsystem.getCurrentPositionWithLimitSwitch());
-            telemetry.addData("ArmCurrentPos Deg", getDegrees() + "°");
+            telemetry.addData("ArmCurrentPos Deg", getDegrees(ArmSubsystem.getCurrentPositionWithLimitSwitch()) + "°");
             telemetry.update();
 
         }

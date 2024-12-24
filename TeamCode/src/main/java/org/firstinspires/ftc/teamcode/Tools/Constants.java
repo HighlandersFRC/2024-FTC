@@ -2,12 +2,18 @@
 
 package org.firstinspires.ftc.teamcode.Tools;
 
+import com.qualcomm.robotcore.hardware.DcMotor;
+
 import org.firstinspires.ftc.teamcode.Commands.Command;
 import org.firstinspires.ftc.teamcode.Subsystems.ArmSubsystem;
+
+import java.lang.reflect.InvocationTargetException;
+import java.util.function.Supplier;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.BooleanSupplier;
+import java.lang.reflect.Method;
 import java.util.function.Supplier;
 
 public class Constants {
@@ -37,9 +43,16 @@ public class Constants {
         return -(degrees / (360) * 5700.4);
     }
 
-    public static double getDegrees() {
-        return -((ArmSubsystem.getCurrentPositionWithLimitSwitch() / (1333/90) + 21));
+
+
+
+    public static double getDegrees(double position) {
+        return -((position / (1333.0 / 90)) + 21);
     }
+
+
+
+
     public static double getOffsetFromVoltage(double voltage){
         return 5.03 + -4950*voltage + -4731*Math.pow(voltage, 2) + -2098*Math.pow(voltage, 3) + -286*Math.pow(voltage, 4);
     }
