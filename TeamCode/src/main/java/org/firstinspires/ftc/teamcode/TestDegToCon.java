@@ -21,23 +21,12 @@ public class TestDegToCon extends LinearOpMode {
         while (opModeIsActive()) {
 
 
-            if (gamepad1.y) {
-                pos = encodersToDeg(120);
-            } else if (gamepad1.x) {
-                pos = encodersToDeg(190);
-            } else if (gamepad1.dpad_down) {
-                pos = encodersToDeg(215);
-            } else if(gamepad1.b) {
-                pos = encodersToDeg(0);
+            if(gamepad1.touchpad_finger_2) {
+                telemetry.addData("What", "It worked");
+                gamepad1.rumble(1000);
+            } else {
+                telemetry.addData("It" , "failed");
             }
-            piviotPID.setSetPoint(pos);
-            piviotPID.updatePID(ArmSubsystem.getCurrentPositionWithLimitSwitch());
-            piviotPID.setMaxOutput(1);
-            piviotPID.setMinOutput(-1);
-            ArmSubsystem.setPower(-piviotPID.getResult());
-
-            telemetry.addData("ArmCurrentPos", ArmSubsystem.getCurrentPositionWithLimitSwitch());
-            telemetry.addData("ArmCurrentPos Deg", getDegrees(ArmSubsystem.getCurrentPositionWithLimitSwitch()) + "°");
             telemetry.update();
 
         }

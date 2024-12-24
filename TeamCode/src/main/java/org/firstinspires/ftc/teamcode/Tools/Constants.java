@@ -44,8 +44,6 @@ public class Constants {
     }
 
 
-
-
     public static double getDegrees(double position) {
         return -((position / (1333.0 / 90)) + 21);
     }
