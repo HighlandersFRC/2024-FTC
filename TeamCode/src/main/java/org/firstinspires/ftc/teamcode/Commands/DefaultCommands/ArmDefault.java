@@ -1,6 +1,5 @@
 package org.firstinspires.ftc.teamcode.Commands.DefaultCommands;
 
-import static org.firstinspires.ftc.teamcode.Commands.ArmCommand.Pos;
 import static org.firstinspires.ftc.teamcode.Tools.Constants.GravityTerm;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -9,28 +8,30 @@ import org.firstinspires.ftc.teamcode.Commands.Command;
 import org.firstinspires.ftc.teamcode.Subsystems.ArmSubsystem;
 import org.firstinspires.ftc.teamcode.Subsystems.Subsystem;
 import org.firstinspires.ftc.teamcode.Tools.PID;
+import static org.firstinspires.ftc.teamcode.Commands.ArmCommand.Pos;
 
 
 public class ArmDefault implements Command {
 
-
     private double pivotPower;
-    private PID pivotPID ;
+    private PID pivotPID = new PID(.001,0,0) ;
     String name = "Arm";
     ArmSubsystem Arm;
 
 
+
     @Override
     public void start() {
-        pivotPID.setPID(.10,0,0.01);
-        pivotPID.setSetPoint(Pos);
+        pivotPID.setSetPoint(-1*Math.abs(Pos));
+        System.out.println("default");
     }
 
     @Override
     public void execute() {
-        Pos = ArmSubsystem.getCurrentPosition();
         pivotPower = pivotPID.updatePID(ArmSubsystem.getCurrentPositionWithLimitSwitch());
-        ArmSubsystem.setPower(-pivotPower*GravityTerm(Pos));
+        double feed = GravityTerm(ArmSubsystem.getCurrentPositionWithLimitSwitch());
+        ArmSubsystem.setPower(-pivotPower*feed);
+        System.out.println(Pos+"default");
     }
 
     @Override
@@ -41,7 +42,9 @@ public class ArmDefault implements Command {
 
     @Override
     public boolean isFinished() {
-        return false;
+        double tolerance = 7;
+        double currentPosition = ArmSubsystem.getCurrentPositionWithLimitSwitch();
+        return Math.abs(currentPosition - Pos) <= tolerance;
     }
 
     @Override

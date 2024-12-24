@@ -1,5 +1,4 @@
 
-
 package org.firstinspires.ftc.teamcode.Tools;
 
 import org.firstinspires.ftc.teamcode.Commands.Command;
@@ -48,7 +47,7 @@ public class Constants {
         double gravityConstant = 9.81;
         double gravityForce = gravityConstant * Math.sin(Math.toRadians(degrees));
 
-        return Math.abs(gravityForce-10);
+        return Math.abs(gravityForce);
     }
 
     public static double getDegrees() {
@@ -99,12 +98,3 @@ public class Constants {
     public static final double AUTONOMOUS_LOOKAHEAD_ANGULAR_RADIUS = Math.PI;
 
 }
-
-
-
-
-
-
-
-
-

@@ -44,6 +44,7 @@ public class ArmCommand implements Command {
     public void end() {
         ArmSubsystem.setPower(0);
         ArmSubsystem.pivotMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        System.out.println("ended Hi");
     }
 
     @Override

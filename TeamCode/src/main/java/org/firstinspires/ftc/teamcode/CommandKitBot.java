@@ -4,7 +4,6 @@ import static org.firstinspires.ftc.teamcode.Commands.StopIntake.StopTheIntake;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.util.RobotLog;
 
 import org.firstinspires.ftc.teamcode.Commands.ArmCommand;
 
@@ -20,7 +19,6 @@ import org.firstinspires.ftc.teamcode.Subsystems.IntakeSubsystem;
 import org.firstinspires.ftc.teamcode.Subsystems.Wrist;
 import org.firstinspires.ftc.teamcode.Tools.Mouse;
 import static org.firstinspires.ftc.teamcode.Tools.Constants.DegreesToEncoderTicks;
-
 import org.firstinspires.ftc.teamcode.Tools.Robot;
 
 
@@ -42,7 +40,7 @@ public class CommandKitBot extends LinearOpMode {
         ArmCommand Score = new ArmCommand(Robot.arm,DegreesToEncoderTicks(120));
         ArmCommand Zero= new ArmCommand(Robot.arm,DegreesToEncoderTicks(0));
         ArmCommand pickUp = new ArmCommand(Robot.arm,DegreesToEncoderTicks(215));
-        ArmCommand Enter= new ArmCommand(Robot.arm,DegreesToEncoderTicks(190));
+        ArmCommand Enter= new ArmCommand(Robot.arm,DegreesToEncoderTicks(150));
 
         scheduler = new CommandScheduler();
 
@@ -77,9 +75,18 @@ public class CommandKitBot extends LinearOpMode {
                 scheduler.schedule(pickUp);
             }
 
+
             Drive.FeildCentric(gamepad1);
+            scheduler.printCurrentCommands();
+            telemetry.addData("commands", CommandScheduler.getInstance().printCurrentCommandsTele());
             scheduler.run();
 
+            double tolerance = 100;
+            double currentPosition = ArmSubsystem.getCurrentPositionWithLimitSwitch();
+            telemetry.addData("a",(Math.abs(currentPosition + 1900)) <= tolerance);
+            telemetry.addData("b",Math.abs(currentPosition + 1900));
+
+            telemetry.addData("en",DegreesToEncoderTicks(120));
             telemetry.addData("Mouse Sensor Y:", Mouse.getX());
             telemetry.addData("Mouse Sensor X:", Mouse.getY());
             telemetry.addData("Piviot Arm Posiotion:", ArmSubsystem.getCurrentPositionWithLimitSwitch());

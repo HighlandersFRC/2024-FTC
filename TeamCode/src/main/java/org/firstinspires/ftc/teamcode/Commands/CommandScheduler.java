@@ -91,6 +91,20 @@ public class CommandScheduler {
         RobotLog.d("============================");
     }
 
+    public String printCurrentCommandsTele() {
+        StringBuilder commands = new StringBuilder("===== Current Commands =====\n");
+        for (Map.Entry<Subsystem, Command> entry : activeSubsystemCommands.entrySet()) {
+            Subsystem subsystem = entry.getKey();
+            Command command = entry.getValue();
+            commands.append("Subsystem: ").append(subsystem.getClass().getSimpleName())
+                    .append(", Command: ").append(command.getClass().getSimpleName())
+                    .append("\n");
+        }
+        commands.append("============================");
+        return commands.toString();
+    }
+
+
     private void cancel(Command command) {
         Subsystem requiredSubsystem = command.getRequiredSubsystem();
         if (requiredSubsystem != null) {
