@@ -1,6 +1,6 @@
 package org.firstinspires.ftc.teamcode;
 
-import static org.firstinspires.ftc.teamcode.Tools.Constants.encodersToDeg;
+import static org.firstinspires.ftc.teamcode.Tools.Constants.DegreesToEncoderTicks;
 import static org.firstinspires.ftc.teamcode.Tools.Constants.getDegrees;
 import static org.firstinspires.ftc.teamcode.Tools.Constants.piviotPID;
 
@@ -39,13 +39,13 @@ public class kitbot extends LinearOpMode {
                 Wrist.controlWrist(gamepad2);
                 if (!gamepad2.right_bumper || !gamepad2.left_bumper) {
                     if (gamepad2.y) {
-                        pos = encodersToDeg(120);
+                        pos = DegreesToEncoderTicks(120);
                     } else if (gamepad2.x) {
-                        pos = encodersToDeg(190);
+                        pos = DegreesToEncoderTicks(190);
                     } else if (gamepad2.dpad_down) {
-                        pos = encodersToDeg(215);
+                        pos = DegreesToEncoderTicks(215);
                     } else if (gamepad2.b) {
-                        pos = encodersToDeg(0);
+                        pos = DegreesToEncoderTicks(0);
                     }
 
                     piviotPID.setSetPoint(pos);
@@ -60,13 +60,13 @@ public class kitbot extends LinearOpMode {
                 Wrist.controlWrist(gamepad1);
                 if (!gamepad1.right_bumper || !gamepad1.left_bumper) {
                     if (gamepad1.y) {
-                        pos = encodersToDeg(120);
+                        pos = DegreesToEncoderTicks(120);
                     } else if (gamepad1.x) {
-                        pos = encodersToDeg(190);
+                        pos = DegreesToEncoderTicks(190);
                     } else if (gamepad1.dpad_down) {
-                        pos = encodersToDeg(215);
+                        pos = DegreesToEncoderTicks(215);
                     } else if (gamepad1.b) {
-                        pos = encodersToDeg(0);
+                        pos = DegreesToEncoderTicks(0);
                     }
 
                     piviotPID.setSetPoint(pos);

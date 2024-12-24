@@ -30,7 +30,7 @@ public class TestAuto extends LinearOpMode {
 
         PathLoading pathLoading = new PathLoading(hardwareMap.appContext, "TestAuto.polarpath");
         CommandScheduler scheduler = new CommandScheduler();
-        Drive drive = new Drive();
+        Drive drive = new Drive("drive");
         Peripherals peripherals = new Peripherals("peripherals");
         PolarPathFollower moveToPosition;
 
@@ -50,11 +50,7 @@ public class TestAuto extends LinearOpMode {
 
         while (opModeIsActive()) {
             FinalPose.poseUpdate();
-                        try {
-                scheduler.run();
-            } catch (JSONException e) {
-                throw new RuntimeException(e);
-            }
+            scheduler.run();
 
             double robotX = FinalPose.x;
             double robotY = FinalPose.y;

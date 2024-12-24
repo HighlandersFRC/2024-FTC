@@ -36,7 +36,7 @@ public class Intake implements Command  {
     public boolean isFinished() {
         return StopTheIntake;
     }
-
+ @Override
     public Subsystem getRequiredSubsystem() {
         return intakeSubsystem;
     }

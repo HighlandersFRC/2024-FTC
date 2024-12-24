@@ -7,6 +7,9 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.NormalizedColorSensor;
 import com.qualcomm.robotcore.hardware.NormalizedRGBA;
 
+import org.firstinspires.ftc.teamcode.Commands.Command;
+import org.firstinspires.ftc.teamcode.Commands.DefaultCommands.IntakeDefault;
+
 
 public class IntakeSubsystem extends Subsystem {
     public static CRServo intake;
@@ -133,6 +136,15 @@ public class IntakeSubsystem extends Subsystem {
 
         }
     }
+    @Override
+    public void setDefaultCommand(Command command) {
+        super.setDefaultCommand(new IntakeDefault());
+    }
 
+    @Override
+    public Command getDefaultCommand() {
+        return new IntakeDefault();
+    }
 }
+
 

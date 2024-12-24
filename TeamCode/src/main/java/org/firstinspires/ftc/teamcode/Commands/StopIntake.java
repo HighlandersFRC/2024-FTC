@@ -1,7 +1,10 @@
 package org.firstinspires.ftc.teamcode.Commands;
 
 
+import static org.firstinspires.ftc.teamcode.Tools.Robot.intake;
+
 import org.firstinspires.ftc.teamcode.Subsystems.IntakeSubsystem;
+import org.firstinspires.ftc.teamcode.Subsystems.Subsystem;
 
 public class StopIntake implements Command  {
     public static boolean StopTheIntake;
@@ -27,5 +30,9 @@ public class StopIntake implements Command  {
     @Override
     public boolean isFinished() {
         return true;
+    }
+@Override
+    public Subsystem getRequiredSubsystem() {
+        return intake;
     }
 }

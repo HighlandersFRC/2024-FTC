@@ -36,11 +36,7 @@ public class SensorSparkFunOTOS extends LinearOpMode {
             Mouse.update();
             FinalPose.poseUpdate();
 
-            try {
-                scheduler.run();
-            } catch (JSONException e) {
-                throw new RuntimeException(e);
-            }
+            scheduler.run();
 
             telemetry.addLine("Press Y (triangle) on Gamepad to reset tracking");
             telemetry.addLine("Press X (square) on Gamepad to calibrate the IMU");

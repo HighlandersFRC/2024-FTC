@@ -1,13 +1,14 @@
 package org.firstinspires.ftc.teamcode.Commands;
 
-import com.qualcomm.robotcore.hardware.Gamepad;
-
 import org.firstinspires.ftc.teamcode.Subsystems.ArmSubsystem;
+import org.firstinspires.ftc.teamcode.Subsystems.Subsystem;
 
 public class Gamepad1Climb implements Command{
     public double Arm_power;
     public boolean STOP;
-
+    String name = "Arm";
+    ArmSubsystem Arm;
+    public Gamepad1Climb(ArmSubsystem arm, double targetPos) {Arm=arm ;}
     @Override
     public void start() {
         STOP = false;
@@ -31,5 +32,10 @@ public Gamepad1Climb(double power) {
     @Override
     public boolean isFinished() {
         return STOP;
+    }
+
+    @Override
+    public Subsystem getRequiredSubsystem() {
+        return Arm;
     }
 }

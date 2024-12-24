@@ -1,5 +1,5 @@
 package org.firstinspires.ftc.teamcode.Commands;
-import static org.firstinspires.ftc.teamcode.Tools.Robot.pivot;
+import static org.firstinspires.ftc.teamcode.Tools.Robot.arm;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 import org.firstinspires.ftc.teamcode.Subsystems.ArmSubsystem;
@@ -12,17 +12,19 @@ public class ArmCommand implements Command {
     private double setPos;
     private double pivotPower;
     private PID pivotPID;
-    String name = "Pivot";
-    Pivot pivotSubsystem;
+    public static double Pos = 0;
+    String name = "Arm";
+    ArmSubsystem Arm;
 
-    public ArmCommand(double targetPos) {
-        pivotSubsystem = pivot;
+    public ArmCommand(ArmSubsystem arm,double targetPos) {
+        Arm=arm ;
         this.setPos = targetPos;
         this.pivotPID = new PID(0.015, 0, 0);
         this.pivotPID.setSetPoint(targetPos);
         this.pivotPID.setMaxOutput(0.5);
         this.pivotPID.setMinInput(-180);
         this.pivotPID.setMaxInput(180);
+
         System.out.println("Created ArmCommand with TargetPos: " + targetPos);
     }
 
@@ -33,6 +35,7 @@ public class ArmCommand implements Command {
 
     @Override
     public void execute() {
+        Pos = ArmSubsystem.getCurrentPosition();
         pivotPower = pivotPID.updatePID(ArmSubsystem.getCurrentPositionWithLimitSwitch());
         ArmSubsystem.setPower(-pivotPower);
     }
@@ -52,6 +55,6 @@ public class ArmCommand implements Command {
 
     @Override
     public Subsystem getRequiredSubsystem() {
-        return pivotSubsystem;
+        return Arm;
     }
 }

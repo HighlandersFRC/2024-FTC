@@ -33,8 +33,22 @@ public class Constants {
     public static double nextY;
     public static double nextTheta;
 
-    public static double encodersToDeg(double degrees) {
+    public static double DegreesToEncoderTicks(double degrees) {
         return -(degrees / (360) * 5700.4);
+    }
+    public static double EncoderTicksToDegrees(double encoderTicks) {
+        return -(encoderTicks / 5700.4) * 360;
+    }
+
+    public static double GravityTerm(double encoderTicks) {
+
+        double degrees = EncoderTicksToDegrees(encoderTicks);
+
+
+        double gravityConstant = 9.81;
+        double gravityForce = gravityConstant * Math.sin(Math.toRadians(degrees));
+
+        return Math.abs(gravityForce-10);
     }
 
     public static double getDegrees() {

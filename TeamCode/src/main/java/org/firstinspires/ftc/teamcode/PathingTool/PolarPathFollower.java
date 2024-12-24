@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.PathingTool;
 import org.firstinspires.ftc.teamcode.Commands.*;
 import org.firstinspires.ftc.teamcode.Subsystems.Drive;
 import org.firstinspires.ftc.teamcode.Subsystems.Peripherals;
+import org.firstinspires.ftc.teamcode.Subsystems.Subsystem;
 import org.firstinspires.ftc.teamcode.Tools.FinalPose;
 import org.firstinspires.ftc.teamcode.Tools.Mouse;
 import org.firstinspires.ftc.teamcode.Tools.PID;
@@ -179,5 +180,10 @@ public class PolarPathFollower implements Command {
     @Override
     public boolean isFinished() {
         return getCurrentTime() >= points.length() * 0.01;
+    }
+
+    @Override
+    public Subsystem getRequiredSubsystem() {
+        return null;
     }
 }

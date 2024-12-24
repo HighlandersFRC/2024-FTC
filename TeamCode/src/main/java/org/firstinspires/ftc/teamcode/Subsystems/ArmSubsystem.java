@@ -1,20 +1,17 @@
 package org.firstinspires.ftc.teamcode.Subsystems;
 
-
-import static org.firstinspires.ftc.teamcode.Tools.Constants.encodersToDeg;
-import static org.firstinspires.ftc.teamcode.Tools.Constants.piviotPID;
-
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
-import org.firstinspires.ftc.teamcode.Tools.PID;
+import org.firstinspires.ftc.teamcode.Commands.Command;
+import org.firstinspires.ftc.teamcode.Commands.DefaultCommands.ArmDefault;
 
 public class ArmSubsystem extends Subsystem {
     public static DcMotor pivotMotor;
     public static DigitalChannel limitSwitch;
-    private static double armPosition = encodersToDeg(0);
+
     protected static double pos = 0;
 
     public static void initialize(HardwareMap hardwareMap) {
@@ -35,7 +32,9 @@ public class ArmSubsystem extends Subsystem {
         }
         return ArmSubsystem.getCurrentPosition() - pos;
     }
-
+    public ArmSubsystem(String name) {
+        super(name);
+    }
     public static void ArmMovement(Gamepad gamepad1) {
       if(gamepad1.left_bumper) {
           ArmSubsystem.setPower(1);
@@ -45,7 +44,15 @@ public class ArmSubsystem extends Subsystem {
 
     }
 
+    @Override
+    public void setDefaultCommand(Command command) {
+        super.setDefaultCommand(new ArmDefault());
+    }
 
+    @Override
+    public Command getDefaultCommand() {
+        return new ArmDefault();
+    }
 
 
 }

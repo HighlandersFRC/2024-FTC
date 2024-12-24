@@ -6,24 +6,23 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.RobotLog;
 
-
 import org.firstinspires.ftc.teamcode.Commands.ArmCommand;
 
 import org.firstinspires.ftc.teamcode.Commands.CommandScheduler;
 
 import org.firstinspires.ftc.teamcode.Commands.Intake;
 import org.firstinspires.ftc.teamcode.Commands.Outtake;
-import org.firstinspires.ftc.teamcode.Commands.StopIntake;
+
 import org.firstinspires.ftc.teamcode.Commands.WristCommands;
 import org.firstinspires.ftc.teamcode.Subsystems.ArmSubsystem;
 import org.firstinspires.ftc.teamcode.Subsystems.Drive;
 import org.firstinspires.ftc.teamcode.Subsystems.IntakeSubsystem;
 import org.firstinspires.ftc.teamcode.Subsystems.Wrist;
 import org.firstinspires.ftc.teamcode.Tools.Mouse;
-import static org.firstinspires.ftc.teamcode.Commands.StopIntake.StopTheIntake;
+import static org.firstinspires.ftc.teamcode.Tools.Constants.DegreesToEncoderTicks;
 
 import org.firstinspires.ftc.teamcode.Tools.Robot;
-import org.json.JSONException;
+
 
 @TeleOp
 public class CommandKitBot extends LinearOpMode {
@@ -40,13 +39,15 @@ public class CommandKitBot extends LinearOpMode {
         Drive.initialize(hardwareMap);
         Mouse.init(hardwareMap);
 
-        ArmCommand Score = new ArmCommand(-1964);
-        ArmCommand Zero= new ArmCommand(0);
+        ArmCommand Score = new ArmCommand(Robot.arm,DegreesToEncoderTicks(120));
+        ArmCommand Zero= new ArmCommand(Robot.arm,DegreesToEncoderTicks(0));
+        ArmCommand pickUp = new ArmCommand(Robot.arm,DegreesToEncoderTicks(215));
+        ArmCommand Enter= new ArmCommand(Robot.arm,DegreesToEncoderTicks(190));
 
         scheduler = new CommandScheduler();
 
-        Intake intakeCommand = new Intake(Robot.intakeSubsystem);
-        Outtake outtakeCommand = new Outtake(Robot.intakeSubsystem);
+        Intake intakeCommand = new Intake(Robot.intake);
+        Outtake outtakeCommand = new Outtake(Robot.intake);
 
         WristCommands leftWrist = new WristCommands(Robot.wrist,0.4);
         WristCommands rightWrist = new WristCommands(Robot.wrist,0.8);
@@ -65,12 +66,15 @@ public class CommandKitBot extends LinearOpMode {
             }
 
             if (gamepad1.y) {
-
-
                 scheduler.schedule(Score);
             } else if (gamepad1.b) {
-
                 scheduler.schedule(Zero);
+            }
+              else if(gamepad1.x){
+                  scheduler.schedule(Enter);
+            }
+            else if(gamepad1.a){
+                scheduler.schedule(pickUp);
             }
 
             Drive.FeildCentric(gamepad1);
