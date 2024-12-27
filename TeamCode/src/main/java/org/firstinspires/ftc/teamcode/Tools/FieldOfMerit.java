@@ -1,5 +1,8 @@
 package org.firstinspires.ftc.teamcode.Tools;
 
+import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.hardwareMap;
+import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.telemetry;
+
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.teamcode.Subsystems.Drive;
@@ -16,7 +19,8 @@ public class FieldOfMerit {
 
 
     public static void initialize(HardwareMap hardwareMap) {
-        Drive.initialize(hardwareMap);
+        Drive drive = new Drive("drive",hardwareMap,telemetry);
+        drive.initialize(hardwareMap);
         Peripherals.initialize(hardwareMap);
 
         Peripherals.resetYaw();

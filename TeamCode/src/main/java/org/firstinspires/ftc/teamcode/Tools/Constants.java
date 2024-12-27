@@ -1,6 +1,8 @@
 
 package org.firstinspires.ftc.teamcode.Tools;
 
+import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.hardwareMap;
+
 import org.firstinspires.ftc.teamcode.Commands.Command;
 import org.firstinspires.ftc.teamcode.Subsystems.ArmSubsystem;
 
@@ -51,7 +53,8 @@ public class Constants {
     }
 
     public static double getDegrees() {
-        return -((ArmSubsystem.getCurrentPositionWithLimitSwitch() / (1333/90) + 21));
+        ArmSubsystem armSubsystem = new ArmSubsystem("arm",hardwareMap);
+        return -((armSubsystem.getCurrentPositionWithLimitSwitch() / (1333/90) + 21));
     }
     public static double getOffsetFromVoltage(double voltage){
         return 5.03 + -4950*voltage + -4731*Math.pow(voltage, 2) + -2098*Math.pow(voltage, 3) + -286*Math.pow(voltage, 4);

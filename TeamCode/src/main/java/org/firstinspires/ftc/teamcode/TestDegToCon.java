@@ -17,7 +17,7 @@ public class TestDegToCon extends LinearOpMode {
     public static double pos;
     public void runOpMode() throws InterruptedException {
         waitForStart();
-        ArmSubsystem.initialize(hardwareMap);
+        ArmSubsystem armSubsystem = new ArmSubsystem("arm",hardwareMap);
 
         while (opModeIsActive()) {
 
@@ -32,12 +32,12 @@ public class TestDegToCon extends LinearOpMode {
                 pos = DegreesToEncoderTicks(0);
             }
             piviotPID.setSetPoint(pos);
-            piviotPID.updatePID(ArmSubsystem.getCurrentPositionWithLimitSwitch());
+            piviotPID.updatePID(armSubsystem.getCurrentPositionWithLimitSwitch());
             piviotPID.setMaxOutput(1);
             piviotPID.setMinOutput(-1);
-            ArmSubsystem.setPower(-piviotPID.getResult());
+            armSubsystem.setPower(-piviotPID.getResult());
 
-            telemetry.addData("ArmCurrentPos", ArmSubsystem.getCurrentPositionWithLimitSwitch());
+            telemetry.addData("ArmCurrentPos", armSubsystem.getCurrentPositionWithLimitSwitch());
             telemetry.addData("ArmCurrentPos Deg", getDegrees() + "°");
             telemetry.update();
 

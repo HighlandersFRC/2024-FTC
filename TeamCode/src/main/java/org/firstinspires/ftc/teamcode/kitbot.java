@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
+import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.hardwareMap;
+import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.telemetry;
 import static org.firstinspires.ftc.teamcode.Tools.Constants.DegreesToEncoderTicks;
 import static org.firstinspires.ftc.teamcode.Tools.Constants.getDegrees;
 import static org.firstinspires.ftc.teamcode.Tools.Constants.piviotPID;
@@ -20,10 +22,12 @@ public class kitbot extends LinearOpMode {
         boolean armControlToggle = true;
         boolean togglePressed = false;
         waitForStart();
-        ArmSubsystem.initialize(hardwareMap);
+        ArmSubsystem armSubsystem = new ArmSubsystem("arm",hardwareMap);
         IntakeSubsystem.initialize(hardwareMap);
-        Wrist.initialize(hardwareMap);
-        Drive.initialize(hardwareMap);
+        Wrist wrist = new Wrist("wrist");
+        wrist.initialize(hardwareMap);
+        Drive drive = new Drive("drive",hardwareMap,telemetry);
+        drive.initialize(hardwareMap);
         while (opModeIsActive()) {
 
             if (gamepad1.left_stick_button && !togglePressed) {
@@ -34,9 +38,9 @@ public class kitbot extends LinearOpMode {
             }
 
             if (armControlToggle) {
-                ArmSubsystem.ArmMovement(gamepad2);
+                armSubsystem.ArmMovement(gamepad2);
                 IntakeSubsystem.contolIntakeBlueAlliance(gamepad2);
-                Wrist.controlWrist(gamepad2);
+                wrist.controlWrist(gamepad2);
                 if (!gamepad2.right_bumper || !gamepad2.left_bumper) {
                     if (gamepad2.y) {
                         pos = DegreesToEncoderTicks(120);
@@ -49,15 +53,15 @@ public class kitbot extends LinearOpMode {
                     }
 
                     piviotPID.setSetPoint(pos);
-                    piviotPID.updatePID(ArmSubsystem.getCurrentPositionWithLimitSwitch());
+                    piviotPID.updatePID(armSubsystem.getCurrentPositionWithLimitSwitch());
                     piviotPID.setMaxOutput(0.7);
                     piviotPID.setMinOutput(-0.7);
-                    ArmSubsystem.setPower(-piviotPID.getResult());
+                    armSubsystem.setPower(-piviotPID.getResult());
                 }
             } else {
-                ArmSubsystem.ArmMovement(gamepad1);
+                armSubsystem.ArmMovement(gamepad1);
                 IntakeSubsystem.contolIntakeBlueAlliance(gamepad1);
-                Wrist.controlWrist(gamepad1);
+                wrist.controlWrist(gamepad1);
                 if (!gamepad1.right_bumper || !gamepad1.left_bumper) {
                     if (gamepad1.y) {
                         pos = DegreesToEncoderTicks(120);
@@ -70,16 +74,16 @@ public class kitbot extends LinearOpMode {
                     }
 
                     piviotPID.setSetPoint(pos);
-                    piviotPID.updatePID(ArmSubsystem.getCurrentPositionWithLimitSwitch());
+                    piviotPID.updatePID(armSubsystem.getCurrentPositionWithLimitSwitch());
                     piviotPID.setMaxOutput(0.7);
                     piviotPID.setMinOutput(-0.7);
-                    ArmSubsystem.setPower(-piviotPID.getResult());
+                    armSubsystem.setPower(-piviotPID.getResult());
                 }
                 gamepad2.rumble(1000);
             }
 
 
-            Drive.FeildCentric(gamepad1);
+            drive.FeildCentric(gamepad1);
             Mouse.update();
 
 //            telemetry.addData("Mouse X", Mouse.getX());
@@ -90,6 +94,7 @@ public class kitbot extends LinearOpMode {
 //            telemetry.addData("Drive Left Back Pos", Drive.leftBackPos());
 //            telemetry.addData("Drive Right Back Pos", Drive.RightBackPos());
 //            telemetry.addData("Arm Current Position", getDegrees());
+            telemetry.addData("arm power",-piviotPID.getResult());
 
             telemetry.update();
         }

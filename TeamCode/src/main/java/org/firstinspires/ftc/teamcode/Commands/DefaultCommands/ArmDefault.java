@@ -8,47 +8,49 @@ import org.firstinspires.ftc.teamcode.Commands.Command;
 import org.firstinspires.ftc.teamcode.Subsystems.ArmSubsystem;
 import org.firstinspires.ftc.teamcode.Subsystems.Subsystem;
 import org.firstinspires.ftc.teamcode.Tools.PID;
-import static org.firstinspires.ftc.teamcode.Commands.ArmCommand.Pos;
 
+import static org.firstinspires.ftc.teamcode.Commands.ArmCommand.pos;
 
 public class ArmDefault implements Command {
 
     private double pivotPower;
-    private PID pivotPID = new PID(.001,0,0) ;
-    String name = "Arm";
-    ArmSubsystem Arm;
+    private PID pivotPID = new PID(.001, 0, 0);
+    private String name = "Arm";
+    private ArmSubsystem arm;
 
-
+    public ArmDefault(ArmSubsystem arm) {
+        this.arm = arm;
+    }
 
     @Override
     public void start() {
-        pivotPID.setSetPoint(-1*Math.abs(Pos));
-        System.out.println("default");
+        pivotPID.setSetPoint(-1 * Math.abs(pos));
+        System.out.println("ArmDefault started");
     }
 
     @Override
     public void execute() {
-        pivotPower = pivotPID.updatePID(ArmSubsystem.getCurrentPositionWithLimitSwitch());
-        double feed = GravityTerm(ArmSubsystem.getCurrentPositionWithLimitSwitch());
-        ArmSubsystem.setPower(-pivotPower*feed);
-        System.out.println(Pos+"default");
+        pivotPower = pivotPID.updatePID(arm.getCurrentPositionWithLimitSwitch());
+        double feed = GravityTerm(arm.getCurrentPositionWithLimitSwitch());
+        arm.setPower(-pivotPower * feed);
+        System.out.println(pos + " ArmDefault executing");
     }
 
     @Override
     public void end() {
-        ArmSubsystem.setPower(0);
-        ArmSubsystem.pivotMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        arm.setPower(0);
+        System.out.println("ArmDefault ended");
     }
 
     @Override
     public boolean isFinished() {
         double tolerance = 7;
-        double currentPosition = ArmSubsystem.getCurrentPositionWithLimitSwitch();
-        return Math.abs(currentPosition - Pos) <= tolerance;
+        double currentPosition = arm.getCurrentPositionWithLimitSwitch();
+        return Math.abs(currentPosition - pos) <= tolerance;
     }
 
     @Override
     public Subsystem getRequiredSubsystem() {
-        return Arm;
+        return arm;
     }
 }

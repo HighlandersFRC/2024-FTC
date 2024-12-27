@@ -1,13 +1,11 @@
 package org.firstinspires.ftc.teamcode.Commands;
 
-
-import static org.firstinspires.ftc.teamcode.Tools.Robot.intake;
-
 import org.firstinspires.ftc.teamcode.Subsystems.IntakeSubsystem;
 import org.firstinspires.ftc.teamcode.Subsystems.Subsystem;
 
 public class StopIntake implements Command  {
     public static boolean StopTheIntake;
+    IntakeSubsystem intakeSubsystem;
     @Override
     public void start() {
         System.out.println("StopIntake started");
@@ -33,6 +31,6 @@ public class StopIntake implements Command  {
     }
 @Override
     public Subsystem getRequiredSubsystem() {
-        return intake;
+        return intakeSubsystem;
     }
 }

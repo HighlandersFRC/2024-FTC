@@ -1,5 +1,8 @@
 package org.firstinspires.ftc.teamcode;
 
+import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.hardwareMap;
+import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.telemetry;
+
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
@@ -19,9 +22,10 @@ public class SensorSparkFunOTOS extends LinearOpMode {
 
     public void runOpMode() throws InterruptedException {
 
+        Drive drive = new Drive("drive",hardwareMap,telemetry);
         Peripherals.initialize(hardwareMap);
         CommandScheduler scheduler = new CommandScheduler();
-        Drive.initialize(hardwareMap);
+        drive.initialize(hardwareMap);
         Mouse.init(hardwareMap);
         
 

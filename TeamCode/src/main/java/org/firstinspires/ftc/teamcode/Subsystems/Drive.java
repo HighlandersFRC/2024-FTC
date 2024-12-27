@@ -1,77 +1,110 @@
 package org.firstinspires.ftc.teamcode.Subsystems;
 
-import  com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.teamcode.Commands.Command;
+import org.firstinspires.ftc.teamcode.Commands.DefaultCommands.ArmDefault;
+import org.firstinspires.ftc.teamcode.Commands.DefaultCommands.DriveDefault;
 import org.firstinspires.ftc.teamcode.Tools.Constants;
 import org.firstinspires.ftc.teamcode.Tools.FinalPose;
 import org.firstinspires.ftc.teamcode.Tools.Mouse;
 import org.firstinspires.ftc.teamcode.Tools.PID;
-
 import org.firstinspires.ftc.teamcode.Tools.Vector;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 public class Drive extends Subsystem {
 
-    public static DcMotorEx frontLeftMotor;
-    public static DcMotorEx backLeftMotor;
-    public static DcMotorEx frontRightMotor;
-    public static DcMotorEx backRightMotor;
+    private DcMotorEx frontLeftMotor;
+    private DcMotorEx backLeftMotor;
+    private DcMotorEx frontRightMotor;
+    private DcMotorEx backRightMotor;
 
-    public static final double TICKS_PER_REV = 2000;
-    public static final double WHEEL_DIAMETER = 0.048; // meters
-    public static final double WHEEL_CIRCUMFERENCE = Math.PI * WHEEL_DIAMETER;
-    public static final double CORRECTION_FACTOR = 1;
+    private final double TICKS_PER_REV = 2000;
+    private final double WHEEL_DIAMETER = 0.048; // meters
+    private final double WHEEL_CIRCUMFERENCE = Math.PI * WHEEL_DIAMETER;
 
-    public static double x = 0.0;
-    public static double y = 0.0;
+    private double x = 0.0;
+    private double y = 0.0;
+    private double theta = 0.0;
 
-    public static double theta = 0.0;
+    private double lastLeftPos = 0;
+    private double lastRightPos = 0;
+    private double lastCenterPos = 0;
 
-    public static double lastLeftPos = 0;
-    public static double lastRightPos = 0;
-    public static double lastCenterPos = 0;
+    private final PID xPID = new PID(1, 0, 0);
+    private final PID yPID = new PID(1, 0, 0);
+    private final PID thetaPID = new PID(1, 0, 0);
 
-    public static PID xPID = new PID(1, 0, 0);
-    public static PID yPID = new PID(1, 0, 0);
-    public static PID thetaPID = new PID(1, 0, 0);
+    private long lastUpdateTime = 0;
 
-    public static final double FORWARD_OFFSET = 0.22225;
+    private double totalXTraveled = 0.0;
+    private double totalYTraveled = 0.0;
 
-    private static long lastUpdateTime = 0;
+    private final double L = 0.4064;
+    private final double W = 0.4064;
 
-    public static double totalXTraveled = 0.0;
-    public static double totalYTraveled = 0.0;
-    public static double totalThetaTraveled = 0.0;
-    private static final double L = 0.4064;
-    private static final double W = 0.4064;
+    public Drive(String name, HardwareMap hardwareMap, Telemetry telemetry) {
+        super(name);
 
-    public static void initialize(HardwareMap hardwareMap) {
+        // Initialize motors using the HardwareMap
         frontLeftMotor = hardwareMap.get(DcMotorEx.class, "left_front");
         backLeftMotor = hardwareMap.get(DcMotorEx.class, "left_back");
         frontRightMotor = hardwareMap.get(DcMotorEx.class, "right_front");
         backRightMotor = hardwareMap.get(DcMotorEx.class, "right_back");
+
+// Set motor directions (if needed)
+        frontLeftMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+        backLeftMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+        frontRightMotor.setDirection(DcMotorSimple.Direction.FORWARD);
+        backRightMotor.setDirection(DcMotorSimple.Direction.FORWARD);
+
+// Set zero power behavior for all motors
+        frontLeftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        backLeftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        frontRightMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        backRightMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+// Reset encoders
+        frontLeftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        backLeftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        frontRightMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        backRightMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+// Set to RUN_WITHOUT_ENCODER for odometry
+        frontLeftMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        backLeftMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        frontRightMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        backRightMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+    }
+
+
+
+    public void initialize(HardwareMap hardwareMap) {
+        frontLeftMotor = hardwareMap.get(DcMotorEx.class, "left_front");
+        backLeftMotor = hardwareMap.get(DcMotorEx.class, "left_back");
+        frontRightMotor = hardwareMap.get(DcMotorEx.class, "right_front");
+        backRightMotor = hardwareMap.get(DcMotorEx.class, "right_back");
+
         Mouse.init(hardwareMap);
 
         frontRightMotor.setDirection(DcMotorSimple.Direction.REVERSE);
         backRightMotor.setDirection(DcMotorSimple.Direction.REVERSE);
 
-        resetEncoder();
+        this.resetEncoder();
         lastUpdateTime = System.currentTimeMillis();
-        Drive.Float();
-
-    }
-    public Drive(String name) {
-        super(name);
+        setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
     }
 
-    public static Vector purePursuitController(double currentX, double currentY, double currentTheta, int currentIndex,
-                                               JSONArray pathPoints) throws JSONException {
+    public Vector purePursuitController(double currentX, double currentY, double currentTheta, int currentIndex,
+                                        JSONArray pathPoints) throws JSONException {
         JSONObject targetPoint = pathPoints.getJSONObject(pathPoints.length() - 1);
         int targetIndex = pathPoints.length() - 1;
         for (int i = currentIndex; i < pathPoints.length(); i++) {
@@ -89,8 +122,7 @@ public class Drive extends Subsystem {
             if (!insideRadius(currentX - point.getDouble("x") / Constants.AUTONOMOUS_LOOKAHEAD_LINEAR_RADIUS,
                     currentY - point.getDouble("y") / Constants.AUTONOMOUS_LOOKAHEAD_LINEAR_RADIUS,
                     (currentTheta - targetTheta) / Constants.AUTONOMOUS_LOOKAHEAD_ANGULAR_RADIUS,
-                    Constants.AUTONOMOUS_LOOKAHEAD_DISTANCE /* * velocityMag */ + 0.01
-            )) {
+                    Constants.AUTONOMOUS_LOOKAHEAD_DISTANCE /* * velocityMag */ + 0.01)) {
 
                 targetIndex = i;
                 targetPoint = pathPoints.getJSONObject(i);
@@ -125,30 +157,41 @@ public class Drive extends Subsystem {
         double feedForwardY = targetPoint.getDouble("y_velocity") / 2;
         double feedForwardTheta = -targetPoint.getDouble("angular_velocity") / 2;
 
-        Vector velocityVector = new Vector(feedForwardX + xVelNoFF, -(feedForwardY + yVelNoFF));
-
-        return velocityVector;
+        return new Vector(feedForwardX + xVelNoFF, -(feedForwardY + yVelNoFF));
     }
 
-    public static void teleopDrive(Gamepad gamepad1) {
-        double forward = -gamepad1.left_stick_y;  // Invert if necessary for correct direction
-        double strafe = gamepad1.left_stick_x*2;
+    public void teleopDrive(Gamepad gamepad1) {
+        double forward = -gamepad1.left_stick_y;
+        double strafe = gamepad1.left_stick_x * 2;
         double pivot = gamepad1.right_stick_x;
 
-
-
-        double frontLeftPower = (forward - strafe - pivot) ;
-        double backLeftPower = (forward + strafe - pivot) ;
-        double frontRightPower = (forward - strafe + pivot) ;
-        double backRightPower = (forward + strafe + pivot) ;
+        double frontLeftPower = (forward - strafe - pivot);
+        double backLeftPower = (forward + strafe - pivot);
+        double frontRightPower = (forward - strafe + pivot);
+        double backRightPower = (forward + strafe + pivot);
 
         drive(frontLeftPower, -frontRightPower, backLeftPower, backRightPower);
+    }
 
+    public  void stop() {
+        drive(0,0,0,0);
+
+        backLeftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        backRightMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        frontLeftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        frontRightMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
     }
 
-    public static void FeildCentric(Gamepad gamepad1) {
-        double x = gamepad1.left_stick_x*2;  // Invert if necessary for correct direction
+    public void drive(double leftFrontPower, double rightFrontPower, double leftBackPower, double rightBackPower) {
+        frontLeftMotor.setPower(-leftFrontPower);
+        frontRightMotor.setPower(-rightFrontPower);
+        backLeftMotor.setPower(-leftBackPower);
+        backRightMotor.setPower(-rightBackPower);
+    }
+
+    public void FeildCentric(Gamepad gamepad1) {
+        double x = gamepad1.left_stick_x*2;
         double y = gamepad1.left_stick_y;
         double rx = -gamepad1.right_stick_x;
 
@@ -167,109 +210,68 @@ public class Drive extends Subsystem {
         double frontRightPower = (rotY - rotX + rx);
         double backRightPower = (rotY + rotX + rx);
 
-
-        /*double frontLeftPower = (forward - strafe - pivot) ;
-        double backLeftPower = (forward + strafe - pivot) ;
-        double frontRightPower = (forward - strafe + pivot) ;
-        double backRightPower = (forward + strafe + pivot) ;*/
-
-        Drive.drive(frontLeftPower, -frontRightPower, backLeftPower, backRightPower);
+        drive(-frontLeftPower, -frontRightPower, -backLeftPower, backRightPower);
 
 
 
-        Drive.Float();
+
 
 
     }
-    public static void drive(double leftFrontPower, double rightFrontPower, double leftBackPower, double rightBackPower) {
-        frontLeftMotor.setPower(-leftFrontPower);
-        frontRightMotor.setPower(-rightFrontPower);
-        backLeftMotor.setPower(-leftBackPower);
-        backRightMotor.setPower(-rightBackPower);
 
+    public void resetEncoder() {
+        frontLeftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        backLeftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        frontRightMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        backRightMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+        frontLeftMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        backLeftMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        frontRightMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        backRightMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+        x = 0.0;
+        y = 0.0;
+        theta = 0.0;
+
+        lastLeftPos = 0;
+        lastRightPos = 0;
+        lastCenterPos = 0;
     }
 
-    public static void stop() {
-        Drive.drive(0,0,0,0);
-
-        backLeftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        backRightMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        frontLeftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        frontRightMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-
+    private void setZeroPowerBehavior(DcMotor.ZeroPowerBehavior behavior) {
+        backLeftMotor.setZeroPowerBehavior(behavior);
+        backRightMotor.setZeroPowerBehavior(behavior);
+        frontLeftMotor.setZeroPowerBehavior(behavior);
+        frontRightMotor.setZeroPowerBehavior(behavior);
     }
 
-    public static void Float() {
-
-
-        backLeftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        backRightMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        frontLeftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        frontRightMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-
-    }
-
-
-    private static boolean insideRadius(double deltaX, double deltaY, double deltaTheta, double radius) {
+    private boolean insideRadius(double deltaX, double deltaY, double deltaTheta, double radius) {
         return Math.sqrt(Math.pow(deltaX, 2) + Math.pow(deltaY, 2) + Math.pow(deltaTheta, 2)) < radius;
     }
 
-    public static double getVelocityBackLeft() {
+    public  double getVelocityBackLeft() {
         return backLeftMotor.getVelocity();
     }
 
-    public static double getVelocityBackRight() {
+    public  double getVelocityBackRight() {
         return backRightMotor.getVelocity();
     }
 
-    public static double getVelocityFrontLeft() {
+    public  double getVelocityFrontLeft() {
         return frontLeftMotor.getVelocity();
     }
 
-    public static double getVelocityFrontRight() {
+    public  double getVelocityFrontRight() {
         return frontRightMotor.getVelocity();
     }
 
-    public static double direction() {
+    public  double direction() {
         return direction();
     }
 
-/*    public static void update() {
-        double imuTheta = Peripherals.getYawDegrees();
 
-        double currentLeftPos = getLeftEncoder();
-        double currentRightPos = getRightEncoder();
-        double currentCenterPos = getCenterEncoder();
-
-        double deltaLeft = currentLeftPos - lastLeftPos;
-        double deltaRight = currentRightPos - lastRightPos;
-        double deltaCenter = currentCenterPos - lastCenterPos;
-
-        lastLeftPos = currentLeftPos;
-        lastRightPos = currentRightPos;
-        lastCenterPos = currentCenterPos;
-
-        double distanceLeft = deltaLeft * WHEEL_CIRCUMFERENCE / TICKS_PER_REV;
-        double distanceRight = deltaRight * WHEEL_CIRCUMFERENCE / TICKS_PER_REV;
-        double distanceCenter = deltaCenter * WHEEL_CIRCUMFERENCE / TICKS_PER_REV;
-
-        theta = imuTheta;
-
-        double avgForwardMovement = (distanceLeft + distanceRight) / 2.0;
-        double deltaTheta = Math.toRadians(theta);
-        double deltaThetaDegrees = theta;
-
-        double deltaX = avgForwardMovement * Math.cos(deltaTheta) + distanceCenter * Math.sin(deltaTheta);
-        double deltaY = -avgForwardMovement * Math.sin(deltaTheta) + distanceCenter * Math.cos(deltaTheta);
-
-        x += deltaX;
-        y += deltaY;
-
-        totalXTraveled += Math.abs(deltaX);
-        totalYTraveled += Math.abs(deltaY);
-    }*/
-
-    public static void update() {
+    public  void update() {
         double imuTheta = Peripherals.getYawDegrees();
 
         double currentLeftPos = getLeftEncoder();
@@ -312,43 +314,39 @@ public class Drive extends Subsystem {
     }
 
 
-    public static double getLastLeftPos(){
+    public double getLastLeftPos(){
         return lastLeftPos;
     }
 
-    public static double getLastRightPos(){
+    public double getLastRightPos(){
         return lastRightPos;
     }
 
-    public static double getLastCenterPos(){
+    public double getLastCenterPos(){
         return lastCenterPos;
     }
 
-    public static double getOdometryX() {
+    public double getOdometryX() {
         return x;
     }
 
-    public static double getOdometryY() {
+    public double getOdometryY() {
         return y;
     }
 
-    public static double getOdometryTheta() {
+    public double getOdometryTheta() {
         return theta;
     }
 
-    public static double getTotalXTraveled() {
+    public double getTotalXTraveled() {
         return totalXTraveled;
     }
 
-    public static double getTotalYTraveled() {
+    public double getTotalYTraveled() {
         return totalYTraveled;
     }
 
-    public static double getTotalThetaTraveled() {
-        return totalThetaTraveled;
-    }
-
-    public static void setPosition(double fieldX, double fieldY, double fieldTheta) {
+    public void setPosition(double fieldX, double fieldY, double fieldTheta) {
         x = fieldX;
         y = fieldY;
         theta = fieldTheta;
@@ -358,34 +356,13 @@ public class Drive extends Subsystem {
         lastCenterPos = getCenterEncoder();
     }
 
-    public static void resetEncoder() {
-        frontLeftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        backLeftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        frontRightMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        backRightMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-
-        frontLeftMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        backLeftMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        frontRightMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        backRightMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-
-        x = 0.0;
-        y = 0.0;
-        theta = 0.0;
-
-        lastLeftPos = 0;
-        lastRightPos = 0;
-        lastCenterPos = 0;
-    }
-
-
-    public static int getLeftEncoder() {
+    public int getLeftEncoder() {
         return backRightMotor.getCurrentPosition();
     }
-    public static int getRightEncoder() {
+    public  int getRightEncoder() {
         return frontLeftMotor.getCurrentPosition();
     }
-    public static int getBackEncoder(){
+    public  int getBackEncoder(){
         return backLeftMotor.getCurrentPosition();
     }
 
@@ -412,10 +389,12 @@ public class Drive extends Subsystem {
         }
     }*/
 
-    public static int getCenterEncoder() {
+    public  int getCenterEncoder() {
         return frontRightMotor.getCurrentPosition();
     }
-    public static void autoDrive(Vector vector, double angle) {
+
+
+    public void autoDrive(Vector vector, double angle, Drive drive) {
         double vx = vector.getI();
         double vy = -vector.getJ();
 
@@ -434,38 +413,31 @@ public class Drive extends Subsystem {
         double backLeftPower = (rotX - rotY + rotationFactor) / denominator;
         double backRightPower = (rotX + rotY - rotationFactor) / denominator;
 
-/*
-        double frontLeftPower = vx + vy + rotationFactor;
-        double frontRightPower = vx - vy - rotationFactor;
-        double backLeftPower = vx - vy + rotationFactor;
-        double backRightPower = vx + vy - rotationFactor;
-
-        double maxMagnitude = Math.max(Math.max(Math.abs(frontLeftPower), Math.abs(frontRightPower)),
-                Math.max(Math.abs(backLeftPower), Math.abs(backRightPower)));
-
-        if (maxMagnitude > 1) {
-            frontLeftPower /= maxMagnitude;
-            frontRightPower /= maxMagnitude;
-            backLeftPower /= maxMagnitude;
-            backRightPower /= maxMagnitude;
-        }
-*/
-
-        Drive.drive(-frontLeftPower, frontRightPower, -backLeftPower, -backRightPower);
+        // Call the drive method using the passed instance
+        drive.drive(-frontLeftPower, frontRightPower, -backLeftPower, -backRightPower);
     }
 
-    public static double leftFrontPos(){
+
+    public double leftFrontPos(){
         return frontLeftMotor.getCurrentPosition();
     }
-    public static double RightFrontPos(){
+    public  double RightFrontPos(){
         return frontRightMotor.getCurrentPosition();
     }
-    public static double leftBackPos(){
+    public  double leftBackPos(){
         return backLeftMotor.getCurrentPosition();
     }
-    public static double RightBackPos(){
+    public  double RightBackPos(){
         return backRightMotor.getCurrentPosition();
     }
 
+    @Override
+    public void setDefaultCommand(Command command) {
+        super.setDefaultCommand(new DriveDefault());
+    }
 
+    @Override
+    public Command getDefaultCommand() {
+        return new DriveDefault(); // Retrieve the set default command
+    }
 }

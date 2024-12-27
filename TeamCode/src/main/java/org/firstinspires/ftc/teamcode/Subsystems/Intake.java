@@ -1,4 +1,3 @@
-
 package org.firstinspires.ftc.teamcode.Subsystems;
 
 import com.qualcomm.robotcore.hardware.CRServo;
@@ -7,27 +6,25 @@ import com.qualcomm.robotcore.hardware.NormalizedColorSensor;
 import com.qualcomm.robotcore.hardware.NormalizedRGBA;
 
 import org.firstinspires.ftc.teamcode.Commands.Command;
-import org.firstinspires.ftc.teamcode.Commands.DefaultCommands.ElevatorDefault;
 import org.firstinspires.ftc.teamcode.Commands.DefaultCommands.IntakeDefault;
 
-public class Intake extends Subsystem{
+public class Intake extends Subsystem {
 
-    private static NormalizedColorSensor colorSensor;
-    public static CRServo leftServo;
-    public static CRServo rightServo;
-    private static final String setColor = "blue";
+    private NormalizedColorSensor colorSensor;
+    private CRServo leftServo;
+    private CRServo rightServo;
+    private final String setColor = "blue";
 
     public Intake(String name) {
         super(name);
     }
 
-
-    public static void initialize(HardwareMap hardwareMap) {
+    public void initialize(HardwareMap hardwareMap) {
         colorSensor = hardwareMap.get(NormalizedColorSensor.class, "colorSensor");
         leftServo = hardwareMap.get(CRServo.class, "left_servo");
         rightServo = hardwareMap.get(CRServo.class, "right_servo");
 
-        Intake.stopIntake();
+        stopIntake();
     }
 
     public void intake() {
@@ -40,7 +37,7 @@ public class Intake extends Subsystem{
         rightServo.setPower(-1);
     }
 
-    public static void stopIntake() {
+    public void stopIntake() {
         leftServo.setPower(0);
         rightServo.setPower(0);
     }
@@ -62,6 +59,7 @@ public class Intake extends Subsystem{
 
         return mainColor.equals(setColor) || mainColor.equals("yellow");
     }
+
     @Override
     public void setDefaultCommand(Command command) {
         super.setDefaultCommand(new IntakeDefault());

@@ -35,6 +35,8 @@ public class PolarPathFollower implements Command {
     private ArrayList<Command> activeCommands = new ArrayList<>();
     private double nextX, nextY;
 
+    private Drive drive; // Adding Drive instance
+
     public PolarPathFollower(Drive drive, Peripherals peripherals, JSONObject pathJSON,
                              HashMap<String, Supplier<Command>> commandMap,
                              HashMap<String, BooleanSupplier> conditionMap,
@@ -43,6 +45,7 @@ public class PolarPathFollower implements Command {
         this.points = pathJSON.getJSONArray("sampled_points");
         this.commandMap = commandMap;
         this.conditionMap = conditionMap;
+        this.drive = drive; // Initialize Drive instance
     }
 
     private double getPathTime() {
@@ -71,7 +74,6 @@ public class PolarPathFollower implements Command {
         yawPID.setMinInput(-180);
         yawPID.setMinInput(180);
     }
-
     public void execute() {
         FinalPose.poseUpdate();
         double elapsedTime = getPathTime() - pathStartTime;
@@ -100,7 +102,9 @@ public class PolarPathFollower implements Command {
             yawPID.updatePID(currentTheta);
 
             Vector relativePos = new Vector(xPID.getResult(), yPID.getResult());
-            Drive.autoDrive(relativePos, yawPID.getResult());
+
+            // Pass the 'drive' instance here to autoDrive
+            drive.autoDrive(relativePos, yawPID.getResult(), drive);
 
             JSONArray commands = points.getJSONObject(index).optJSONArray("commands");
             if (commands != null) {
@@ -121,6 +125,7 @@ public class PolarPathFollower implements Command {
             throw new RuntimeException("Error reading point data from JSON", e);
         }
     }
+
 
     private Command parseCommand(JSONObject commandJSON) throws JSONException {
         if (commandJSON.has("command")) {
@@ -174,7 +179,7 @@ public class PolarPathFollower implements Command {
 
     @Override
     public void end() {
-        Drive.stop();
+        drive.drive(0,0,0,0);
     }
 
     @Override

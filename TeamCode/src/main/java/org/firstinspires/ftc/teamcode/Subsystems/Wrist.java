@@ -5,10 +5,13 @@ import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
+import org.firstinspires.ftc.teamcode.Commands.Command;
+import org.firstinspires.ftc.teamcode.Commands.DefaultCommands.WristDefault;
+
 public class Wrist extends Subsystem {
-    public static Servo wrist;
-public static double position = 0.4;
-    public static void initialize(HardwareMap hardwareMap) {
+    public Servo wrist;
+public double position = 0.4;
+    public void initialize(HardwareMap hardwareMap) {
         wrist = hardwareMap.servo.get("wrist");
     }
 
@@ -17,7 +20,7 @@ public static double position = 0.4;
     }
 
     // Add this method to handle gamepad inputs for wrist control
-    public static void controlWrist (Gamepad gamepad1) {
+    public void controlWrist (Gamepad gamepad1) {
 
 if (gamepad1.dpad_up) {
     position = 0.4;
@@ -31,7 +34,7 @@ if (gamepad1.dpad_up) {
 
         wrist.setPosition(position);
     }
-public static void contolWristWithOperator(Gamepad gamepad2) {
+public void contolWristWithOperator(Gamepad gamepad2) {
     if (gamepad2.left_bumper && gamepad2.right_bumper) {
         position = 0.49;
     } else if (gamepad2.right_bumper) {
@@ -40,8 +43,23 @@ public static void contolWristWithOperator(Gamepad gamepad2) {
         position = 0.2;
     }
 }
-    public static double getPosition() {
+    public double getPosition() {
         return wrist.getPosition();
+    }
+
+    public void setPosition(double pos){
+        wrist.setPosition(pos);
+    }
+
+    @Override
+    public void setDefaultCommand(Command command) {
+        super.setDefaultCommand(new WristDefault());
+    }
+
+
+    @Override
+    public Command getDefaultCommand() {
+        return new WristDefault(); // Retrieve the set default command
     }
 
 }

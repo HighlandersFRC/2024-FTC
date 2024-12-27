@@ -25,12 +25,11 @@ public class TestAuto extends LinearOpMode {
         Mouse.init(hardwareMap);
 
         Mouse.configureOtos();
-
-        Drive.setPosition(0, 0, 0);
+        Drive drive = new Drive("drive",hardwareMap,telemetry);
+        drive.setPosition(0, 0, 0);
 
         PathLoading pathLoading = new PathLoading(hardwareMap.appContext, "TestAuto.polarpath");
         CommandScheduler scheduler = new CommandScheduler();
-        Drive drive = new Drive("drive");
         Peripherals peripherals = new Peripherals("peripherals");
         PolarPathFollower moveToPosition;
 

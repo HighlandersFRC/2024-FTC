@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.Commands;
 
+import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.RobotLog;
 import org.firstinspires.ftc.teamcode.Subsystems.Subsystem;
 import org.firstinspires.ftc.teamcode.Tools.Robot;
@@ -10,6 +11,7 @@ public class CommandScheduler {
     private static CommandScheduler instance;
     private final List<Command> scheduledCommands = new ArrayList<>();
     private final Map<Subsystem, Command> activeSubsystemCommands = new HashMap<>();
+    private Robot robot;
 
     public static CommandScheduler getInstance() {
         if (instance == null) {
@@ -18,25 +20,41 @@ public class CommandScheduler {
         return instance;
     }
 
+    public void setRobot(Robot robot) {
+        this.robot = robot;
+    }
+
     public void schedule(Command command) {
         Subsystem requiredSubsystem = command.getRequiredSubsystem();
 
+        // Check if the command is already active for the subsystem
         if (requiredSubsystem != null) {
             Command activeCommand = activeSubsystemCommands.get(requiredSubsystem);
 
-            // Cancel the currently active command only if it is not a default command
+            // If the active command is the same as the one being scheduled, don't reschedule
+            if (activeCommand != null && activeCommand == command) {
+                RobotLog.d("Command already active, not rescheduling: " + command.getClass().getSimpleName());
+                return;
+            }
+
+            // Cancel the currently active command only if it's not a default command
             if (activeCommand != null && !isDefaultCommand(activeCommand)) {
                 cancel(activeCommand);
             }
 
-            // Schedule the new command
+            // Schedule the new command for the subsystem
             activeSubsystemCommands.put(requiredSubsystem, command);
         }
 
-        command.start();
-        scheduledCommands.add(command);
-        RobotLog.d("Command Scheduled: " + command.getClass().getSimpleName());
+        // Start the new command if it's not already started
+        if (!scheduledCommands.contains(command)) {
+            scheduledCommands.add(command);
+            command.start();
+            RobotLog.d("Command Scheduled: " + command.getClass().getSimpleName());
+        }
     }
+
+
 
     public void run() {
         List<Command> finishedCommands = new ArrayList<>();
@@ -72,7 +90,7 @@ public class CommandScheduler {
         for (Subsystem subsystem : getAllSubsystems()) {
             if (!activeSubsystemCommands.containsKey(subsystem)) {
                 Command defaultCommand = subsystem.getDefaultCommand();
-                if (defaultCommand != null && !scheduledCommands.contains(defaultCommand)) {
+                if (defaultCommand != null && !isCommandScheduled(defaultCommand)) {
                     RobotLog.d("Default Command Triggered for Subsystem: " + subsystem.getClass().getSimpleName());
                     schedule(defaultCommand);
                 }
@@ -80,7 +98,7 @@ public class CommandScheduler {
         }
     }
 
-    public void printCurrentCommands() {
+        public void printCurrentCommands() {
         RobotLog.d("===== Current Commands =====");
         for (Map.Entry<Subsystem, Command> entry : activeSubsystemCommands.entrySet()) {
             Subsystem subsystem = entry.getKey();
@@ -90,20 +108,6 @@ public class CommandScheduler {
         }
         RobotLog.d("============================");
     }
-
-    public String printCurrentCommandsTele() {
-        StringBuilder commands = new StringBuilder("===== Current Commands =====\n");
-        for (Map.Entry<Subsystem, Command> entry : activeSubsystemCommands.entrySet()) {
-            Subsystem subsystem = entry.getKey();
-            Command command = entry.getValue();
-            commands.append("Subsystem: ").append(subsystem.getClass().getSimpleName())
-                    .append(", Command: ").append(command.getClass().getSimpleName())
-                    .append("\n");
-        }
-        commands.append("============================");
-        return commands.toString();
-    }
-
 
     private void cancel(Command command) {
         Subsystem requiredSubsystem = command.getRequiredSubsystem();
@@ -118,11 +122,16 @@ public class CommandScheduler {
 
     private Set<Subsystem> getAllSubsystems() {
         Set<Subsystem> subsystems = new HashSet<>();
-        subsystems.add(Robot.arm);
-        subsystems.add(Robot.drive);
-        subsystems.add(Robot.intake);
-        subsystems.add(Robot.wrist);
+        subsystems.add(robot.arm);
+        subsystems.add(robot.drive);
+        subsystems.add(robot.intake);
+        subsystems.add(robot.wrist);
         return subsystems;
+    }
+
+    public boolean isCommandScheduled(Command command) {
+        Subsystem subsystem = command.getRequiredSubsystem();
+        return subsystem != null && activeSubsystemCommands.get(subsystem) == command;
     }
 
     private boolean isDefaultCommand(Command command) {
