@@ -96,6 +96,16 @@ public class CommandKitBot extends LinearOpMode {
                     scheduler.schedule(pickUp);
                 }
 
+                if (gamepad1.dpad_up){
+                    scheduler.schedule(zeroWrist);
+                }
+                else if (gamepad1.dpad_right){
+                    scheduler.schedule(rightWrist);
+                }
+                else if (gamepad1.dpad_left){
+                    scheduler.schedule(leftWrist);
+                }
+
                 // Run scheduled commands
                 scheduler.run();
 
