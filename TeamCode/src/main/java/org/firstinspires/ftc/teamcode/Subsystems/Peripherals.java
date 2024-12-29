@@ -1,3 +1,4 @@
+
 package org.firstinspires.ftc.teamcode.Subsystems;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -27,7 +28,7 @@ public class Peripherals extends Subsystem {
     public static void initialize(HardwareMap hardwareMap) {
         imu = hardwareMap.get(IMU.class, "imu");
 
-     limelight = hardwareMap.get(Limelight3A.class, "limelight");
+        limelight = hardwareMap.get(Limelight3A.class, "limelight");
         limelight.setPollRateHz(60);
         limelight.pipelineSwitch(0);
         limelight.getStatus();
@@ -84,9 +85,3 @@ public class Peripherals extends Subsystem {
         return 0;
     }
 }
-
-
-
-
-
-

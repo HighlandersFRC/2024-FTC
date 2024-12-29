@@ -1,3 +1,4 @@
+
 package org.firstinspires.ftc.teamcode.Commands;
 
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -7,7 +8,8 @@ import org.firstinspires.ftc.teamcode.Subsystems.Subsystem;
 public class IntakeCommand implements Command {
 
 
-Intake intakeSubsystem;
+    Intake intakeSubsystem;
+
     public IntakeCommand(Intake intake) {
         intakeSubsystem = intake;
     }

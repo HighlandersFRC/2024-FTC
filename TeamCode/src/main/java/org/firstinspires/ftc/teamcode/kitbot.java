@@ -1,10 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
-import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.hardwareMap;
-import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.telemetry;
 import static org.firstinspires.ftc.teamcode.Tools.Constants.DegreesToEncoderTicks;
 import static org.firstinspires.ftc.teamcode.Tools.Constants.getDegrees;
-import static org.firstinspires.ftc.teamcode.Tools.Constants.piviotPID;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -15,87 +12,67 @@ import org.firstinspires.ftc.teamcode.Subsystems.IntakeSubsystem;
 import org.firstinspires.ftc.teamcode.Subsystems.Wrist;
 import org.firstinspires.ftc.teamcode.Tools.Mouse;
 
+
 @TeleOp
 public class kitbot extends LinearOpMode {
-    public static double pos;
+    public boolean armControlToggle = true;
+    public boolean togglePressed = false;
+    @Override
     public void runOpMode() throws InterruptedException {
-        boolean armControlToggle = true;
-        boolean togglePressed = false;
+
+        ArmSubsystem armSubsystem = new ArmSubsystem("Arm", hardwareMap);
+        IntakeSubsystem intakeSubsystem = new IntakeSubsystem("Intake");
+        Wrist wristSubsystem = new Wrist("Wrist");
+        Drive driveSubsystem = new Drive("Drive", hardwareMap, telemetry);
+
+
         waitForStart();
-        ArmSubsystem armSubsystem = new ArmSubsystem("arm",hardwareMap);
-        IntakeSubsystem.initialize(hardwareMap);
-        Wrist wrist = new Wrist("wrist");
-        wrist.initialize(hardwareMap);
-        Drive drive = new Drive("drive",hardwareMap,telemetry);
-        drive.initialize(hardwareMap);
+
+
+        armSubsystem.initialize(hardwareMap);
+        intakeSubsystem.initialize(hardwareMap);
+        wristSubsystem.initialize(hardwareMap);
+        driveSubsystem.initialize(hardwareMap);
+
         while (opModeIsActive()) {
 
-            if (gamepad1.left_stick_button && !togglePressed) {
+            if (gamepad1.touchpad && !togglePressed) {
                 armControlToggle = !armControlToggle;
                 togglePressed = true;
-            } else if (!gamepad1.left_stick_button) {
+            } else if (!gamepad1.touchpad) {
                 togglePressed = false;
             }
 
+            double wristPosition = 0.35;
+                if (armSubsystem.getCurrentPositionWithLimitSwitch() >= DegreesToEncoderTicks(90)) {
+                    wristPosition = 0.55;
+                } else if (armSubsystem.getCurrentPositionWithLimitSwitch() >= DegreesToEncoderTicks(0)) {
+                    wristPosition = 0;
+                }
+
+                wristSubsystem.setPosition(wristPosition);
+
+
+
             if (armControlToggle) {
                 armSubsystem.ArmMovement(gamepad2);
-                IntakeSubsystem.contolIntakeBlueAlliance(gamepad2);
-                wrist.controlWrist(gamepad2);
-                if (!gamepad2.right_bumper || !gamepad2.left_bumper) {
-                    if (gamepad2.y) {
-                        pos = DegreesToEncoderTicks(120);
-                    } else if (gamepad2.x) {
-                        pos = DegreesToEncoderTicks(190);
-                    } else if (gamepad2.dpad_down) {
-                        pos = DegreesToEncoderTicks(215);
-                    } else if (gamepad2.b) {
-                        pos = DegreesToEncoderTicks(0);
-                    }
-
-                    piviotPID.setSetPoint(pos);
-                    piviotPID.updatePID(armSubsystem.getCurrentPositionWithLimitSwitch());
-                    piviotPID.setMaxOutput(0.7);
-                    piviotPID.setMinOutput(-0.7);
-                    armSubsystem.setPower(-piviotPID.getResult());
-                }
+                armSubsystem.climb(gamepad2);
+                intakeSubsystem.controlIntake(gamepad2);
+                wristSubsystem.controlWrist(gamepad2);
             } else {
                 armSubsystem.ArmMovement(gamepad1);
-                IntakeSubsystem.contolIntakeBlueAlliance(gamepad1);
-                wrist.controlWrist(gamepad1);
-                if (!gamepad1.right_bumper || !gamepad1.left_bumper) {
-                    if (gamepad1.y) {
-                        pos = DegreesToEncoderTicks(120);
-                    } else if (gamepad1.x) {
-                        pos = DegreesToEncoderTicks(190);
-                    } else if (gamepad1.dpad_down) {
-                        pos = DegreesToEncoderTicks(215);
-                    } else if (gamepad1.b) {
-                        pos = DegreesToEncoderTicks(0);
-                    }
-
-                    piviotPID.setSetPoint(pos);
-                    piviotPID.updatePID(armSubsystem.getCurrentPositionWithLimitSwitch());
-                    piviotPID.setMaxOutput(0.7);
-                    piviotPID.setMinOutput(-0.7);
-                    armSubsystem.setPower(-piviotPID.getResult());
-                }
-                gamepad2.rumble(1000);
+                armSubsystem.climb(gamepad1);
+                intakeSubsystem.controlIntake(gamepad1);
+                wristSubsystem.controlWrist(gamepad1);
             }
 
-
-            drive.FeildCentric(gamepad1);
             Mouse.update();
-
-//            telemetry.addData("Mouse X", Mouse.getX());
-//            telemetry.addData("Mouse Y", Mouse.getY());
-//            telemetry.addData("Mouse θ", Mouse.getTheta());
-//            telemetry.addData("Drive Left Front Pos", Drive.leftFrontPos());
-//            telemetry.addData("Drive Right Front Pos", Drive.RightFrontPos());
-//            telemetry.addData("Drive Left Back Pos", Drive.leftBackPos());
-//            telemetry.addData("Drive Right Back Pos", Drive.RightBackPos());
-//            telemetry.addData("Arm Current Position", getDegrees());
-            telemetry.addData("arm power",-piviotPID.getResult());
-
+            driveSubsystem.FeildCentric(gamepad1);
+            telemetry.addData("Gamepad Toggle State", armControlToggle ? "Gamepad2" : "Gamepad1");
+            telemetry.addData("Arm Degrees", getDegrees(armSubsystem.getCurrentPositionWithLimitSwitch()));
+            telemetry.addData("Drive Degrees", getDegrees(driveSubsystem.leftBackPos()));
+            telemetry.addData("Wrist Pos", wristSubsystem.getPosition());
+            telemetry.addData("Wrist Pos (Attempting to encounter)", wristPosition);
             telemetry.update();
         }
     }

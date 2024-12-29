@@ -1,6 +1,5 @@
 package org.firstinspires.ftc.teamcode;
 
-import static org.firstinspires.ftc.teamcode.Commands.StopIntake.StopTheIntake;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -28,7 +27,7 @@ public class CommandKitBot extends LinearOpMode {
 
         ArmSubsystem armSubsystem = new ArmSubsystem("arm",hardwareMap);
         IntakeSubsystem intake = new IntakeSubsystem("intakeSubsystem");
-        IntakeSubsystem.initialize(hardwareMap);
+        intake.initialize(hardwareMap);
         Wrist wrist = new Wrist("wrist");
         wrist.initialize(hardwareMap);
         Drive drive = new Drive("drive",hardwareMap,telemetry);
@@ -45,7 +44,7 @@ public class CommandKitBot extends LinearOpMode {
             wrist = new Wrist("wrist");
             wrist.initialize(hardwareMap);
 
-            IntakeSubsystem.initialize(hardwareMap);
+            intake.initialize(hardwareMap);
             Mouse.init(hardwareMap);
         } catch (Exception e) {
             telemetry.addData("Initialization Error", e.getMessage());
@@ -53,10 +52,10 @@ public class CommandKitBot extends LinearOpMode {
             return; // Exit if initialization fails
         }
 
-        ArmCommand Score = new ArmCommand(armSubsystem, DegreesToEncoderTicks(120));
-        ArmCommand Zero = new ArmCommand(armSubsystem, DegreesToEncoderTicks(0));
-        ArmCommand pickUp = new ArmCommand(armSubsystem, DegreesToEncoderTicks(215));
-        ArmCommand Enter = new ArmCommand(armSubsystem, DegreesToEncoderTicks(150));
+        ArmCommand Score = new ArmCommand(armSubsystem, DegreesToEncoderTicks(70));
+        ArmCommand Zero = new ArmCommand(armSubsystem, DegreesToEncoderTicks(4));
+        ArmCommand pickUp = new ArmCommand(armSubsystem, DegreesToEncoderTicks(120));
+        ArmCommand Enter = new ArmCommand(armSubsystem, DegreesToEncoderTicks(100));
 
         // Intake and wrist commands
         Intake intakeCommand = new Intake(intake);
@@ -77,13 +76,9 @@ public class CommandKitBot extends LinearOpMode {
 
                 // Command scheduling
                 if (gamepad1.right_trigger > 0 && !scheduler.isCommandScheduled(intakeCommand)) {
-                    StopTheIntake = false;
                     scheduler.schedule(intakeCommand);
                 } else if (gamepad1.left_trigger > 0 && !scheduler.isCommandScheduled(outtakeCommand)) {
-                    StopTheIntake = false;
                     scheduler.schedule(outtakeCommand);
-                } else {
-                    StopTheIntake = true;
                 }
 
                 if (gamepad1.y && !scheduler.isCommandScheduled(Score)) {
@@ -94,6 +89,16 @@ public class CommandKitBot extends LinearOpMode {
                     scheduler.schedule(Enter);
                 } else if (gamepad1.a && !scheduler.isCommandScheduled(pickUp)) {
                     scheduler.schedule(pickUp);
+                }
+
+                if (gamepad1.dpad_up){
+                    scheduler.schedule(zeroWrist);
+                }
+                else if (gamepad1.dpad_right){
+                    scheduler.schedule(rightWrist);
+                }
+                else if (gamepad1.dpad_left){
+                    scheduler.schedule(leftWrist);
                 }
 
                 // Run scheduled commands

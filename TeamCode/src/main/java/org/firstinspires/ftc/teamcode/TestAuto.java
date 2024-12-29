@@ -30,6 +30,7 @@ public class TestAuto extends LinearOpMode {
 
         PathLoading pathLoading = new PathLoading(hardwareMap.appContext, "AutoTest.polarpath");
         CommandScheduler scheduler = new CommandScheduler();
+        drive = new Drive("drive", hardwareMap, telemetry);
         Peripherals peripherals = new Peripherals("peripherals");
         PolarPathFollower moveToPosition;
 

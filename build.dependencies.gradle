@@ -17,6 +17,5 @@ dependencies {
     implementation('com.acmerobotics.dashboard:dashboard:0.4.16') {
         exclude group: 'org.firstinspires.ftc'
     }
-    implementation 'androidx.core:core-ktx:1.15.0'
 }
 

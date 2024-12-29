@@ -1,6 +1,6 @@
+
 package org.firstinspires.ftc.teamcode.Commands;
 
-import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.RobotLog;
 import org.firstinspires.ftc.teamcode.Subsystems.Subsystem;
 import org.firstinspires.ftc.teamcode.Tools.Robot;
@@ -12,6 +12,10 @@ public class CommandScheduler {
     private final List<Command> scheduledCommands = new ArrayList<>();
     private final Map<Subsystem, Command> activeSubsystemCommands = new HashMap<>();
     private Robot robot;
+
+    public CommandScheduler() {
+
+    }
 
     public static CommandScheduler getInstance() {
         if (instance == null) {
@@ -27,26 +31,25 @@ public class CommandScheduler {
     public void schedule(Command command) {
         Subsystem requiredSubsystem = command.getRequiredSubsystem();
 
-        // Check if the command is already active for the subsystem
         if (requiredSubsystem != null) {
             Command activeCommand = activeSubsystemCommands.get(requiredSubsystem);
 
-            // If the active command is the same as the one being scheduled, don't reschedule
-            if (activeCommand != null && activeCommand == command) {
+            // Prevent duplicate scheduling of the same command
+            if (activeCommand == command) {
                 RobotLog.d("Command already active, not rescheduling: " + command.getClass().getSimpleName());
                 return;
             }
 
-            // Cancel the currently active command only if it's not a default command
+            // Cancel the currently active command if it's not a default command
             if (activeCommand != null && !isDefaultCommand(activeCommand)) {
                 cancel(activeCommand);
             }
 
-            // Schedule the new command for the subsystem
+            // Associate the new command with the subsystem
             activeSubsystemCommands.put(requiredSubsystem, command);
         }
 
-        // Start the new command if it's not already started
+        // Schedule and start the new command if not already in the list
         if (!scheduledCommands.contains(command)) {
             scheduledCommands.add(command);
             command.start();
@@ -54,12 +57,10 @@ public class CommandScheduler {
         }
     }
 
-
-
     public void run() {
         List<Command> finishedCommands = new ArrayList<>();
 
-        // Iterate through all scheduled commands and check if they have finished
+        // Execute scheduled commands and handle completion
         for (Command command : new ArrayList<>(scheduledCommands)) {
             if (command.isFinished()) {
                 command.end();
@@ -70,13 +71,10 @@ public class CommandScheduler {
                 if (subsystem != null) {
                     activeSubsystemCommands.remove(subsystem);
 
-                    // Only reschedule default command if no higher-priority command is active
-                    if (subsystem.getDefaultCommand() != null && !activeSubsystemCommands.containsKey(subsystem)) {
-                        Command defaultCommand = subsystem.getDefaultCommand();
-                        if (!scheduledCommands.contains(defaultCommand)) {
-                            RobotLog.d("Scheduling Default Command: " + defaultCommand.getClass().getSimpleName());
-                            schedule(defaultCommand);
-                        }
+                    // Reschedule default command if no other commands are active for this subsystem
+                    Command defaultCommand = subsystem.getDefaultCommand();
+                    if (defaultCommand != null && !isCommandScheduled(defaultCommand)) {
+                        schedule(defaultCommand);
                     }
                 }
             } else {
@@ -86,25 +84,22 @@ public class CommandScheduler {
 
         scheduledCommands.removeAll(finishedCommands);
 
-        // Ensure that default commands are scheduled only when no other commands are active
+        // Ensure default commands are scheduled when needed
         for (Subsystem subsystem : getAllSubsystems()) {
             if (!activeSubsystemCommands.containsKey(subsystem)) {
                 Command defaultCommand = subsystem.getDefaultCommand();
                 if (defaultCommand != null && !isCommandScheduled(defaultCommand)) {
-                    RobotLog.d("Default Command Triggered for Subsystem: " + subsystem.getClass().getSimpleName());
                     schedule(defaultCommand);
                 }
             }
         }
     }
 
-        public void printCurrentCommands() {
+    public void printCurrentCommands() {
         RobotLog.d("===== Current Commands =====");
         for (Map.Entry<Subsystem, Command> entry : activeSubsystemCommands.entrySet()) {
-            Subsystem subsystem = entry.getKey();
-            Command command = entry.getValue();
-            RobotLog.d("Subsystem: " + subsystem.getClass().getSimpleName() +
-                    ", Command: " + command.getClass().getSimpleName());
+            RobotLog.d("Subsystem: " + entry.getKey().getClass().getSimpleName() +
+                    ", Command: " + entry.getValue().getClass().getSimpleName());
         }
         RobotLog.d("============================");
     }
@@ -122,10 +117,12 @@ public class CommandScheduler {
 
     private Set<Subsystem> getAllSubsystems() {
         Set<Subsystem> subsystems = new HashSet<>();
-        subsystems.add(robot.arm);
-        subsystems.add(robot.drive);
-        subsystems.add(robot.intake);
-        subsystems.add(robot.wrist);
+        if (robot != null) {
+            subsystems.add(robot.arm);
+            subsystems.add(robot.drive);
+            subsystems.add(robot.intake);
+            subsystems.add(robot.wrist);
+        }
         return subsystems;
     }
 
@@ -135,6 +132,7 @@ public class CommandScheduler {
     }
 
     private boolean isDefaultCommand(Command command) {
-        return command.getClass().getSimpleName().contains("Default");
+        Subsystem subsystem = command.getRequiredSubsystem();
+        return subsystem != null && subsystem.getDefaultCommand() == command;
     }
 }

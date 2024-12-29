@@ -1,3 +1,4 @@
+
 package org.firstinspires.ftc.teamcode.Subsystems;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -173,7 +174,7 @@ public class Drive extends Subsystem {
         drive(frontLeftPower, -frontRightPower, backLeftPower, backRightPower);
     }
 
-    public  void stop() {
+    public void stop() {
         drive(0,0,0,0);
 
         backLeftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -188,6 +189,14 @@ public class Drive extends Subsystem {
         frontRightMotor.setPower(-rightFrontPower);
         backLeftMotor.setPower(-leftBackPower);
         backRightMotor.setPower(-rightBackPower);
+    }
+
+    public void ArcadeDrive(Gamepad gamepad1) {
+        frontLeftMotor.setPower(gamepad1.left_stick_y);
+        backLeftMotor.setPower(gamepad1.left_stick_y);
+
+        frontRightMotor.setPower(gamepad1.right_stick_y);
+        backRightMotor.setPower(-gamepad1.right_stick_y);
     }
 
     public void FeildCentric(Gamepad gamepad1) {

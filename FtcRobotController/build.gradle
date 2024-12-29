@@ -6,6 +6,7 @@ import java.text.SimpleDateFormat
 apply plugin: 'com.android.library'
 
 android {
+
     defaultConfig {
         minSdkVersion 24
         //noinspection ExpiredTargetSdkVersion
@@ -16,19 +17,17 @@ android {
     buildFeatures {
         buildConfig = true
     }
-    compileSdk 35
+
+    compileSdkVersion 30
 
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_11
-        targetCompatibility JavaVersion.VERSION_11
+        sourceCompatibility JavaVersion.VERSION_21
+        targetCompatibility JavaVersion.VERSION_21
     }
-
     namespace = 'com.qualcomm.ftcrobotcontroller'
-    buildToolsVersion '35.0.0'
 }
-
 dependencies {
     implementation files("C:\\Drive\\FTC Robotics\\NAVX-MXP\\navxmxp-master.zip")
 }
-
 apply from: '../build.dependencies.gradle'
+
