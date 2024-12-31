@@ -80,6 +80,16 @@ public class Constants {
     public static double getDegrees(double getPosition) {
         return -((getPosition / (1333/90) + 21));
     }
+
+    public static double setPowerToPercentage(double percentage) {
+        if (percentage > 100) {
+            percentage = 100;
+        } else if (percentage < -100) {
+            percentage = -100;
+        }
+        return percentage / 100;
+    }
+
     public static double getOffsetFromVoltage(double voltage){
         return 5.03 + -4950*voltage + -4731*Math.pow(voltage, 2) + -2098*Math.pow(voltage, 3) + -286*Math.pow(voltage, 4);
     }

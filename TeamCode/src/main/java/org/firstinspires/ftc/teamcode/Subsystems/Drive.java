@@ -200,8 +200,8 @@ public class Drive extends Subsystem {
     }
 
     public void FeildCentric(Gamepad gamepad1) {
-        double x = gamepad1.left_stick_x*2;
-        double y = gamepad1.left_stick_y;
+        double x = -gamepad1.left_stick_x*2;
+        double y = -gamepad1.left_stick_y;
         double rx = -gamepad1.right_stick_x;
 
         double botHeading = -Math.toRadians(Mouse.getTheta());
@@ -215,11 +215,11 @@ public class Drive extends Subsystem {
         double rotY = x * Math.sin(-botHeading) + y * Math.cos(-botHeading);
 
         double frontLeftPower = (rotY - rotX - rx);
-        double backLeftPower = (rotY + rotX - rx);
-        double frontRightPower = (rotY - rotX + rx);
-        double backRightPower = (rotY + rotX + rx);
+        double backLeftPower = (-rotY - rotX + rx);
+        double frontRightPower = (rotY + rotX + rx);
+        double backRightPower = (rotY - rotX + rx);
 
-        drive(-frontLeftPower, -frontRightPower, -backLeftPower, backRightPower);
+        drive(frontLeftPower, frontRightPower, backLeftPower, backRightPower);
 
 
 
@@ -417,13 +417,14 @@ public class Drive extends Subsystem {
         rotX *= 1.1;
 
         double denominator = Math.max(Math.abs(rotY) + Math.abs(rotX) + Math.abs(rotationFactor), 1);
-        double frontLeftPower = (rotX + rotY + rotationFactor) / denominator;
-        double frontRightPower = (rotX - rotY - rotationFactor) / denominator;
-        double backLeftPower = (rotX - rotY + rotationFactor) / denominator;
-        double backRightPower = (rotX + rotY - rotationFactor) / denominator;
+        double frontLeftPower = (rotY - rotX + rotationFactor) / denominator;
+        double frontRightPower = (rotY + rotX - rotationFactor) / denominator;
+        double backLeftPower = (-rotY - rotX + rotationFactor) / denominator;
+        double backRightPower = (rotY - rotX - rotationFactor) / denominator;
+
 
         // Call the drive method using the passed instance
-        drive.drive(-frontLeftPower, frontRightPower, -backLeftPower, -backRightPower);
+        drive.drive(-frontLeftPower, -frontRightPower, -backLeftPower, -backRightPower);
     }
 
 

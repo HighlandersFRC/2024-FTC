@@ -28,7 +28,7 @@ public class TestAuto extends LinearOpMode {
         Drive drive = new Drive("drive",hardwareMap,telemetry);
         drive.setPosition(0, 0, 0);
 
-        PathLoading pathLoading = new PathLoading(hardwareMap.appContext, "AutoTest.polarpath");
+        PathLoading pathLoading = new PathLoading(hardwareMap.appContext, "Turn90Deg.polarpath");
         CommandScheduler scheduler = new CommandScheduler();
         drive = new Drive("drive", hardwareMap, telemetry);
         Peripherals peripherals = new Peripherals("peripherals");
@@ -55,8 +55,6 @@ public class TestAuto extends LinearOpMode {
             double robotX = FinalPose.x;
             double robotY = FinalPose.y;
             double robotTheta = FinalPose.Yaw;
-            robotY = -robotY;
-            robotX = -robotX;
             telemetry.addData("X", -robotY);
             telemetry.addData("Y", -robotX);
             telemetry.addData("Theta", robotTheta);

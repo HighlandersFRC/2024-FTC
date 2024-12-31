@@ -8,11 +8,12 @@ import com.qualcomm.robotcore.hardware.Servo;
 import org.firstinspires.ftc.teamcode.Commands.Command;
 import org.firstinspires.ftc.teamcode.Commands.DefaultCommands.IntakeDefault;
 public class IntakeSubsystem extends Subsystem {
-    private Servo RightIntake;
-    private Servo LeftIntake;
+   public Servo RightIntake;
+    public Servo LeftIntake;
 
-    private double lastRightIntakePosition = -1;
-    private double lastLeftIntakePosition = -1;
+    public double intakePosRight;
+    public double intakePosLeft;
+
     public IntakeSubsystem(String name) {
         super(name);
     }
@@ -33,32 +34,20 @@ public class IntakeSubsystem extends Subsystem {
 
 
     public void controlIntake(Gamepad gamepad1) {
-        double rightIntakePosition = lastRightIntakePosition; // Default to the last position
-        double leftIntakePosition = lastLeftIntakePosition;
 
-        if (gamepad1.right_trigger > 0) {
-            // Fully open the intake
-            rightIntakePosition = 1.0;
-            leftIntakePosition = 0.0;
-        } else if (gamepad1.left_trigger > 0) {
-            // Clamp the intake
-            rightIntakePosition = 0.5;
-            leftIntakePosition = 0.5;
+        intakePosRight = 0;
+        intakePosLeft = 0.5;
+        if (gamepad1.left_trigger != 0) {
+            intakePosRight = 0;
+            intakePosLeft = 0.5;
+        } else if (gamepad1.right_trigger!= 0) {
+            intakePosRight = 0.5;
+            intakePosLeft = 0;
+        }
+        RightIntake.setPosition(intakePosRight);
+        LeftIntake.setPosition(intakePosLeft);
         }
 
-        // Update servo positions only if they are different from the last known positions
-        if (rightIntakePosition != lastRightIntakePosition || leftIntakePosition != lastLeftIntakePosition) {
-            RightIntake.setPosition(rightIntakePosition);
-            LeftIntake.setPosition(leftIntakePosition);
-
-            // Update last known positions
-            lastRightIntakePosition = rightIntakePosition;
-            lastLeftIntakePosition = leftIntakePosition;
-
-            // Debugging
-            System.out.println("Servo positions updated: Right=" + rightIntakePosition + ", Left=" + leftIntakePosition);
-        }
-    }
 
 
 

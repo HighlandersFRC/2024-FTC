@@ -25,6 +25,7 @@ public class Mouse {
         mouse.setOffset(offset);
         mouse.setLinearScalar(1.005809562240364);
         mouse.setAngularScalar(0.989932511851);
+
         mouse.calibrateImu();
         mouse.resetTracking();
 

@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
 import static org.firstinspires.ftc.teamcode.Tools.Constants.DegreesToEncoderTicks;
+import static org.firstinspires.ftc.teamcode.Tools.Constants.absoluteArmZero;
 import static org.firstinspires.ftc.teamcode.Tools.Constants.getDegrees;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -42,15 +43,8 @@ public class kitbot extends LinearOpMode {
             } else if (!gamepad1.touchpad) {
                 togglePressed = false;
             }
+            wristSubsystem.setPosition(armSubsystem.wristPosition);
 
-            double wristPosition = 0.35;
-                if (armSubsystem.getCurrentPositionWithLimitSwitch() >= DegreesToEncoderTicks(90)) {
-                    wristPosition = 0.55;
-                } else if (armSubsystem.getCurrentPositionWithLimitSwitch() >= DegreesToEncoderTicks(0)) {
-                    wristPosition = 0;
-                }
-
-                wristSubsystem.setPosition(wristPosition);
 
 
 
@@ -72,7 +66,6 @@ public class kitbot extends LinearOpMode {
             telemetry.addData("Arm Degrees", getDegrees(armSubsystem.getCurrentPositionWithLimitSwitch()));
             telemetry.addData("Drive Degrees", getDegrees(driveSubsystem.leftBackPos()));
             telemetry.addData("Wrist Pos", wristSubsystem.getPosition());
-            telemetry.addData("Wrist Pos (Attempting to encounter)", wristPosition);
             telemetry.update();
         }
     }

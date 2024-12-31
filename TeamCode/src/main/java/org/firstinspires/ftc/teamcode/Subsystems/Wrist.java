@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.Subsystems;
 
+import static org.firstinspires.ftc.teamcode.Tools.Constants.DegreesToEncoderTicks;
+
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -29,6 +31,7 @@ public class Wrist extends Subsystem {
         } else if (gamepad1.dpad_right) {
             position = 0.0;
         }
+
 
         setPosition(position);
     }

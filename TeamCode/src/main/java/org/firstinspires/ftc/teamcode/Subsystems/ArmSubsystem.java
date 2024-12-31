@@ -4,6 +4,7 @@ import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.har
 import static org.firstinspires.ftc.teamcode.Tools.Constants.DegreesToEncoderTicks;
 import static org.firstinspires.ftc.teamcode.Tools.Constants.piviotPID;
 import static org.firstinspires.ftc.teamcode.Tools.Constants.BRAKE;
+import static org.firstinspires.ftc.teamcode.Tools.Constants.setPowerToPercentage;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
@@ -15,6 +16,7 @@ import org.firstinspires.ftc.teamcode.Commands.DefaultCommands.ArmDefault;
 import org.firstinspires.ftc.teamcode.Tools.Constants;
 
 public class ArmSubsystem extends Subsystem {
+    public double wristPosition = 0.35;
     private DcMotor pivotMotor;
     private DigitalChannel limitSwitch;
     ArmSubsystem armSubsystem;
@@ -66,20 +68,24 @@ public class ArmSubsystem extends Subsystem {
     public void ArmMovement(Gamepad gamepad1) {
 
         if (gamepad1.y) {
-            pos = DegreesToEncoderTicks(70);
+            pos = DegreesToEncoderTicks(-45);
+            wristPosition = 0.55;
         } else if (gamepad1.x) {
             pos = DegreesToEncoderTicks(90);
+            wristPosition = 0.55;
         } else if (gamepad1.dpad_down) {
             pos = DegreesToEncoderTicks(120);
+            wristPosition = 0.35;
         } else if (gamepad1.b) {
             pos = DegreesToEncoderTicks(0);
+            wristPosition = 0.2;
         }
 
 
         piviotPID.setSetPoint(pos);
         piviotPID.updatePID(getCurrentPositionWithLimitSwitch());
-        piviotPID.setMaxOutput(1);
-        piviotPID.setMinOutput(-1);
+        piviotPID.setMaxOutput(setPowerToPercentage(70));
+        piviotPID.setMinOutput(setPowerToPercentage(-70));
 
         double pidResult = -piviotPID.getResult();
         pivotMotor.setPower(pidResult);
@@ -91,13 +97,15 @@ public class ArmSubsystem extends Subsystem {
     }
 
     public void climb(Gamepad gamepad1) {
-        if (gamepad1.a) {
-            setPower(-1.0);
-            if (!limitSwitch.getState()) {
-                pos = 0;
-                BRAKE(pivotMotor);
-                setPower(0.0);
-                System.out.println("Limit switch triggered, position reset.");
+        if (!gamepad1.b || !gamepad1.dpad_down || !gamepad1.y || !gamepad1.x) {
+            if (gamepad1.a) {
+                setPower(-1.0);
+                if (!limitSwitch.getState()) {
+                    pos = 0;
+                    BRAKE(pivotMotor);
+                    setPower(0.0);
+                    System.out.println("Limit switch triggered, position reset.");
+                }
             }
         }
     }
