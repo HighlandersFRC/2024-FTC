@@ -3,6 +3,10 @@ package org.firstinspires.ftc.teamcode.Tools;
 
 import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.hardwareMap;
 
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.Gamepad;
+
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.Commands.Command;
 import org.firstinspires.ftc.teamcode.Subsystems.ArmSubsystem;
 
@@ -29,6 +33,8 @@ public class Constants {
     public static double ArmDownPosition = 200;
     public static Object SetPoints;
     public static PID piviotPID = new PID(0.01, 0, 0.01);
+    private static boolean armControlToggle = true;
+    private static boolean previousButtonState = false;
 
     public static double nextX;
     public static double nextY;
@@ -37,13 +43,26 @@ public class Constants {
     public static double DegreesToEncoderTicks(double degrees) {
         return -(degrees / (360) * 5700.4);
     }
-    public static double EncoderTicksToDegrees(double encoderTicks) {
-        return -(encoderTicks / 5700.4) * 360;
+
+    public static void BRAKE(DcMotor motor) {
+        motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
     }
 
-    public static double GravityTerm(double encoderTicks) {
+    public static double ServoInputToDegrees(double degrees) {
+        final double MIN_PWM = 1000;
+        final double MAX_PWM = 2000;
+        final double MIN_DEGREES = 0;
+        final double MAX_DEGREES = 300;
 
-        double degrees = EncoderTicksToDegrees(encoderTicks);
+        // Map servo input to degrees
+        return MIN_DEGREES + (degrees - MIN_PWM) * (MAX_DEGREES - MIN_DEGREES) / (MAX_PWM - MIN_PWM);
+    }
+
+
+
+    public static double GravityTerm(double degreesInput) {
+
+        double degrees = DegreesToEncoderTicks(degreesInput);
 
 
         double gravityConstant = 9.81;
@@ -52,10 +71,25 @@ public class Constants {
         return Math.abs(gravityForce);
     }
 
-    public static double getDegrees() {
-        ArmSubsystem armSubsystem = new ArmSubsystem("arm",hardwareMap);
-        return -((armSubsystem.getCurrentPositionWithLimitSwitch() / (1333/90) + 21));
+
+        // Static variable to maintain toggle state across calls
+
+
+
+
+    public static double getDegrees(double getPosition) {
+        return -((getPosition / (1333/90) + 21));
     }
+
+    public static double setPowerToPercentage(double percentage) {
+        if (percentage > 100) {
+            percentage = 100;
+        } else if (percentage < -100) {
+            percentage = -100;
+        }
+        return percentage / 100;
+    }
+
     public static double getOffsetFromVoltage(double voltage){
         return 5.03 + -4950*voltage + -4731*Math.pow(voltage, 2) + -2098*Math.pow(voltage, 3) + -286*Math.pow(voltage, 4);
     }

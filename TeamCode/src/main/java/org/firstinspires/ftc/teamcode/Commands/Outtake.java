@@ -1,8 +1,6 @@
 package org.firstinspires.ftc.teamcode.Commands;
 
 
-import static org.firstinspires.ftc.teamcode.Commands.StopIntake.StopTheIntake;
-
 import org.firstinspires.ftc.teamcode.Subsystems.IntakeSubsystem;
 import org.firstinspires.ftc.teamcode.Subsystems.Subsystem;
 
@@ -20,23 +18,23 @@ public class Outtake implements Command  {
 
     @Override
     public void start() {
-     System.out.println("Outtake started");
+        System.out.println("Outtake started");
     }
 
     @Override
     public void execute()  {
-    System.out.println("Outtake executing");
-    IntakeSubsystem.setPower(-1);
+        System.out.println("Outtake executing");
+        intakeSubsystem.setPosition(1,-1);
     }
 
     @Override
     public void end() {
-    IntakeSubsystem.setPower(0);
+        intakeSubsystem.setPosition(1,-1);
     }
 
     @Override
     public boolean isFinished() {
-        return StopTheIntake;
+        return intakeSubsystem.getPositionLeft() == -1 && intakeSubsystem.getPositionRight() == 1;
     }
 
     @Override
@@ -45,4 +43,3 @@ public class Outtake implements Command  {
     }
 
 }
-

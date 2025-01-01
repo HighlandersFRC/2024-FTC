@@ -22,7 +22,7 @@ public class kitbot extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
 
         ArmSubsystem armSubsystem = new ArmSubsystem("Arm", hardwareMap);
-
+        IntakeSubsystem intakeSubsystem = new IntakeSubsystem("Intake");
         Wrist wristSubsystem = new Wrist("Wrist");
         Drive driveSubsystem = new Drive("Drive", hardwareMap, telemetry);
 
@@ -30,7 +30,8 @@ public class kitbot extends LinearOpMode {
         waitForStart();
 
 
-
+        armSubsystem.initialize(hardwareMap);
+        intakeSubsystem.initialize(hardwareMap);
         wristSubsystem.initialize(hardwareMap);
         driveSubsystem.initialize(hardwareMap);
 
@@ -42,10 +43,28 @@ public class kitbot extends LinearOpMode {
             } else if (!gamepad1.touchpad) {
                 togglePressed = false;
             }
+            wristSubsystem.setPosition(armSubsystem.wristPosition);
+
+
+
+
+            if (armControlToggle) {
+                armSubsystem.ArmMovement(gamepad2);
+                armSubsystem.climb(gamepad2);
+                intakeSubsystem.controlIntake(gamepad2);
+                wristSubsystem.controlWrist(gamepad2);
+            } else {
+                armSubsystem.ArmMovement(gamepad1);
+                armSubsystem.climb(gamepad1);
+                intakeSubsystem.controlIntake(gamepad1);
+                wristSubsystem.controlWrist(gamepad1);
+            }
 
             Mouse.update();
             driveSubsystem.FeildCentric(gamepad1);
             telemetry.addData("Gamepad Toggle State", armControlToggle ? "Gamepad2" : "Gamepad1");
+            telemetry.addData("Arm Degrees", getDegrees(armSubsystem.getCurrentPositionWithLimitSwitch()));
+            telemetry.addData("Drive Degrees", getDegrees(driveSubsystem.leftBackPos()));
             telemetry.addData("Wrist Pos", wristSubsystem.getPosition());
             telemetry.update();
         }
