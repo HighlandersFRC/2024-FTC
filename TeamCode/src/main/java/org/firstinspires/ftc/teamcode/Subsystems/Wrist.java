@@ -48,7 +48,11 @@ public void contolWristWithOperator(Gamepad gamepad2) {
     }
 
     public void setPosition(double pos){
-        wrist.setPosition(pos);
+        wrist.setPosition(pos
+
+
+
+        );
     }
 
     @Override

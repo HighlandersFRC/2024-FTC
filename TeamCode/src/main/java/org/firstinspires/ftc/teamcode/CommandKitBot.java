@@ -76,10 +76,10 @@ public class CommandKitBot extends LinearOpMode {
                 drive.FeildCentric(gamepad1);
 
                 // Command scheduling
-                if (gamepad1.right_trigger > 0 && !scheduler.isCommandScheduled(intakeCommand)) {
+                if (gamepad1.right_trigger > 0 ) {
                     StopTheIntake = false;
                     scheduler.schedule(intakeCommand);
-                } else if (gamepad1.left_trigger > 0 && !scheduler.isCommandScheduled(outtakeCommand)) {
+                } else if (gamepad1.left_trigger > 0 ) {
                     StopTheIntake = false;
                     scheduler.schedule(outtakeCommand);
                 } else {

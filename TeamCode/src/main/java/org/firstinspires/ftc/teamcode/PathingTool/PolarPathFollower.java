@@ -28,7 +28,7 @@ public class PolarPathFollower implements Command {
 
     private PID xPID = new PID(3.6, 0, 1.9);
     private PID yPID = new PID(3.6, 0, 1.9);
-    private PID yawPID = new PID(2.5, 0, 1);
+    private PID yawPID = new PID(5, 0,0);
     private HashMap<String, Supplier<Command>> commandMap;
     private HashMap<String, BooleanSupplier> conditionMap;
 
@@ -101,10 +101,10 @@ public class PolarPathFollower implements Command {
             yawPID.setSetPoint(nextTheta);
             yawPID.updatePID(currentTheta);
 
-            Vector relativePos = new Vector(xPID.getResult(), yPID.getResult());
+            Vector relativePos = new Vector(-xPID.getResult(), -yPID.getResult());
 
             // Pass the 'drive' instance here to autoDrive
-            drive.autoDrive(relativePos, yawPID.getResult(), drive);
+            drive.autoDrive(relativePos, -yawPID.getResult(), drive);
 
             JSONArray commands = points.getJSONObject(index).optJSONArray("commands");
             if (commands != null) {

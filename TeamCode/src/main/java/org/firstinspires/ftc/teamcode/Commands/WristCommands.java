@@ -32,7 +32,10 @@ public class WristCommands implements Command {
 
     @Override
     public boolean isFinished() {
-        return wristSubsystem.getPosition() == pos; // Compare desired and current position
+
+        double tolerance = 0.07;
+        double currentPosition = wristSubsystem.getPosition();
+        return Math.abs(currentPosition - pos) <= tolerance;
     }
 
     @Override

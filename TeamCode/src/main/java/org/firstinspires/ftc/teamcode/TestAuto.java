@@ -21,15 +21,15 @@ public class TestAuto extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
-        FieldOfMerit.initialize(hardwareMap);
         Mouse.init(hardwareMap);
 
-        Mouse.configureOtos();
+
         Drive drive = new Drive("drive",hardwareMap,telemetry);
         drive.setPosition(0, 0, 0);
 
-        PathLoading pathLoading = new PathLoading(hardwareMap.appContext, "AutoTest.polarpath");
+        PathLoading pathLoading = new PathLoading(hardwareMap.appContext, "Turn90Deg.polarpath");
         CommandScheduler scheduler = new CommandScheduler();
+        drive = new Drive("drive", hardwareMap, telemetry);
         Peripherals peripherals = new Peripherals("peripherals");
         PolarPathFollower moveToPosition;
 
@@ -39,6 +39,7 @@ public class TestAuto extends LinearOpMode {
             throw new RuntimeException(e);
         }*/
         waitForStart();
+        Mouse.configureOtos();
         try {
             moveToPosition = new PolarPathFollower(drive, peripherals, PathLoading.getJsonPathData(), Constants.commandMap, Constants.conditionMap, scheduler);
             scheduler.schedule(moveToPosition);
@@ -54,10 +55,8 @@ public class TestAuto extends LinearOpMode {
             double robotX = FinalPose.x;
             double robotY = FinalPose.y;
             double robotTheta = FinalPose.Yaw;
-            robotY = -robotY;
-            robotX = -robotX;
-            telemetry.addData("X", -robotY);
-            telemetry.addData("Y", -robotX);
+            telemetry.addData("X", robotX);
+            telemetry.addData("Y", robotY);
             telemetry.addData("Theta", robotTheta);
             telemetry.update();
         }
