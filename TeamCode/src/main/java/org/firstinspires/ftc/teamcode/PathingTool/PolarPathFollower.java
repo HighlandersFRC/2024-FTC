@@ -118,6 +118,7 @@ public class PolarPathFollower implements Command {
                 }
             }
 
+
             System.out.println("Vector X: " + relativePos.getI() + ", Vector Y: " + relativePos.getJ() +
                     ", Theta: " + currentTheta + ", Index: " + index);
 
