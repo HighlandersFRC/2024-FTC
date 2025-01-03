@@ -1,46 +1,78 @@
 package org.firstinspires.ftc.teamcode.Subsystems;
 
+
+import static org.firstinspires.ftc.teamcode.Tools.Constants.MAX_TICKS;
+import static org.firstinspires.ftc.teamcode.Tools.Constants.MIN_TICKS;
+import static org.firstinspires.ftc.teamcode.Tools.Constants.elevatorPID;
+
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
-public class ElevatorSubsystem extends Subsystem{
-    public static DcMotor ElevatorL;
-    public static DcMotor ElevatorR;
-
-    public static String name = "Elevators";
-
-    public ElevatorSubsystem(String name) {
+public class ElevatorSubsystem extends Subsystem  {
+    private DcMotor Elevator;
+    ArmSubsystem armSubsystem;
+    public ElevatorSubsystem(String name, HardwareMap hardwareMap) {
         super(name);
+        this.Elevator = null;
+        initialize(hardwareMap);
     }
 
-    public static void initialize(HardwareMap hardwareMap){
-        ElevatorL = hardwareMap.dcMotor.get("Elevator_Left");
-        ElevatorR = hardwareMap.dcMotor.get("Elevator_Right");
+    public void initialize(HardwareMap hardwareMap) {
+        Elevator = hardwareMap.dcMotor.get( "Elevator");
+    }
 
-        ElevatorL.setDirection(DcMotorSimple.Direction.REVERSE);
-    }
-    public static void resetEncoders(){
-        ElevatorL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        ElevatorR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
-        ElevatorL.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        ElevatorR.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+
+    public void manual(Gamepad gamepad1) {
+        double currentPosition = Elevator.getCurrentPosition();
+
+
+        if (gamepad1.right_bumper && currentPosition < MAX_TICKS) {
+            Elevator.setPower(0.5);
+        } else if (gamepad1.left_bumper && currentPosition > MIN_TICKS) {
+            Elevator.setPower(-0.5);
+        } else {
+            Elevator.setPower(0);
+        }
+
+
     }
-    public static double getArmLPosition(){
-        return ElevatorL.getCurrentPosition();
+
+
+    public void contolElevatorSetPoint(Gamepad gamepad1) {
+        armSubsystem.elePos = Math.max(MIN_TICKS, Math.min(MAX_TICKS, armSubsystem.elePos));
+
+        elevatorPID.setSetPoint(armSubsystem.elePos);
+
+        elevatorPID.updatePID(Elevator.getCurrentPosition());
+        elevatorPID.setMaxOutput(0.5);
+        elevatorPID.setMinOutput(-0.5);
+        Elevator.setPower(elevatorPID.getResult());
     }
-    public static double getArmRPosition(){
-        return ElevatorR.getCurrentPosition();
+
+
+
+    public void contolElevator(Gamepad gamepad1) {
+        double currentPosition = Elevator.getCurrentPosition();
+
+        if (gamepad1.right_bumper && currentPosition < MAX_TICKS) {
+            Elevator.setPower(0.5);
+        } else if (gamepad1.left_bumper && currentPosition > MIN_TICKS) {
+            Elevator.setPower(-0.5);
+        } else {
+            Elevator.setPower(0);
+        }
+
+        armSubsystem.elePos = Math.max(MIN_TICKS, Math.min(MAX_TICKS, armSubsystem.elePos));
+
+        elevatorPID.setSetPoint(armSubsystem.elePos);
+
+        elevatorPID.updatePID(Elevator.getCurrentPosition());
+        elevatorPID.setMaxOutput(0.5);
+        elevatorPID.setMinOutput(-0.5);
+        Elevator.setPower(elevatorPID.getResult());
     }
-    public static void moveElevatorsL(double power){
-        ElevatorL.setPower(power);
-    }
-    public static void moveElevatorsR(double power){
-        ElevatorR.setPower(power);
-    }
-    public static void brakeMotors(){
-        ElevatorL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        ElevatorR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-    }
+
 }

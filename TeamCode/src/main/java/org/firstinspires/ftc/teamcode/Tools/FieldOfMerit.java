@@ -19,7 +19,7 @@ public class FieldOfMerit {
 
 
     public static void initialize(HardwareMap hardwareMap) {
-        Drive drive = new Drive("drive",hardwareMap,telemetry);
+        Drive drive = new Drive("drive",hardwareMap);
         drive.initialize(hardwareMap);
         Peripherals.initialize(hardwareMap);
 

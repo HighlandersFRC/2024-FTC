@@ -25,12 +25,12 @@ public class TestAuto extends LinearOpMode {
         Mouse.init(hardwareMap);
 
         Mouse.configureOtos();
-        Drive drive = new Drive("drive",hardwareMap,telemetry);
+        Drive drive = new Drive("drive",hardwareMap);
         drive.setPosition(0, 0, 0);
 
-        PathLoading pathLoading = new PathLoading(hardwareMap.appContext, "Turn90Deg.polarpath");
+        PathLoading pathLoading = new PathLoading(hardwareMap.appContext, "DriveForeward.polarpath");
         CommandScheduler scheduler = new CommandScheduler();
-        drive = new Drive("drive", hardwareMap, telemetry);
+        drive = new Drive("drive", hardwareMap);
         Peripherals peripherals = new Peripherals("peripherals");
         PolarPathFollower moveToPosition;
 
@@ -38,7 +38,8 @@ public class TestAuto extends LinearOpMode {
             scheduler.schedule(new Wait(3000));
         } catch (JSONException e) {
             throw new RuntimeException(e);
-        }*/
+        }
+ */
         waitForStart();
         try {
             moveToPosition = new PolarPathFollower(drive, peripherals, PathLoading.getJsonPathData(), Constants.commandMap, Constants.conditionMap, scheduler);

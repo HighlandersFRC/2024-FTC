@@ -1,6 +1,7 @@
 
 package org.firstinspires.ftc.teamcode.Commands.DefaultCommands;
 
+import static org.firstinspires.ftc.teamcode.Subsystems.Pivot.pivotMotor;
 import static org.firstinspires.ftc.teamcode.Tools.Constants.GravityTerm;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -33,13 +34,13 @@ public class ArmDefault implements Command {
     public void execute() {
         pivotPower = pivotPID.updatePID(arm.getCurrentPositionWithLimitSwitch());
         double feed = GravityTerm(arm.getCurrentPositionWithLimitSwitch());
-        arm.setPower(-pivotPower * feed);
+        arm.setPower(pivotMotor,-pivotPower * feed);
         System.out.println(pos + " ArmDefault executing");
     }
 
     @Override
     public void end() {
-        arm.setPower(0);
+        arm.setPower(pivotMotor,0);
         System.out.println("ArmDefault ended");
     }
 

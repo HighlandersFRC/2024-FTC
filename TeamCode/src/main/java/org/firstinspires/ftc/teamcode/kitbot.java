@@ -9,6 +9,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.Subsystems.ArmSubsystem;
 import org.firstinspires.ftc.teamcode.Subsystems.Drive;
+import org.firstinspires.ftc.teamcode.Subsystems.ElevatorSubsystem;
 import org.firstinspires.ftc.teamcode.Subsystems.IntakeSubsystem;
 import org.firstinspires.ftc.teamcode.Subsystems.Wrist;
 import org.firstinspires.ftc.teamcode.Tools.Mouse;
@@ -20,20 +21,15 @@ public class kitbot extends LinearOpMode {
     public boolean togglePressed = false;
     @Override
     public void runOpMode() throws InterruptedException {
-
+        ElevatorSubsystem elevatorSubsystem = new ElevatorSubsystem("Elevator", hardwareMap);
         ArmSubsystem armSubsystem = new ArmSubsystem("Arm", hardwareMap);
-        IntakeSubsystem intakeSubsystem = new IntakeSubsystem("Intake");
-        Wrist wristSubsystem = new Wrist("Wrist");
-        Drive driveSubsystem = new Drive("Drive", hardwareMap, telemetry);
+        IntakeSubsystem intakeSubsystem = new IntakeSubsystem("Intake", hardwareMap);
+        Wrist wristSubsystem = new Wrist("Wrist", hardwareMap);
+        Drive driveSubsystem = new Drive("Drive", hardwareMap);
 
 
         waitForStart();
 
-
-        armSubsystem.initialize(hardwareMap);
-        intakeSubsystem.initialize(hardwareMap);
-        wristSubsystem.initialize(hardwareMap);
-        driveSubsystem.initialize(hardwareMap);
 
         while (opModeIsActive()) {
 
@@ -43,21 +39,22 @@ public class kitbot extends LinearOpMode {
             } else if (!gamepad1.touchpad) {
                 togglePressed = false;
             }
-            wristSubsystem.setPosition(armSubsystem.wristPosition);
+
 
 
 
 
             if (armControlToggle) {
                 armSubsystem.ArmMovement(gamepad2);
-                armSubsystem.climb(gamepad2);
+                elevatorSubsystem.contolElevator(gamepad2);
                 intakeSubsystem.controlIntake(gamepad2);
                 wristSubsystem.controlWrist(gamepad2);
             } else {
                 armSubsystem.ArmMovement(gamepad1);
-                armSubsystem.climb(gamepad1);
+                elevatorSubsystem.contolElevator(gamepad1);
                 intakeSubsystem.controlIntake(gamepad1);
                 wristSubsystem.controlWrist(gamepad1);
+                gamepad2.rumble(1000);
             }
 
             Mouse.update();

@@ -1,6 +1,8 @@
 
 package org.firstinspires.ftc.teamcode.Commands;
 
+import static org.firstinspires.ftc.teamcode.Subsystems.Pivot.pivotMotor;
+
 import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.teamcode.Subsystems.ArmSubsystem;
@@ -37,12 +39,12 @@ public class ArmCommand implements Command {
     public void execute() {
         pos = arm.getCurrentPositionWithLimitSwitch(); // Update static pos
         pivotPower = pivotPID.updatePID(pos);
-        arm.setPower(-pivotPower);
+        arm.setPower(pivotMotor ,-pivotPower);
     }
 
     @Override
     public void end() {
-        arm.setPower(0);
+        arm.setPower(pivotMotor, 0);
         System.out.println("Command ended.");
     }
 

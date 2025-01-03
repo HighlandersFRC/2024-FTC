@@ -52,7 +52,7 @@ public class Drive extends Subsystem {
     private final double L = 0.4064;
     private final double W = 0.4064;
 
-    public Drive(String name, HardwareMap hardwareMap, Telemetry telemetry) {
+    public Drive(String name, HardwareMap hardwareMap) {
         super(name);
 
         // Initialize motors using the HardwareMap
@@ -84,6 +84,7 @@ public class Drive extends Subsystem {
         backLeftMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         frontRightMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         backRightMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
     }
 
 
@@ -174,7 +175,7 @@ public class Drive extends Subsystem {
         drive(frontLeftPower, -frontRightPower, backLeftPower, backRightPower);
     }
 
-    public void stop() {
+    public  void stop() {
         drive(0,0,0,0);
 
         backLeftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -189,14 +190,6 @@ public class Drive extends Subsystem {
         frontRightMotor.setPower(-rightFrontPower);
         backLeftMotor.setPower(-leftBackPower);
         backRightMotor.setPower(-rightBackPower);
-    }
-
-    public void ArcadeDrive(Gamepad gamepad1) {
-        frontLeftMotor.setPower(gamepad1.left_stick_y);
-        backLeftMotor.setPower(gamepad1.left_stick_y);
-
-        frontRightMotor.setPower(gamepad1.right_stick_y);
-        backRightMotor.setPower(-gamepad1.right_stick_y);
     }
 
     public void FeildCentric(Gamepad gamepad1) {
@@ -220,12 +213,6 @@ public class Drive extends Subsystem {
         double backRightPower = (rotY - rotX + rx);
 
         drive(frontLeftPower, frontRightPower, backLeftPower, backRightPower);
-
-
-
-
-
-
     }
 
     public void resetEncoder() {
@@ -405,9 +392,9 @@ public class Drive extends Subsystem {
 
     public void autoDrive(Vector vector, double angle, Drive drive) {
         double vx = vector.getI();
-        double vy = -vector.getJ();
+        double vy = vector.getJ();
 
-        double rotationFactor = -(angle);
+        double rotationFactor = angle;
 
         double botHeading = Math.toRadians(FinalPose.Yaw);
 
@@ -418,13 +405,16 @@ public class Drive extends Subsystem {
 
         double denominator = Math.max(Math.abs(rotY) + Math.abs(rotX) + Math.abs(rotationFactor), 1);
         double frontLeftPower = (rotY - rotX + rotationFactor) / denominator;
-        double frontRightPower = (rotY + rotX - rotationFactor) / denominator;
         double backLeftPower = (-rotY - rotX + rotationFactor) / denominator;
+        double frontRightPower = (rotY + rotX - rotationFactor) / denominator;
         double backRightPower = (rotY - rotX - rotationFactor) / denominator;
 
 
+
+
+
         // Call the drive method using the passed instance
-        drive.drive(-frontLeftPower, -frontRightPower, -backLeftPower, -backRightPower);
+        drive.drive(frontLeftPower, frontRightPower, -backLeftPower, -backRightPower);
     }
 
 

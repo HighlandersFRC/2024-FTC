@@ -27,17 +27,17 @@ public class Robot {
     // Constructor to initialize subsystems with hardwareMap and telemetry
     public Robot(HardwareMap hardwareMap, Telemetry telemetry) {
         // Initialize subsystems with appropriate hardware
-        this.drive = new Drive("drive", hardwareMap, telemetry);
-        this.intake = new IntakeSubsystem("intakeSubsystem");
-        this.wrist = new Wrist("wrist");
+        this.drive = new Drive("drive", hardwareMap);
+        this.intake = new IntakeSubsystem("intakeSubsystem", hardwareMap);
+        this.wrist = new Wrist("wrist", hardwareMap);
         this.arm = new ArmSubsystem("arm", hardwareMap);
     }
 
     // Initialize hardware for all subsystems
     public void initialize(HardwareMap hardwareMap, Telemetry telemetry) {
-        this.drive = new Drive("drive", hardwareMap, telemetry);
-        this.intake = new IntakeSubsystem("intakeSubsystem");
-        this.wrist = new Wrist("wrist");
+        this.drive = new Drive("drive", hardwareMap);
+        this.intake = new IntakeSubsystem("intakeSubsystem", hardwareMap);
+        this.wrist = new Wrist("wrist", hardwareMap);
         this.arm = new ArmSubsystem("arm", hardwareMap);
     }
 

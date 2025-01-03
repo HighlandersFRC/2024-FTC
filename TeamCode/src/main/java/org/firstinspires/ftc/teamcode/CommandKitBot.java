@@ -26,22 +26,22 @@ public class CommandKitBot extends LinearOpMode {
         CommandScheduler scheduler = new CommandScheduler();
 
         ArmSubsystem armSubsystem = new ArmSubsystem("arm",hardwareMap);
-        IntakeSubsystem intake = new IntakeSubsystem("intakeSubsystem");
+        IntakeSubsystem intake = new IntakeSubsystem("intakeSubsystem", hardwareMap);
         intake.initialize(hardwareMap);
-        Wrist wrist = new Wrist("wrist");
+        Wrist wrist = new Wrist("wrist", hardwareMap);
         wrist.initialize(hardwareMap);
-        Drive drive = new Drive("drive",hardwareMap,telemetry);
+        Drive drive = new Drive("drive",hardwareMap);
         drive.initialize(hardwareMap);
 
         // Subsystem initialization with try-catch blocks for safety
 
         try {
-            drive = new Drive("drive", hardwareMap, telemetry);
+            drive = new Drive("drive", hardwareMap);
             drive.initialize(hardwareMap);
 
             armSubsystem = new ArmSubsystem("arm", hardwareMap);
 
-            wrist = new Wrist("wrist");
+            wrist = new Wrist("wrist", hardwareMap);
             wrist.initialize(hardwareMap);
 
             intake.initialize(hardwareMap);

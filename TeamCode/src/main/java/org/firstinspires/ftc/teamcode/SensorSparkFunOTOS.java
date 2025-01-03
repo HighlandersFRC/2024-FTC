@@ -23,7 +23,7 @@ public class SensorSparkFunOTOS extends LinearOpMode {
 
     public void runOpMode() throws InterruptedException {
 
-        Drive drive = new Drive("drive",hardwareMap,telemetry);
+        Drive drive = new Drive("drive",hardwareMap);
         Peripherals.initialize(hardwareMap);
         CommandScheduler scheduler = new CommandScheduler();
         drive.initialize(hardwareMap);

@@ -14,8 +14,11 @@ public class IntakeSubsystem extends Subsystem {
     public double intakePosRight;
     public double intakePosLeft;
 
-    public IntakeSubsystem(String name) {
+    public IntakeSubsystem(String name, HardwareMap hardwareMap) {
         super(name);
+        this.RightIntake = null;
+        this.LeftIntake = null;
+        initialize(hardwareMap);
     }
     public double getPositionRight() {
         return RightIntake.getPosition();
@@ -34,7 +37,6 @@ public class IntakeSubsystem extends Subsystem {
 
 
     public void controlIntake(Gamepad gamepad1) {
-
         intakePosRight = 0;
         intakePosLeft = 0.5;
         if (gamepad1.left_trigger != 0) {
