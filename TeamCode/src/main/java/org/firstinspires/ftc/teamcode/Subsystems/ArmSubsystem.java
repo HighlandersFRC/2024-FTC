@@ -29,7 +29,7 @@ public class ArmSubsystem extends Subsystem {
         super(name);
         this.pivotMotor = null;
         this.limitSwitch = null;
-        this.pos = 0;
+//        this.pos = 0;
         this.manualPower = 0.0;
         initialize(hardwareMap);
     }
@@ -76,10 +76,10 @@ public class ArmSubsystem extends Subsystem {
     public void ArmMovement(Gamepad gamepad1) {
 
         if (gamepad1.y) {
-            pos = DegreesToEncoderTicks(-45);
+            pos = DegreesToEncoderTicks(60);
             wristPosition = 0.55;
             elePos = 0;
-        } else if (gamepad1.x) {
+       } else if (gamepad1.x) {
             pos = DegreesToEncoderTicks(90);
             wristPosition = 0.55;
             elePos = 0;
@@ -92,6 +92,7 @@ public class ArmSubsystem extends Subsystem {
             wristPosition = 0.2;
             elePos = 0;
         }
+
 
 
 

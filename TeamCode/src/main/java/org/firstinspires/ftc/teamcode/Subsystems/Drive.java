@@ -60,7 +60,7 @@ public class Drive extends Subsystem {
         backLeftMotor = hardwareMap.get(DcMotorEx.class, "left_back");
         frontRightMotor = hardwareMap.get(DcMotorEx.class, "right_front");
         backRightMotor = hardwareMap.get(DcMotorEx.class, "right_back");
-
+        Mouse.init(hardwareMap);
 // Set motor directions (if needed)
         frontLeftMotor.setDirection(DcMotorSimple.Direction.REVERSE);
         backLeftMotor.setDirection(DcMotorSimple.Direction.REVERSE);
@@ -84,7 +84,6 @@ public class Drive extends Subsystem {
         backLeftMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         frontRightMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         backRightMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-
     }
 
 
@@ -207,12 +206,12 @@ public class Drive extends Subsystem {
         double rotX = x * Math.cos(-botHeading) - y * Math.sin(-botHeading);
         double rotY = x * Math.sin(-botHeading) + y * Math.cos(-botHeading);
 
-        double frontLeftPower = (rotY - rotX - rx);
-        double backLeftPower = (-rotY - rotX + rx);
+        double frontLeftPower = (-rotY + rotX + rx);
+        double backLeftPower = (rotY + rotX - rx);
         double frontRightPower = (rotY + rotX + rx);
         double backRightPower = (rotY - rotX + rx);
 
-        drive(frontLeftPower, frontRightPower, backLeftPower, backRightPower);
+        drive(-frontLeftPower, -frontRightPower, -backLeftPower, -backRightPower);
     }
 
     public void resetEncoder() {
@@ -398,7 +397,7 @@ public class Drive extends Subsystem {
 
         double botHeading = Math.toRadians(FinalPose.Yaw);
 
-        double rotX = vx * Math.cos(-botHeading) + vy * Math.sin(-botHeading);
+        /*double rotX = vx * Math.cos(-botHeading) + vy * Math.sin(-botHeading);
         double rotY = - vx * Math.sin(-botHeading) + vy * Math.cos(-botHeading);
 
         rotX *= 1.1;
@@ -407,8 +406,17 @@ public class Drive extends Subsystem {
         double frontLeftPower = (rotY - rotX + rotationFactor) / denominator;
         double backLeftPower = (-rotY - rotX + rotationFactor) / denominator;
         double frontRightPower = (rotY + rotX - rotationFactor) / denominator;
-        double backRightPower = (rotY - rotX - rotationFactor) / denominator;
+        double backRightPower = (rotY - rotX - rotationFactor) / denominator;*/
 
+        double rotX = vx * Math.cos(-botHeading) - vy * Math.sin(-botHeading);
+        double rotY = vx * Math.sin(-botHeading) + vy * Math.cos(-botHeading);
+
+        double frontLeftPower = (-rotX + rotY + rotationFactor);
+        double backLeftPower = (rotX + rotY - rotationFactor);
+        double frontRightPower = (rotX + rotY + rotationFactor);
+        double backRightPower = (rotX - rotY + rotationFactor);
+
+        drive(-frontLeftPower, -frontRightPower, -backLeftPower, -backRightPower);
 
 
 

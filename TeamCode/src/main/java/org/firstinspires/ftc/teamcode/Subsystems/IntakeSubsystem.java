@@ -11,8 +11,8 @@ public class IntakeSubsystem extends Subsystem {
    public Servo RightIntake;
     public Servo LeftIntake;
 
-    public double intakePosRight;
-    public double intakePosLeft;
+    public double intakePosRight = 0.7;
+    public double intakePosLeft = 0;
 
     public IntakeSubsystem(String name, HardwareMap hardwareMap) {
         super(name);
@@ -37,14 +37,11 @@ public class IntakeSubsystem extends Subsystem {
 
 
     public void controlIntake(Gamepad gamepad1) {
-        intakePosRight = 0;
-        intakePosLeft = 0.5;
+        intakePosRight = 0.7;
+        intakePosLeft = 0.1;
         if (gamepad1.left_trigger != 0) {
-            intakePosRight = 0;
-            intakePosLeft = 0.5;
-        } else if (gamepad1.right_trigger!= 0) {
-            intakePosRight = 0.5;
-            intakePosLeft = 0;
+            intakePosRight = 0.1;
+            intakePosLeft = 0.7;
         }
         RightIntake.setPosition(intakePosRight);
         LeftIntake.setPosition(intakePosLeft);

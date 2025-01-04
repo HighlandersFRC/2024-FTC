@@ -12,7 +12,7 @@ import org.firstinspires.ftc.teamcode.Commands.DefaultCommands.WristDefault;
 public class Wrist extends Subsystem {
     private Servo wrist;
     private double position = 0.4; // Default position
-ArmSubsystem armSubsystem;
+
 
     public Wrist(String name, HardwareMap hardwareMap) {
         super(name);
@@ -24,24 +24,6 @@ ArmSubsystem armSubsystem;
         wrist = hardwareMap.servo.get("wrist");
         // Set initial position during initialization
         wrist.setPosition(position);
-    }
-
-    public void controlWrist(Gamepad gamepad1) {
-        if (gamepad1.dpad_up) {
-            position = 0.4; // Adjust positions as needed
-        } else if (gamepad1.dpad_left) {
-            position = 0.8;
-        } else if (gamepad1.dpad_right) {
-            position = 0.0;
-        }
-if (armSubsystem.wristPosition == 0.35) {
-    setPosition(position);
-} else {
-    setPosition(armSubsystem.wristPosition);
-}
-
-
-
     }
 
     public double getPosition() {

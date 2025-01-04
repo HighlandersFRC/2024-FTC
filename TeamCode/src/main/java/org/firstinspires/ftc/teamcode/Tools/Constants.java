@@ -49,6 +49,7 @@ public class Constants {
         motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
     }
 
+
     public static double ServoInputToDegrees(double degrees) {
         final double MIN_PWM = 1000;
         final double MAX_PWM = 2000;

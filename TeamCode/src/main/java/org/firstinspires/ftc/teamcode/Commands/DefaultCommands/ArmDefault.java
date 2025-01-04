@@ -12,11 +12,12 @@ import org.firstinspires.ftc.teamcode.Subsystems.Subsystem;
 import org.firstinspires.ftc.teamcode.Tools.PID;
 
 import static org.firstinspires.ftc.teamcode.Commands.ArmCommand.pos;
+import static org.firstinspires.ftc.teamcode.Tools.Constants.piviotPID;
 
 public class ArmDefault implements Command {
 
     private double pivotPower;
-    private PID pivotPID = new PID(.001, 0, 0);
+
     private String name = "Arm";
     private ArmSubsystem arm;
 
@@ -26,21 +27,21 @@ public class ArmDefault implements Command {
 
     @Override
     public void start() {
-        pivotPID.setSetPoint(-1 * Math.abs(pos));
+        piviotPID.setSetPoint(-1 * Math.abs(pos));
         System.out.println("ArmDefault started");
     }
 
     @Override
     public void execute() {
-        pivotPower = pivotPID.updatePID(arm.getCurrentPositionWithLimitSwitch());
+        pivotPower = piviotPID.updatePID(arm.getCurrentPositionWithLimitSwitch());
         double feed = GravityTerm(arm.getCurrentPositionWithLimitSwitch());
-        arm.setPower(pivotMotor,-pivotPower * feed);
+      arm.setPower(pivotMotor,-pivotPower * feed);
         System.out.println(pos + " ArmDefault executing");
     }
 
     @Override
     public void end() {
-        arm.setPower(pivotMotor,0);
+       arm.setPower(pivotMotor,0);
         System.out.println("ArmDefault ended");
     }
 
