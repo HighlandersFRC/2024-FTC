@@ -36,8 +36,8 @@ public class PivotDefault implements Command {
             move = true;
         }
         Pivot.pivotMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-
     }
+
     @Override
     public void end() {
 

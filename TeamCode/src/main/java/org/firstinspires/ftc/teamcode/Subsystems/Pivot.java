@@ -13,8 +13,8 @@ import org.firstinspires.ftc.teamcode.Tools.Constants;
 import org.firstinspires.ftc.teamcode.Tools.PID;
 
 public class Pivot extends Subsystem {
-    private static final PID pid = new PID(0.009, 0.0, 0.0092);
-    public static DcMotor pivotMotor;
+    private static final PID pid = new PID(0.009, 0.0, 0.012);
+    public static DcMotor pivotMotor, pivotMotor2;
     public static DigitalChannel limitSwitch;
 
     public Pivot(String name) {
@@ -23,11 +23,14 @@ public class Pivot extends Subsystem {
 
     public static void initialize(HardwareMap hardwareMap) {
         pivotMotor = hardwareMap.get(DcMotor.class, "pivot");
-/*
+        pivotMotor2 = hardwareMap.get(DcMotor.class, "pivot2");
+
+        /*
         limitSwitch = hardwareMap.get(DigitalChannel.class, "limit_switch");
 */
 
-        pivotMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+        pivotMotor2.setDirection(DcMotorSimple.Direction.REVERSE);
+
         resetEncoder();
     }
 
@@ -38,21 +41,26 @@ public class Pivot extends Subsystem {
     }*/
 
     public static void setPower(double power) {
-        pivotMotor.setPower(power);
+        pivotMotor.setPower(-power);
+        pivotMotor2.setPower(power);
     }
 
     public static void stop() {
         setPower(0);
         pivotMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        setPower(0);
+        pivotMotor2.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
     }
 
     public static void resetEncoder() {
         pivotMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         pivotMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        pivotMotor2.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        pivotMotor2.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 
     public static int getEncoderPosition() {
-        return pivotMotor.getCurrentPosition();
+        return -pivotMotor.getCurrentPosition();
     }
 
     public static void runUsingPID(double offsetPosition) {
