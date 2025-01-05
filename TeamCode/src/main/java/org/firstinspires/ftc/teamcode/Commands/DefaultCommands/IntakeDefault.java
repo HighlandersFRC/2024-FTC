@@ -28,6 +28,6 @@ public class IntakeDefault implements Command {
 
     @Override
     public Subsystem getRequiredSubsystem() {
-        return null;
+        return Robot.intake;
     }
 }

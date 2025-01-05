@@ -25,7 +25,7 @@ public class FieldOfMerit {
         double limelightY = Peripherals.getLimelightY();
         double robotYaw = Mouse.getTheta();
 
-        if (isValidLimelightData(limelightX, limelightY)) {
+        if (isValidLimelightData(limelightX, limelightY) && Math.abs(Mouse.getTheta()) < 5) {
             currentState = "Vision";
             fieldX = limelightX;
             fieldY = limelightY;

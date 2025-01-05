@@ -28,7 +28,7 @@ public class Peripherals extends Subsystem {
         imu = hardwareMap.get(IMU.class, "imu");
 
      limelight = hardwareMap.get(Limelight3A.class, "limelight");
-        limelight.setPollRateHz(60);
+        limelight.setPollRateHz(5);
         limelight.pipelineSwitch(0);
         limelight.getStatus();
         limelight.start();
