@@ -44,7 +44,6 @@ public class FieldOfMerit {
             botHeading = Peripherals.getYaw();
             Mouse.update();
             FinalPose.setfinalPose(fieldX, fieldY, theta);
-
         }
     }
 

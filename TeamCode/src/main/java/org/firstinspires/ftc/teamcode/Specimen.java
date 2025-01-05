@@ -46,7 +46,7 @@ public class Specimen extends LinearOpMode {
         Drive.setPosition(0, 0, 0);
 
 
-        PathLoading pathLoading = new PathLoading(hardwareMap.appContext, "parabolic.polarpath");
+        PathLoading pathLoading = new PathLoading(hardwareMap.appContext, /*"hello.polarpath"*/"hello2.polarpath");
         CommandScheduler scheduler = new CommandScheduler();
         Drive drive = new Drive("drive");
         Peripherals peripherals = new Peripherals("peripherals");
