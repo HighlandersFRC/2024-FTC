@@ -24,9 +24,7 @@ public class Robot {
     public Wrist wrist;
     public ArmSubsystem arm;
 
-    // Constructor to initialize subsystems with hardwareMap and telemetry
-    public Robot(HardwareMap hardwareMap, Telemetry telemetry) {
-        // Initialize subsystems with appropriate hardware
+    public Robot(HardwareMap hardwareMap) {
         this.drive = new Drive("drive", hardwareMap);
         this.intake = new IntakeSubsystem("intakeSubsystem", hardwareMap);
         this.wrist = new Wrist("wrist", hardwareMap);
@@ -41,14 +39,4 @@ public class Robot {
         this.arm = new ArmSubsystem("arm", hardwareMap);
     }
 
-    // Elevator power calculation based on button states
-    public static double elevatorPowerCalc(boolean right, boolean left) {
-        if (right) {
-            return 1;
-        } else if (left) {
-            return -1;
-        } else {
-            return 0;
-        }
-    }
 }

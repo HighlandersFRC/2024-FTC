@@ -88,7 +88,7 @@ public class Drive extends Subsystem {
 
 
 
-    public void initialize(HardwareMap hardwareMap) {
+    private void initialize(HardwareMap hardwareMap) {
         frontLeftMotor = hardwareMap.get(DcMotorEx.class, "left_front");
         backLeftMotor = hardwareMap.get(DcMotorEx.class, "left_back");
         frontRightMotor = hardwareMap.get(DcMotorEx.class, "right_front");
@@ -389,40 +389,57 @@ public class Drive extends Subsystem {
     }
 
 
-    public void autoDrive(Vector vector, double angle, Drive drive) {
-        double vx = vector.getI();
-        double vy = vector.getJ();
-
-        double rotationFactor = angle;
-
-        double botHeading = Math.toRadians(FinalPose.Yaw);
+    public void autoDrive(Vector vector, double angle) {
+//        double vx = vector.getI();
+//        double vy = vector.getJ();
+//
+//        double rotationFactor = angle;
+//
+//        double botHeading = Math.toRadians(FinalPose.Yaw);
 
         /*double rotX = vx * Math.cos(-botHeading) + vy * Math.sin(-botHeading);
         double rotY = - vx * Math.sin(-botHeading) + vy * Math.cos(-botHeading);
 
         rotX *= 1.1;
 
+
         double denominator = Math.max(Math.abs(rotY) + Math.abs(rotX) + Math.abs(rotationFactor), 1);
         double frontLeftPower = (rotY - rotX + rotationFactor) / denominator;
         double backLeftPower = (-rotY - rotX + rotationFactor) / denominator;
-        double frontRightPower = (rotY + rotX - rotationFactor) / denominator;
-        double backRightPower = (rotY - rotX - rotationFactor) / denominator;*/
+//        double frontRightPower = (rotY + rotX - rotationFactor) / denominator;
+//        double backRightPower = (rotY - rotX - rotationFactor) / denominator;*/
+//
+//        double rotX = vx * Math.cos(-botHeading) - vy * Math.sin(-botHeading);
+//        double rotY = vx * Math.sin(-botHeading) + vy * Math.cos(-botHeading);
+//        // Front Left
+//        double frontLeftPower = (rotX + rotY + rotationFactor);
+//        // Back Left
+//        double backLeftPower = (rotX + rotY - rotationFactor);
+//        // Front Right
+//        double frontRightPower = (rotX - rotY + rotationFactor);
+//        // Back Right
+//        double backRightPower = (rotX - rotY + rotationFactor);
 
-        double rotX = vx * Math.cos(-botHeading) - vy * Math.sin(-botHeading);
-        double rotY = vx * Math.sin(-botHeading) + vy * Math.cos(-botHeading);
+        double vx = vector.getI();
+        double vy = -vector.getJ();
 
-        double frontLeftPower = (-rotX + rotY + rotationFactor);
-        double backLeftPower = (rotX + rotY - rotationFactor);
-        double frontRightPower = (rotX + rotY + rotationFactor);
-        double backRightPower = (rotX - rotY + rotationFactor);
+        double rotationFactor = -(angle);
 
-        drive(-frontLeftPower, -frontRightPower, -backLeftPower, -backRightPower);
+        double botHeading = Math.toRadians(FinalPose.Yaw);
 
+        double rotX = vx * Math.cos(-botHeading) + vy * Math.sin(-botHeading);
+        double rotY = - vx * Math.sin(-botHeading) + vy * Math.cos(-botHeading);
 
+        rotX *= 1.1;
 
+        double denominator = Math.max(Math.abs(rotY) + Math.abs(rotX) + Math.abs(rotationFactor), 1);
+        double frontLeftPower = (rotX + rotY + rotationFactor) / denominator;
+        double frontRightPower = (- rotX - rotY - rotationFactor) / denominator;
+        double backLeftPower = (rotX - rotY + rotationFactor) / denominator;
+        double backRightPower = (rotX + rotY - rotationFactor) / denominator;
 
-        // Call the drive method using the passed instance
-        drive.drive(frontLeftPower, frontRightPower, -backLeftPower, -backRightPower);
+        drive(frontLeftPower, frontRightPower, -backLeftPower, -backRightPower);
+
     }
 
 

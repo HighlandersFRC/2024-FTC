@@ -28,21 +28,20 @@ elevatorPID.setSetPoint(-1 * Math.abs(elePos));
 
     @Override
     public void execute() {
-elevatorPower = elevatorPID.updatePID(elevatorSubsystem.getCurrentPosition(elevatorSubsystem.Elevator));
-double feed = GravityTerm(elevatorSubsystem.getCurrentPosition(elevatorSubsystem.Elevator));
-elevatorSubsystem.setPower(elevatorSubsystem.Elevator, -elevatorPower * feed);
-
+elevatorPower = elevatorPID.updatePID(elevatorSubsystem.getCurrentPosition());
+double feed = GravityTerm(elevatorSubsystem.getCurrentPosition());
+elevatorSubsystem.setPower(-elevatorPower * feed);
     }
 
     @Override
     public void end() {
-elevatorSubsystem.setPower(elevatorSubsystem.Elevator, 0);
+elevatorSubsystem.setPower(0);
     }
 
     @Override
     public boolean isFinished() {
         double tolerance = 0;
-        double currentPosition = elevatorSubsystem.getCurrentPosition(elevatorSubsystem.Elevator);
+        double currentPosition = elevatorSubsystem.getCurrentPosition();
         return Math.abs(currentPosition - elePos) <= tolerance;
     }
 

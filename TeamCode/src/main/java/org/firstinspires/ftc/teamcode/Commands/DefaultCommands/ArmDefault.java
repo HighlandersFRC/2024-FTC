@@ -33,15 +33,15 @@ public class ArmDefault implements Command {
 
     @Override
     public void execute() {
-        pivotPower = piviotPID.updatePID(arm.getCurrentPositionWithLimitSwitch());
-        double feed = GravityTerm(arm.getCurrentPositionWithLimitSwitch());
-      arm.setPower(pivotMotor,-pivotPower * feed);
-        System.out.println(pos + " ArmDefault executing");
+//        pivotPower = piviotPID.updatePID(arm.getCurrentPositionWithLimitSwitch());
+//        double feed = GravityTerm(arm.getCurrentPositionWithLimitSwitch());
+//      arm.setPower(-pivotPower * feed);
+//        System.out.println(pos + " ArmDefault executing");
     }
 
     @Override
     public void end() {
-       arm.setPower(pivotMotor,0);
+       arm.setPower(0);
         System.out.println("ArmDefault ended");
     }
 

@@ -14,13 +14,13 @@ import org.firstinspires.ftc.teamcode.Commands.Command;
 import org.firstinspires.ftc.teamcode.Commands.DefaultCommands.ArmDefault;
 
 public class ArmSubsystem extends Subsystem {
-    public double wristPosition = 0.35;
+    public double wristPosition = 0.65;
     private DcMotor pivotMotor;
     private DigitalChannel limitSwitch;
 
     ArmSubsystem armSubsystem;
     private double pos;
-   public double elePos;
+    public double elePos;
     private double manualPower;
     private boolean isManualControlActive = false;
     private boolean armControlToggle = true;
@@ -45,9 +45,9 @@ public class ArmSubsystem extends Subsystem {
         }
     }
 
-    public void setPower(DcMotor motor, double power) {
+    public void setPower(double power) {
         if (pivotMotor != null) {
-            motor.setPower(power);
+            pivotMotor.setPower(power);
         }
     }
 
@@ -56,9 +56,6 @@ public class ArmSubsystem extends Subsystem {
             motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         }
     }
-
-
-
 
 
     public double getCurrentPosition() {
@@ -73,16 +70,31 @@ public class ArmSubsystem extends Subsystem {
     }
 
 
+    public double ifLimitSwitchDies(Gamepad gamepad1) {
+        boolean buttonPressed = false;
+
+        if (gamepad1.b && !buttonPressed) {
+            pos = getCurrentPosition();
+            buttonPressed = true;
+        } else if (!gamepad1.b) {
+            buttonPressed = false;
+        }
+
+        return getCurrentPosition() - pos;
+
+    }
+
+
     public void ArmMovement(Gamepad gamepad1) {
 
         if (gamepad1.y) {
             pos = DegreesToEncoderTicks(60);
             wristPosition = 0.55;
-            elePos = 0;
+            elePos = -5000;
        } else if (gamepad1.x) {
             pos = DegreesToEncoderTicks(90);
             wristPosition = 0.55;
-            elePos = 0;
+            elePos = -3000;
         } else if (gamepad1.dpad_down) {
             pos = DegreesToEncoderTicks(120);
             wristPosition = 0.35;
@@ -90,7 +102,7 @@ public class ArmSubsystem extends Subsystem {
         } else if (gamepad1.b) {
             pos = DegreesToEncoderTicks(0);
             wristPosition = 0.2;
-            elePos = 0;
+            elePos = -100;
         }
 
 
@@ -98,7 +110,7 @@ public class ArmSubsystem extends Subsystem {
 
 
         piviotPID.setSetPoint(pos);
-        piviotPID.updatePID(getCurrentPositionWithLimitSwitch());
+        piviotPID.updatePID(ifLimitSwitchDies(gamepad1));
         piviotPID.setMaxOutput(setPowerToPercentage(70));
         piviotPID.setMinOutput(setPowerToPercentage(-70));
 
@@ -115,11 +127,11 @@ public class ArmSubsystem extends Subsystem {
     public void climb(Gamepad gamepad1) {
         if (!gamepad1.b || !gamepad1.dpad_down || !gamepad1.y || !gamepad1.x) {
             if (gamepad1.a) {
-                setPower(pivotMotor,-1.0);
+                setPower(-1.0);
                 if (!limitSwitch.getState()) {
                     pos = 0;
                     BRAKE(pivotMotor);
-                    setPower(pivotMotor,0.0);
+                    setPower(0.0);
                     System.out.println("Limit switch triggered, position reset.");
                 }
             }
@@ -129,21 +141,25 @@ public class ArmSubsystem extends Subsystem {
     public void manual(Gamepad gamepad1) {
         wristPosition = 0.35;
         if (gamepad1.right_bumper) {
-            setPower(pivotMotor, 0.5);
-
+            setPower(0.5);
         } else if (gamepad1.left_bumper) {
-            setPower(pivotMotor, -0.5);
-
+            setPower(-0.5);
         } else {
             setZeroPowerBehavior(pivotMotor);
-            setPower(pivotMotor, 0);
-
+            setPower(0);
         }
 
         if (gamepad1.b) {
             wristPosition = 0.55;
         } else if (gamepad1.a) {
-            wristPosition = 0.35;
+            wristPosition = 0.75;
+        }
+
+
+        if (gamepad1.x) {
+            elePos = 1;
+        } else if (gamepad1.y) {
+            elePos = -1;
         }
     }
 

@@ -29,21 +29,21 @@ public class ElevatorCommand implements Command  {
 
     @Override
     public void execute() {
-elePos = elevator.getCurrentPosition(elevator.Elevator);
+elePos = elevator.getCurrentPosition();
 ElevatorPower = elevatorPID.updatePID(elePos);
-elevator.setPower(elevator.Elevator, -ElevatorPower);
+elevator.setPower(-ElevatorPower);
     }
 
     @Override
     public void end() {
-         elevator.setPower(elevator.Elevator, 0);
+         elevator.setPower(0);
         System.out.println("Command ended.");
     }
 
     @Override
     public boolean isFinished() {
         double tolerance = 0;
-        double currentPosition = elevator.getCurrentPosition(elevator.Elevator);
+        double currentPosition = elevator.getCurrentPosition();
         return Math.abs(currentPosition - setElePos) <= tolerance;
     }
 

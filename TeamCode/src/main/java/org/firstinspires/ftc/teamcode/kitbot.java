@@ -7,6 +7,7 @@ import static org.firstinspires.ftc.teamcode.Tools.Constants.setPowerToPercentag
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.teamcode.Subsystems.ArmSubsystem;
 import org.firstinspires.ftc.teamcode.Subsystems.Drive;
@@ -18,6 +19,7 @@ import org.firstinspires.ftc.teamcode.Tools.Mouse;
 
 @TeleOp
 public class kitbot extends LinearOpMode {
+    public int rumble;
     public boolean armControlToggle = true;
     public boolean togglePressed = false;
     @Override
@@ -47,16 +49,42 @@ Mouse.configureOtos();
             if (armControlToggle) {
                 armSubsystem.manual(gamepad2);
                 intakeSubsystem.controlIntake(gamepad2);
+                elevatorSubsystem.manual(gamepad2);
+                rumble = 0;
             } else {
                 armSubsystem.manual(gamepad1);
                 intakeSubsystem.controlIntake(gamepad1);
-                gamepad2.rumble(1000);
+                elevatorSubsystem.manual(gamepad1);
+                rumble = 1000;
             }
-
+            gamepad2.rumble(rumble);
+            gamepad1.rumble(rumble);
             Mouse.update();
             driveSubsystem.FeildCentric(gamepad1);
-            wristSubsystem.setPosition(armSubsystem.wristPosition);
-            elevatorSubsystem.setPosition(elevatorSubsystem.Elevator, armSubsystem.elePos);
+            double wristPosition = 0.65;
+            if (gamepad1.b) {
+               wristPosition = 0.55;
+            }
+            if (elevatorSubsystem.getCurrentPosition() <= -4000) {
+                elevatorSubsystem.Elevator.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+                elevatorSubsystem.setPower(0);
+            } else {
+                if (gamepad1.right_bumper) {
+                    elevatorSubsystem.setPower(1);
+                } else if (gamepad1.left_bumper) {
+                    elevatorSubsystem.setPower(-1);
+                } else {
+                    elevatorSubsystem.Elevator.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+                    elevatorSubsystem.setPower(0);
+                }
+            }
+            wristSubsystem.setPosition(wristPosition);
+            //Manual Arm Movement (if arm is manual)
+            elevatorSubsystem.setPower(armSubsystem.elePos);
+            //PID movement
+//            elevatorSubsystem.setPosition(armSubsystem.elePos);
+            telemetry.addData("Right Intake Current Pos", intakeSubsystem.getPositionRight());
+            telemetry.addData("Left Intake Current Pos", intakeSubsystem.getPositionLeft());
             telemetry.addData("Gamepad Toggle State", armControlToggle ? "Gamepad2" : "Gamepad1");
             telemetry.addData("Arm Degrees", getDegrees(armSubsystem.getCurrentPositionWithLimitSwitch()));
             telemetry.addData("Drive Degrees", getDegrees(driveSubsystem.leftBackPos()));

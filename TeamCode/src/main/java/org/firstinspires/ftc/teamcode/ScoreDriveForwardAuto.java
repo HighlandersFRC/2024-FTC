@@ -1,20 +1,12 @@
 package org.firstinspires.ftc.teamcode;
 
-import static org.firstinspires.ftc.teamcode.Tools.Constants.DegreesToEncoderTicks;
-
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
-import org.firstinspires.ftc.teamcode.Commands.Outtake;
-import org.firstinspires.ftc.teamcode.Commands.SequentialCommandGroup;
-import org.firstinspires.ftc.teamcode.Commands.WristCommands;
-import org.firstinspires.ftc.teamcode.Tools.Robot;
 import org.firstinspires.ftc.teamcode.Commands.CommandScheduler;
 import org.firstinspires.ftc.teamcode.Commands.Wait;
 import org.firstinspires.ftc.teamcode.PathingTool.PathLoading;
 import org.firstinspires.ftc.teamcode.PathingTool.PolarPathFollower;
-import org.firstinspires.ftc.teamcode.Subsystems.ArmSubsystem;
-import org.firstinspires.ftc.teamcode.Commands.ArmCommand;
 import org.firstinspires.ftc.teamcode.Subsystems.Drive;
 import org.firstinspires.ftc.teamcode.Subsystems.Peripherals;
 import org.firstinspires.ftc.teamcode.Tools.Constants;
@@ -25,18 +17,18 @@ import org.json.JSONException;
 
 
 @Autonomous
-public class TestAuto extends LinearOpMode {
+public class ScoreDriveForwardAuto extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
         FieldOfMerit.initialize(hardwareMap);
         Mouse.init(hardwareMap);
+
         Mouse.configureOtos();
-        Robot robot = new Robot(hardwareMap);
         Drive drive = new Drive("drive",hardwareMap);
         drive.setPosition(0, 0, 0);
 
-        PathLoading pathLoading = new PathLoading(hardwareMap.appContext, "Specimen.polarpath");
+        PathLoading pathLoading = new PathLoading(hardwareMap.appContext, "ObservationZone.polarpath");
         CommandScheduler scheduler = new CommandScheduler();
         drive = new Drive("drive", hardwareMap);
         Peripherals peripherals = new Peripherals("peripherals");
@@ -51,12 +43,7 @@ public class TestAuto extends LinearOpMode {
         waitForStart();
         try {
             moveToPosition = new PolarPathFollower(drive, peripherals, PathLoading.getJsonPathData(), Constants.commandMap, Constants.conditionMap, scheduler);
-            ArmCommand UP = new ArmCommand(robot.arm,  DegreesToEncoderTicks(90));
-        WristCommands Straighten = new WristCommands(robot.wrist, 0.65);
-        Outtake outtake = new Outtake(robot.intake, 1);
-        ArmCommand Score = new ArmCommand(robot.arm,  DegreesToEncoderTicks(120));
-        ArmCommand Reset = new ArmCommand(robot.arm, DegreesToEncoderTicks(0));
-        scheduler.schedule(new SequentialCommandGroup(scheduler, moveToPosition, UP, Straighten, Score, outtake, Reset));
+            scheduler.schedule(moveToPosition);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

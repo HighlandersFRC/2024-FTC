@@ -25,12 +25,12 @@ public class Intake implements Command  {
     @Override
     public void execute() {
         System.out.println("Intake executing");
-        intakeSubsystem.setPosition(1,-1);
+        intakeSubsystem.setPosition(0);
     }
 
     @Override
     public void end() {
-        intakeSubsystem.setPosition(-1,1);
+        intakeSubsystem.setPosition(0);
     }
 
     @Override

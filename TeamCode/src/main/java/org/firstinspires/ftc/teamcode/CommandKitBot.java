@@ -6,16 +6,17 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.Commands.ArmCommand;
 import org.firstinspires.ftc.teamcode.Commands.CommandScheduler;
+import org.firstinspires.ftc.teamcode.Commands.ElevatorCommand;
 import org.firstinspires.ftc.teamcode.Commands.Intake;
 import org.firstinspires.ftc.teamcode.Commands.Outtake;
 import org.firstinspires.ftc.teamcode.Commands.WristCommands;
 import org.firstinspires.ftc.teamcode.Subsystems.ArmSubsystem;
 import org.firstinspires.ftc.teamcode.Subsystems.Drive;
+import org.firstinspires.ftc.teamcode.Subsystems.ElevatorSubsystem;
 import org.firstinspires.ftc.teamcode.Subsystems.IntakeSubsystem;
 import org.firstinspires.ftc.teamcode.Subsystems.Wrist;
 import org.firstinspires.ftc.teamcode.Tools.Mouse;
 import static org.firstinspires.ftc.teamcode.Tools.Constants.DegreesToEncoderTicks;
-
 @TeleOp
 public class CommandKitBot extends LinearOpMode {
 
@@ -27,39 +28,25 @@ public class CommandKitBot extends LinearOpMode {
 
         ArmSubsystem armSubsystem = new ArmSubsystem("arm",hardwareMap);
         IntakeSubsystem intake = new IntakeSubsystem("intakeSubsystem", hardwareMap);
-        intake.initialize(hardwareMap);
         Wrist wrist = new Wrist("wrist", hardwareMap);
-        wrist.initialize(hardwareMap);
-        Drive drive = new Drive("drive",hardwareMap);
-        drive.initialize(hardwareMap);
+        Drive driveSubsystem = new Drive("Drive", hardwareMap);
+        ElevatorSubsystem elevator = new ElevatorSubsystem("Elevator", hardwareMap);
 
         // Subsystem initialization with try-catch blocks for safety
 
-        try {
-            drive = new Drive("drive", hardwareMap);
-            drive.initialize(hardwareMap);
-
-            armSubsystem = new ArmSubsystem("arm", hardwareMap);
-
-            wrist = new Wrist("wrist", hardwareMap);
-            wrist.initialize(hardwareMap);
-
-            intake.initialize(hardwareMap);
-            Mouse.init(hardwareMap);
-        } catch (Exception e) {
-            telemetry.addData("Initialization Error", e.getMessage());
-            telemetry.update();
-            return; // Exit if initialization fails
-        }
-
         ArmCommand Score = new ArmCommand(armSubsystem, DegreesToEncoderTicks(70));
-        ArmCommand Zero = new ArmCommand(armSubsystem, DegreesToEncoderTicks(4));
+        ArmCommand Zero = new ArmCommand(armSubsystem, DegreesToEncoderTicks(0));
         ArmCommand pickUp = new ArmCommand(armSubsystem, DegreesToEncoderTicks(120));
         ArmCommand Enter = new ArmCommand(armSubsystem, DegreesToEncoderTicks(100));
 
-        // Intake and wrist commands
+        ElevatorCommand ScoreEle = new ElevatorCommand(elevator, -5000);
+        ElevatorCommand Center = new ElevatorCommand(elevator, -1000);
+        ElevatorCommand ZeroEle = new ElevatorCommand(elevator, -200);
+//ArmCommand UP = new ArmCommand(armSubsystem, armSubsystem.getCurrentPositionWithLimitSwitch());
+//ArmCommand STOP = new ArmCommand(armSubsystem, armSubsystem.getCurrentPositionWithLimitSwitch());
+//        // Intake and wrist commands
         Intake intakeCommand = new Intake(intake);
-        Outtake outtakeCommand = new Outtake(intake);
+        Outtake outtakeCommand = new Outtake(intake, 1);
 
         WristCommands leftWrist = new WristCommands(wrist, 0.4);
         WristCommands rightWrist = new WristCommands(wrist, 0.8);
@@ -70,9 +57,9 @@ public class CommandKitBot extends LinearOpMode {
         // Main loop
         int loopCount = 0; // Loop counter for throttling telemetry
         while (opModeIsActive()) {
-            try {
+
                 // Drive logic
-                drive.FeildCentric(gamepad1);
+                driveSubsystem.FeildCentric(gamepad1);
 
                 // Command scheduling
                 if (gamepad1.right_trigger > 0 && !scheduler.isCommandScheduled(intakeCommand)) {
@@ -81,15 +68,26 @@ public class CommandKitBot extends LinearOpMode {
                     scheduler.schedule(outtakeCommand);
                 }
 
-                if (gamepad1.y && !scheduler.isCommandScheduled(Score)) {
-                    scheduler.schedule(Score);
-                } else if (gamepad1.b && !scheduler.isCommandScheduled(Zero)) {
+                if (gamepad1.b && !scheduler.isCommandScheduled(Zero)) {
                     scheduler.schedule(Zero);
-                } else if (gamepad1.x && !scheduler.isCommandScheduled(Enter)) {
+                    scheduler.schedule(ZeroEle);
+                 } else if (gamepad1.x && !scheduler.isCommandScheduled(Enter)) {
                     scheduler.schedule(Enter);
-                } else if (gamepad1.a && !scheduler.isCommandScheduled(pickUp)) {
+                    scheduler.schedule(Center);
+                } else if (gamepad1.y &&!scheduler.isCommandScheduled(Score)) {
+                    scheduler.schedule(Score);
+                    scheduler.schedule(ScoreEle);
+                } else if (gamepad1.dpad_down && !scheduler.isCommandScheduled(pickUp)) {
                     scheduler.schedule(pickUp);
+                    scheduler.schedule(ZeroEle);
                 }
+
+
+//            if (gamepad1.right_bumper){
+//                scheduler.schedule(UP);
+//            } else {
+//                scheduler.schedule(STOP);
+//            }
 
                 if (gamepad1.dpad_up){
                     scheduler.schedule(zeroWrist);
@@ -103,18 +101,24 @@ public class CommandKitBot extends LinearOpMode {
 
                 // Run scheduled commands
                 scheduler.run();
-
+            System.out.println("Pivot Arm Positon " + armSubsystem.getCurrentPositionWithLimitSwitch());
+            System.out.println("Score " + DegreesToEncoderTicks(70));
+            System.out.println("Enter " + DegreesToEncoderTicks(100));
+            System.out.println("Pick Up " + DegreesToEncoderTicks(120));
+            System.out.println("Zero "+ DegreesToEncoderTicks(0));
                 // Telemetry updates
-                if (loopCount % 10 == 0) { // Update telemetry every 10 loops
+                 // Update telemetry every 10 loops
                     telemetry.addData("Mouse Sensor", "X: %f, Y: %f", Mouse.getX(), Mouse.getY());
                     telemetry.addData("Pivot Arm Position", armSubsystem.getCurrentPositionWithLimitSwitch());
+            telemetry.addData("Score " , DegreesToEncoderTicks(70));
+           telemetry.addData("Enter " , DegreesToEncoderTicks(100));
+            telemetry.addData("Pick Up " ,DegreesToEncoderTicks(120));
+         telemetry.addData("Zero ", DegreesToEncoderTicks(0));
+
                     telemetry.update();
-                }
-                loopCount++;
-            } catch (Exception e) {
-                telemetry.addData("Runtime Error", e.getMessage());
-                telemetry.update();
-            }
-        }
+
+
+
     }
+}
 }

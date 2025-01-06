@@ -15,6 +15,7 @@ public class ArmCommand implements Command {
     private double setPos;
     private double pivotPower;
     public static double pos = 0; // Static variable
+    public double posToo = 0;
     private String name = "Arm";
     private ArmSubsystem arm;
 
@@ -23,10 +24,10 @@ public class ArmCommand implements Command {
         this.setPos = targetPos;
         piviotPID.setSetPoint(targetPos);
         piviotPID.setMaxOutput(0.5);
-        piviotPID.setMinInput(-180);
-        piviotPID.setMaxInput(180);
+        piviotPID.setMinOutput(-0.5);
 
         System.out.println("Created ArmCommand with TargetPos: " + targetPos);
+
     }
 
     @Override
@@ -36,14 +37,18 @@ public class ArmCommand implements Command {
 
     @Override
     public void execute() {
+
         pos = arm.getCurrentPositionWithLimitSwitch(); // Update static pos
-        pivotPower = piviotPID.updatePID(pos);
-        arm.setPower(pivotMotor ,-pivotPower);
+        posToo =arm.getCurrentPositionWithLimitSwitch(); // Update  posToo
+        pivotPower = piviotPID.updatePID(posToo);
+        arm.setPower(pivotPower);
+        System.out.println("Pivot PID: " + piviotPID.getResult());
+        System.out.println("Set Pos" + setPos);
     }
 
     @Override
     public void end() {
-        arm.setPower(pivotMotor, 0);
+        arm.setPower(0);
         System.out.println("Command ended.");
     }
 

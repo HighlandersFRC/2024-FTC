@@ -26,7 +26,6 @@ public class SensorSparkFunOTOS extends LinearOpMode {
         Drive drive = new Drive("drive",hardwareMap);
         Peripherals.initialize(hardwareMap);
         CommandScheduler scheduler = new CommandScheduler();
-        drive.initialize(hardwareMap);
         Mouse.init(hardwareMap);
 
 

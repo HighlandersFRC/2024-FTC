@@ -1,35 +1,27 @@
 package org.firstinspires.ftc.teamcode;
 
-import static org.firstinspires.ftc.teamcode.Tools.Constants.DegreesToEncoderTicks;
-import static org.firstinspires.ftc.teamcode.Tools.Constants.absoluteArmZero;
-import static org.firstinspires.ftc.teamcode.Tools.Constants.getDegrees;
-
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-
-import org.firstinspires.ftc.teamcode.Subsystems.ArmSubsystem;
-import org.firstinspires.ftc.teamcode.Subsystems.Drive;
 import org.firstinspires.ftc.teamcode.Subsystems.ElevatorSubsystem;
-import org.firstinspires.ftc.teamcode.Subsystems.IntakeSubsystem;
-import org.firstinspires.ftc.teamcode.Subsystems.Wrist;
-import org.firstinspires.ftc.teamcode.Tools.Mouse;
-
 
 @TeleOp
 public class TestClass extends LinearOpMode {
+    ElevatorSubsystem elevator;
 
     @Override
     public void runOpMode() throws InterruptedException {
-        ElevatorSubsystem elevatorSubsystem = new ElevatorSubsystem("Elevator", hardwareMap);
-        Drive driveSubsystem = new Drive("Drive", hardwareMap);
+        elevator = new ElevatorSubsystem("Elevator", hardwareMap);
 
         waitForStart();
-
+        if (gamepad1.left_bumper || gamepad1.right_bumper) {
+            elevator.manual(gamepad1);
+        } else {
+            elevator.setPosition(-150);
+        }
 
         while (opModeIsActive()) {
-        driveSubsystem.FeildCentric(gamepad1);
-                elevatorSubsystem.contolElevatorSetPoint(gamepad1);
-
+            elevator.manual(gamepad1);
+            telemetry.addData("Cur Pos", elevator.getCurrentPosition());
             telemetry.update();
         }
     }
