@@ -28,7 +28,7 @@ public class ScoreDriveForwardAuto extends LinearOpMode {
         Drive drive = new Drive("drive",hardwareMap);
         drive.setPosition(0, 0, 0);
 
-        PathLoading pathLoading = new PathLoading(hardwareMap.appContext, "ObservationZone.polarpath");
+        PathLoading pathLoading = new PathLoading(hardwareMap.appContext, "Oberservation.polarpath");
         CommandScheduler scheduler = new CommandScheduler();
         drive = new Drive("drive", hardwareMap);
         Peripherals peripherals = new Peripherals("peripherals");
@@ -42,7 +42,7 @@ public class ScoreDriveForwardAuto extends LinearOpMode {
  */
         waitForStart();
         try {
-            moveToPosition = new PolarPathFollower(drive, peripherals, PathLoading.getJsonPathData(), Constants.commandMap, Constants.conditionMap, scheduler);
+            moveToPosition = new PolarPathFollower(drive, peripherals, pathLoading.getJsonPathData(), Constants.commandMap, Constants.conditionMap, scheduler);
             scheduler.schedule(moveToPosition);
         } catch (Exception e) {
             throw new RuntimeException(e);

@@ -45,9 +45,13 @@ public class ArmSubsystem extends Subsystem {
         }
     }
 
+    public double getPower() {
+        return pivotMotor.getPower();
+    }
+
     public void setPower(double power) {
         if (pivotMotor != null) {
-            pivotMotor.setPower(power);
+            pivotMotor.setPower(-power);
         }
     }
 
@@ -88,7 +92,7 @@ public class ArmSubsystem extends Subsystem {
     public void ArmMovement(Gamepad gamepad1) {
 
         if (gamepad1.y) {
-            pos = DegreesToEncoderTicks(60);
+            pos = DegreesToEncoderTicks(50);
             wristPosition = 0.55;
             elePos = -5000;
        } else if (gamepad1.x) {
@@ -96,7 +100,7 @@ public class ArmSubsystem extends Subsystem {
             wristPosition = 0.55;
             elePos = -3000;
         } else if (gamepad1.dpad_down) {
-            pos = DegreesToEncoderTicks(120);
+            pos = DegreesToEncoderTicks(150);
             wristPosition = 0.35;
             elePos = 0;
         } else if (gamepad1.b) {

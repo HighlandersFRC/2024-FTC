@@ -36,7 +36,8 @@ public class TestAuto extends LinearOpMode {
         Drive drive = new Drive("drive",hardwareMap);
         drive.setPosition(0, 0, 0);
 
-        PathLoading pathLoading = new PathLoading(hardwareMap.appContext, "Specimen.polarpath");
+        PathLoading pathLoading = new PathLoading(hardwareMap.appContext, "Speicaman.polarpath");
+        PathLoading path2 = new PathLoading(hardwareMap.appContext, ".polarpath");
         CommandScheduler scheduler = new CommandScheduler();
         drive = new Drive("drive", hardwareMap);
         Peripherals peripherals = new Peripherals("peripherals");
@@ -50,13 +51,7 @@ public class TestAuto extends LinearOpMode {
  */
         waitForStart();
         try {
-            moveToPosition = new PolarPathFollower(drive, peripherals, PathLoading.getJsonPathData(), Constants.commandMap, Constants.conditionMap, scheduler);
-            ArmCommand UP = new ArmCommand(robot.arm,  DegreesToEncoderTicks(90));
-        WristCommands Straighten = new WristCommands(robot.wrist, 0.65);
-        Outtake outtake = new Outtake(robot.intake, 1);
-        ArmCommand Score = new ArmCommand(robot.arm,  DegreesToEncoderTicks(120));
-        ArmCommand Reset = new ArmCommand(robot.arm, DegreesToEncoderTicks(0));
-        scheduler.schedule(new SequentialCommandGroup(scheduler, moveToPosition, UP, Straighten, Score, outtake, Reset));
+            scheduler.schedule(new SequentialCommandGroup(scheduler, new PolarPathFollower(drive, peripherals, PathLoading.getJsonPathData(), Constants.commandMap, Constants.conditionMap, scheduler), new ArmCommand(robot.arm, DegreesToEncoderTicks(150)), new WristCommands(robot.wrist, 0.65), new Outtake(robot.intake, 0.7)));
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

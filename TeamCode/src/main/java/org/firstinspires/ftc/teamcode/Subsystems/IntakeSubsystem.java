@@ -48,9 +48,9 @@ public class IntakeSubsystem extends Subsystem {
 
 
 
-    public void setPosition(double RightPos) {
-        RightIntake.setPosition(RightPos);
-        LeftIntake.setPosition(1-RightPos);
+    public void setPosition(double pos) {
+        RightIntake.setPosition(pos);
+        LeftIntake.setPosition(1-pos);
     }
 
 

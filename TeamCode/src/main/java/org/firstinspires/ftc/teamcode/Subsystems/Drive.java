@@ -26,7 +26,7 @@ public class Drive extends Subsystem {
     private DcMotorEx frontLeftMotor;
     private DcMotorEx backLeftMotor;
     private DcMotorEx frontRightMotor;
-    private DcMotorEx backRightMotor;
+    public DcMotorEx backRightMotor;
 
     private final double TICKS_PER_REV = 2000;
     private final double WHEEL_DIAMETER = 0.048; // meters
@@ -103,6 +103,7 @@ public class Drive extends Subsystem {
         lastUpdateTime = System.currentTimeMillis();
         setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
     }
+
 
     public Vector purePursuitController(double currentX, double currentY, double currentTheta, int currentIndex,
                                         JSONArray pathPoints) throws JSONException {
@@ -202,6 +203,7 @@ public class Drive extends Subsystem {
         if (gamepad1.options) {
             Mouse.configureOtos();
         }
+
 
         double rotX = x * Math.cos(-botHeading) - y * Math.sin(-botHeading);
         double rotY = x * Math.sin(-botHeading) + y * Math.cos(-botHeading);
@@ -396,16 +398,16 @@ public class Drive extends Subsystem {
 //        double rotationFactor = angle;
 //
 //        double botHeading = Math.toRadians(FinalPose.Yaw);
-
-        /*double rotX = vx * Math.cos(-botHeading) + vy * Math.sin(-botHeading);
-        double rotY = - vx * Math.sin(-botHeading) + vy * Math.cos(-botHeading);
-
-        rotX *= 1.1;
-
-
-        double denominator = Math.max(Math.abs(rotY) + Math.abs(rotX) + Math.abs(rotationFactor), 1);
-        double frontLeftPower = (rotY - rotX + rotationFactor) / denominator;
-        double backLeftPower = (-rotY - rotX + rotationFactor) / denominator;
+//
+//        /*double rotX = vx * Math.cos(-botHeading) + vy * Math.sin(-botHeading);
+//        double rotY = - vx * Math.sin(-botHeading) + vy * Math.cos(-botHeading);
+//
+//        rotX *= 1.1;
+//
+//
+//        double denominator = Math.max(Math.abs(rotY) + Math.abs(rotX) + Math.abs(rotationFactor), 1);
+//        double frontLeftPower = (rotY - rotX + rotationFactor) / denominator;
+//        double backLeftPower = (-rotY - rotX + rotationFactor) / denominator;
 //        double frontRightPower = (rotY + rotX - rotationFactor) / denominator;
 //        double backRightPower = (rotY - rotX - rotationFactor) / denominator;*/
 //
@@ -425,20 +427,24 @@ public class Drive extends Subsystem {
 
         double rotationFactor = -(angle);
 
-        double botHeading = Math.toRadians(FinalPose.Yaw);
+        double botHeading = -Math.toRadians(FinalPose.Yaw);
 
-        double rotX = vx * Math.cos(-botHeading) + vy * Math.sin(-botHeading);
-        double rotY = - vx * Math.sin(-botHeading) + vy * Math.cos(-botHeading);
+        double rotY = vx * Math.cos(-botHeading) - vy * Math.sin(-botHeading);
+        double rotX = vx * Math.sin(-botHeading) + vy * Math.cos(-botHeading);
 
-        rotX *= 1.1;
+        rotY *= 1.1;
 
         double denominator = Math.max(Math.abs(rotY) + Math.abs(rotX) + Math.abs(rotationFactor), 1);
-        double frontLeftPower = (rotX + rotY + rotationFactor) / denominator;
-        double frontRightPower = (- rotX - rotY - rotationFactor) / denominator;
-        double backLeftPower = (rotX - rotY + rotationFactor) / denominator;
-        double backRightPower = (rotX + rotY - rotationFactor) / denominator;
 
-        drive(frontLeftPower, frontRightPower, -backLeftPower, -backRightPower);
+        double frontLeftPower = (-rotY + rotX + rotationFactor);
+        double backLeftPower = (rotY + rotX - rotationFactor);
+        double frontRightPower = (rotY + rotX + rotationFactor);
+        double backRightPower = (rotY - rotX + rotationFactor);
+
+        drive(-frontLeftPower/2, -frontRightPower/2, -backLeftPower/2, -backRightPower/2);
+        System.out.println("Rotation Y " + rotY + " Rotation X " + rotX+ " vy "+vy+" vx "+vx);
+
+
 
     }
 
@@ -458,11 +464,11 @@ public class Drive extends Subsystem {
 
     @Override
     public void setDefaultCommand(Command command) {
-        super.setDefaultCommand(new DriveDefault());
+        super.setDefaultCommand(command);
     }
 
     @Override
     public Command getDefaultCommand() {
-        return new DriveDefault(); // Retrieve the set default command
+        return new DriveDefault(this); // Retrieve the set default command
     }
 }

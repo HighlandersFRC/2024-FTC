@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.Commands;
 
 import static org.firstinspires.ftc.teamcode.Subsystems.Pivot.pivotMotor;
 import static org.firstinspires.ftc.teamcode.Tools.Constants.piviotPID;
+import static org.firstinspires.ftc.teamcode.Tools.Constants.setPowerToPercentage;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 
@@ -23,8 +24,8 @@ public class ArmCommand implements Command {
         this.arm = arm;
         this.setPos = targetPos;
         piviotPID.setSetPoint(targetPos);
-        piviotPID.setMaxOutput(0.5);
-        piviotPID.setMinOutput(-0.5);
+        piviotPID.setMaxOutput(setPowerToPercentage(80));
+        piviotPID.setMinOutput(setPowerToPercentage(-80));
 
         System.out.println("Created ArmCommand with TargetPos: " + targetPos);
 
@@ -37,11 +38,10 @@ public class ArmCommand implements Command {
 
     @Override
     public void execute() {
-
-        pos = arm.getCurrentPositionWithLimitSwitch(); // Update static pos
-        posToo =arm.getCurrentPositionWithLimitSwitch(); // Update  posToo
-        pivotPower = piviotPID.updatePID(posToo);
-        arm.setPower(pivotPower);
+//        pos = arm.getCurrentPositionWithLimitSwitch(); // Update static pos
+//        posToo =arm.getCurrentPositionWithLimitSwitch(); // Update  posToo
+        piviotPID.updatePID(arm.getCurrentPositionWithLimitSwitch());
+        arm.setPower( -piviotPID.getResult());
         System.out.println("Pivot PID: " + piviotPID.getResult());
         System.out.println("Set Pos" + setPos);
     }

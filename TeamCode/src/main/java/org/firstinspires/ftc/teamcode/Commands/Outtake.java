@@ -31,7 +31,7 @@ public static double pos;
 
     @Override
     public void end() {
-        intakeSubsystem.setPosition(1);
+        intakeSubsystem.setPosition(pos);
     }
 
     @Override

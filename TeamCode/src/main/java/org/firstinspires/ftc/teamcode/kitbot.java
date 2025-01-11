@@ -47,12 +47,12 @@ Mouse.configureOtos();
 
 
             if (armControlToggle) {
-                armSubsystem.manual(gamepad2);
+                armSubsystem.ArmMovement(gamepad2);
                 intakeSubsystem.controlIntake(gamepad2);
                 elevatorSubsystem.manual(gamepad2);
                 rumble = 0;
             } else {
-                armSubsystem.manual(gamepad1);
+                armSubsystem.ArmMovement(gamepad1);
                 intakeSubsystem.controlIntake(gamepad1);
                 elevatorSubsystem.manual(gamepad1);
                 rumble = 1000;
@@ -89,6 +89,8 @@ Mouse.configureOtos();
             telemetry.addData("Arm Degrees", getDegrees(armSubsystem.getCurrentPositionWithLimitSwitch()));
             telemetry.addData("Drive Degrees", getDegrees(driveSubsystem.leftBackPos()));
             telemetry.addData("Wrist Pos", wristSubsystem.getPosition());
+            telemetry.addData("Mouse Sensor X", Mouse.getX());
+            telemetry.addData("Mouse Sensor Y", Mouse.getY());
             telemetry.update();
         }
     }

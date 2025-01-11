@@ -7,11 +7,13 @@ import org.firstinspires.ftc.teamcode.Subsystems.Subsystem;
 
 
 public class Intake implements Command  {
-
+public static double pos;
     IntakeSubsystem intakeSubsystem;
 
-    public Intake(IntakeSubsystem intake) {
-        intakeSubsystem = intake;
+    public Intake(IntakeSubsystem intake, double pos) {
+        this.intakeSubsystem = intake;
+        Intake.pos = pos;
+        this.intakeSubsystem.setPosition(pos);
     }
 
     public String getSubsystem() {
@@ -25,12 +27,12 @@ public class Intake implements Command  {
     @Override
     public void execute() {
         System.out.println("Intake executing");
-        intakeSubsystem.setPosition(0);
+        intakeSubsystem.setPosition(pos);
     }
 
     @Override
     public void end() {
-        intakeSubsystem.setPosition(0);
+        intakeSubsystem.setPosition(pos);
     }
 
     @Override

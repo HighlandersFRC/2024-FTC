@@ -1,124 +1,91 @@
 package org.firstinspires.ftc.teamcode;
 
-
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-
 import org.firstinspires.ftc.teamcode.Commands.ArmCommand;
 import org.firstinspires.ftc.teamcode.Commands.CommandScheduler;
-import org.firstinspires.ftc.teamcode.Commands.ElevatorCommand;
-import org.firstinspires.ftc.teamcode.Commands.Intake;
-import org.firstinspires.ftc.teamcode.Commands.Outtake;
-import org.firstinspires.ftc.teamcode.Commands.WristCommands;
 import org.firstinspires.ftc.teamcode.Subsystems.ArmSubsystem;
 import org.firstinspires.ftc.teamcode.Subsystems.Drive;
-import org.firstinspires.ftc.teamcode.Subsystems.ElevatorSubsystem;
 import org.firstinspires.ftc.teamcode.Subsystems.IntakeSubsystem;
 import org.firstinspires.ftc.teamcode.Subsystems.Wrist;
-import org.firstinspires.ftc.teamcode.Tools.Mouse;
+import org.firstinspires.ftc.teamcode.Tools.Robot;
+
 import static org.firstinspires.ftc.teamcode.Tools.Constants.DegreesToEncoderTicks;
+
 @TeleOp
 public class CommandKitBot extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
-        // Initialize hardware and systems
+        CommandScheduler scheduler = CommandScheduler.getInstance();
 
-        CommandScheduler scheduler = new CommandScheduler();
-
-        ArmSubsystem armSubsystem = new ArmSubsystem("arm",hardwareMap);
+        ArmSubsystem armSubsystem = new ArmSubsystem("arm", hardwareMap);
         IntakeSubsystem intake = new IntakeSubsystem("intakeSubsystem", hardwareMap);
         Wrist wrist = new Wrist("wrist", hardwareMap);
         Drive driveSubsystem = new Drive("Drive", hardwareMap);
-        ElevatorSubsystem elevator = new ElevatorSubsystem("Elevator", hardwareMap);
 
-        // Subsystem initialization with try-catch blocks for safety
+        Robot robot = new Robot(hardwareMap);
+        robot.arm = armSubsystem;
+        robot.drive = driveSubsystem;
+        robot.intake = intake;
+        robot.wrist = wrist;
+        scheduler.setRobot(robot);
 
-        ArmCommand Score = new ArmCommand(armSubsystem, DegreesToEncoderTicks(70));
-        ArmCommand Zero = new ArmCommand(armSubsystem, DegreesToEncoderTicks(0));
+        double Pos = 0;
+
+        ArmCommand zero = new ArmCommand(armSubsystem, DegreesToEncoderTicks(0));
+        ArmCommand score = new ArmCommand(armSubsystem, DegreesToEncoderTicks(70));
+        ArmCommand enter = new ArmCommand(armSubsystem, DegreesToEncoderTicks(100));
         ArmCommand pickUp = new ArmCommand(armSubsystem, DegreesToEncoderTicks(120));
-        ArmCommand Enter = new ArmCommand(armSubsystem, DegreesToEncoderTicks(100));
 
-        ElevatorCommand ScoreEle = new ElevatorCommand(elevator, -5000);
-        ElevatorCommand Center = new ElevatorCommand(elevator, -1000);
-        ElevatorCommand ZeroEle = new ElevatorCommand(elevator, -200);
-//ArmCommand UP = new ArmCommand(armSubsystem, armSubsystem.getCurrentPositionWithLimitSwitch());
-//ArmCommand STOP = new ArmCommand(armSubsystem, armSubsystem.getCurrentPositionWithLimitSwitch());
-//        // Intake and wrist commands
-        Intake intakeCommand = new Intake(intake);
-        Outtake outtakeCommand = new Outtake(intake, 1);
-
-        WristCommands leftWrist = new WristCommands(wrist, 0.4);
-        WristCommands rightWrist = new WristCommands(wrist, 0.8);
-        WristCommands zeroWrist = new WristCommands(wrist, 0);
+        boolean previousB = false;
+        boolean previousX = false;
+        boolean previousY = false;
+        boolean previousDpadDown = false;
 
         waitForStart();
 
-        // Main loop
-        int loopCount = 0; // Loop counter for throttling telemetry
         while (opModeIsActive()) {
+            driveSubsystem.FeildCentric(gamepad1);
 
-                // Drive logic
-                driveSubsystem.FeildCentric(gamepad1);
+            // Button Press Detection
+            boolean currentB = gamepad1.b;
+            boolean currentX = gamepad1.x;
+            boolean currentY = gamepad1.y;
+            boolean currentDpadDown = gamepad1.dpad_down;
 
-                // Command scheduling
-                if (gamepad1.right_trigger > 0 && !scheduler.isCommandScheduled(intakeCommand)) {
-                    scheduler.schedule(intakeCommand);
-                } else if (gamepad1.left_trigger > 0 && !scheduler.isCommandScheduled(outtakeCommand)) {
-                    scheduler.schedule(outtakeCommand);
-                }
+            if (currentB && !previousB) {
+                Pos =0;
+                scheduler.schedule(zero);
+            }
+            if (currentX && !previousX) {
+                Pos = DegreesToEncoderTicks(100);
+                scheduler.schedule(enter);
+            }
+            if (currentY && !previousY) {
+                Pos = DegreesToEncoderTicks(70);
+                scheduler.schedule(score);
+            }
+            if (currentDpadDown && !previousDpadDown) {
+                Pos = DegreesToEncoderTicks(120);
+                scheduler.schedule(pickUp);
+            }
 
-                if (gamepad1.b && !scheduler.isCommandScheduled(Zero)) {
-                    scheduler.schedule(Zero);
-                    scheduler.schedule(ZeroEle);
-                 } else if (gamepad1.x && !scheduler.isCommandScheduled(Enter)) {
-                    scheduler.schedule(Enter);
-                    scheduler.schedule(Center);
-                } else if (gamepad1.y &&!scheduler.isCommandScheduled(Score)) {
-                    scheduler.schedule(Score);
-                    scheduler.schedule(ScoreEle);
-                } else if (gamepad1.dpad_down && !scheduler.isCommandScheduled(pickUp)) {
-                    scheduler.schedule(pickUp);
-                    scheduler.schedule(ZeroEle);
-                }
+            previousB = currentB;
+            previousX = currentX;
+            previousY = currentY;
+            previousDpadDown = currentDpadDown;
 
+            scheduler.run();
 
-//            if (gamepad1.right_bumper){
-//                scheduler.schedule(UP);
-//            } else {
-//                scheduler.schedule(STOP);
-//            }
-
-                if (gamepad1.dpad_up){
-                    scheduler.schedule(zeroWrist);
-                }
-                else if (gamepad1.dpad_right){
-                    scheduler.schedule(rightWrist);
-                }
-                else if (gamepad1.dpad_left){
-                    scheduler.schedule(leftWrist);
-                }
-
-                // Run scheduled commands
-                scheduler.run();
-            System.out.println("Pivot Arm Positon " + armSubsystem.getCurrentPositionWithLimitSwitch());
-            System.out.println("Score " + DegreesToEncoderTicks(70));
-            System.out.println("Enter " + DegreesToEncoderTicks(100));
-            System.out.println("Pick Up " + DegreesToEncoderTicks(120));
-            System.out.println("Zero "+ DegreesToEncoderTicks(0));
-                // Telemetry updates
-                 // Update telemetry every 10 loops
-                    telemetry.addData("Mouse Sensor", "X: %f, Y: %f", Mouse.getX(), Mouse.getY());
-                    telemetry.addData("Pivot Arm Position", armSubsystem.getCurrentPositionWithLimitSwitch());
-            telemetry.addData("Score " , DegreesToEncoderTicks(70));
-           telemetry.addData("Enter " , DegreesToEncoderTicks(100));
-            telemetry.addData("Pick Up " ,DegreesToEncoderTicks(120));
-         telemetry.addData("Zero ", DegreesToEncoderTicks(0));
-
-                    telemetry.update();
-
-
-
+            double currentPosition = armSubsystem.getCurrentPositionWithLimitSwitch();
+            scheduler.printCurrentCommands();
+            telemetry.addData("Target Positions", "Score: %f, Enter: %f, Pick Up: %f, Zero: %f",
+                    DegreesToEncoderTicks(70), DegreesToEncoderTicks(100), DegreesToEncoderTicks(120), DegreesToEncoderTicks(0));
+            telemetry.addData("Is Finished", Math.abs(currentPosition - Pos) <= 7);
+            telemetry.addData("Arm Power", armSubsystem.getPower());
+            telemetry.addData("Current Target", Pos);
+            telemetry.update();
+        }
     }
-}
 }

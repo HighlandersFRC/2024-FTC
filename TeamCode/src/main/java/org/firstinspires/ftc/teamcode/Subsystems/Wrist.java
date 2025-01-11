@@ -11,7 +11,7 @@ import org.firstinspires.ftc.teamcode.Commands.DefaultCommands.WristDefault;
 
 public class Wrist extends Subsystem {
     private Servo wrist;
-    private double position = 0.4; // Default position
+    private double position = 0; // Default position
 
 
     public Wrist(String name, HardwareMap hardwareMap) {

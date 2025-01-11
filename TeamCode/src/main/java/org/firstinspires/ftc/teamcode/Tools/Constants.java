@@ -32,17 +32,17 @@ public class Constants {
     public static double ElevatorsDownPosition = 200;
     public static double ArmDownPosition = 200;
     public static Object SetPoints;
-    public static PID piviotPID = new PID(0.01, 0, 0.01);
+    public static PID piviotPID = new PID(1, 0, 0.6);
     public static PID elevatorPID = new PID(0.01 ,0,0.01);
-
 
     public static double nextX;
     public static double nextY;
     public static double nextTheta;
     public static final int MAX_TICKS = 1000;
     public static final int MIN_TICKS = 0;
+    ArmSubsystem arm;
     public static double DegreesToEncoderTicks(double degrees) {
-        return (degrees / (360) * 5700.4);
+        return ((degrees / (360) * 5700.4) + 21);
     }
 
     public static void BRAKE(DcMotor motor) {

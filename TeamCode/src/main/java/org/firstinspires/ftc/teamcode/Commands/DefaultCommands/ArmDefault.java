@@ -11,7 +11,7 @@ import org.firstinspires.ftc.teamcode.Subsystems.ArmSubsystem;
 import org.firstinspires.ftc.teamcode.Subsystems.Subsystem;
 import org.firstinspires.ftc.teamcode.Tools.PID;
 
-import static org.firstinspires.ftc.teamcode.Commands.ArmCommand.pos;
+
 import static org.firstinspires.ftc.teamcode.Tools.Constants.piviotPID;
 
 public class ArmDefault implements Command {
@@ -27,7 +27,7 @@ public class ArmDefault implements Command {
 
     @Override
     public void start() {
-        piviotPID.setSetPoint(-1 * Math.abs(pos));
+        piviotPID.setSetPoint(arm.getCurrentPosition());
         System.out.println("ArmDefault started");
     }
 
@@ -47,9 +47,10 @@ public class ArmDefault implements Command {
 
     @Override
     public boolean isFinished() {
-        double tolerance = 7;
-        double currentPosition = arm.getCurrentPositionWithLimitSwitch();
-        return Math.abs(currentPosition - pos) <= tolerance;
+//        double tolerance = 7;
+//        double currentPosition = arm.getCurrentPositionWithLimitSwitch();
+//        return Math.abs(currentPosition - pos) <= tolerance;
+        return true;
     }
 
     @Override
