@@ -17,6 +17,7 @@ public class PathLoading {
         loadJSONFromAsset(context, pathFileName);
     }
 
+
     private void loadJSONFromAsset(Context context, String pathFileName) {
         try {
             InputStream inputStream = context.getAssets().open(pathFileName);

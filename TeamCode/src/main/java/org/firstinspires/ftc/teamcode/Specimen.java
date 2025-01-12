@@ -13,6 +13,7 @@ import org.firstinspires.ftc.teamcode.Commands.SequentialCommandGroup;
 import org.firstinspires.ftc.teamcode.Commands.Wait;
 import org.firstinspires.ftc.teamcode.Commands.WristMove;
 import org.firstinspires.ftc.teamcode.PathingTool.PathLoading;
+import org.firstinspires.ftc.teamcode.PathingTool.PathLoader2;
 import org.firstinspires.ftc.teamcode.PathingTool.PolarPathFollower;
 import org.firstinspires.ftc.teamcode.Subsystems.Drive;
 import org.firstinspires.ftc.teamcode.Subsystems.Elevators;
@@ -46,11 +47,13 @@ public class Specimen extends LinearOpMode {
         Drive.setPosition(0, 0, 0);
 
 
-        PathLoading pathLoading = new PathLoading(hardwareMap.appContext, /*"hello.polarpath"*/"hello2.polarpath");
+        PathLoading pathLoading = new PathLoading(hardwareMap.appContext, /*"hello.polarpath"*/"specimen.polarpath");
+        PathLoader2 pathloading1 = new PathLoader2(hardwareMap.appContext, "park.polarpath");
         CommandScheduler scheduler = new CommandScheduler();
         Drive drive = new Drive("drive");
         Peripherals peripherals = new Peripherals("peripherals");
         PolarPathFollower moveToPosition;
+        PolarPathFollower path2;
 
 
  /*       try {9[
@@ -62,14 +65,19 @@ public class Specimen extends LinearOpMode {
         waitForStart();
 
         try {
+//            scheduler.schedule(/*new ParallelCommandGroup(scheduler, Parameters.ALL,*/ /*new PivotMove(Robot.pivot,59.8)*//*,new Elevator(Robot.elevators,0))*//*);*/
             moveToPosition = new PolarPathFollower(drive, peripherals, PathLoading.getJsonPathData(), Constants.commandMap, Constants.conditionMap, scheduler);
+            scheduler.schedule(new SequentialCommandGroup(scheduler, new Wait(1000), moveToPosition ));
+          /*  scheduler.schedule(new Elevator(Robot.elevators,936));*/
 
+           /* scheduler.schedule(new Elevator(Robot.elevators, 2000));
+            path2 = new PolarPathFollower(drive,peripherals, PathLoader2.getJsonPathData(),Constants.commandMap, Constants.conditionMap, scheduler);
+            scheduler.schedule(new SequentialCommandGroup(scheduler,new Wait(1000), new Elevator(Robot.elevators,0), new PivotMove(Robot.pivot, -45), path2));*/
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
 
 
-scheduler.schedule(new SequentialCommandGroup(scheduler, new Wait(1000), moveToPosition));
 
         while (opModeIsActive()) {
 
@@ -90,6 +98,7 @@ scheduler.schedule(new SequentialCommandGroup(scheduler, new Wait(1000), moveToP
             telemetry.addData("Theta", robotTheta);
             telemetry.addData("Current State", FieldOfMerit.currentState);
             telemetry.update();
+
         }
     }
 }

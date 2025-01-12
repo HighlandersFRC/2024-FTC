@@ -19,6 +19,7 @@ public class ParallelCommandGroup implements Command {
         this.scheduler = scheduler;
         this.parameter = parameter;
         Collections.addAll(this.commands, commands);
+
         if (parameter == Parameters.SPECIFIC && commands.length > 0) {
             specificCommand = commands[0];
         }

@@ -110,7 +110,6 @@ public class CommandScheduler {
         subsystems.add(Robot.wrist);
         return subsystems;
     }
-
     private boolean isDefaultCommand(Command command) {
         return command.getClass().getSimpleName().contains("Default");
     }
