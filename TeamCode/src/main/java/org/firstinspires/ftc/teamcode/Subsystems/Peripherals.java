@@ -21,17 +21,17 @@ public class Peripherals extends Subsystem {
     private static Limelight3A limelight;
 
     public Peripherals(String name) {
-        super();
+        super(name);
     }
 
     public static void initialize(HardwareMap hardwareMap) {
         imu = hardwareMap.get(IMU.class, "imu");
 
-   /*     limelight = hardwareMap.get(Limelight3A.class, "limelight");
-        limelight.setPollRateHz(50);
+     limelight = hardwareMap.get(Limelight3A.class, "limelight");
+        limelight.setPollRateHz(5);
         limelight.pipelineSwitch(0);
         limelight.getStatus();
-        limelight.start();*/
+        limelight.start();
     }
 
     public static double getYawDegrees(){
@@ -39,7 +39,7 @@ public class Peripherals extends Subsystem {
     }
 
     public static double getYaw() {
-        return imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
+        return Math.toRadians(Mouse.getTheta());
     }
 
     public static double getRoll() {

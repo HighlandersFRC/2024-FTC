@@ -1,0 +1,34 @@
+package org.firstinspires.ftc.teamcode.Commands.DefaultCommands;
+
+import org.firstinspires.ftc.teamcode.Commands.Command;
+import org.firstinspires.ftc.teamcode.Commands.WristMove;
+import org.firstinspires.ftc.teamcode.Subsystems.Subsystem;
+import org.firstinspires.ftc.teamcode.Subsystems.Wrist;
+import org.firstinspires.ftc.teamcode.Tools.Robot;
+
+public class WristDefault implements Command {
+    @Override
+    public void start() {
+
+    }
+
+    @Override
+    public void execute() {
+        Wrist.move(Robot.CURRENT_WRIST);
+    }
+
+    @Override
+    public void end() {
+
+    }
+
+    @Override
+    public boolean isFinished() {
+        return false;
+    }
+
+    @Override
+    public Subsystem getRequiredSubsystem() {
+        return null;
+    }
+}

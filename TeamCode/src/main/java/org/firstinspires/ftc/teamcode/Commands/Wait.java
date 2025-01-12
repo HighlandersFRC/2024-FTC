@@ -2,16 +2,18 @@ package org.firstinspires.ftc.teamcode.Commands;
 
 import com.qualcomm.robotcore.util.RobotLog;
 
+import org.firstinspires.ftc.teamcode.Commands.Command;
+import org.firstinspires.ftc.teamcode.Subsystems.Subsystem;
+
 public class Wait implements Command {
-    private long waitTime;
+    private final long waitTime;
     private long startTime;
-    private long elapsedTime;
     private boolean isStarted;
+    private double elapsed;
+    private double setTime;
 
     public Wait(long waitTime) {
         this.waitTime = waitTime;
-        this.elapsedTime = 0;
-        this.isStarted = false;
     }
 
     @Override
@@ -24,26 +26,24 @@ public class Wait implements Command {
     @Override
     public void execute() {
         if (isStarted) {
-            elapsedTime += System.currentTimeMillis() - startTime;
-            startTime = System.currentTimeMillis();
-            RobotLog.d("Wait Command Executing: " + waitTime + "ms, Elapsed: " + elapsedTime + "ms");
+            elapsed = System.currentTimeMillis() - startTime;
+            RobotLog.d("Wait Command Executing: WaitTime=" + waitTime + "ms, Elapsed=" + elapsed + "ms");
         }
     }
 
     @Override
     public void end() {
         isStarted = false;
-        RobotLog.d("Wait Command Ended: " + waitTime + "ms, Total Elapsed: " + elapsedTime + "ms");
+        RobotLog.d("Wait Command Ended after " + waitTime + "ms");
     }
 
     @Override
     public boolean isFinished() {
-        return elapsedTime >= waitTime;
+        return elapsed >= waitTime;
     }
 
-
-    public void reset() {
-        elapsedTime = 0;
-        isStarted = false;
+    @Override
+    public Subsystem getRequiredSubsystem() {
+        return null;
     }
-}
+} 

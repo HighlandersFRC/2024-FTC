@@ -1,43 +1,39 @@
-
 package org.firstinspires.ftc.teamcode.Subsystems;
 
-import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
+import org.firstinspires.ftc.teamcode.Commands.Command;
+import org.firstinspires.ftc.teamcode.Commands.DefaultCommands.ElevatorDefault;
+import org.firstinspires.ftc.teamcode.Commands.DefaultCommands.WristDefault;
+
 public class Wrist extends Subsystem {
-    public static Servo wrist;
-public static double position = 0.49;
-    public static void initialize(HardwareMap hardwareMap) {
-        wrist = hardwareMap.servo.get("wrist");
+    static Servo wrist;
+
+    public Wrist(String name) {
+        super(name);
     }
 
-    // Add this method to handle gamepad inputs for wrist control
-    public static void controlWrist (Gamepad gamepad1) {
+    public static void initialize(HardwareMap hardwareMap) {
 
-if (gamepad1.dpad_up) {
-    position = 0.49;
-    } else if (gamepad1.dpad_left) {
-            position = 0.8;
-        } else if (gamepad1.dpad_right) {
-           position = 0.2;
-        }
+        wrist = hardwareMap.get(Servo.class, "wrist");
+
+        wrist.setDirection(Servo.Direction.REVERSE);
 
 
+    }
 
+    public static void move(double position) {
         wrist.setPosition(position);
     }
-public static void contolWristWithOperator(Gamepad gamepad2) {
-    if (gamepad2.left_bumper && gamepad2.right_bumper) {
-        position = 0.49;
-    } else if (gamepad2.right_bumper) {
-        position = 0.8;
-    } else if (gamepad2.left_bumper) {
-        position = 0.2;
-    }
-}
-    public static double getPosition() {
-        return wrist.getPosition();
+
+    @Override
+    public void setDefaultCommand(Command command) {
+        super.setDefaultCommand(new WristDefault());
     }
 
+    @Override
+    public Command getDefaultCommand() {
+        return new WristDefault();
+    }
 }

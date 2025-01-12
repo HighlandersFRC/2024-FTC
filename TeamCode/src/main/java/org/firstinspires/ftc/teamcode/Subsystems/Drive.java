@@ -3,12 +3,11 @@ package org.firstinspires.ftc.teamcode.Subsystems;
 import  com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
-import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.teamcode.Tools.Constants;
+import org.firstinspires.ftc.teamcode.Tools.FieldOfMerit;
 import org.firstinspires.ftc.teamcode.Tools.FinalPose;
-import org.firstinspires.ftc.teamcode.Tools.Mouse;
 import org.firstinspires.ftc.teamcode.Tools.PID;
 
 import org.firstinspires.ftc.teamcode.Tools.Vector;
@@ -51,6 +50,10 @@ public class Drive extends Subsystem {
     private static final double L = 0.4064;
     private static final double W = 0.4064;
 
+    public Drive(String name) {
+        super(name);
+    }
+
     public static void initialize(HardwareMap hardwareMap) {
         frontLeftMotor = hardwareMap.get(DcMotorEx.class, "left_front");
         backLeftMotor = hardwareMap.get(DcMotorEx.class, "left_back");
@@ -62,8 +65,22 @@ public class Drive extends Subsystem {
 
         resetEncoder();
         lastUpdateTime = System.currentTimeMillis();
-        Drive.Float();
+    }
 
+    public static void RobotCentric(double x, double y, double rx){
+        double botHeading = 0;
+        double rotX = x * Math.cos(-botHeading) - y * Math.sin(-botHeading);
+        double rotY = x * Math.sin(-botHeading) + y * Math.cos(-botHeading);
+
+        rotX *= 1.1;
+
+        double denominator = Math.max(Math.abs(rotY) + Math.abs(rotX) + Math.abs(rx), 1);
+        double frontLeftPower = (rotY + rotX + rx) / denominator;
+        double backLeftPower = (rotY - rotX + rx) / denominator;
+        double frontRightPower = (rotY - rotX - rx) / denominator;
+        double backRightPower = (rotY + rotX - rx) / denominator;
+
+        drive(frontLeftPower, frontRightPower, -backLeftPower, backRightPower);
     }
 
     public static Vector purePursuitController(double currentX, double currentY, double currentTheta, int currentIndex,
@@ -126,83 +143,22 @@ public class Drive extends Subsystem {
         return velocityVector;
     }
 
-    public static void teleopDrive(Gamepad gamepad1) {
-        double forward = -gamepad1.left_stick_y;  // Invert if necessary for correct direction
-        double strafe = gamepad1.left_stick_x*2;
-        double pivot = gamepad1.right_stick_x;
 
-
-
-        double frontLeftPower = (forward - strafe - pivot) ;
-        double backLeftPower = (forward + strafe - pivot) ;
-        double frontRightPower = (forward - strafe + pivot) ;
-        double backRightPower = (forward + strafe + pivot) ;
-
-        drive(frontLeftPower, -frontRightPower, backLeftPower, backRightPower);
-
-
-    }
-
-    public static void FeildCentric(Gamepad gamepad1) {
-        double x = gamepad1.left_stick_x*2;  // Invert if necessary for correct direction
-        double y = gamepad1.left_stick_y;
-        double rx = -gamepad1.right_stick_x;
-
-        double botHeading = -Math.toRadians(Mouse.getTheta());
-        Mouse.update();
-
-        if (gamepad1.options) {
-            Mouse.configureOtos();
-        }
-
-        double rotX = x * Math.cos(-botHeading) - y * Math.sin(-botHeading);
-        double rotY = x * Math.sin(-botHeading) + y * Math.cos(-botHeading);
-
-        double frontLeftPower = (rotY - rotX - rx);
-        double backLeftPower = (rotY + rotX - rx);
-        double frontRightPower = (rotY - rotX + rx);
-        double backRightPower = (rotY + rotX + rx);
-
-
-        /*double frontLeftPower = (forward - strafe - pivot) ;
-        double backLeftPower = (forward + strafe - pivot) ;
-        double frontRightPower = (forward - strafe + pivot) ;
-        double backRightPower = (forward + strafe + pivot) ;*/
-
-        Drive.drive(frontLeftPower, -frontRightPower, backLeftPower, backRightPower);
-
-
-
-        Drive.Float();
-
-
-    }
     public static void drive(double leftFrontPower, double rightFrontPower, double leftBackPower, double rightBackPower) {
         frontLeftMotor.setPower(-leftFrontPower);
         frontRightMotor.setPower(-rightFrontPower);
         backLeftMotor.setPower(-leftBackPower);
         backRightMotor.setPower(-rightBackPower);
-
     }
 
     public static void stop() {
-        Drive.drive(0,0,0,0);
+    Drive.drive(0,0,0,0);
 
-        backLeftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        backRightMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        frontLeftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        frontRightMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-
-    }
-
-    public static void Float() {
-
-
-        backLeftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        backRightMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        frontLeftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        frontRightMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-
+    backLeftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+    backRightMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+    frontLeftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+    frontRightMotor.setZeroPowerBehavior(
+            DcMotor.ZeroPowerBehavior.BRAKE);
     }
 
 
@@ -224,10 +180,6 @@ public class Drive extends Subsystem {
 
     public static double getVelocityFrontRight() {
         return frontRightMotor.getVelocity();
-    }
-
-    public static double direction() {
-        return direction();
     }
 
 /*    public static void update() {
@@ -396,13 +348,13 @@ public class Drive extends Subsystem {
                 if (Math.abs(turnPID.getError()) < 2) {
                     double distance = Math.sqrt(x * x + y * y);
                     if ((distance < 0.1)){
-                        DriveCommand.drive(0.5,0.5,0.5,0.5);
+                        Drive.drive(0.5,0.5,0.5,0.5);
                     }else {
-                        DriveCommand.stop();
+                        Drive.stop();
                     }
                 }else {
                     double power = turnPID.getResult();
-                    DriveCommand.drive(power, -power, power, -power);
+                    Drive.drive(power, -power, power, -power);
                 }
 
         }
@@ -417,7 +369,7 @@ public class Drive extends Subsystem {
 
         double rotationFactor = -(angle);
 
-        double botHeading = Math.toRadians(FinalPose.Yaw);
+        double botHeading = Math.toRadians(FinalPose.yaw);
 
         double rotX = vx * Math.cos(-botHeading) + vy * Math.sin(-botHeading);
         double rotY = - vx * Math.sin(-botHeading) + vy * Math.cos(-botHeading);
@@ -447,21 +399,7 @@ public class Drive extends Subsystem {
         }
 */
 
-        Drive.drive(frontLeftPower, frontRightPower, backLeftPower, backRightPower);
+        Drive.drive(frontLeftPower, frontRightPower, -backLeftPower, backRightPower);
     }
-
-    public static double leftFrontPos(){
-        return frontLeftMotor.getCurrentPosition();
-    }
-    public static double RightFrontPos(){
-        return frontRightMotor.getCurrentPosition();
-    }
-    public static double leftBackPos(){
-        return backLeftMotor.getCurrentPosition();
-    }
-    public static double RightBackPos(){
-        return backRightMotor.getCurrentPosition();
-    }
-
 
 }

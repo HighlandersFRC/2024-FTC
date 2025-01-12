@@ -35,7 +35,7 @@ public class PathLoading {
         }
     }
 
-    public static JSONObject getJsonPathData() {
+    public JSONObject getJsonPathData() {
         return jsonPathData;
     }
 }

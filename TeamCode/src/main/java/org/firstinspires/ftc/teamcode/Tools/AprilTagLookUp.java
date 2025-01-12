@@ -12,12 +12,23 @@ public class AprilTagLookUp {
         return new AprilTagLibrary.Builder()
                 .setAllowOverwrite(true)
                 .addTag(7,
-                        "tag 14",
-                        0.127,//test
+                        "tag 7",
+                        0.152,//test
                         new VectorF(0,0),
                         DistanceUnit.METER,
                         Quaternion.identityQuaternion())
-
+                .addTag(
+                        8,
+                        "tag 8",
+                        0.03571875,
+                        DistanceUnit.METER
+                )
+                .addTag(
+                        9,
+                        "tag 9",
+                        0.03571875,
+                        DistanceUnit.METER
+                )
                 .build();
 
     }

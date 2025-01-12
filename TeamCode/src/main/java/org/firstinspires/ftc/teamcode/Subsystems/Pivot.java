@@ -1,43 +1,94 @@
 package org.firstinspires.ftc.teamcode.Subsystems;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
+import org.firstinspires.ftc.teamcode.Commands.Command;
+import org.firstinspires.ftc.teamcode.Commands.DefaultCommands.ElevatorDefault;
+import org.firstinspires.ftc.teamcode.Commands.DefaultCommands.PivotDefault;
+import org.firstinspires.ftc.teamcode.Commands.DefaultCommands.WristDefault;
+import org.firstinspires.ftc.teamcode.Tools.Constants;
 import org.firstinspires.ftc.teamcode.Tools.PID;
 
-public class Pivot extends Subsystem{
-    public static PID pid = new PID(0.3, 0.0, 0.0);
-    public static DcMotor pivotMotor;
+public class Pivot extends Subsystem {
+    private static final PID pid = new PID(0.009, 0.0, 0.012);
+    public static DcMotor pivotMotor, pivotMotor2;
+    public static DigitalChannel limitSwitch;
+
+    public Pivot(String name) {
+        super(name);
+    }
 
     public static void initialize(HardwareMap hardwareMap) {
         pivotMotor = hardwareMap.get(DcMotor.class, "pivot");
+        pivotMotor2 = hardwareMap.get(DcMotor.class, "pivot2");
+
+        /*
+        limitSwitch = hardwareMap.get(DigitalChannel.class, "limit_switch");
+*/
+
+        pivotMotor2.setDirection(DcMotorSimple.Direction.REVERSE);
+
+        resetEncoder();
     }
 
+/*    public static void checkForZero(){
+    if (limitSwitch.getState()){
+        resetEncoder();
+    }
+    }*/
+
     public static void setPower(double power) {
-        pivotMotor.setPower(power);
+        pivotMotor.setPower(-power);
+        pivotMotor2.setPower(power);
     }
 
     public static void stop() {
         setPower(0);
         pivotMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        setPower(0);
+        pivotMotor2.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
     }
 
-    public void resetEncoder() {
+    public static void resetEncoder() {
         pivotMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         pivotMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        pivotMotor2.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        pivotMotor2.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 
     public static int getEncoderPosition() {
-        return pivotMotor.getCurrentPosition();
+        return -pivotMotor.getCurrentPosition();
     }
 
-    public static void runUsingPID(double offsetPosition){
+    public static void runUsingPID(double offsetPosition) {
         pid.setSetPoint(offsetPosition);
     }
 
-    public static void run(){
-        pid.updatePID(getEncoderPosition());
+    public static void run() {
+        double pivotPower = pid.updatePID(Pivot.getAngle());
 
-        setPower(pid.getResult());
+        setPower(pivotPower + (Constants.PIVOT_FEED_FORWARD * Math.cos(Pivot.getAngle() + Constants.ARM_BALANCE_OFFSET)));
+    }
+
+    public static double ticksToDegrees(double ticks) {
+        double degrees = (ticks / Constants.PIVOT_TICKS_PER_ROTATION) * 360.0;
+        return degrees + Constants.PIVOT_STARTING_ANGLE;
+    }
+
+    public static double getAngle() {
+        return ((getEncoderPosition()) / (501 / 90.8)) + Constants.PIVOT_STARTING_ANGLE;
+    }
+
+    @Override
+    public void setDefaultCommand(Command command) {
+        super.setDefaultCommand(new PivotDefault());
+    }
+
+    @Override
+    public Command getDefaultCommand() {
+        return new PivotDefault();
     }
 }

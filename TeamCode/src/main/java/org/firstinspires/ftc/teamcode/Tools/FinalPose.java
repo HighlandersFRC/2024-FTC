@@ -1,24 +1,20 @@
 package org.firstinspires.ftc.teamcode.Tools;
 
-import org.firstinspires.ftc.teamcode.Subsystems.Drive;
+import org.firstinspires.ftc.teamcode.Subsystems.Peripherals;
 
-public class FinalPose extends Object{
+public class FinalPose {
     public static double x;
     public static double y;
-    public static double Yaw;
+    public static double yaw;
 
-    public static void setfinalPose(double X, double Y, double yaw){
-        x = Mouse.getX();
-        y = Mouse.getY();
-        Yaw = Mouse.getTheta();
+    public static void setfinalPose(double X, double Y, double yaw) {
+        x = X;
+        y = Y;
+        FinalPose.yaw = yaw;
+
     }
+
     public static void poseUpdate() {
-Mouse.update();
-x = -Mouse.getX();
-y = -Mouse.getY();
-Yaw = Mouse.getTheta();
-
+        FieldOfMerit.processTags();
     }
-    public static void Reset(){Mouse.configureOtos();}
-
 }
