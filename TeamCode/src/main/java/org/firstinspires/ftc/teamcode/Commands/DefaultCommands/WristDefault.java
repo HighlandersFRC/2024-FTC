@@ -14,7 +14,8 @@ public class WristDefault implements Command {
 
     @Override
     public void execute() {
-        Wrist.move(Robot.CURRENT_WRIST);
+        Wrist.move1(Robot.CURRENT_WRIST1);
+        Wrist.move2(Robot.CURRENT_WRIST2);
     }
 
     @Override

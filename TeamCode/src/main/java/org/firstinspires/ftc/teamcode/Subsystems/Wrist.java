@@ -8,7 +8,8 @@ import org.firstinspires.ftc.teamcode.Commands.DefaultCommands.ElevatorDefault;
 import org.firstinspires.ftc.teamcode.Commands.DefaultCommands.WristDefault;
 
 public class Wrist extends Subsystem {
-    static Servo wrist;
+    static Servo wrist1;
+    static Servo wrist2;
 
     public Wrist(String name) {
         super(name);
@@ -16,17 +17,20 @@ public class Wrist extends Subsystem {
 
     public static void initialize(HardwareMap hardwareMap) {
 
-        wrist = hardwareMap.get(Servo.class, "wrist");
+        wrist1 = hardwareMap.get(Servo.class, "wrist`");
+        wrist2 = hardwareMap.get(Servo.class,"wrist2");
 
-        wrist.setDirection(Servo.Direction.REVERSE);
+        wrist1.setDirection(Servo.Direction.REVERSE);
 
 
     }
 
-    public static void move(double position) {
-        wrist.setPosition(position);
+    public static void move1(double position) {
+        wrist1.setPosition(position);
     }
-
+public static void move2(double position){
+        wrist2.setPosition(position);
+}
     @Override
     public void setDefaultCommand(Command command) {
         super.setDefaultCommand(new WristDefault());

@@ -11,7 +11,8 @@ import org.firstinspires.ftc.teamcode.Subsystems.Wrist;
 
 public class Robot {
     public static double CURRENT_PIVOT;
-    public static double CURRENT_WRIST;
+    public static double CURRENT_WRIST1;
+    public static double CURRENT_WRIST2;
     public static double CURRENT_INTAKE_POWER;
     public static double CURRENT_ELEVATOR = 0;
     public static double elevatorPower = 0;

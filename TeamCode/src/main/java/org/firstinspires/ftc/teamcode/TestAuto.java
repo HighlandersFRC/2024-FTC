@@ -63,7 +63,7 @@ public class TestAuto extends LinearOpMode {
 
 
             Command place = new SequentialCommandGroup(scheduler,
-                    new WristMove(Robot.wrist, 0.5),
+                    new WristMove(Robot.wrist, 0.5,0.1),
                     new PivotMove(Robot.pivot, 95),
                     new Elevator(Robot.elevators, 2450),
                     new ParallelCommandGroup(scheduler, Parameters.ANY,
@@ -72,7 +72,7 @@ public class TestAuto extends LinearOpMode {
                     ));
 
             Command place2 = new SequentialCommandGroup(scheduler,
-                    new WristMove(Robot.wrist, 0.5),
+                    new WristMove(Robot.wrist, 0.5,0.1),
                     new Pivot3(Robot.pivot, 95),
                     new Elevator(Robot.elevators, 2450),
                     new ParallelCommandGroup(scheduler, Parameters.ANY,
@@ -81,9 +81,9 @@ public class TestAuto extends LinearOpMode {
                     ));
 
             Command reset = new SequentialCommandGroup(scheduler,
-                    new WristMove(Robot.wrist, 0.1),
+                    new WristMove(Robot.wrist, 0.1,0.5),
                     new Elevator(Robot.elevators, 50),
-                    new WristMove(Robot.wrist, 1),
+                    new WristMove(Robot.wrist, 1,0),
                     new Pivot1(Robot.pivot, -10)
             );
 
@@ -92,16 +92,16 @@ public class TestAuto extends LinearOpMode {
                     reset,
                     new ParallelCommandGroup(scheduler, Parameters.ALL,
                             path1,
-                            new WristMove(Robot.wrist, 0.1),
+                            new WristMove(Robot.wrist, 0.1,0.5),
                             new IntakeCommand(Robot.intake)
                     ),
-                    new WristMove(Robot.wrist,0.6),
+                    new WristMove(Robot.wrist,0.6,0.1),
                     path2command,
                     place2,
                     reset,
                     new ParallelCommandGroup(scheduler, Parameters.ALL,
                             path3,
-                            new WristMove(Robot.wrist, 0.1),
+                            new WristMove(Robot.wrist, 0.1,0.6),
                             new IntakeCommand(Robot.intake)
                     ),
                     path4,

@@ -89,11 +89,12 @@ public class Drive extends LinearOpMode {
             }
 
             if (gamepad1.dpad_down) {
-                scheduler.schedule(new WristMove(wrist, 0.1));
+
+                scheduler.schedule(new WristMove(wrist, 0.1,0.8));
             }
 
             if (gamepad1.dpad_up) {
-                scheduler.schedule(new WristMove(wrist, 0.8));
+                scheduler.schedule(new WristMove(wrist, 0.8,0.1));
             }
 
             if (gamepad1.dpad_left){
