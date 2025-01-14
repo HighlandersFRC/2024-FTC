@@ -47,23 +47,22 @@ Mouse.configureOtos();
 
 
             if (armControlToggle) {
-                armSubsystem.ArmMovement(gamepad2);
+                armSubsystem.manual(gamepad2);
                 intakeSubsystem.controlIntake(gamepad2);
                 elevatorSubsystem.manual(gamepad2);
                 rumble = 0;
             } else {
-                armSubsystem.ArmMovement(gamepad1);
+                armSubsystem.manual(gamepad1);
                 intakeSubsystem.controlIntake(gamepad1);
                 elevatorSubsystem.manual(gamepad1);
                 rumble = 1000;
             }
             gamepad2.rumble(rumble);
-            gamepad1.rumble(rumble);
             Mouse.update();
             driveSubsystem.FeildCentric(gamepad1);
-            double wristPosition = 0.65;
+            double wristPosition = 0.55;
             if (gamepad1.b) {
-               wristPosition = 0.55;
+               wristPosition = 0.65;
             }
             if (elevatorSubsystem.getCurrentPosition() <= -4000) {
                 elevatorSubsystem.Elevator.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -89,8 +88,9 @@ Mouse.configureOtos();
             telemetry.addData("Arm Degrees", getDegrees(armSubsystem.getCurrentPositionWithLimitSwitch()));
             telemetry.addData("Drive Degrees", getDegrees(driveSubsystem.leftBackPos()));
             telemetry.addData("Wrist Pos", wristSubsystem.getPosition());
-            telemetry.addData("Mouse Sensor X", Mouse.getX());
-            telemetry.addData("Mouse Sensor Y", Mouse.getY());
+            telemetry.addData("Mouse Sensor X", -Mouse.getY());
+            telemetry.addData("Mouse Sensor Y", -Mouse.getX());
+            telemetry.addData("Mouse Sensor theta", -Mouse.getTheta());
             telemetry.update();
         }
     }

@@ -24,8 +24,8 @@ public class ArmCommand implements Command {
         this.arm = arm;
         this.setPos = targetPos;
         piviotPID.setSetPoint(targetPos);
-        piviotPID.setMaxOutput(setPowerToPercentage(80));
-        piviotPID.setMinOutput(setPowerToPercentage(-80));
+        piviotPID.setMaxOutput(0.5);
+        piviotPID.setMinOutput(-0.5);
 
         System.out.println("Created ArmCommand with TargetPos: " + targetPos);
 

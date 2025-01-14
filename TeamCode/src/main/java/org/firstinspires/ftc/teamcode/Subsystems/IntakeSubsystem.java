@@ -35,11 +35,10 @@ public class IntakeSubsystem extends Subsystem {
 
 
     public void controlIntake(Gamepad gamepad1) {
-        double pos = RightIntake.getPosition();
-        if (gamepad1.right_trigger != 0) {
-            pos = 1;
-        } else if (gamepad1.left_trigger != 0) {
-            pos = 0.65;
+        double pos = 0.85;
+
+        if (gamepad1.left_trigger != 0) {
+            pos = 0.5;
         }
         setPosition(pos);
         }

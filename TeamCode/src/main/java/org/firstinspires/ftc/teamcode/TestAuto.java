@@ -1,3 +1,4 @@
+
 package org.firstinspires.ftc.teamcode;
 
 import static org.firstinspires.ftc.teamcode.Tools.Constants.DegreesToEncoderTicks;
@@ -5,9 +6,12 @@ import static org.firstinspires.ftc.teamcode.Tools.Constants.DegreesToEncoderTic
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
+import org.firstinspires.ftc.teamcode.Commands.Intake;
 import org.firstinspires.ftc.teamcode.Commands.Outtake;
+import org.firstinspires.ftc.teamcode.Commands.ParallelCommandGroup;
 import org.firstinspires.ftc.teamcode.Commands.SequentialCommandGroup;
 import org.firstinspires.ftc.teamcode.Commands.WristCommands;
+import org.firstinspires.ftc.teamcode.Tools.Parameters;
 import org.firstinspires.ftc.teamcode.Tools.Robot;
 import org.firstinspires.ftc.teamcode.Commands.CommandScheduler;
 import org.firstinspires.ftc.teamcode.Commands.Wait;
@@ -51,7 +55,7 @@ public class TestAuto extends LinearOpMode {
  */
         waitForStart();
         try {
-            scheduler.schedule(new SequentialCommandGroup(scheduler, new PolarPathFollower(drive, peripherals, PathLoading.getJsonPathData(), Constants.commandMap, Constants.conditionMap, scheduler), new ArmCommand(robot.arm, DegreesToEncoderTicks(150)), new WristCommands(robot.wrist, 0.65), new Outtake(robot.intake, 0.7)));
+            scheduler.schedule(new SequentialCommandGroup(scheduler,  new PolarPathFollower(drive, peripherals, PathLoading.getJsonPathData(), Constants.commandMap, Constants.conditionMap, scheduler),new WristCommands(robot.wrist, 0.75), new ArmCommand(robot.arm, DegreesToEncoderTicks(150))));
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

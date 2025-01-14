@@ -44,13 +44,3 @@ public class Mouse {
         return theta;
     }
 }
-
-
-
-
-
-
-
-
-
-

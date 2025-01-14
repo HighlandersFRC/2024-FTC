@@ -1,4 +1,5 @@
 
+
 package org.firstinspires.ftc.teamcode.Subsystems;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -41,8 +42,8 @@ public class Drive extends Subsystem {
     private double lastCenterPos = 0;
 
     private final PID xPID = new PID(1, 0, 0);
-    private final PID yPID = new PID(1, 0, 0);
-    private final PID thetaPID = new PID(1, 0, 0);
+    private final PID yPID = new PID(1, 0, 0.5);
+    private final PID thetaPID = new PID(5, 0, 1);
 
     private long lastUpdateTime = 0;
 
@@ -304,6 +305,7 @@ public class Drive extends Subsystem {
         y = Math.round(y * 1000) / 1000.0;
     }
 
+
     private static double normalizeAngle(double angle) {
         while (angle > Math.PI) angle -= 2 * Math.PI;
         while (angle < -Math.PI) angle += 2 * Math.PI;
@@ -436,16 +438,29 @@ public class Drive extends Subsystem {
 
         double denominator = Math.max(Math.abs(rotY) + Math.abs(rotX) + Math.abs(rotationFactor), 1);
 
-        double frontLeftPower = (-rotY + rotX + rotationFactor);
-        double backLeftPower = (rotY + rotX - rotationFactor);
+        double frontLeftPower = (rotY + rotX - rotationFactor);
+        double backLeftPower = (-rotY + rotX + rotationFactor);
         double frontRightPower = (rotY + rotX + rotationFactor);
         double backRightPower = (rotY - rotX + rotationFactor);
 
-        drive(-frontLeftPower/2, -frontRightPower/2, -backLeftPower/2, -backRightPower/2);
+        drive(frontLeftPower, frontRightPower, backLeftPower, backRightPower);
         System.out.println("Rotation Y " + rotY + " Rotation X " + rotX+ " vy "+vy+" vx "+vx);
 
+    }
 
-
+    public void sketchDrive(Gamepad gamepad1) {
+        if (gamepad1.dpad_up) {
+            drive(-1,1,-1,1);
+        } else if (gamepad1.dpad_right) {
+            drive(1,1,1,1);
+        } else if (gamepad1.dpad_left) {
+            drive(-1,-1,-1,-1);
+        } else if (gamepad1.dpad_down) {
+            drive(1,-1,1,-1);
+        } else {
+            stop();
+            drive(0,0,0,0);
+        }
     }
 
 

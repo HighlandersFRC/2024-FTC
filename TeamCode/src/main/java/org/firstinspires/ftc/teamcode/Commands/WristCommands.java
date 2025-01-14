@@ -27,7 +27,7 @@ public class WristCommands implements Command {
 
     @Override
     public void end() {
-        wristSubsystem.setPosition(0.5); // Reset to neutral position
+        wristSubsystem.setPosition(pos); // Reset to neutral position
     }
 
     @Override

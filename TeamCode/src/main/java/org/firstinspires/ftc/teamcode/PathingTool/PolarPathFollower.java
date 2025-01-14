@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.PathingTool;
 
+import com.qualcomm.robotcore.hardware.PIDFCoefficients;
+
 import org.firstinspires.ftc.teamcode.Commands.*;
 import org.firstinspires.ftc.teamcode.Subsystems.Drive;
 import org.firstinspires.ftc.teamcode.Subsystems.Peripherals;
@@ -24,7 +26,7 @@ public class PolarPathFollower implements Command {
     private JSONArray points;
     private PID xPID = new PID(3.6, 0, 1.9);
     private PID yPID = new PID(3.6, 0, 1.9);
-    private PID yawPID = new PID(4.5, 0,0);
+    private final PID yawPID = new PID(1, 0, 0);
     private HashMap<String, Supplier<Command>> commandMap;
     private HashMap<String, BooleanSupplier> conditionMap;
     private ArrayList<Command> activeCommands = new ArrayList<>();

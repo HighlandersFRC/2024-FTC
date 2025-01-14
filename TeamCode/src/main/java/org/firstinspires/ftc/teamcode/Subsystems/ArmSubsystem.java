@@ -110,9 +110,6 @@ public class ArmSubsystem extends Subsystem {
         }
 
 
-
-
-
         piviotPID.setSetPoint(pos);
         piviotPID.updatePID(ifLimitSwitchDies(gamepad1));
         piviotPID.setMaxOutput(setPowerToPercentage(70));

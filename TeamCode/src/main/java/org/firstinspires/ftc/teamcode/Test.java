@@ -3,27 +3,20 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.CRServo;
-import com.qualcomm.robotcore.hardware.DcMotor;
+import org.firstinspires.ftc.teamcode.Subsystems.Drive;
+import org.firstinspires.ftc.teamcode.Tools.Vector;
 
 
 @TeleOp
 public class Test extends LinearOpMode {
 
-    DcMotor Elevator = hardwareMap.get(DcMotor.class, "pivotMotor");
-
     @Override
     public void runOpMode() throws InterruptedException {
-
-
+        Drive drive = new Drive("Drive", hardwareMap);
         waitForStart();
         while (opModeIsActive()) {
-            if (gamepad1.a) {
-                Elevator.setPower(0.01);
-            } else if (gamepad1.b) {
-                Elevator.setPower(-0.01);
-            }
-            telemetry.update();
+            Vector vector = new Vector(10, 10);
+            drive.autoDrive(vector, 0);
         }
     }
 }
