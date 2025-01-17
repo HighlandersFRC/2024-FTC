@@ -19,7 +19,7 @@ import org.firstinspires.ftc.teamcode.Tools.*;
 @Autonomous
 public class TestAuto extends LinearOpMode {
 
-    private FtcDashboard dashboard; // FTC Dashboard instance
+    private FtcDashboard dashboard;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -63,18 +63,18 @@ public class TestAuto extends LinearOpMode {
 
 
             Command place = new SequentialCommandGroup(scheduler,
-                    new WristMove(Robot.wrist, 0.5),
                     new PivotMove(Robot.pivot, 95),
-                    new Elevator(Robot.elevators, 2450),
+                    new Elevator(Robot.elevators, 2400),
+                    new WristMove(Robot.wrist, 0.55),
                     new ParallelCommandGroup(scheduler, Parameters.ANY,
                             new Outtake(Robot.intake, 2000),
                             new Wait(1000)
                     ));
 
             Command place2 = new SequentialCommandGroup(scheduler,
-                    new WristMove(Robot.wrist, 0.5),
                     new Pivot3(Robot.pivot, 95),
-                    new Elevator(Robot.elevators, 2450),
+                    new Elevator(Robot.elevators, 2300),
+                    new WristMove(Robot.wrist, 0.55),
                     new ParallelCommandGroup(scheduler, Parameters.ANY,
                             new Outtake(Robot.intake, 2000),
                             new Wait(1000)
@@ -82,26 +82,28 @@ public class TestAuto extends LinearOpMode {
 
             Command reset = new SequentialCommandGroup(scheduler,
                     new WristMove(Robot.wrist, 0.1),
-                    new Elevator(Robot.elevators, 50),
+                    new Elevator(Robot.elevators, 0),
                     new WristMove(Robot.wrist, 1),
                     new Pivot1(Robot.pivot, -10)
             );
 
             scheduler.schedule(new SequentialCommandGroup(scheduler,
+                    new WristMove(Robot.wrist, 0.2),
                     place,
                     reset,
                     new ParallelCommandGroup(scheduler, Parameters.ALL,
                             path1,
-                            new WristMove(Robot.wrist, 0.1),
+                            new WristMove(Robot.wrist, 0.25),
                             new IntakeCommand(Robot.intake)
                     ),
                     new WristMove(Robot.wrist,0.6),
                     path2command,
+                    new WristMove(Robot.wrist, 0.2),
                     place2,
                     reset,
                     new ParallelCommandGroup(scheduler, Parameters.ALL,
                             path3,
-                            new WristMove(Robot.wrist, 0.1),
+                            new WristMove(Robot.wrist, 0.25),
                             new IntakeCommand(Robot.intake)
                     ),
                     path4,

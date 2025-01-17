@@ -43,6 +43,7 @@ public class Pivot extends Subsystem {
     public static void setPower(double power) {
         pivotMotor.setPower(-power);
         pivotMotor2.setPower(power);
+        System.out.println("Pivot: " + Pivot.getAngle());
     }
 
     public static void stop() {
@@ -79,7 +80,7 @@ public class Pivot extends Subsystem {
     }
 
     public static double getAngle() {
-        return ((getEncoderPosition()) / (501 / 90.8)) + Constants.PIVOT_STARTING_ANGLE;
+        return ((getEncoderPosition()) / (482 / 90.8)) + Constants.PIVOT_STARTING_ANGLE;
     }
 
     @Override

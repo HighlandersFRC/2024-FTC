@@ -157,8 +157,7 @@ public class Drive extends Subsystem {
     backLeftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
     backRightMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
     frontLeftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-    frontRightMotor.setZeroPowerBehavior(
-            DcMotor.ZeroPowerBehavior.BRAKE);
+    frontRightMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
     }
 
 
