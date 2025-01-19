@@ -1,5 +1,9 @@
 package org.firstinspires.ftc.teamcode;
 
+
+import android.provider.ContactsContract;
+
+
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.canvas.Canvas;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
@@ -7,6 +11,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.RobotLog;
 import org.firstinspires.ftc.teamcode.Commands.*;
+import org.firstinspires.ftc.teamcode.PathingTool.FirstPathFollower;
 import org.firstinspires.ftc.teamcode.PathingTool.PathLoader2;
 import org.firstinspires.ftc.teamcode.PathingTool.PathLoader3;
 import org.firstinspires.ftc.teamcode.PathingTool.PathLoader4;
@@ -16,14 +21,18 @@ import org.firstinspires.ftc.teamcode.PathingTool.PolarPathFollower;
 import org.firstinspires.ftc.teamcode.Subsystems.*;
 import org.firstinspires.ftc.teamcode.Tools.*;
 
+
 @Autonomous
 public class TestAuto extends LinearOpMode {
 
-    private FtcDashboard dashboard; // FTC Dashboard instance
+
+    private FtcDashboard dashboard;
+
 
     @Override
     public void runOpMode() throws InterruptedException {
         dashboard = FtcDashboard.getInstance();
+
 
         Robot.initialize(hardwareMap);
         Mouse.init(hardwareMap);
@@ -32,7 +41,9 @@ public class TestAuto extends LinearOpMode {
         Elevators.initialize(hardwareMap);
         Wrist.initialize(hardwareMap);
 
+
         Mouse.configureOtos();
+
 
         PathLoader2 pathLoading = new PathLoader2(hardwareMap.appContext, "Autos/1Preload.polarpath");
         PathLoading path2 = new PathLoading(hardwareMap.appContext, "Autos/2Preload.polarpath");
@@ -41,20 +52,25 @@ public class TestAuto extends LinearOpMode {
         PathLoader5 pathfive = new PathLoader5(hardwareMap.appContext, "Autos/5Preload.polarpath");
 
 
+
+
         CommandScheduler scheduler = new CommandScheduler();
         org.firstinspires.ftc.teamcode.Subsystems.Drive drive = new org.firstinspires.ftc.teamcode.Subsystems.Drive("drive");
         Peripherals peripherals = new Peripherals("peripherals");
-        PolarPathFollower path1;
+        FirstPathFollower path1;
         PolarPathFollower path2command;
         PolarPathFollower path3;
         PolarPathFollower path4;
         PolarPathFollower path5;
 
 
+
+
         waitForStart();
 
+
         try {
-            path1 = new PolarPathFollower(drive, peripherals, pathLoading.getJsonPathData(), Constants.commandMap, Constants.conditionMap, scheduler);
+            path1 = new FirstPathFollower(drive, peripherals, pathLoading.getJsonPathData(), Constants.commandMap, Constants.conditionMap, scheduler);
             path2command = new PolarPathFollower(drive, peripherals, path2.getJsonPathData(), Constants.commandMap, Constants.conditionMap, scheduler);
             path3 = new PolarPathFollower(drive, peripherals, paththree.getJsonPathData(), Constants.commandMap, Constants.conditionMap, scheduler);
             path4 = new PolarPathFollower(drive, peripherals, pathfour.getJsonPathData(), Constants.commandMap, Constants.conditionMap, scheduler);
@@ -62,60 +78,72 @@ public class TestAuto extends LinearOpMode {
 
 
 
+
+
+
             Command place = new SequentialCommandGroup(scheduler,
-                    new WristMove(Robot.wrist, 0.5),
-                    new PivotMove(Robot.pivot, 95),
-                    new Elevator(Robot.elevators, 2450),
+                    new PivotMove(Robot.pivot, Constants.ARM_HIGH),
+                    new Elevator(Robot.elevators, 2350),
+                    new WristMove(Robot.wrist, 0.55),
                     new ParallelCommandGroup(scheduler, Parameters.ANY,
                             new Outtake(Robot.intake, 2000),
                             new Wait(1000)
                     ));
 
+
             Command place2 = new SequentialCommandGroup(scheduler,
-                    new WristMove(Robot.wrist, 0.5),
-                    new Pivot3(Robot.pivot, 95),
-                    new Elevator(Robot.elevators, 2450),
+                    new Pivot3(Robot.pivot, Constants.ARM_HIGH),
+                    new Elevator(Robot.elevators, 2350),
+                    new WristMove(Robot.wrist, 0.55),
                     new ParallelCommandGroup(scheduler, Parameters.ANY,
                             new Outtake(Robot.intake, 2000),
-                            new Wait(1000)
+                            new Wait(2000)
                     ));
+
 
             Command reset = new SequentialCommandGroup(scheduler,
                     new WristMove(Robot.wrist, 0.1),
-                    new Elevator(Robot.elevators, 50),
+                    new Elevator(Robot.elevators, 0),
                     new WristMove(Robot.wrist, 1),
                     new Pivot1(Robot.pivot, -10)
             );
 
+
             scheduler.schedule(new SequentialCommandGroup(scheduler,
+                    new WristMove(Robot.wrist, 0.2),
                     place,
                     reset,
                     new ParallelCommandGroup(scheduler, Parameters.ALL,
+                            new IntakeCommand(Robot.intake),
                             path1,
-                            new WristMove(Robot.wrist, 0.1),
-                            new IntakeCommand(Robot.intake)
+                            new WristMove(Robot.wrist, 0.15)
                     ),
                     new WristMove(Robot.wrist,0.6),
                     path2command,
+                    new WristMove(Robot.wrist, 0.15),
                     place2,
                     reset,
                     new ParallelCommandGroup(scheduler, Parameters.ALL,
                             path3,
-                            new WristMove(Robot.wrist, 0.1),
+                            new WristMove(Robot.wrist, 0.25),
                             new IntakeCommand(Robot.intake)
                     ),
                     path4,
                     place,
                     reset,
                     path5,
-                    new Pivot3(Robot.pivot, 95),
-                    new Elevator(Robot.elevators, 300)
+                    new Pivot3(Robot.pivot, Constants.ARM_HIGH),
+                    new Elevator(Robot.elevators, 2300),
+                    new Outtake(Robot.intake, 2000)
             ));
+
 
         } catch (Exception e) {
 
+
             throw new RuntimeException(e);
         }
+
 
         while (opModeIsActive()) {
             RobotLog.d(Elevators.getLeftEncoder() + " " + Elevators.getRightEncoder());
@@ -154,3 +182,4 @@ public class TestAuto extends LinearOpMode {
         }
     }
 }
+

@@ -44,7 +44,7 @@ public class Pivot3 implements Command {
 
     @Override
     public boolean isFinished() {
-        return Math.abs(Pivot.getAngle() - setPos) <= (1);
+        return Math.abs(Pivot.getAngle() - setPos) <= (3);
     }
 
     @Override

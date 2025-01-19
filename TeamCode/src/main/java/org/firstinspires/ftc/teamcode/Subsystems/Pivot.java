@@ -79,7 +79,7 @@ public class Pivot extends Subsystem {
     }
 
     public static double getAngle() {
-        return ((getEncoderPosition()) / (501 / 90.8)) + Constants.PIVOT_STARTING_ANGLE;
+        return ((getEncoderPosition()) / (457 / 90)) + Constants.PIVOT_STARTING_ANGLE;
     }
 
     @Override

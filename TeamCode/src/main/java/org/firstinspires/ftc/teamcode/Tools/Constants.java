@@ -14,6 +14,8 @@ public class Constants {
 
     public static double ARM_BALANCE_OFFSET = 18.9;
 
+    public static double ARM_HIGH = 104;
+
     public static double yCorrected(double AY) {
         return AY - ((0.172 * AY) + 0.00307);
     }
