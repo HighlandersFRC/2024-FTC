@@ -16,6 +16,8 @@ public class Constants {
 
     public static double ARM_HIGH = 104;
 
+    public static double ELEVATOR_AUTO = 0;
+
     public static double yCorrected(double AY) {
         return AY - ((0.172 * AY) + 0.00307);
     }

@@ -47,10 +47,10 @@ public class Drive extends LinearOpMode {
         CommandScheduler scheduler = new CommandScheduler();
 
 
-
-
+        Robot.CURRENT_STATE = "Tele-Op";
         while (opModeIsActive()) {
             gamepad2.rumble(1000);
+            gamepad1.rumble(1);
 
             Mouse.update();
             FinalPose.poseUpdate();
@@ -59,9 +59,9 @@ public class Drive extends LinearOpMode {
             } else if (gamepad1.start) {
                 Pivot.resetEncoder();
             }*/
-            if (gamepad2.y) {
+            if (gamepad2.right_bumper) {
                 scheduler.schedule(new PivotMove(pivot, 100));
-            } else if (gamepad2.a) {
+            } else if (gamepad2.left_bumper) {
                 scheduler.schedule(new PivotMove(pivot, -10));
             } else if (gamepad2.b) {
                 scheduler.schedule(new PivotMove(pivot, 0));
@@ -94,15 +94,21 @@ public class Drive extends LinearOpMode {
 
             if (gamepad1.dpad_up) {
                 scheduler.schedule(new WristMove(wrist, 0.8));
-            }
-
+            }else
             if (gamepad1.dpad_left){
-                scheduler.schedule(new SequentialCommandGroup(scheduler, new PivotMove(Robot.pivot, 95), new Wait(1000), new Elevator(elevators, 2500)));
+                scheduler.schedule(new WristMove(wrist, 0.55));
             }
-
+            else
             if (gamepad1.right_trigger > 0.1) {
                 scheduler.schedule(new IntakeCommand(intake));
+            }else
+            if (gamepad1.left_stick_button){
+                scheduler.schedule(new WristMove(wrist, 0.1));
             }
+            else {
+                scheduler.schedule(new WristMove(wrist, 0.8));
+            }
+
 
             if (gamepad1.left_trigger > 0.1) {
 
@@ -111,7 +117,21 @@ public class Drive extends LinearOpMode {
 
             }
 
-            org.firstinspires.ftc.teamcode.Subsystems.Drive.RobotCentric(gamepad1.left_stick_x, gamepad1.left_stick_y, gamepad1.right_stick_x);
+
+            double leftStickX = gamepad1.left_stick_x;
+            double leftStickY = -gamepad1.left_stick_y;
+            double rightStickX = gamepad1.right_stick_x;
+
+            if (gamepad1.left_bumper) {
+                org.firstinspires.ftc.teamcode.Subsystems.Drive.RobotCentric(gamepad1.left_stick_x / 4, -gamepad1.left_stick_y / 4, gamepad1.right_stick_x / 4);
+            }
+            else {
+                org.firstinspires.ftc.teamcode.Subsystems.Drive.RobotCentric(gamepad1.left_stick_x, -gamepad1.left_stick_y, gamepad1.right_stick_x);
+            }
+
+            if (gamepad1.right_bumper){
+                org.firstinspires.ftc.teamcode.Subsystems.Drive.stop();
+            }
 
             scheduler.run();
             telemetry.addLine("Pivot").addData("Encoder", Pivot.getEncoderPosition()).addData("Pivot Angle", Pivot.getAngle());
@@ -119,7 +139,7 @@ public class Drive extends LinearOpMode {
             telemetry.addLine("Pose").addData("x", FinalPose.x).addData("y", FinalPose.y).addData("current", FieldOfMerit.currentState).addData("yaw", FinalPose.yaw);
             telemetry.update();
 
-            Robot.elevatorPower = Robot.elevatorPowerCalc(gamepad2.right_bumper, gamepad2.left_bumper);
+            Robot.elevatorPower = (((Math.sqrt(gamepad2.right_trigger))/Math.pow(gamepad2.right_trigger - 2, 2))) - gamepad2.left_trigger;
 
             scheduler.printCurrentCommands();
         }

@@ -26,20 +26,22 @@ public class ElevatorDefault implements Command {
 
     @Override
     public void execute() {
- /*       double power = Robot.elevatorPower;
-        if ((Robot.elevatorPower == 0)) {
-            elevators.moveLeftElevator(elevatorPID.updatePID(elevators.getLeftEncoder()));
-            elevators.moveRightElevator(elevatorPID.updatePID(elevators.getLeftEncoder()));
-        }else {
-            elevatorPID.setSetPoint(Robot.CURRENT_ELEVATOR);
-            if (power > 0) {
-                elevators.moveLeftElevator(1);
-                elevators.moveRightElevator(1);
-            } else if (power < 0) {
-                elevators.moveLeftElevator(-1);
-                elevators.moveRightElevator(-1);
+        if (Robot.CURRENT_STATE.equals("Tele-Op")) {
+            double power = Robot.elevatorPower;
+            if ((Robot.elevatorPower == 0)) {
+                elevators.moveLeftElevator(elevatorPID.updatePID(elevators.getLeftEncoder()));
+                elevators.moveRightElevator(elevatorPID.updatePID(elevators.getLeftEncoder()));
+            } else {
+                elevatorPID.setSetPoint(Robot.CURRENT_ELEVATOR);
+                if (power > 0) {
+                    elevators.moveLeftElevator(1);
+                    elevators.moveRightElevator(1);
+                } else if (power < 0) {
+                    elevators.moveLeftElevator(-1);
+                    elevators.moveRightElevator(-1);
+                }
             }
-        }*/
+        }
     }
 
     @Override

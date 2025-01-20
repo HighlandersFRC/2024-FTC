@@ -9,7 +9,7 @@ import org.firstinspires.ftc.teamcode.Tools.PID;
 import org.firstinspires.ftc.teamcode.Tools.Robot;
 
 public class Pivot1 implements Command {
-    public static final PID pivotPID = new PID(0.008, 0.0, 0.0);
+    public static final PID pivotPID = new PID(0.012, 0.0, 0.0);
     public static double setPos;
     public static double pivotPower;
     String name = "Pivot";
@@ -44,7 +44,7 @@ public class Pivot1 implements Command {
 
     @Override
     public boolean isFinished() {
-        return Math.abs(Pivot.getAngle() - setPos) <= (3);
+        return Math.abs(Pivot.getAngle() - setPos) <= (1);
     }
 
     @Override

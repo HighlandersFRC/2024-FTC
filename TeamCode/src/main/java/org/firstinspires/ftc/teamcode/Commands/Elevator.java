@@ -45,7 +45,7 @@ public class Elevator implements Command {
     @Override
     public boolean isFinished() {
         double averageEncoderPosition = (elevators.getLeftEncoder() + elevators.getRightEncoder()) / 2;
-        if (Math.abs(elevatorPID.getSetPoint() - averageEncoderPosition) < 50 || averageEncoderPosition < -20){
+        if (Math.abs(elevatorPID.getSetPoint() - averageEncoderPosition) < 200 || averageEncoderPosition < -20){
             if (averageEncoderPosition < -30){
                 Elevators.resetEncoders();
                 return true;

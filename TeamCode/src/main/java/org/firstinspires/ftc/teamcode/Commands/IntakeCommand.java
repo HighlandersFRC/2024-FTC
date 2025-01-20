@@ -37,7 +37,7 @@ public class IntakeCommand implements Command {
 
     @Override
     public boolean isFinished() {
-        return intakeSubsystem.getCorrectColor() || (System.currentTimeMillis() - startTime) >= 4000;
+        return intakeSubsystem.getCorrectColor() || (System.currentTimeMillis() - startTime) >= 5000;
     }
 
     @Override

@@ -10,6 +10,7 @@ import org.firstinspires.ftc.teamcode.Subsystems.Pivot;
 import org.firstinspires.ftc.teamcode.Subsystems.Wrist;
 
 public class Robot {
+    public static String CURRENT_STATE = "Auto";
     public static double CURRENT_PIVOT;
     public static double CURRENT_WRIST;
     public static double CURRENT_INTAKE_POWER;

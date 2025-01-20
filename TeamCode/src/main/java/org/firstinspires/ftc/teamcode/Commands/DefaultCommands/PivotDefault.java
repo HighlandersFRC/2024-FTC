@@ -25,7 +25,7 @@ public class PivotDefault implements Command {
     @Override
     public void execute() {
 
-        if (Pivot.getAngle() > 90) {
+        if (Pivot.getAngle() > 105) {
             move = false;
             setPos = Robot.CURRENT_PIVOT;
 

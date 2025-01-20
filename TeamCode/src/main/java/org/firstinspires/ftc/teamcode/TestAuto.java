@@ -83,8 +83,8 @@ public class TestAuto extends LinearOpMode {
 
             Command place = new SequentialCommandGroup(scheduler,
                     new PivotMove(Robot.pivot, Constants.ARM_HIGH),
-                    new Elevator(Robot.elevators, 2350),
-                    new WristMove(Robot.wrist, 0.55),
+                    new Elevator(Robot.elevators, Constants.ELEVATOR_AUTO),
+                    new WristMove(Robot.wrist, 0.3),
                     new ParallelCommandGroup(scheduler, Parameters.ANY,
                             new Outtake(Robot.intake, 2000),
                             new Wait(1000)
@@ -93,7 +93,7 @@ public class TestAuto extends LinearOpMode {
 
             Command place2 = new SequentialCommandGroup(scheduler,
                     new Pivot3(Robot.pivot, Constants.ARM_HIGH),
-                    new Elevator(Robot.elevators, 2350),
+                    new Elevator(Robot.elevators, Constants.ELEVATOR_AUTO),
                     new WristMove(Robot.wrist, 0.55),
                     new ParallelCommandGroup(scheduler, Parameters.ANY,
                             new Outtake(Robot.intake, 2000),
@@ -102,8 +102,8 @@ public class TestAuto extends LinearOpMode {
 
 
             Command reset = new SequentialCommandGroup(scheduler,
-                    new WristMove(Robot.wrist, 0.1),
-                    new Elevator(Robot.elevators, 0),
+         /*           new WristMove(Robot.wrist, 0.1),
+                    new Elevator(Robot.elevators, 0),*/
                     new WristMove(Robot.wrist, 1),
                     new Pivot1(Robot.pivot, -10)
             );
@@ -133,7 +133,7 @@ public class TestAuto extends LinearOpMode {
                     reset,
                     path5,
                     new Pivot3(Robot.pivot, Constants.ARM_HIGH),
-                    new Elevator(Robot.elevators, 2300),
+                    new Elevator(Robot.elevators, Constants.ELEVATOR_AUTO),
                     new Outtake(Robot.intake, 2000)
             ));
 
@@ -178,6 +178,7 @@ public class TestAuto extends LinearOpMode {
             telemetry.addData("Theta", robotTheta);
             telemetry.addData("Left Elevator", Elevators.getLeftEncoder());
             telemetry.addData("Right Elevator", Elevators.getRightEncoder());
+            telemetry.addData("Pivot Angle", Pivot.getAngle());
             telemetry.update();
         }
     }
