@@ -102,7 +102,7 @@ public class Drive extends Subsystem {
 
         this.resetEncoder();
         lastUpdateTime = System.currentTimeMillis();
-        setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+//        setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
     }
 
 
@@ -168,12 +168,13 @@ public class Drive extends Subsystem {
         double strafe = gamepad1.left_stick_x * 2;
         double pivot = gamepad1.right_stick_x;
 
-        double frontLeftPower = (forward - strafe - pivot);
+        double frontLeftPower = (-forward + strafe + pivot);
         double backLeftPower = (forward + strafe - pivot);
-        double frontRightPower = (forward - strafe + pivot);
-        double backRightPower = (forward + strafe + pivot);
+        double frontRightPower = (forward + strafe + pivot);
+        double backRightPower = (forward - strafe + pivot);
 
-        drive(frontLeftPower, -frontRightPower, backLeftPower, backRightPower);
+
+        drive(frontLeftPower, -frontRightPower, -backLeftPower, -backRightPower);
     }
 
     public  void stop() {
@@ -196,7 +197,7 @@ public class Drive extends Subsystem {
     public void FeildCentric(Gamepad gamepad1) {
         double x = -gamepad1.left_stick_x*2;
         double y = -gamepad1.left_stick_y;
-        double rx = -gamepad1.right_stick_x;
+        double rx = gamepad1.right_stick_x;
 
         double botHeading = -Math.toRadians(Mouse.getTheta());
         Mouse.update();
@@ -214,7 +215,10 @@ public class Drive extends Subsystem {
         double frontRightPower = (rotY + rotX + rx);
         double backRightPower = (rotY - rotX + rx);
 
-        drive(-frontLeftPower, -frontRightPower, -backLeftPower, -backRightPower);
+        frontLeftMotor.setPower(-frontLeftPower);
+        backLeftMotor.setPower(-backLeftPower);
+        frontRightMotor.setPower(-frontRightPower);
+        backRightMotor.setPower(-backRightPower);
     }
 
     public void resetEncoder() {
@@ -443,25 +447,27 @@ public class Drive extends Subsystem {
         double frontRightPower = (rotY + rotX + rotationFactor);
         double backRightPower = (rotY - rotX + rotationFactor);
 
-        drive(frontLeftPower, frontRightPower, backLeftPower, backRightPower);
+        drive(-frontLeftPower, -frontRightPower, -backLeftPower, -backRightPower);
         System.out.println("Rotation Y " + rotY + " Rotation X " + rotX+ " vy "+vy+" vx "+vx);
 
     }
 
     public void sketchDrive(Gamepad gamepad1) {
         if (gamepad1.dpad_up) {
-            drive(-1,1,-1,1);
-        } else if (gamepad1.dpad_right) {
-            drive(1,1,1,1);
-        } else if (gamepad1.dpad_left) {
-            drive(-1,-1,-1,-1);
-        } else if (gamepad1.dpad_down) {
-            drive(1,-1,1,-1);
-        } else {
+            drive(1,  -1, 1, 1);
+        }
+//        } else if (gamepad1.dpad_right) {
+//            drive(1,1,1,1);
+//        } else if (gamepad1.dpad_left) {
+//            drive(-1,-1,-1,-1);
+//        } else if (gamepad1.dpad_down) {
+//            drive(1,-1,1,-1);
+//        } else {
             stop();
             drive(0,0,0,0);
         }
-    }
+
+
 
 
     public double leftFrontPos(){

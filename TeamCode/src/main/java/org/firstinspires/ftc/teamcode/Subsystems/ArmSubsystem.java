@@ -1,6 +1,9 @@
 package org.firstinspires.ftc.teamcode.Subsystems;
 
 import static org.firstinspires.ftc.teamcode.Tools.Constants.DegreesToEncoderTicks;
+import static org.firstinspires.ftc.teamcode.Tools.Constants.EncodersTicksToDegrees;
+import static org.firstinspires.ftc.teamcode.Tools.Constants.GravityTerm;
+import static org.firstinspires.ftc.teamcode.Tools.Constants.elevatorPID;
 import static org.firstinspires.ftc.teamcode.Tools.Constants.piviotPID;
 import static org.firstinspires.ftc.teamcode.Tools.Constants.BRAKE;
 import static org.firstinspires.ftc.teamcode.Tools.Constants.setPowerToPercentage;
@@ -14,7 +17,8 @@ import org.firstinspires.ftc.teamcode.Commands.Command;
 import org.firstinspires.ftc.teamcode.Commands.DefaultCommands.ArmDefault;
 
 public class ArmSubsystem extends Subsystem {
-    public double wristPosition = 0.65;
+    public double wristPosition = 0.2;
+    public double intakePosition = 0.85;
     private DcMotor pivotMotor;
     private DigitalChannel limitSwitch;
 
@@ -55,10 +59,17 @@ public class ArmSubsystem extends Subsystem {
         }
     }
 
-    public void setZeroPowerBehavior(DcMotor motor) {
-        if (pivotMotor != null) {
-            motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        }
+    public void setZeroPowerBehavior() {
+            pivotMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+            pivotMotor.setPower(0);
+    }
+
+    public void HOLDPos() {
+        piviotPID.setSetPoint(getCurrentPositionWithLimitSwitch());
+        piviotPID.updatePID(getCurrentPositionWithLimitSwitch());
+        piviotPID.setMinOutput(-1);
+        piviotPID.setMaxOutput(1);
+        pivotMotor.setPower(-piviotPID.getResult());
     }
 
 
@@ -90,34 +101,35 @@ public class ArmSubsystem extends Subsystem {
 
 
     public void ArmMovement(Gamepad gamepad1) {
-
         if (gamepad1.y) {
-            pos = DegreesToEncoderTicks(50);
-            wristPosition = 0.55;
-            elePos = -5000;
-       } else if (gamepad1.x) {
-            pos = DegreesToEncoderTicks(90);
-            wristPosition = 0.55;
-            elePos = -3000;
-        } else if (gamepad1.dpad_down) {
-            pos = DegreesToEncoderTicks(150);
-            wristPosition = 0.35;
-            elePos = 0;
-        } else if (gamepad1.b) {
+            pos = DegreesToEncoderTicks(-60);
+            wristPosition = 0;
+            intakePosition = 0.85;
+            elePos = 2004;
+       } else if(gamepad1.b) {
             pos = DegreesToEncoderTicks(0);
-            wristPosition = 0.2;
-            elePos = -100;
+            wristPosition = 0;
+            intakePosition = 0.85;
+            elePos = 0;
+        } else if (gamepad1.x) {
+            pos = DegreesToEncoderTicks(-20);
+            wristPosition = 0;
+            intakePosition = 0.85;
+            elePos = 1500;
+        } else if (gamepad1.a) {
+            pos = DegreesToEncoderTicks(-40);
+            wristPosition = 0;
+            intakePosition = 0.85;
+            elePos = 2004;
         }
 
-
         piviotPID.setSetPoint(pos);
-        piviotPID.updatePID(ifLimitSwitchDies(gamepad1));
-        piviotPID.setMaxOutput(setPowerToPercentage(70));
-        piviotPID.setMinOutput(setPowerToPercentage(-70));
+        piviotPID.updatePID(getCurrentPositionWithLimitSwitch());
+        piviotPID.setMaxOutput(setPowerToPercentage(50));
+        piviotPID.setMinOutput(setPowerToPercentage(-50));
 
+        pivotMotor.setPower(piviotPID.getResult());
 
-        double pidResult = -piviotPID.getResult();
-        pivotMotor.setPower(pidResult);
 
 //
 //        System.out.println("Target Position: " + pos);
@@ -139,6 +151,16 @@ public class ArmSubsystem extends Subsystem {
         }
     }
 
+
+
+    public void setPosition(double position) {
+        piviotPID.setSetPoint(position);
+        piviotPID.updatePID(getCurrentPositionWithLimitSwitch());
+        piviotPID.setMaxOutput(0.5);
+        piviotPID.setMinOutput(-0.5);
+        setPower(-piviotPID.getResult());
+    }
+
     public void manual(Gamepad gamepad1) {
         wristPosition = 0.35;
         if (gamepad1.right_bumper) {
@@ -146,22 +168,22 @@ public class ArmSubsystem extends Subsystem {
         } else if (gamepad1.left_bumper) {
             setPower(-0.5);
         } else {
-            setZeroPowerBehavior(pivotMotor);
+            setZeroPowerBehavior();
             setPower(0);
         }
 
-        if (gamepad1.b) {
-            wristPosition = 0.55;
-        } else if (gamepad1.a) {
-            wristPosition = 0.75;
-        }
-
-
-        if (gamepad1.x) {
-            elePos = 1;
-        } else if (gamepad1.y) {
-            elePos = -1;
-        }
+//        if (gamepad1.b) {
+//            wristPosition = 0.55;
+//        } else if (gamepad1.a) {
+//            wristPosition = 0.75;
+//        }
+//
+//
+//        if (gamepad1.x) {
+//            elePos = 1;
+//        } else if (gamepad1.y) {
+//            elePos = -1;
+//        }
     }
 
 
@@ -172,6 +194,6 @@ public class ArmSubsystem extends Subsystem {
 
     @Override
     public Command getDefaultCommand() {
-        return new ArmDefault(this);
+        return new ArmDefault(armSubsystem);
     }
 }

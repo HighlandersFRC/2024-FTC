@@ -1,6 +1,5 @@
 package org.firstinspires.ftc.teamcode.Subsystems;
 
-
 import static org.firstinspires.ftc.teamcode.Tools.Constants.MAX_TICKS;
 import static org.firstinspires.ftc.teamcode.Tools.Constants.MIN_TICKS;
 import static org.firstinspires.ftc.teamcode.Tools.Constants.elevatorPID;
@@ -13,6 +12,8 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 public class ElevatorSubsystem extends Subsystem {
     public DcMotor Elevator;
     private double elePos = -500;
+
+    double power = 0;
 
     public ElevatorSubsystem(String name, HardwareMap hardwareMap) {
         super(name);
@@ -38,30 +39,40 @@ public class ElevatorSubsystem extends Subsystem {
         Elevator.setPower(power);
     }
 
-
     public void manual(Gamepad gamepad1) {
-        double tolerance = 10;
-        if (Elevator.getCurrentPosition() <= -4000) {
-            Elevator.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-            Elevator.setPower(0);
-            if (gamepad1.right_bumper) {
-                Elevator.setPower(setPowerToPercentage(100));
-            }
-        } else if (Elevator.getCurrentPosition() >= -150) {
 
+//        double currentPosition = getCurrentPosition();
+//        System.out.println("asxsssdf");
+//        System.out.println(gamepad1.b &&!(currentPosition < -300));
+//
+//
+//
+//            if (!(currentPosition > MIN_TICKS - 100)) {
+//                System.out.println("First Passed");
+//                if (gamepad1.a) {
+//                    System.out.println("Second Passed");
+//                    power = setPowerToPercentage(100);
+//                    setPower(setPowerToPercentage(100));
+//
+//                }
+//            } else if (gamepad1.b && !(currentPosition < -300)) {
+//                System.out.println("b");
+//                power = setPowerToPercentage(-100);
+//                setPower(setPowerToPercentage(-100));
+//            } else {
+//                System.out.println("else Statement");
+//                Elevator.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+//                setPower(0);
+//            }
+
+        if (gamepad1.left_bumper){
+            setPower(0.8);
+        } else if (gamepad1.right_bumper) {
+            setPower(-0.8);
+        } else {
             Elevator.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-            Elevator.setPower(setPowerToPercentage(-500));
-            } else {
-            if (gamepad1.right_bumper) {
-                Elevator.setPower(setPowerToPercentage(100));
-            } else if (gamepad1.left_bumper) {
-                Elevator.setPower(setPowerToPercentage(-100));
-            } else {
-                Elevator.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-                Elevator.setPower(0);
-            }
+            setPower(0);
         }
-
 
 
     }
@@ -71,29 +82,29 @@ public class ElevatorSubsystem extends Subsystem {
         elevatorPID.updatePID(Elevator.getCurrentPosition());
         elevatorPID.setMaxOutput(1);
         elevatorPID.setMinOutput(-1);
-        Elevator.setPower(-elevatorPID.getResult());
+        Elevator.setPower(elevatorPID.getResult());
     }
 
 
     public void contolElevatorSetPoint(Gamepad gamepad1) {
             if (gamepad1.a) {
-                elePos = -4000;
+                elePos = -2000;
             } else if (gamepad1.b) {
-                elePos = -200;
+                elePos = 0;
             } else if (gamepad1.x) {
-                elePos = -1000;
+                elePos = -1600;
             }
 
         elevatorPID.setSetPoint(elePos);
         elevatorPID.updatePID(Elevator.getCurrentPosition());
-        elevatorPID.setMaxOutput(1);
-        elevatorPID.setMinOutput(-1);
+        elevatorPID.setMaxOutput(0.8);
+        elevatorPID.setMinOutput(-0.8);
         Elevator.setPower(elevatorPID.getResult());
     }
 
 
     public void contolElevator(Gamepad gamepad1) {
-        double currentPosition = Elevator.getCurrentPosition();
+        double currentPosition = getCurrentPosition();
 
         if (gamepad1.right_bumper && currentPosition < MAX_TICKS) {
             Elevator.setPower(0.5);

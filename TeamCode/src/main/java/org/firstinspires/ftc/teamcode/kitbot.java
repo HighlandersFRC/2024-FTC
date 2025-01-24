@@ -1,10 +1,10 @@
 package org.firstinspires.ftc.teamcode;
 
-import static org.firstinspires.ftc.teamcode.Tools.Constants.DegreesToEncoderTicks;
-import static org.firstinspires.ftc.teamcode.Tools.Constants.absoluteArmZero;
-import static org.firstinspires.ftc.teamcode.Tools.Constants.getDegrees;
-import static org.firstinspires.ftc.teamcode.Tools.Constants.setPowerToPercentage;
 
+import static org.firstinspires.ftc.teamcode.Tools.Constants.getDegrees;
+
+import com.acmerobotics.dashboard.FtcDashboard;
+import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -22,8 +22,10 @@ public class kitbot extends LinearOpMode {
     public int rumble;
     public boolean armControlToggle = true;
     public boolean togglePressed = false;
+    private FtcDashboard dashboard;
     @Override
     public void runOpMode() throws InterruptedException {
+        dashboard = FtcDashboard.getInstance();
         ElevatorSubsystem elevatorSubsystem = new ElevatorSubsystem("Elevator", hardwareMap);
         ArmSubsystem armSubsystem = new ArmSubsystem("Arm", hardwareMap);
         IntakeSubsystem intakeSubsystem = new IntakeSubsystem("Intake", hardwareMap);
@@ -45,47 +47,50 @@ Mouse.configureOtos();
 
 
 
-
             if (armControlToggle) {
-                armSubsystem.manual(gamepad2);
+                armSubsystem.ArmMovement(gamepad2);
                 intakeSubsystem.controlIntake(gamepad2);
                 elevatorSubsystem.manual(gamepad2);
+                wristSubsystem.contolWrist(gamepad2);
                 rumble = 0;
             } else {
-                armSubsystem.manual(gamepad1);
+                armSubsystem.ArmMovement(gamepad1);
                 intakeSubsystem.controlIntake(gamepad1);
                 elevatorSubsystem.manual(gamepad1);
+                wristSubsystem.contolWrist(gamepad1);
                 rumble = 1000;
             }
-            gamepad2.rumble(rumble);
+
+                    gamepad2.rumble(rumble);
             Mouse.update();
+
             driveSubsystem.FeildCentric(gamepad1);
-            double wristPosition = 0.55;
-            if (gamepad1.b) {
-               wristPosition = 0.65;
-            }
-            if (elevatorSubsystem.getCurrentPosition() <= -4000) {
-                elevatorSubsystem.Elevator.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-                elevatorSubsystem.setPower(0);
-            } else {
-                if (gamepad1.right_bumper) {
-                    elevatorSubsystem.setPower(1);
-                } else if (gamepad1.left_bumper) {
-                    elevatorSubsystem.setPower(-1);
-                } else {
-                    elevatorSubsystem.Elevator.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-                    elevatorSubsystem.setPower(0);
-                }
-            }
-            wristSubsystem.setPosition(wristPosition);
+
+
+//            if (gamepad1.left_trigger == 0 && gamepad1.right_trigger == 0 ) {
+//                intakeSubsystem.setPosition(armSubsystem.intakePosition);
+//            }
+//wristSubsystem.setPosition(armSubsystem.wristPosition);
             //Manual Arm Movement (if arm is manual)
-            elevatorSubsystem.setPower(armSubsystem.elePos);
+//            elevatorSubsystem.setPower(armSubsystem.elePos);
+            TelemetryPacket packet = new TelemetryPacket();
+            packet.put("Right Intake Current Pos", intakeSubsystem.getPositionRight());
+            packet.put("Left Intake Current Pos", intakeSubsystem.getPositionLeft());
+            packet.put("Gamepad Toggle State", armControlToggle ? "Gamepad2" : "Gamepad1");
+            packet.put("Arm Degrees", getDegrees(armSubsystem.getCurrentPositionWithLimitSwitch()));
+            packet.put("Drive Degrees", getDegrees(driveSubsystem.leftBackPos()));
+            packet.put("Wrist Pos", wristSubsystem.getPosition());
+            packet.put("Mouse Sensor X", -Mouse.getY());
+            packet.put("Mouse Sensor Y", -Mouse.getX());
+            packet.put("Mouse Sensor theta", -Mouse.getTheta());
+            dashboard.sendTelemetryPacket(packet);
             //PID movement
 //            elevatorSubsystem.setPosition(armSubsystem.elePos);
             telemetry.addData("Right Intake Current Pos", intakeSubsystem.getPositionRight());
             telemetry.addData("Left Intake Current Pos", intakeSubsystem.getPositionLeft());
             telemetry.addData("Gamepad Toggle State", armControlToggle ? "Gamepad2" : "Gamepad1");
             telemetry.addData("Arm Degrees", getDegrees(armSubsystem.getCurrentPositionWithLimitSwitch()));
+            telemetry.addData("elevator",elevatorSubsystem.getCurrentPosition());
             telemetry.addData("Drive Degrees", getDegrees(driveSubsystem.leftBackPos()));
             telemetry.addData("Wrist Pos", wristSubsystem.getPosition());
             telemetry.addData("Mouse Sensor X", -Mouse.getY());

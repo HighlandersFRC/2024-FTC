@@ -51,7 +51,11 @@ public class ScoreDriveForwardAuto extends LinearOpMode {
 
         while (opModeIsActive()) {
             FinalPose.poseUpdate();
-            scheduler.run();
+
+                scheduler.run();
+
+
+
 
             double robotX = FinalPose.x;
             double robotY = FinalPose.y;

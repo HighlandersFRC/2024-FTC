@@ -5,6 +5,7 @@ import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.har
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Gamepad;
+import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.Commands.Command;
@@ -32,17 +33,29 @@ public class Constants {
     public static double ElevatorsDownPosition = 200;
     public static double ArmDownPosition = 200;
     public static Object SetPoints;
-    public static PID piviotPID = new PID(1, 0, 0.6);
+    public static PID piviotPID = new PID( 0.00625, 0, 0);
     public static PID elevatorPID = new PID(0.01 ,0,0.01);
-
     public static double nextX;
     public static double nextY;
     public static double nextTheta;
-    public static final int MAX_TICKS = 1000;
-    public static final int MIN_TICKS = 0;
+    public static final double MAX_TICKS = -2090;
+    public static final double MIN_TICKS = 31;
     ArmSubsystem arm;
     public static double DegreesToEncoderTicks(double degrees) {
-        return ((degrees / (360) * 5700.4) + 21);
+        double TPR = 5700.4;
+        return ((degrees / (360) * TPR));
+    }
+
+    public static double InchesToEncoderTicks(double inches) {
+        double circumference = 4.71238898038;
+        double ticksPerRotation = 28;
+        double gearRatio = 1;
+        return ((inches / circumference) * ticksPerRotation * gearRatio);
+    }
+
+
+    public static double EncodersTicksToDegrees(double encoders) {
+        return -((encoders) * (360) / 5700.4);
     }
 
     public static void BRAKE(DcMotor motor) {
@@ -64,20 +77,19 @@ public class Constants {
 
     public static double GravityTerm(double degreesInput) {
 
-        double degrees = DegreesToEncoderTicks(degreesInput);
 
 
-        double gravityConstant = 9.81;
-        double gravityForce = gravityConstant * Math.sin(Math.toRadians(degrees));
+        double degrees = degreesInput+90;
+        double gravityConstant = 2;
+        double gravityForce = gravityConstant * Math.cos(Math.toRadians(degrees));
+
+        System.out.println("gravity"+gravityForce);
 
         return Math.abs(gravityForce);
     }
 
 
         // Static variable to maintain toggle state across calls
-
-
-
 
     public static double getDegrees(double getPosition) {
         return -((getPosition / (1333/90) + 21));

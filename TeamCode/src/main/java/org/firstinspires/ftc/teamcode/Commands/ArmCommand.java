@@ -23,38 +23,38 @@ public class ArmCommand implements Command {
     public ArmCommand(ArmSubsystem arm, double targetPos) {
         this.arm = arm;
         this.setPos = targetPos;
-        piviotPID.setSetPoint(targetPos);
-        piviotPID.setMaxOutput(0.5);
-        piviotPID.setMinOutput(-0.5);
-
         System.out.println("Created ArmCommand with TargetPos: " + targetPos);
 
     }
 
     @Override
     public void start() {
-        // Initialization logic if needed
+        System.out.println(setPos);
     }
 
     @Override
     public void execute() {
 //        pos = arm.getCurrentPositionWithLimitSwitch(); // Update static pos
 //        posToo =arm.getCurrentPositionWithLimitSwitch(); // Update  posToo
-        piviotPID.updatePID(arm.getCurrentPositionWithLimitSwitch());
-        arm.setPower( -piviotPID.getResult());
-        System.out.println("Pivot PID: " + piviotPID.getResult());
-        System.out.println("Set Pos" + setPos);
+
+        arm.setPosition(setPos);
     }
 
     @Override
     public void end() {
-        arm.setPower(0);
+//        piviotPID.setSetPoint(arm.getCurrentPositionWithLimitSwitch());
+//        piviotPID.updatePID(arm.getCurrentPositionWithLimitSwitch());
+//        piviotPID.setMaxOutput(1);
+//        piviotPID.setMinOutput(-1);
+//        arm.setPower(piviotPID.getResult());
+
+        arm.setZeroPowerBehavior();
         System.out.println("Command ended.");
     }
 
     @Override
     public boolean isFinished() {
-        double tolerance = 7;
+        double tolerance = 10;
         double currentPosition = arm.getCurrentPositionWithLimitSwitch();
         return Math.abs(currentPosition - setPos) <= tolerance;
     }

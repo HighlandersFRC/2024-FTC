@@ -1,41 +1,39 @@
 package org.firstinspires.ftc.teamcode;
 
+import static org.firstinspires.ftc.teamcode.Tools.Constants.DegreesToEncoderTicks;
+import static org.firstinspires.ftc.teamcode.Tools.Constants.getDegrees;
+import static org.firstinspires.ftc.teamcode.Tools.Constants.piviotPID;
+
+import com.acmerobotics.dashboard.FtcDashboard;
+import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.teamcode.Subsystems.ArmSubsystem;
 import org.firstinspires.ftc.teamcode.Subsystems.Drive;
 import org.firstinspires.ftc.teamcode.Subsystems.ElevatorSubsystem;
-import org.firstinspires.ftc.teamcode.Subsystems.Intake;
-import org.firstinspires.ftc.teamcode.Subsystems.IntakeSubsystem;
-import org.firstinspires.ftc.teamcode.Subsystems.Wrist;
+
 
 @TeleOp
 public class TestClass extends LinearOpMode {
-
-
+    private FtcDashboard dashboard;
     @Override
     public void runOpMode() throws InterruptedException {
-        ElevatorSubsystem elevatorSubsystem = new ElevatorSubsystem("Elevator", hardwareMap);
-        IntakeSubsystem intake = new IntakeSubsystem("Intake", hardwareMap);
-        Wrist wrist = new Wrist("wrist", hardwareMap);
-        Drive drive = new Drive("drive", hardwareMap);
-        waitForStart();
 
+        waitForStart();
+        dashboard = FtcDashboard.getInstance();
+        ArmSubsystem armSubsystem = new ArmSubsystem("arm", hardwareMap);
+        ElevatorSubsystem elevatorSubsystem = new ElevatorSubsystem("elevator", hardwareMap);
+        Drive drive = new Drive("drive", hardwareMap);
         while (opModeIsActive()) {
-                elevatorSubsystem.manual(gamepad1);
-                intake.controlIntake(gamepad1);
-                double wristPos = 0.5;
-                 if (gamepad1.dpad_right) {
-                     wristPos = 1;
-                 } else if (gamepad1.dpad_up) {
-                  wristPos = 0.5;
-                 } else if (gamepad1.dpad_left) {
-                     wristPos = 0;
-                 }
-                 wrist.setPosition(wristPos);
-                 drive.sketchDrive(gamepad1);
-            telemetry.update();
+//         armSubsystem.ArmMovement(gamepad1);
+         elevatorSubsystem.contolElevatorSetPoint(gamepad1);
+         drive.FeildCentric(gamepad1);
+            TelemetryPacket packet = new TelemetryPacket();
+                packet.put("Degrees-Arm", getDegrees(armSubsystem.getCurrentPositionWithLimitSwitch()));
+                packet.put("Degrees-Elevator", elevatorSubsystem.getCurrentPosition());
+            dashboard.sendTelemetryPacket(packet);
         }
     }
 }
