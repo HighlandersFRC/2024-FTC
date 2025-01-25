@@ -48,13 +48,13 @@ Mouse.configureOtos();
 
 
             if (armControlToggle) {
-                armSubsystem.ArmMovement(gamepad2);
+                armSubsystem.manual(gamepad2);
                 intakeSubsystem.controlIntake(gamepad2);
                 elevatorSubsystem.manual(gamepad2);
                 wristSubsystem.contolWrist(gamepad2);
                 rumble = 0;
             } else {
-                armSubsystem.ArmMovement(gamepad1);
+                armSubsystem.manual(gamepad1);
                 intakeSubsystem.controlIntake(gamepad1);
                 elevatorSubsystem.manual(gamepad1);
                 wristSubsystem.contolWrist(gamepad1);

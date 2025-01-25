@@ -11,7 +11,7 @@ import org.firstinspires.ftc.teamcode.Commands.DefaultCommands.WristDefault;
 
 public class Wrist extends Subsystem {
     private Servo wrist;
-    private double position = 1; // Default position
+    private double position; // Default position
 
 
     public Wrist(String name, HardwareMap hardwareMap) {
@@ -20,10 +20,9 @@ public class Wrist extends Subsystem {
         initialize(hardwareMap);
     }
 
-    public void initialize(HardwareMap hardwareMap) {
+    private void initialize(HardwareMap hardwareMap) {
         wrist = hardwareMap.servo.get("wrist");
         // Set initial position during initialization
-        wrist.setPosition(position);
     }
 
     public void contolWrist(Gamepad gamepad1) {

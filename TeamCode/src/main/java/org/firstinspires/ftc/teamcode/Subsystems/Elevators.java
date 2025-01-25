@@ -99,7 +99,7 @@
 //
 //    @Override
 //    public void setDefaultCommand(Command command) {
-//        super.setDefaultCommand(new ElevatorDefault());
+//        super.setDefaultCommand(new ElevatorDefault(el));
 //    }
 //
 //    @Override
