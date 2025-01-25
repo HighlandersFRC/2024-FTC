@@ -60,9 +60,12 @@ public class ArmSubsystem extends Subsystem {
 
     public double getCurrentPositionWithLimitSwitch() {
         if (limitSwitch != null && !limitSwitch.getState()) {
-            pos = getCurrentPosition();
+            // Update pos only once when the limit switch is triggered
+            if (pos == 0) {
+                pos = getCurrentPosition();  // Store initial position when triggered
+            }
         }
-        return getCurrentPosition() - pos;
+        return getCurrentPosition() - pos; // Return offset from the initial position
     }
 
     public void ArmMovement(Gamepad gamepad1) {

@@ -25,7 +25,6 @@ public class SensorSparkFunOTOS extends LinearOpMode {
 
         Drive drive = new Drive("drive",hardwareMap,telemetry);
         Peripherals.initialize(hardwareMap);
-        CommandScheduler scheduler = new CommandScheduler();
         drive.initialize(hardwareMap);
         Mouse.init(hardwareMap);
 
@@ -41,7 +40,7 @@ public class SensorSparkFunOTOS extends LinearOpMode {
             Mouse.update();
             FinalPose.poseUpdate();
 
-            scheduler.run();
+            CommandScheduler.run();
 
             telemetry.addLine("Press Y (triangle) on Gamepad to reset tracking");
             telemetry.addLine("Press X (square) on Gamepad to calibrate the IMU");

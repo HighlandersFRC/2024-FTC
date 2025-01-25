@@ -39,8 +39,7 @@ public class PolarPathFollower implements Command {
 
     public PolarPathFollower(Drive drive, Peripherals peripherals, JSONObject pathJSON,
                              HashMap<String, Supplier<Command>> commandMap,
-                             HashMap<String, BooleanSupplier> conditionMap,
-                             CommandScheduler scheduler) throws JSONException {
+                             HashMap<String, BooleanSupplier> conditionMap) throws JSONException {
         this.scheduler = scheduler;
         this.points = pathJSON.getJSONArray("sampled_points");
         this.commandMap = commandMap;

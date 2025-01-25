@@ -28,7 +28,7 @@ public class TestAuto extends LinearOpMode {
         drive.setPosition(0, 0, 0);
 
         PathLoading pathLoading = new PathLoading(hardwareMap.appContext, "Turn90Deg.polarpath");
-        CommandScheduler scheduler = new CommandScheduler();
+
         drive = new Drive("drive", hardwareMap, telemetry);
         Peripherals peripherals = new Peripherals("peripherals");
         PolarPathFollower moveToPosition;
@@ -41,8 +41,8 @@ public class TestAuto extends LinearOpMode {
         waitForStart();
         Mouse.configureOtos();
         try {
-            moveToPosition = new PolarPathFollower(drive, peripherals, PathLoading.getJsonPathData(), Constants.commandMap, Constants.conditionMap, scheduler);
-            scheduler.schedule(moveToPosition);
+            moveToPosition = new PolarPathFollower(drive, peripherals, PathLoading.getJsonPathData(), Constants.commandMap, Constants.conditionMap);
+            CommandScheduler.schedule(moveToPosition);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -50,7 +50,7 @@ public class TestAuto extends LinearOpMode {
 
         while (opModeIsActive()) {
             FinalPose.poseUpdate();
-            scheduler.run();
+            CommandScheduler.run();
 
             double robotX = FinalPose.x;
             double robotY = FinalPose.y;

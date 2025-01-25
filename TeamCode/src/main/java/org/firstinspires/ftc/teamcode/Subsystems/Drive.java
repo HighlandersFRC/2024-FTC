@@ -83,6 +83,10 @@ public class Drive extends Subsystem {
         backLeftMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         frontRightMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         backRightMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+        telemetry.addData("Power Left", frontLeftMotor.getPower() + backLeftMotor.getPower());
+        telemetry.addData("Power Right", frontRightMotor.getPower() + backRightMotor.getPower());
+        telemetry.update();
     }
 
 
@@ -400,7 +404,6 @@ public class Drive extends Subsystem {
         double rotY = - vx * Math.sin(-botHeading) + vy * Math.cos(-botHeading);
 
         rotX *= 1.1;
-
         double denominator = Math.max(Math.abs(rotY) + Math.abs(rotX) + Math.abs(rotationFactor), 1);
         double frontLeftPower = (rotY - rotX + rotationFactor) / denominator;
         double backLeftPower = (-rotY - rotX + rotationFactor) / denominator;
