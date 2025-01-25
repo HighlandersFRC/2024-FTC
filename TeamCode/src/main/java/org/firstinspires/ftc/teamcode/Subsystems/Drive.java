@@ -199,6 +199,7 @@ public class Drive extends Subsystem {
         double y = -gamepad1.left_stick_y;
         double rx = gamepad1.right_stick_x;
 
+
         double botHeading = -Math.toRadians(Mouse.getTheta());
         Mouse.update();
 
@@ -442,10 +443,10 @@ public class Drive extends Subsystem {
 
         double denominator = Math.max(Math.abs(rotY) + Math.abs(rotX) + Math.abs(rotationFactor), 1);
 
-        double frontLeftPower = (rotY + rotX - rotationFactor);
-        double backLeftPower = (-rotY + rotX + rotationFactor);
-        double frontRightPower = (rotY + rotX + rotationFactor);
-        double backRightPower = (rotY - rotX + rotationFactor);
+        double frontLeftPower = (rotY + rotX - rotationFactor) / denominator;
+        double backLeftPower = (-rotY + rotX + rotationFactor) / denominator;
+        double frontRightPower = (rotY + rotX + rotationFactor) / denominator;
+        double backRightPower = (rotY - rotX + rotationFactor) / denominator;
 
         drive(-frontLeftPower, -frontRightPower, -backLeftPower, -backRightPower);
         System.out.println("Rotation Y " + rotY + " Rotation X " + rotX+ " vy "+vy+" vx "+vx);

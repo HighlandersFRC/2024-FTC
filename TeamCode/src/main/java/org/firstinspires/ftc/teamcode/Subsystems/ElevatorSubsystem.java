@@ -40,25 +40,23 @@ public class ElevatorSubsystem extends Subsystem {
     }
 
     public void manual(Gamepad gamepad1) {
-
+//
 //        double currentPosition = getCurrentPosition();
 //        System.out.println("asxsssdf");
 //        System.out.println(gamepad1.b &&!(currentPosition < -300));
 //
-//
-//
-//            if (!(currentPosition > MIN_TICKS - 100)) {
+//            if (!(currentPosition > MIN_TICKS - 100)&&gamepad1.a) {
 //                System.out.println("First Passed");
-//                if (gamepad1.a) {
+//
 //                    System.out.println("Second Passed");
 //                    power = setPowerToPercentage(100);
 //                    setPower(setPowerToPercentage(100));
 //
-//                }
 //            } else if (gamepad1.b && !(currentPosition < -300)) {
 //                System.out.println("b");
 //                power = setPowerToPercentage(-100);
 //                setPower(setPowerToPercentage(-100));
+//
 //            } else {
 //                System.out.println("else Statement");
 //                Elevator.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -73,7 +71,6 @@ public class ElevatorSubsystem extends Subsystem {
             Elevator.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
             setPower(0);
         }
-
 
     }
 

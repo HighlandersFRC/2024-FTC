@@ -49,7 +49,7 @@ public class TestAuto extends LinearOpMode {
         Drive drive = new Drive("drive", hardwareMap);
         drive.setPosition(0, 0, 0);
 
-        PathLoading pathLoading = new PathLoading(hardwareMap.appContext, "Speicaman.polarpath");
+        PathLoading pathLoading = new PathLoading(hardwareMap.appContext, "Speciman.polarpath");
         Path2 path2 = new Path2(hardwareMap.appContext, "BackUps.polarpath");
         CommandScheduler scheduler = new CommandScheduler();
         drive = new Drive("drive", hardwareMap);
@@ -60,15 +60,21 @@ public class TestAuto extends LinearOpMode {
         try {
             scheduler.schedule(new SequentialCommandGroup(
                     scheduler,
+                    new Wait(2000),
                     new PolarPathFollower(drive, peripherals, pathLoading.getJsonPathData(), Constants.commandMap, Constants.conditionMap, scheduler),
-                    new ArmCommand(robot.arm, DegreesToEncoderTicks(75)),
-                    new ElevatorCommand(robot.elevator, -1800),
-                    new Wait(500),
+                    new Wait(2000),
+                    new ArmCommand(robot.arm, DegreesToEncoderTicks(65)),
+                    new Wait(2000),
+                    new WristCommands(robot.wrist, 0.3),
+                    new Wait(2000),
+                    new ElevatorCommand(robot.elevator, -1700),
+                    new Wait(2000),
                     new ElevatorCommand(robot.elevator, 0),
-                    new ArmCommand(robot.arm, DegreesToEncoderTicks(130)),
-                    new PolarPathFollower(drive, peripherals, path2.getJsonPathData(), Constants.commandMap, Constants.conditionMap, scheduler),
+                    new Wait(2000),
+                    new ArmCommand(robot.arm, DegreesToEncoderTicks(100)),
+//                    new PolarPathFollower(drive, peripherals, path2.getJsonPathData(), Constants.commandMap, Constants.conditionMap, scheduler),
                     new ArmCommand(robot.arm, DegreesToEncoderTicks(0))
-                    ));
+            ));
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -76,7 +82,7 @@ public class TestAuto extends LinearOpMode {
         while (opModeIsActive()) {
             FinalPose.poseUpdate();
 
-                scheduler.run();
+            scheduler.run();
 
 
             double robotX = FinalPose.x;
@@ -92,7 +98,7 @@ public class TestAuto extends LinearOpMode {
             packet.put("Target Angle", 150);
             packet.put("Current Pos", getDegrees(robot.arm.getCurrentPositionWithLimitSwitch()));
             packet.put("Result", piviotPID.getResult());
-            packet.put("Arm current power" , robot.arm.getPower());
+            packet.put("Arm current power", robot.arm.getPower());
             dashboard.sendTelemetryPacket(packet);
 
             telemetry.addData("X", -robotY);

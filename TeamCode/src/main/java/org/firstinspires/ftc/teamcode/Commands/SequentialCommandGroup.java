@@ -56,7 +56,7 @@ public class SequentialCommandGroup implements Command {
             }
             currentCommand = null;
         } else {
-            currentExecutionCount++;
+           // currentExecutionCount++;
         }
     }
 

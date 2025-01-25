@@ -40,6 +40,7 @@ public class Constants {
     public static double nextTheta;
     public static final double MAX_TICKS = -2090;
     public static final double MIN_TICKS = 31;
+    public static final double DEAD_ZONE = 0.1;
     ArmSubsystem arm;
     public static double DegreesToEncoderTicks(double degrees) {
         double TPR = 5700.4;

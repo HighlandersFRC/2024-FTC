@@ -12,7 +12,7 @@ public class Intake implements Command  {
 
     public Intake(IntakeSubsystem intakeSubsystem) {
         this.intakeSubsystem = intakeSubsystem;
-        this.intakeSubsystem.setPosition(0.85);
+        this.intakeSubsystem.setPosition(0.5);
     }
 
     public String getSubsystem() {
@@ -26,12 +26,12 @@ public class Intake implements Command  {
     @Override
     public void execute() {
         System.out.println("Intake executing");
-        intakeSubsystem.setPosition(0.85);
+        intakeSubsystem.setPosition(0.5);
     }
 
     @Override
     public void end() {
-        intakeSubsystem.setPosition(0.85);
+        intakeSubsystem.setPosition(0.5);
     }
 
     @Override

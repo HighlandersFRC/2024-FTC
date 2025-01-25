@@ -26,28 +26,21 @@ public class ArmDefault implements Command {
     @Override
     public void start() {
         // Initialization logic if needed
-        //piviotPID.setSetPoint(arm.getCurrentPositionWithLimitSwitch());
     }
 
     @Override
     public void execute() {
-//        pos = arm.getCurrentPositionWithLimitSwitch(); // Update static pos
-//        posToo =arm.getCurrentPositionWithLimitSwitch(); // Update  posToo
-        //piviotPID.updatePID(arm.getCurrentPositionWithLimitSwitch());
-
-        //arm.setPower(piviotPID.getResult());
+//       arm.setPosition(arm.getCurrentPositionWithLimitSwitch());
     }
 
     @Override
     public void end() {
-        //arm.setPower(0);
-        //System.out.println("Command ended.");
+        arm.setPower(0);
+        System.out.println("Command ended.");
     }
 
     @Override
     public boolean isFinished() {
-        //double tolerance = 7;
-        //double currentPosition = arm.getCurrentPositionWithLimitSwitch();
         return false;
     }
 
