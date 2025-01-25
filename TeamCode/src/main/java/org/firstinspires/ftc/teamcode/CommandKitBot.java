@@ -42,9 +42,6 @@ public class CommandKitBot extends LinearOpMode {
 
         double Pos = 0;
 
-
-
-
         boolean previousB = false;
         boolean previousX = false;
         boolean previousY = false;

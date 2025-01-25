@@ -13,7 +13,7 @@ public class ArmDefault implements Command {
 
     private double setPos;
     private double pivotPower;
-    public double posToo = 0;
+    public double pos = 0;
     private String name = "Arm";
     private ArmSubsystem arm;
 
@@ -25,12 +25,12 @@ public class ArmDefault implements Command {
 
     @Override
     public void start() {
-        // Initialization logic if needed
+       pos = arm.getCurrentPositionWithLimitSwitch();
     }
 
     @Override
     public void execute() {
-//       arm.setPosition(arm.getCurrentPositionWithLimitSwitch());
+      arm.setPosition(pos);
     }
 
     @Override

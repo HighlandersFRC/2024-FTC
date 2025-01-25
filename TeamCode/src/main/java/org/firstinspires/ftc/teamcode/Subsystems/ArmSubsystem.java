@@ -22,7 +22,7 @@ public class ArmSubsystem extends Subsystem {
     private DcMotor pivotMotor;
     private DigitalChannel limitSwitch;
 
-    ArmSubsystem armSubsystem;
+
     private double pos;
     public double elePos;
     private double manualPower;
@@ -31,8 +31,6 @@ public class ArmSubsystem extends Subsystem {
 
     public ArmSubsystem(String name, HardwareMap hardwareMap) {
         super(name);
-        this.pivotMotor = null;
-        this.limitSwitch = null;
 //        this.pos = 0;
         this.manualPower = 0.0;
         initialize(hardwareMap);
@@ -197,6 +195,6 @@ public class ArmSubsystem extends Subsystem {
 
     @Override
     public Command getDefaultCommand() {
-        return new ArmDefault(armSubsystem);
+        return new ArmDefault(this);
     }
 }
