@@ -49,7 +49,6 @@ public class Drive extends LinearOpMode {
 
         Robot.CURRENT_STATE = "Tele-Op";
         while (opModeIsActive()) {
-            gamepad2.rumble(1000);
             gamepad1.rumble(1);
 
             Mouse.update();

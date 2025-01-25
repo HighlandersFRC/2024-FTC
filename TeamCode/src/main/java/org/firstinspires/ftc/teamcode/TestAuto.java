@@ -84,7 +84,7 @@ public class TestAuto extends LinearOpMode {
             Command place = new SequentialCommandGroup(scheduler,
                     new PivotMove(Robot.pivot, Constants.ARM_HIGH),
                     new Elevator(Robot.elevators, Constants.ELEVATOR_AUTO),
-                    new WristMove(Robot.wrist, 0.3),
+                    new WristMove(Robot.wrist, 0.55),
                     new ParallelCommandGroup(scheduler, Parameters.ANY,
                             new Outtake(Robot.intake, 2000),
                             new Wait(1000)
@@ -102,8 +102,8 @@ public class TestAuto extends LinearOpMode {
 
 
             Command reset = new SequentialCommandGroup(scheduler,
-         /*           new WristMove(Robot.wrist, 0.1),
-                    new Elevator(Robot.elevators, 0),*/
+                    new WristMove(Robot.wrist, 0.1),
+                    new Elevator(Robot.elevators, 0),
                     new WristMove(Robot.wrist, 1),
                     new Pivot1(Robot.pivot, -10)
             );
@@ -125,7 +125,7 @@ public class TestAuto extends LinearOpMode {
                     reset,
                     new ParallelCommandGroup(scheduler, Parameters.ALL,
                             path3,
-                            new WristMove(Robot.wrist, 0.25),
+                            new WristMove(Robot.wrist, 0.15),
                             new IntakeCommand(Robot.intake)
                     ),
                     path4,
@@ -151,8 +151,8 @@ public class TestAuto extends LinearOpMode {
             FinalPose.poseUpdate();
             scheduler.run();
 
-            double robotX = FinalPose.x * 39.37;
-            double robotY = FinalPose.y * 39.37;
+            double robotX = FinalPose.x ;
+            double robotY = FinalPose.y ;
             double robotTheta = Math.toRadians(FinalPose.yaw);
 
             TelemetryPacket packet = new TelemetryPacket();

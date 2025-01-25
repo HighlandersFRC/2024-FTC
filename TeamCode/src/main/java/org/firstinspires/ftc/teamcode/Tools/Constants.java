@@ -13,10 +13,9 @@ public class Constants {
     public static final double PIVOT_FEED_FORWARD = 0.09;
 
     public static double ARM_BALANCE_OFFSET = 18.9;
+    public static double ARM_HIGH = 101;
 
-    public static double ARM_HIGH = 104;
-
-    public static double ELEVATOR_AUTO = 0;
+    public static double ELEVATOR_AUTO = 2300;
 
     public static double yCorrected(double AY) {
         return AY - ((0.172 * AY) + 0.00307);
