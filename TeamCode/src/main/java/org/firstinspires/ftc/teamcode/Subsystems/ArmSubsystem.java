@@ -102,12 +102,12 @@ public class ArmSubsystem extends Subsystem {
 
     public void ArmMovement(Gamepad gamepad1) {
         if (gamepad1.y) {
-            pos = DegreesToEncoderTicks(-60);
+            pos = DegreesToEncoderTicks(0);
             wristPosition = 0;
             intakePosition = 0.85;
             elePos = 2004;
        } else if(gamepad1.b) {
-            pos = DegreesToEncoderTicks(0);
+            pos = DegreesToEncoderTicks(-45);
             wristPosition = 0;
             intakePosition = 0.85;
             elePos = 0;
@@ -117,7 +117,7 @@ public class ArmSubsystem extends Subsystem {
             intakePosition = 0.85;
             elePos = 1500;
         } else if (gamepad1.a) {
-            pos = DegreesToEncoderTicks(-40);
+            pos = DegreesToEncoderTicks(-10);
             wristPosition = 0;
             intakePosition = 0.85;
             elePos = 2004;
@@ -159,17 +159,17 @@ public class ArmSubsystem extends Subsystem {
         piviotPID.setMaxOutput(0.5);
         piviotPID.setMinOutput(-0.5);
         setPower(-piviotPID.getResult());
+//        setZeroPowerBehavior();
     }
 
     public void manual(Gamepad gamepad1) {
         wristPosition = 0.35;
-        if (gamepad1.right_bumper) {
+        if (gamepad1.a) {
             setPower(0.5);
-        } else if (gamepad1.left_bumper) {
+        } else if (gamepad1.b) {
             setPower(-0.5);
         } else {
-            setZeroPowerBehavior();
-            setPower(0);
+            setPosition(getCurrentPositionWithLimitSwitch());
         }
 
 //        if (gamepad1.b) {

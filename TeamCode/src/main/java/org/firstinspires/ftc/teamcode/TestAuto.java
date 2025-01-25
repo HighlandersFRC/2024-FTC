@@ -60,6 +60,7 @@ public class TestAuto extends LinearOpMode {
         try {
             scheduler.schedule(new SequentialCommandGroup(
                     scheduler,
+                    new Wait(2000),
                     new PolarPathFollower(drive, peripherals, pathLoading.getJsonPathData(), Constants.commandMap, Constants.conditionMap, scheduler),
                     new Wait(2000),
                     new ArmCommand(robot.arm, DegreesToEncoderTicks(65)),
@@ -70,9 +71,9 @@ public class TestAuto extends LinearOpMode {
                     new Wait(2000),
                     new ElevatorCommand(robot.elevator, 0),
                     new Wait(2000),
-                    new ArmCommand(robot.arm, DegreesToEncoderTicks(100))
+                    new ArmCommand(robot.arm, DegreesToEncoderTicks(100)),
 //                    new PolarPathFollower(drive, peripherals, path2.getJsonPathData(), Constants.commandMap, Constants.conditionMap, scheduler),
-//                    new ArmCommand(robot.arm, DegreesToEncoderTicks(0))
+                    new ArmCommand(robot.arm, DegreesToEncoderTicks(0))
             ));
         } catch (Exception e) {
             throw new RuntimeException(e);

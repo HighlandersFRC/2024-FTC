@@ -63,9 +63,9 @@ public class ElevatorSubsystem extends Subsystem {
 //                setPower(0);
 //            }
 
-        if (gamepad1.a){
+        if (gamepad1.left_bumper){
             setPower(0.8);
-        } else if (gamepad1.b) {
+        } else if (gamepad1.right_bumper) {
             setPower(-0.8);
         } else {
             Elevator.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);

@@ -42,11 +42,7 @@ public class CommandKitBot extends LinearOpMode {
 
         double Pos = 0;
 
-      /*  ArmCommand zero = new ArmCommand(armSubsystem, DegreesToEncoderTicks(0));
-        ArmCommand score = new ArmCommand(armSubsystem, DegreesToEncoderTicks(70));
-        ArmCommand enter = new ArmCommand(armSubsystem, DegreesToEncoderTicks(100));
-        ArmCommand pickUp = new ArmCommand(armSubsystem, DegreesToEncoderTicks(120));
-        */
+
 
 
         boolean previousB = false;
@@ -58,10 +54,10 @@ public class CommandKitBot extends LinearOpMode {
         waitForStart();
 
         while (opModeIsActive()) {
-            driveSubsystem.FeildCentric(gamepad1);
 
 
-/*
+
+
             // Button Press Detection
             boolean currentB = gamepad1.b;
             boolean currentX = gamepad1.x;
@@ -69,20 +65,25 @@ public class CommandKitBot extends LinearOpMode {
             boolean currentDpadDown = gamepad1.dpad_down;
 
             if (currentB && !previousB) {
-                Pos =0;
-                scheduler.schedule(zero);
-            }
-            if (currentX && !previousX) {
-                Pos = DegreesToEncoderTicks(100);
-                scheduler.schedule(enter);
-            }
-            if (currentY && !previousY) {
-                Pos = DegreesToEncoderTicks(70);
-                scheduler.schedule(score);
-            }
-            if (currentDpadDown && !previousDpadDown) {
-                Pos = DegreesToEncoderTicks(120);
-                scheduler.schedule(pickUp);
+                Pos = DegreesToEncoderTicks(0);
+
+                ArmCommand pos = new ArmCommand(robot.arm, Pos);
+                scheduler.schedule(pos);
+            }else if (currentY && !previousY) {
+                Pos = DegreesToEncoderTicks(60);
+
+                ArmCommand pos = new ArmCommand(robot.arm, Pos);
+                scheduler.schedule(pos);
+            } else if (currentDpadDown && !previousDpadDown) {
+                Pos = DegreesToEncoderTicks(45);
+
+                ArmCommand pos = new ArmCommand(robot.arm, Pos);
+                scheduler.schedule(pos);
+            } else if (currentX && !previousX) {
+                Pos = DegreesToEncoderTicks(90);
+
+                ArmCommand pos = new ArmCommand(robot.arm, Pos);
+                scheduler.schedule(pos);
             }
 
             previousB = currentB;
@@ -90,7 +91,7 @@ public class CommandKitBot extends LinearOpMode {
             previousY = currentY;
             previousDpadDown = currentDpadDown;
 
-*/
+
 
 
                 scheduler.run();

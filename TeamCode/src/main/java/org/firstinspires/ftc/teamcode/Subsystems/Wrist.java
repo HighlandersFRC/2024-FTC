@@ -26,14 +26,15 @@ public class Wrist extends Subsystem {
     }
 
     public void contolWrist(Gamepad gamepad1) {
+
         if (gamepad1.dpad_right) {
            double wristPosition = 0;
             setPosition(wristPosition);
         } else if (gamepad1.dpad_left) {
-            double wristPosition = 0.2;
+            double wristPosition = 1;
             setPosition(wristPosition);
         } else if (gamepad1.dpad_up) {
-            double wristPosition = 0.8;
+            double wristPosition = 0.5;
             setPosition(wristPosition);
         }
     }

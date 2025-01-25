@@ -23,20 +23,19 @@ public class ArmCommand implements Command {
     public ArmCommand(ArmSubsystem arm, double targetPos) {
         this.arm = arm;
         this.setPos = targetPos;
-        System.out.println("Created ArmCommand with TargetPos: " + targetPos);
-
     }
 
     @Override
     public void start() {
         System.out.println(setPos);
+        System.out.println("Created ArmCommand with TargetPos: " + setPos + " Current Position: " + arm.getCurrentPositionWithLimitSwitch());
     }
 
     @Override
     public void execute() {
 //        pos = arm.getCurrentPositionWithLimitSwitch(); // Update static pos
 //        posToo =arm.getCurrentPositionWithLimitSwitch(); // Update  posToo
-
+System.out.println("Executing");
         arm.setPosition(setPos);
     }
 
@@ -57,6 +56,7 @@ public class ArmCommand implements Command {
         double tolerance = 10;
         double currentPosition = arm.getCurrentPositionWithLimitSwitch();
         return Math.abs(currentPosition - setPos) <= tolerance;
+
     }
 
     @Override

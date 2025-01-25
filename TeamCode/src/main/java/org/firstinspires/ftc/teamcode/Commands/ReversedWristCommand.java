@@ -3,16 +3,17 @@ package org.firstinspires.ftc.teamcode.Commands;
 import org.firstinspires.ftc.teamcode.Subsystems.Subsystem;
 import org.firstinspires.ftc.teamcode.Subsystems.Wrist;
 
-public class WristCommands implements Command {
+public class ReversedWristCommand implements Command {
     public static double pos;
 
     private String name = "Wrist";
     private Wrist wristSubsystem;
 
-    public WristCommands(Wrist wristSubsystem, double pos) {
+    public ReversedWristCommand(Wrist wristSubsystem, double pos) {
         this.wristSubsystem = wristSubsystem;
         WristCommands.pos = pos; // Set the position for the wrist
 
+        this.wristSubsystem.setPosition(pos);
     }
 
     @Override
