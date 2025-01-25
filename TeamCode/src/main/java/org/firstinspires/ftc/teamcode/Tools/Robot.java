@@ -4,6 +4,7 @@ package org.firstinspires.ftc.teamcode.Tools;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import org.firstinspires.ftc.teamcode.Subsystems.ArmSubsystem;
 import org.firstinspires.ftc.teamcode.Subsystems.Drive;
+import org.firstinspires.ftc.teamcode.Subsystems.ElevatorSubsystem;
 import org.firstinspires.ftc.teamcode.Subsystems.IntakeSubsystem;
 import org.firstinspires.ftc.teamcode.Subsystems.Peripherals;
 import org.firstinspires.ftc.teamcode.Subsystems.Pivot;
@@ -20,35 +21,26 @@ public class Robot {
 
     // Instance variables for subsystems
     public Drive drive;
-    public IntakeSubsystem intake;
+    public IntakeSubsystem intakeSubsystem;
     public Wrist wrist;
     public ArmSubsystem arm;
+    public ElevatorSubsystem elevator;
 
-    // Constructor to initialize subsystems with hardwareMap and telemetry
-    public Robot(HardwareMap hardwareMap, Telemetry telemetry) {
-        // Initialize subsystems with appropriate hardware
-        this.drive = new Drive("drive", hardwareMap, telemetry);
-        this.intake = new IntakeSubsystem("intakeSubsystem");
-        this.wrist = new Wrist("wrist");
+    public Robot(HardwareMap hardwareMap) {
+        this.drive = new Drive("drive", hardwareMap);
+        this.intakeSubsystem = new IntakeSubsystem("intakeSubsystem", hardwareMap);
+        this.wrist = new Wrist("wrist", hardwareMap);
         this.arm = new ArmSubsystem("arm", hardwareMap);
+        this.elevator = new ElevatorSubsystem("elevator", hardwareMap);
     }
 
     // Initialize hardware for all subsystems
     public void initialize(HardwareMap hardwareMap, Telemetry telemetry) {
-        this.drive = new Drive("drive", hardwareMap, telemetry);
-        this.intake = new IntakeSubsystem("intakeSubsystem");
-        this.wrist = new Wrist("wrist");
+        this.drive = new Drive("drive", hardwareMap);
+        this.intakeSubsystem = new IntakeSubsystem("intakeSubsystem", hardwareMap);
+        this.wrist = new Wrist("wrist", hardwareMap);
         this.arm = new ArmSubsystem("arm", hardwareMap);
+        this.elevator = new ElevatorSubsystem("elevator", hardwareMap);
     }
 
-    // Elevator power calculation based on button states
-    public static double elevatorPowerCalc(boolean right, boolean left) {
-        if (right) {
-            return 1;
-        } else if (left) {
-            return -1;
-        } else {
-            return 0;
-        }
-    }
 }

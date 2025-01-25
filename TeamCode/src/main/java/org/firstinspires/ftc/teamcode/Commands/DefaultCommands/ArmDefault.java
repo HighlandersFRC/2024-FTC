@@ -1,53 +1,54 @@
 
 package org.firstinspires.ftc.teamcode.Commands.DefaultCommands;
 
-import static org.firstinspires.ftc.teamcode.Tools.Constants.GravityTerm;
-
-import com.qualcomm.robotcore.hardware.DcMotor;
+import static org.firstinspires.ftc.teamcode.Subsystems.Pivot.pivotMotor;
+import static org.firstinspires.ftc.teamcode.Tools.Constants.piviotPID;
 
 import org.firstinspires.ftc.teamcode.Commands.Command;
 import org.firstinspires.ftc.teamcode.Subsystems.ArmSubsystem;
 import org.firstinspires.ftc.teamcode.Subsystems.Subsystem;
 import org.firstinspires.ftc.teamcode.Tools.PID;
 
-import static org.firstinspires.ftc.teamcode.Commands.ArmCommand.pos;
-
 public class ArmDefault implements Command {
 
+    private double setPos;
     private double pivotPower;
-    private PID pivotPID = new PID(.001, 0, 0);
+    public double posToo = 0;
     private String name = "Arm";
     private ArmSubsystem arm;
 
     public ArmDefault(ArmSubsystem arm) {
         this.arm = arm;
+        piviotPID.setMaxOutput(0.5);
+        piviotPID.setMinOutput(-0.5);
     }
 
     @Override
     public void start() {
-        pivotPID.setSetPoint(-1 * Math.abs(pos));
-        System.out.println("ArmDefault started");
+        // Initialization logic if needed
+        //piviotPID.setSetPoint(arm.getCurrentPositionWithLimitSwitch());
     }
 
     @Override
     public void execute() {
-        pivotPower = pivotPID.updatePID(arm.getCurrentPositionWithLimitSwitch());
-        double feed = GravityTerm(arm.getCurrentPositionWithLimitSwitch());
-        arm.setPower(-pivotPower * feed);
-        System.out.println(pos + " ArmDefault executing");
+//        pos = arm.getCurrentPositionWithLimitSwitch(); // Update static pos
+//        posToo =arm.getCurrentPositionWithLimitSwitch(); // Update  posToo
+        //piviotPID.updatePID(arm.getCurrentPositionWithLimitSwitch());
+
+        //arm.setPower(piviotPID.getResult());
     }
 
     @Override
     public void end() {
-        arm.setPower(0);
-        System.out.println("ArmDefault ended");
+        //arm.setPower(0);
+        //System.out.println("Command ended.");
     }
 
     @Override
     public boolean isFinished() {
-        double tolerance = 7;
-        double currentPosition = arm.getCurrentPositionWithLimitSwitch();
-        return Math.abs(currentPosition - pos) <= tolerance;
+        //double tolerance = 7;
+        //double currentPosition = arm.getCurrentPositionWithLimitSwitch();
+        return false;
     }
 
     @Override

@@ -10,8 +10,9 @@ public class Intake implements Command  {
 
     IntakeSubsystem intakeSubsystem;
 
-    public Intake(IntakeSubsystem intake) {
-        intakeSubsystem = intake;
+    public Intake(IntakeSubsystem intakeSubsystem) {
+        this.intakeSubsystem = intakeSubsystem;
+        this.intakeSubsystem.setPosition(0.85);
     }
 
     public String getSubsystem() {
@@ -25,12 +26,12 @@ public class Intake implements Command  {
     @Override
     public void execute() {
         System.out.println("Intake executing");
-        intakeSubsystem.setPosition(1,-1);
+        intakeSubsystem.setPosition(0.85);
     }
 
     @Override
     public void end() {
-        intakeSubsystem.setPosition(-1,1);
+        intakeSubsystem.setPosition(0.85);
     }
 
     @Override

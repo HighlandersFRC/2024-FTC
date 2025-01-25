@@ -1,6 +1,10 @@
 
 package org.firstinspires.ftc.teamcode.Commands;
 
+import static org.firstinspires.ftc.teamcode.Subsystems.Pivot.pivotMotor;
+import static org.firstinspires.ftc.teamcode.Tools.Constants.piviotPID;
+import static org.firstinspires.ftc.teamcode.Tools.Constants.setPowerToPercentage;
+
 import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.teamcode.Subsystems.ArmSubsystem;
@@ -11,44 +15,46 @@ public class ArmCommand implements Command {
 
     private double setPos;
     private double pivotPower;
-    private PID pivotPID;
     public static double pos = 0; // Static variable
+    public double posToo = 0;
     private String name = "Arm";
     private ArmSubsystem arm;
 
     public ArmCommand(ArmSubsystem arm, double targetPos) {
         this.arm = arm;
         this.setPos = targetPos;
-        this.pivotPID = new PID(0.15, 0, 0.01);
-        this.pivotPID.setSetPoint(targetPos);
-        this.pivotPID.setMaxOutput(0.5);
-        this.pivotPID.setMinInput(-180);
-        this.pivotPID.setMaxInput(180);
-
         System.out.println("Created ArmCommand with TargetPos: " + targetPos);
+
     }
 
     @Override
     public void start() {
-        // Initialization logic if needed
+        System.out.println(setPos);
     }
 
     @Override
     public void execute() {
-        pos = arm.getCurrentPositionWithLimitSwitch(); // Update static pos
-        pivotPower = pivotPID.updatePID(pos);
-        arm.setPower(-pivotPower);
+//        pos = arm.getCurrentPositionWithLimitSwitch(); // Update static pos
+//        posToo =arm.getCurrentPositionWithLimitSwitch(); // Update  posToo
+
+        arm.setPosition(setPos);
     }
 
     @Override
     public void end() {
-        arm.setPower(0);
+//        piviotPID.setSetPoint(arm.getCurrentPositionWithLimitSwitch());
+//        piviotPID.updatePID(arm.getCurrentPositionWithLimitSwitch());
+//        piviotPID.setMaxOutput(1);
+//        piviotPID.setMinOutput(-1);
+//        arm.setPower(piviotPID.getResult());
+
+        arm.setZeroPowerBehavior();
         System.out.println("Command ended.");
     }
 
     @Override
     public boolean isFinished() {
-        double tolerance = 7;
+        double tolerance = 10;
         double currentPosition = arm.getCurrentPositionWithLimitSwitch();
         return Math.abs(currentPosition - setPos) <= tolerance;
     }

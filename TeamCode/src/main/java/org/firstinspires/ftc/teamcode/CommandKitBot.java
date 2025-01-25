@@ -1,125 +1,119 @@
-//package org.firstinspires.ftc.teamcode;
-//
-//import static org.firstinspires.ftc.teamcode.Commands.
-//
-//import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-//import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-//
-//import org.firstinspires.ftc.teamcode.Commands.ArmCommand;
-//import org.firstinspires.ftc.teamcode.Commands.CommandScheduler;
-//import org.firstinspires.ftc.teamcode.Commands.Intake;
-//import org.firstinspires.ftc.teamcode.Commands.Outtake;
-//import org.firstinspires.ftc.teamcode.Commands.WristCommands;
-//import org.firstinspires.ftc.teamcode.Subsystems.ArmSubsystem;
-//import org.firstinspires.ftc.teamcode.Subsystems.Drive;
-//import org.firstinspires.ftc.teamcode.Subsystems.IntakeSubsystem;
-//import org.firstinspires.ftc.teamcode.Subsystems.Wrist;
-//import org.firstinspires.ftc.teamcode.Tools.Mouse;
-//import static org.firstinspires.ftc.teamcode.Tools.Constants.DegreesToEncoderTicks;
-//
-//@TeleOp
-//public class CommandKitBot extends LinearOpMode {
-//
-//    @Override
-//    public void runOpMode() throws InterruptedException {
-//        // Initialize hardware and systems
-//
-//
-//
-//        ArmSubsystem armSubsystem = new ArmSubsystem("arm",hardwareMap);
-//        IntakeSubsystem intake = new IntakeSubsystem("intakeSubsystem");
-//        intake.initialize(hardwareMap);
-//        Wrist wrist = new Wrist("wrist");
-//        wrist.initialize(hardwareMap);
-//        Drive drive = new Drive("drive",hardwareMap,telemetry);
-//        drive.initialize(hardwareMap);
-//
-//        // Subsystem initialization with try-catch blocks for safety
-//
-//        try {
-//            drive = new Drive("drive", hardwareMap, telemetry);
-//            drive.initialize(hardwareMap);
-//
-//            armSubsystem = new ArmSubsystem("arm", hardwareMap);
-//
-//            wrist = new Wrist("wrist");
-//            wrist.initialize(hardwareMap);
-//
-//            intake.initialize(hardwareMap);
-//            Mouse.init(hardwareMap);
-//        } catch (Exception e) {
-//            telemetry.addData("Initialization Error", e.getMessage());
-//            telemetry.update();
-//            return; // Exit if initialization fails
-//        }
-//
-//        ArmCommand Score = new ArmCommand(armSubsystem, DegreesToEncoderTicks(120));
-//        ArmCommand Zero = new ArmCommand(armSubsystem, DegreesToEncoderTicks(0));
-//        ArmCommand pickUp = new ArmCommand(armSubsystem, DegreesToEncoderTicks(215));
-//        ArmCommand Enter = new ArmCommand(armSubsystem, DegreesToEncoderTicks(150));
-//
-//        // Intake and wrist commands
-//        Intake intakeCommand = new Intake(intake);
-//        Outtake outtakeCommand = new Outtake(intake);
-//
-//        WristCommands leftWrist = new WristCommands(wrist, 0.4);
-//        WristCommands rightWrist = new WristCommands(wrist, 0.8);
-//        WristCommands zeroWrist = new WristCommands(wrist, 0);
-//
-//        waitForStart();
-//
-//        // Main loop
-//        int loopCount = 0; // Loop counter for throttling telemetry
-//        while (opModeIsActive()) {
-//            try {
-//                // Drive logic
-//                drive.FeildCentric(gamepad1);
-//
-//                // Command scheduling
-//                if (gamepad1.right_trigger > 0 ) {
-//                    StopTheIntake = false;
-//                    scheduler.schedule(intakeCommand);
-//                } else if (gamepad1.left_trigger > 0 ) {
-//                    StopTheIntake = false;
-//                    scheduler.schedule(outtakeCommand);
-//                } else {
-//                    StopTheIntake = true;
-//                }
-//
-//                if (gamepad1.y && !scheduler.isCommandScheduled(Score)) {
-//                    scheduler.schedule(Score);
-//                } else if (gamepad1.b && !scheduler.isCommandScheduled(Zero)) {
-//                    scheduler.schedule(Zero);
-//                } else if (gamepad1.x && !scheduler.isCommandScheduled(Enter)) {
-//                    scheduler.schedule(Enter);
-//                } else if (gamepad1.a && !scheduler.isCommandScheduled(pickUp)) {
-//                    scheduler.schedule(pickUp);
-//                }
-//
-//                if (gamepad1.dpad_up){
-//                    scheduler.schedule(zeroWrist);
-//                }
-//                else if (gamepad1.dpad_right){
-//                    scheduler.schedule(rightWrist);
-//                }
-//                else if (gamepad1.dpad_left){
-//                    scheduler.schedule(leftWrist);
-//                }
-//
-//                // Run scheduled commands
-//                scheduler.run();
-//
-//                // Telemetry updates
-//                if (loopCount % 10 == 0) { // Update telemetry every 10 loops
-//                    telemetry.addData("Mouse Sensor", "X: %f, Y: %f", Mouse.getX(), Mouse.getY());
-//                    telemetry.addData("Pivot Arm Position", armSubsystem.getCurrentPositionWithLimitSwitch());
-//                    telemetry.update();
-//                }
-//                loopCount++;
-//            } catch (Exception e) {
-//                telemetry.addData("Runtime Error", e.getMessage());
-//                telemetry.update();
-//            }
-//        }
-//    }
-//}
+package org.firstinspires.ftc.teamcode;
+
+import com.acmerobotics.dashboard.FtcDashboard;
+import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import org.firstinspires.ftc.teamcode.Commands.ArmCommand;
+import org.firstinspires.ftc.teamcode.Commands.CommandScheduler;
+import org.firstinspires.ftc.teamcode.Commands.DefaultCommands.ArmDefault;
+import org.firstinspires.ftc.teamcode.Commands.ElevatorDown;
+import org.firstinspires.ftc.teamcode.Commands.ElevatorUp;
+import org.firstinspires.ftc.teamcode.Commands.StopElevator;
+import org.firstinspires.ftc.teamcode.Subsystems.ArmSubsystem;
+import org.firstinspires.ftc.teamcode.Subsystems.Drive;
+import org.firstinspires.ftc.teamcode.Subsystems.IntakeSubsystem;
+import org.firstinspires.ftc.teamcode.Subsystems.Wrist;
+import org.firstinspires.ftc.teamcode.Tools.Mouse;
+import org.firstinspires.ftc.teamcode.Tools.Robot;
+import org.json.JSONException;
+
+import static org.firstinspires.ftc.teamcode.Tools.Constants.DegreesToEncoderTicks;
+import static org.firstinspires.ftc.teamcode.Tools.Constants.getDegrees;
+
+@TeleOp
+public class CommandKitBot extends LinearOpMode {
+    private FtcDashboard dashboard;
+    @Override
+    public void runOpMode() throws InterruptedException {
+        CommandScheduler scheduler = CommandScheduler.getInstance();
+        dashboard = FtcDashboard.getInstance();
+        ArmSubsystem armSubsystem = new ArmSubsystem("arm", hardwareMap);
+        IntakeSubsystem intake = new IntakeSubsystem("intakeSubsystem", hardwareMap);
+        Wrist wrist = new Wrist("wrist", hardwareMap);
+        Drive driveSubsystem = new Drive("Drive", hardwareMap);
+
+        Robot robot = new Robot(hardwareMap);
+        robot.arm = armSubsystem;
+        robot.drive = driveSubsystem;
+        robot.intakeSubsystem = intake;
+        robot.wrist = wrist;
+        scheduler.setRobot(robot);
+
+        double Pos = 0;
+
+      /*  ArmCommand zero = new ArmCommand(armSubsystem, DegreesToEncoderTicks(0));
+        ArmCommand score = new ArmCommand(armSubsystem, DegreesToEncoderTicks(70));
+        ArmCommand enter = new ArmCommand(armSubsystem, DegreesToEncoderTicks(100));
+        ArmCommand pickUp = new ArmCommand(armSubsystem, DegreesToEncoderTicks(120));
+        */
+
+
+        boolean previousB = false;
+        boolean previousX = false;
+        boolean previousY = false;
+        boolean previousDpadDown = false;
+
+        ArmDefault armDefault = new ArmDefault(armSubsystem);
+        waitForStart();
+
+        while (opModeIsActive()) {
+            driveSubsystem.FeildCentric(gamepad1);
+
+
+/*
+            // Button Press Detection
+            boolean currentB = gamepad1.b;
+            boolean currentX = gamepad1.x;
+            boolean currentY = gamepad1.y;
+            boolean currentDpadDown = gamepad1.dpad_down;
+
+            if (currentB && !previousB) {
+                Pos =0;
+                scheduler.schedule(zero);
+            }
+            if (currentX && !previousX) {
+                Pos = DegreesToEncoderTicks(100);
+                scheduler.schedule(enter);
+            }
+            if (currentY && !previousY) {
+                Pos = DegreesToEncoderTicks(70);
+                scheduler.schedule(score);
+            }
+            if (currentDpadDown && !previousDpadDown) {
+                Pos = DegreesToEncoderTicks(120);
+                scheduler.schedule(pickUp);
+            }
+
+            previousB = currentB;
+            previousX = currentX;
+            previousY = currentY;
+            previousDpadDown = currentDpadDown;
+
+*/
+
+
+                scheduler.run();
+
+
+            double currentPosition = armSubsystem.getCurrentPositionWithLimitSwitch();
+            scheduler.printCurrentCommands();
+
+            telemetry.addData("Target Positions", "Score: %f, Enter: %f, Pick Up: %f, Zero: %f",
+                    DegreesToEncoderTicks(70), DegreesToEncoderTicks(100), DegreesToEncoderTicks(120), DegreesToEncoderTicks(0));
+            telemetry.addData("Is Finished", Math.abs(currentPosition - Pos) <= 7);
+            telemetry.addData("Arm Power", armSubsystem.getPower());
+            telemetry.addData("Current Target", Pos);
+            telemetry.update();
+
+
+            TelemetryPacket packet = new TelemetryPacket();
+            packet.put("Arm Degrees", getDegrees(armSubsystem.getCurrentPositionWithLimitSwitch()));
+            packet.put("Drive Degrees", getDegrees(driveSubsystem.leftBackPos()));
+            packet.put("Mouse Sensor X", -Mouse.getY());
+            packet.put("Mouse Sensor Y", -Mouse.getX());
+            packet.put("Mouse Sensor theta", -Mouse.getTheta());
+            dashboard.sendTelemetryPacket(packet);
+        }
+    }
+}

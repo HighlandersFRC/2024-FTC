@@ -7,9 +7,7 @@
 //import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 //import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 //import org.firstinspires.ftc.teamcode.Subsystems.Drive;
-//import org.firstinspires.ftc.teamcode.Subsystems.Elevators;
 //import org.firstinspires.ftc.teamcode.Subsystems.Peripherals;
-//import org.firstinspires.ftc.teamcode.Subsystems.Pivot;
 //import org.firstinspires.ftc.teamcode.Tools.FinalPose;
 //import org.firstinspires.ftc.teamcode.Tools.FieldOfMerit;
 //import org.firstinspires.ftc.teamcode.Tools.Mouse;
@@ -23,9 +21,9 @@
 //    public void runOpMode() throws InterruptedException {
 //        CRServo servo;
 //        // Initialize the robot systems
-//        Robot.initialize(hardwareMap);
+//        Robot robot = new Robot(hardwareMap);
 //        Mouse.init(hardwareMap);
-//        Pivot.initialize(hardwareMap);
+//
 //
 //        waitForStart();
 //
@@ -33,7 +31,6 @@
 //
 //        while (opModeIsActive()) {
 //
-//            Elevators.initialize(hardwareMap);
 //            Mouse.update();
 //
 //            FinalPose.poseUpdate();

@@ -15,11 +15,13 @@ public class Intake extends Subsystem {
     private CRServo rightServo;
     private final String setColor = "blue";
 
-    public Intake(String name) {
+    public Intake(String name, HardwareMap hardwareMap) {
         super(name);
+        leftServo = hardwareMap.get(CRServo.class, "left_servo");
+        rightServo = hardwareMap.get(CRServo.class, "right_servo");
     }
 
-    public void initialize(HardwareMap hardwareMap) {
+    private void initialize(HardwareMap hardwareMap) {
         colorSensor = hardwareMap.get(NormalizedColorSensor.class, "colorSensor");
         leftServo = hardwareMap.get(CRServo.class, "left_servo");
         rightServo = hardwareMap.get(CRServo.class, "right_servo");

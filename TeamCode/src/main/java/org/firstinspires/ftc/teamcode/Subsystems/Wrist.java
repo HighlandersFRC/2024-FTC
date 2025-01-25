@@ -1,5 +1,6 @@
-
 package org.firstinspires.ftc.teamcode.Subsystems;
+
+import static org.firstinspires.ftc.teamcode.Tools.Constants.DegreesToEncoderTicks;
 
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -9,61 +10,52 @@ import org.firstinspires.ftc.teamcode.Commands.Command;
 import org.firstinspires.ftc.teamcode.Commands.DefaultCommands.WristDefault;
 
 public class Wrist extends Subsystem {
-    public Servo wrist;
-public double position = 0.4;
+    private Servo wrist;
+    private double position = 1; // Default position
+
+
+    public Wrist(String name, HardwareMap hardwareMap) {
+        super(name);
+        this.wrist = null;
+        initialize(hardwareMap);
+    }
+
     public void initialize(HardwareMap hardwareMap) {
         wrist = hardwareMap.servo.get("wrist");
-    }
-
-    public Wrist(String name) {
-        super(name);
-    }
-
-    // Add this method to handle gamepad inputs for wrist control
-    public void controlWrist (Gamepad gamepad1) {
-
-if (gamepad1.dpad_up) {
-    position = 0.4;
-    } else if (gamepad1.dpad_left) {
-            position = 0.8;
-        } else if (gamepad1.dpad_right) {
-           position = 0;
-        }
-
-
-
+        // Set initial position during initialization
         wrist.setPosition(position);
     }
-public void contolWristWithOperator(Gamepad gamepad2) {
-    if (gamepad2.left_bumper && gamepad2.right_bumper) {
-        position = 0.49;
-    } else if (gamepad2.right_bumper) {
-        position = 0.8;
-    } else if (gamepad2.left_bumper) {
-        position = 0.2;
+
+    public void contolWrist(Gamepad gamepad1) {
+        if (gamepad1.dpad_right) {
+           double wristPosition = 0;
+            setPosition(wristPosition);
+        } else if (gamepad1.dpad_left) {
+            double wristPosition = 0.2;
+            setPosition(wristPosition);
+        } else if (gamepad1.dpad_up) {
+            double wristPosition = 0.8;
+            setPosition(wristPosition);
+        }
     }
-}
+
     public double getPosition() {
         return wrist.getPosition();
     }
 
-    public void setPosition(double pos){
-        wrist.setPosition(pos
-
-
-
-        );
+    public void setPosition(double pos) {
+        // Ensure position is within valid range (adjust min/max as needed)
+        position = Math.max(0.0, Math.min(1.0, pos));
+        wrist.setPosition(position);
     }
 
     @Override
     public void setDefaultCommand(Command command) {
-        super.setDefaultCommand(new WristDefault());
+        super.setDefaultCommand(command);
     }
-
 
     @Override
     public Command getDefaultCommand() {
-        return new WristDefault(); // Retrieve the set default command
+        return new WristDefault();
     }
-
 }
