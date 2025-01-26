@@ -9,7 +9,9 @@ import org.firstinspires.ftc.teamcode.Commands.CommandScheduler;
 import org.firstinspires.ftc.teamcode.Commands.DefaultCommands.ArmDefault;
 import org.firstinspires.ftc.teamcode.Commands.ElevatorDown;
 import org.firstinspires.ftc.teamcode.Commands.ElevatorUp;
+import org.firstinspires.ftc.teamcode.Commands.SequentialCommandGroup;
 import org.firstinspires.ftc.teamcode.Commands.StopElevator;
+import org.firstinspires.ftc.teamcode.Commands.WristCommands;
 import org.firstinspires.ftc.teamcode.Subsystems.ArmSubsystem;
 import org.firstinspires.ftc.teamcode.Subsystems.Drive;
 import org.firstinspires.ftc.teamcode.Subsystems.IntakeSubsystem;
@@ -49,6 +51,7 @@ public class CommandKitBot extends LinearOpMode {
 
         ArmDefault armDefault = new ArmDefault(armSubsystem);
         waitForStart();
+        armSubsystem.initialize(hardwareMap);
 
         while (opModeIsActive()) {
 
@@ -67,17 +70,16 @@ public class CommandKitBot extends LinearOpMode {
                 ArmCommand pos = new ArmCommand(robot.arm, Pos);
                 scheduler.schedule(pos);
             }else if (currentY && !previousY) {
-                Pos = DegreesToEncoderTicks(60);
+                Pos = DegreesToEncoderTicks(54);
+                scheduler.schedule(new SequentialCommandGroup(scheduler,new ArmCommand(robot.arm,Pos),new WristCommands(robot.wrist,0) ));
 
-                ArmCommand pos = new ArmCommand(robot.arm, Pos);
-                scheduler.schedule(pos);
             } else if (currentDpadDown && !previousDpadDown) {
                 Pos = DegreesToEncoderTicks(45);
 
                 ArmCommand pos = new ArmCommand(robot.arm, Pos);
                 scheduler.schedule(pos);
             } else if (currentX && !previousX) {
-                Pos = DegreesToEncoderTicks(90);
+                Pos = DegreesToEncoderTicks(93);
 
                 ArmCommand pos = new ArmCommand(robot.arm, Pos);
                 scheduler.schedule(pos);
@@ -90,7 +92,7 @@ public class CommandKitBot extends LinearOpMode {
 
 
 
-
+                scheduler.removeDuplicateCommands();
                 scheduler.run();
 
 
@@ -98,15 +100,17 @@ public class CommandKitBot extends LinearOpMode {
             scheduler.printCurrentCommands();
 
             telemetry.addData("Target Positions", "Score: %f, Enter: %f, Pick Up: %f, Zero: %f",
-                    DegreesToEncoderTicks(70), DegreesToEncoderTicks(100), DegreesToEncoderTicks(120), DegreesToEncoderTicks(0));
+                    DegreesToEncoderTicks(54), DegreesToEncoderTicks(100), DegreesToEncoderTicks(120), DegreesToEncoderTicks(0));
             telemetry.addData("Is Finished", Math.abs(currentPosition - Pos) <= 7);
             telemetry.addData("Arm Power", armSubsystem.getPower());
             telemetry.addData("Current Target", Pos);
+            telemetry.addData("angle",armSubsystem.getCurrentPositionWithLimitSwitch());
+            telemetry.addData("angle",armSubsystem.getLimit());
             telemetry.update();
 
 
             TelemetryPacket packet = new TelemetryPacket();
-            packet.put("Arm Degrees", getDegrees(armSubsystem.getCurrentPositionWithLimitSwitch()));
+            packet.put("Arm Degrees", armSubsystem.getCurrentPositionWithLimitSwitch());
             packet.put("Drive Degrees", getDegrees(driveSubsystem.leftBackPos()));
             packet.put("Mouse Sensor X", -Mouse.getY());
             packet.put("Mouse Sensor Y", -Mouse.getX());

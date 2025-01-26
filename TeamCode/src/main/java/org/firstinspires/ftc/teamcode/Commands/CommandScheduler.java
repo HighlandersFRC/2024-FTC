@@ -197,9 +197,9 @@ public class CommandScheduler {
                 if (subsystem != null) {
                     activeSubsystemCommands.remove(subsystem);
 
-                    // Reschedule default command if no other commands are active for this subsystem
+                    // Only reschedule default command if no other commands are active for this subsystem
                     Command defaultCommand = subsystem.getDefaultCommand();
-                    if (defaultCommand != null && !isCommandScheduled(defaultCommand)) {
+                    if (defaultCommand != null && !activeSubsystemCommands.containsKey(subsystem) && !isCommandScheduled(defaultCommand)) {
                         schedule(defaultCommand);
                     }
                 }
@@ -220,6 +220,7 @@ public class CommandScheduler {
             }
         }
     }
+
 
     public void printCurrentCommands() {
         RobotLog.d("===== Current Commands =====");
@@ -260,5 +261,16 @@ public class CommandScheduler {
     private boolean isDefaultCommand(Command command) {
         Subsystem subsystem = command.getRequiredSubsystem();
         return subsystem != null && subsystem.getDefaultCommand() == command;
+    }
+    public void removeDuplicateCommands() {
+        List<Command> uniqueCommands = new ArrayList<>();
+
+        for (Command command : new ArrayList<>(scheduledCommands)) {
+            String name = command.getClass().getSimpleName();
+            scheduledCommands.removeIf(c -> c.getClass().getSimpleName().equalsIgnoreCase(name));
+            uniqueCommands.add(command);
+        }
+
+        scheduledCommands.addAll(uniqueCommands);
     }
 }

@@ -31,17 +31,21 @@ public class ArmSubsystem extends Subsystem {
 
     public ArmSubsystem(String name, HardwareMap hardwareMap) {
         super(name);
-//        this.pos = 0;
-        this.manualPower = 0.0;
-        initialize(hardwareMap);
+
+
     }
 
     public void initialize(HardwareMap hardwareMap) {
         try {
+            this.pos = 0;
+            this.manualPower = 0.0;
             pivotMotor = hardwareMap.dcMotor.get("pivotMotor");
             limitSwitch = hardwareMap.digitalChannel.get("limitSwitch");
-            // Ensure limitSwitch is set to input mode
             limitSwitch.setMode(DigitalChannel.Mode.INPUT);
+
+            // Set the default command explicitly after initialization
+            setDefaultCommand(new ArmDefault(this));
+
         } catch (Exception e) {
             throw new IllegalStateException("Failed to initialize ArmSubsystem: " + e.getMessage());
         }
@@ -75,13 +79,16 @@ public class ArmSubsystem extends Subsystem {
         return pivotMotor != null ? pivotMotor.getCurrentPosition() : 0;
     }
 
+    public boolean getLimit(){
+        return limitSwitch.getState();
+    }
+
     public double getCurrentPositionWithLimitSwitch() {
         if (limitSwitch != null && !limitSwitch.getState()) {
             // Update pos only once when the limit switch is triggered
-            if (pos == 0) {
                 pos = getCurrentPosition();  // Store initial position when triggered
-            }
         }
+        System.out.println(pos);
         return getCurrentPosition() - pos; // Return offset from the initial position
     }
 

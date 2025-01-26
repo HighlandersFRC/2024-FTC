@@ -15,7 +15,7 @@ public class ArmCommand implements Command {
 
     private double setPos;
     private double pivotPower;
-    public static double pos = 0; // Static variable
+    public  double pos = 0; // Static variable
     public double posToo = 0;
     private String name = "Arm";
     private ArmSubsystem arm;
@@ -49,6 +49,7 @@ System.out.println("Executing");
 
         arm.setZeroPowerBehavior();
         System.out.println("Command ended.");
+        System.out.println("serdtgf");
     }
 
     @Override
@@ -56,6 +57,7 @@ System.out.println("Executing");
         double tolerance = 10;
         double currentPosition = arm.getCurrentPositionWithLimitSwitch();
         return Math.abs(currentPosition - setPos) <= tolerance;
+
 
     }
 
