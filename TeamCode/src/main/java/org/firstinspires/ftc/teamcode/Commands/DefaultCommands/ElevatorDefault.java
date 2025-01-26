@@ -14,7 +14,7 @@ import org.firstinspires.ftc.teamcode.Tools.Robot;
 
 public class ElevatorDefault implements Command {
 
-    private final PID elevatorPID = new PID(0.005, 0.004, 0.01);
+    private final PID elevatorPID = new PID(0.02, 0.004, 0.04);
     private final Elevators elevators = Robot.elevators;
     String name = "Elevator";
 

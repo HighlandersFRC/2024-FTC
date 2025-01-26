@@ -1,6 +1,8 @@
 package org.firstinspires.ftc.teamcode;
 
 
+import static org.firstinspires.ftc.teamcode.Tools.Robot.elevators;
+import static org.firstinspires.ftc.teamcode.Tools.Robot.pivot;
 import static org.firstinspires.ftc.teamcode.Tools.Robot.wrist;
 
 import android.graphics.Path;
@@ -121,7 +123,7 @@ public class TestAuto extends LinearOpMode {
                     reset,
                     new ParallelCommandGroup(scheduler, Parameters.ALL,
                             path1,
-                            new WristMove(Robot.wrist, 0.12),
+                            new WristMove(Robot.wrist, 0.1),
                             new IntakeCommand(Robot.intake)
                     ),
                     path2command,
@@ -129,28 +131,32 @@ public class TestAuto extends LinearOpMode {
                     place3,
                     new WristMove(wrist, 0.4),
                     new ParallelCommandGroup(scheduler, Parameters.ANY,
-                            new Outtake(Robot.intake, 1000),
-                            new Wait(1000)
+                            new Outtake(Robot.intake, 500),
+                            new Wait(500)
                     ),
                     reset,
                     new ParallelCommandGroup(scheduler, Parameters.ALL,
                             path3,
-                            new WristMove(Robot.wrist, 0.12),
+                            new WristMove(Robot.wrist, 0.1),
                             new IntakeCommand(Robot.intake)
                     ),
                     path4,
                     place3,
                     new WristMove(wrist, 0.4),
                     new ParallelCommandGroup(scheduler, Parameters.ANY,
-                            new Outtake(Robot.intake, 1000),
-                            new Wait(1000)
+                            new Outtake(Robot.intake, 500),
+                            new Wait(500)
                     ),
-                    reset,
-                    path5,
-                    new Pivot3(Robot.pivot, 95),
-                    new Elevator(Robot.elevators, 300)
-
-            ));
+                    new ParallelCommandGroup(scheduler, Parameters.ANY,
+                            new Outtake(Robot.intake, 500),
+                            new Wait(500)
+                    ),
+                    new ParallelCommandGroup(scheduler, Parameters.ALL, new Elevator(elevators, 500), path5),
+                    new WristMove(wrist, 0.5),
+                    new ParallelCommandGroup(scheduler, Parameters.ALL,
+                    new Pivot1(pivot, 45),
+                    new Elevator(elevators, 500)
+            )));
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
