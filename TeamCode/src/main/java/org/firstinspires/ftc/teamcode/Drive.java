@@ -60,7 +60,7 @@ public class Drive extends LinearOpMode {
                 Pivot.resetEncoder();
             }*/
             if (gamepad2.right_bumper) {
-                scheduler.schedule(new PivotMove(pivot, 100));
+                scheduler.schedule(new PivotMove(pivot, 99));
             } else if (gamepad2.left_bumper) {
                 scheduler.schedule(new PivotMove(pivot, -10));
             } else if (gamepad2.b) {

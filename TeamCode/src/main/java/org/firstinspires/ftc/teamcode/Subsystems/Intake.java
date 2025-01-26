@@ -9,6 +9,7 @@ import com.qualcomm.robotcore.hardware.NormalizedRGBA;
 import org.firstinspires.ftc.teamcode.Commands.Command;
 import org.firstinspires.ftc.teamcode.Commands.DefaultCommands.ElevatorDefault;
 import org.firstinspires.ftc.teamcode.Commands.DefaultCommands.IntakeDefault;
+import org.firstinspires.ftc.teamcode.Tools.Robot;
 
 public class Intake extends Subsystem{
 
@@ -39,6 +40,10 @@ public class Intake extends Subsystem{
         leftServo.setPower(1);
         rightServo.setPower(-1);
     }
+    public void outtakePower(double left, double right){
+        leftServo.setPower(left);
+        rightServo.setPower(-right);
+    }
 
     public static void stopIntake() {
         leftServo.setPower(0);
@@ -64,11 +69,11 @@ public class Intake extends Subsystem{
     }
     @Override
     public void setDefaultCommand(Command command) {
-        super.setDefaultCommand(new IntakeDefault());
+        super.setDefaultCommand(new IntakeDefault(Robot.intake));
     }
 
     @Override
     public Command getDefaultCommand() {
-        return new IntakeDefault();
+        return new IntakeDefault(Robot.intake);
     }
 }

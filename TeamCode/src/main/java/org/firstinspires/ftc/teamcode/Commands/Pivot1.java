@@ -9,7 +9,7 @@ import org.firstinspires.ftc.teamcode.Tools.PID;
 import org.firstinspires.ftc.teamcode.Tools.Robot;
 
 public class Pivot1 implements Command {
-    public static final PID pivotPID = new PID(0.012, 0.0, 0.0);
+    public static final PID pivotPID = new PID(0.002, 0.0, 0.0);
     public static double setPos;
     public static double pivotPower;
     String name = "Pivot";
@@ -22,6 +22,12 @@ public class Pivot1 implements Command {
         pivotPID.setMaxOutput(0.5);
         pivotPID.setMinInput(180);
         pivotPID.setMaxInput(-180);
+        if (targetPos > 40) {
+            pivotPID.setPID(0.002,0,0);
+        }
+        else {
+            pivotPID.setPID(0.005,0,0);
+        }
     }
 
     @Override
@@ -44,7 +50,7 @@ public class Pivot1 implements Command {
 
     @Override
     public boolean isFinished() {
-        return Math.abs(Pivot.getAngle() - setPos) <= (1);
+        return Math.abs(Pivot.getAngle() - setPos) <= (3);
     }
 
     @Override

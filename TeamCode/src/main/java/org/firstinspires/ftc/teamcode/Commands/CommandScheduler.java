@@ -81,7 +81,7 @@ public class CommandScheduler {
     }
 
     public void printCurrentCommands() {
-        RobotLog.d("===== Current Commands =====");
+        RobotLog.d("===== <Current Commands> =====");
         for (Map.Entry<Subsystem, Command> entry : activeSubsystemCommands.entrySet()) {
             Subsystem subsystem = entry.getKey();
             Command command = entry.getValue();
