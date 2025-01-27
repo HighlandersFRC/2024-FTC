@@ -47,6 +47,8 @@ public class TestAuto extends LinearOpMode {
         Elevators.initialize(hardwareMap);
         Wrist.initialize(hardwareMap);
 
+        Robot.CURRENT_STATE = "Auto";
+
 
         Mouse.configureOtos();
 
