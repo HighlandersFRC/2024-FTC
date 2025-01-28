@@ -6,6 +6,10 @@ import org.firstinspires.ftc.teamcode.Subsystems.Subsystem;
 import org.firstinspires.ftc.teamcode.Tools.Robot;
 
 public class IntakeDefault implements Command {
+    private Intake intakeSubsystem;
+    public IntakeDefault(Intake subystem){
+        this.intakeSubsystem = subystem;
+    }
     @Override
     public void start() {
 
@@ -13,7 +17,6 @@ public class IntakeDefault implements Command {
 
     @Override
     public void execute() {
-
     }
 
     @Override
@@ -28,6 +31,6 @@ public class IntakeDefault implements Command {
 
     @Override
     public Subsystem getRequiredSubsystem() {
-        return Robot.intake;
+        return intakeSubsystem;
     }
 }

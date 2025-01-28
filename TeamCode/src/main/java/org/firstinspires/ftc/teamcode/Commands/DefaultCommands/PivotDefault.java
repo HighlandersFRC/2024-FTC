@@ -10,7 +10,7 @@ import org.firstinspires.ftc.teamcode.Tools.PID;
 import org.firstinspires.ftc.teamcode.Tools.Robot;
 
 public class PivotDefault implements Command {
-    public static final PID pivotPID = new PID(0.09, 0.0, 0.0425);
+    public static final PID pivotPID = new PID(0.02, 0.0, 0.0);
     public static double setPos;
     public static double pivotPower;
     String name = "Pivot";
@@ -25,7 +25,7 @@ public class PivotDefault implements Command {
     @Override
     public void execute() {
 
-        if (Pivot.getAngle() > 90) {
+        if (Pivot.getAngle() > 105) {
             move = false;
             setPos = Robot.CURRENT_PIVOT;
 

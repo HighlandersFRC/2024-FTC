@@ -13,8 +13,6 @@ public class SequentialCommandGroup implements Command {
     private int currentCommandIndex = 0;
     private Command currentCommand;
     private CommandScheduler scheduler;
-    private int maxExecutionCount = 100;
-    private int currentExecutionCount = 0;
 
     public SequentialCommandGroup(CommandScheduler scheduler, Command... commands) {
         this.scheduler = scheduler;
@@ -40,7 +38,6 @@ public class SequentialCommandGroup implements Command {
         if (currentCommand != null && currentCommand.isFinished()) {
             currentCommand.end();
             currentCommandIndex++;
-            currentExecutionCount = 0;
             if (currentCommandIndex < commands.size()) {
                 currentCommand = commands.get(currentCommandIndex);
                 scheduler.schedule(currentCommand);
@@ -48,14 +45,6 @@ public class SequentialCommandGroup implements Command {
             } else {
                 currentCommand = null;
             }
-        } else if (currentExecutionCount > maxExecutionCount) {
-            RobotLog.e("Command execution exceeded max count, ending current command");
-            if (currentCommand != null) {
-                currentCommand.end();
-            }
-            currentCommand = null;
-        } else {
-            currentExecutionCount++;
         }
     }
 

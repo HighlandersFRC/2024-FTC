@@ -25,20 +25,18 @@ public class Pivot extends Subsystem {
         pivotMotor = hardwareMap.get(DcMotor.class, "pivot");
         pivotMotor2 = hardwareMap.get(DcMotor.class, "pivot2");
 
-        /*
         limitSwitch = hardwareMap.get(DigitalChannel.class, "limit_switch");
-*/
 
         pivotMotor2.setDirection(DcMotorSimple.Direction.REVERSE);
 
         resetEncoder();
     }
 
-/*    public static void checkForZero(){
+    public static void checkForZero(){
     if (limitSwitch.getState()){
         resetEncoder();
     }
-    }*/
+    }
 
     public static void setPower(double power) {
         pivotMotor.setPower(-power);
@@ -79,7 +77,7 @@ public class Pivot extends Subsystem {
     }
 
     public static double getAngle() {
-        return ((getEncoderPosition()) / (678 / 90.8)) - 14.8;
+        return ((getEncoderPosition()) / (674 / 90)) + Constants.PIVOT_STARTING_ANGLE;
     }
 
     @Override

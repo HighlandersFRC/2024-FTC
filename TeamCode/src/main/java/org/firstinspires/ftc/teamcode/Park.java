@@ -62,7 +62,7 @@ public class Park extends LinearOpMode {
         waitForStart();
 
         try {
-            moveToPosition = new PolarPathFollower(drive, peripherals, PathLoading.getJsonPathData(), Constants.commandMap, Constants.conditionMap, scheduler);
+            moveToPosition = new PolarPathFollower(drive, peripherals, pathLoading.getJsonPathData(), Constants.commandMap, Constants.conditionMap, scheduler);
             scheduler.schedule(moveToPosition);
         } catch (Exception e) {
             throw new RuntimeException(e);

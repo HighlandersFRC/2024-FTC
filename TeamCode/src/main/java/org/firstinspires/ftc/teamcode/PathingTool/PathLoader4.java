@@ -9,14 +9,13 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 
-public class PathLoading {
+public class PathLoader4 {
 
     private static JSONObject jsonPathData;
 
-    public PathLoading(Context context, String pathFileName) {
+    public PathLoader4(Context context, String pathFileName) {
         loadJSONFromAsset(context, pathFileName);
     }
-
 
     private void loadJSONFromAsset(Context context, String pathFileName) {
         try {

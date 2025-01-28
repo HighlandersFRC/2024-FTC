@@ -3,7 +3,12 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
+import org.firstinspires.ftc.teamcode.Commands.Command;
 import org.firstinspires.ftc.teamcode.Commands.CommandScheduler;
+import org.firstinspires.ftc.teamcode.Commands.SequentialCommandGroup;
+import org.firstinspires.ftc.teamcode.Commands.WristMove;
+import org.firstinspires.ftc.teamcode.PathingTool.FirstPathFollower;
+import org.firstinspires.ftc.teamcode.PathingTool.PathLoader2;
 import org.firstinspires.ftc.teamcode.PathingTool.PathLoading;
 import org.firstinspires.ftc.teamcode.PathingTool.PolarPathFollower;
 import org.firstinspires.ftc.teamcode.Subsystems.Drive;
@@ -34,10 +39,13 @@ public class Push extends LinearOpMode {
 
 
         PathLoading pathLoading = new PathLoading(hardwareMap.appContext, "Autos/Push.polarpath");
+        PathLoader2 pathLoader2 = new PathLoader2(hardwareMap.appContext, "Autos/PushSpecimen.polarpath");
         CommandScheduler scheduler = new CommandScheduler();
         Drive drive = new Drive("drive");
         Peripherals peripherals = new Peripherals("peripherals");
-        PolarPathFollower moveToPosition;
+        FirstPathFollower moveToPosition;
+        PolarPathFollower move2;
+        Command wrist = new WristMove(Robot.wrist, 0.8);
 
 
  /*       try {9[
@@ -51,8 +59,9 @@ public class Push extends LinearOpMode {
         waitForStart();
 
         try {
-            moveToPosition = new PolarPathFollower(drive, peripherals, PathLoading.getJsonPathData(), Constants.commandMap, Constants.conditionMap, scheduler);
-            scheduler.schedule(moveToPosition);
+            moveToPosition = new FirstPathFollower(drive, peripherals, pathLoader2.getJsonPathData(), Constants.commandMap, Constants.conditionMap, scheduler);
+            move2 = new PolarPathFollower(drive, peripherals, pathLoading.getJsonPathData(), Constants.commandMap, Constants.conditionMap, scheduler);
+            scheduler.schedule(new SequentialCommandGroup(scheduler, wrist, moveToPosition, wrist, move2));
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

@@ -8,26 +8,16 @@ import org.firstinspires.ftc.teamcode.Tools.Constants;
 import org.firstinspires.ftc.teamcode.Tools.PID;
 import org.firstinspires.ftc.teamcode.Tools.Robot;
 
-public class PivotMove implements Command {
+public class PivotWithPower implements Command {
     public static final PID pivotPID = new PID(0.002, 0.0, 0.0);
     public static double setPos;
     public static double pivotPower;
     String name = "Pivot";
     Pivot pivotSubsystem;
 
-    public PivotMove(Pivot pivot, double targetPos) {
+    public PivotWithPower(Pivot pivot, double power) {
         pivotSubsystem = pivot;
-        setPos = targetPos;
-        pivotPID.setSetPoint(targetPos);
-        pivotPID.setMaxOutput(0.5);
-        pivotPID.setMinInput(180);
-        pivotPID.setMaxInput(-180);
-        if (targetPos > 40) {
-            pivotPID.setPID(0.002,0,0);
-        }
-        else {
-            pivotPID.setPID(0.005,0,0);
-        }
+        setPos = power;
     }
 
     @Override
@@ -37,10 +27,8 @@ public class PivotMove implements Command {
 
     @Override
     public void execute() {
-        pivotPower = pivotPID.updatePID(Pivot.getAngle());
-        pivotPower += (Constants.PIVOT_FEED_FORWARD * Math.cos(Math.toRadians(Pivot.getAngle()) + Constants.ARM_BALANCE_OFFSET));
         Pivot.setPower(pivotPower);
-        RobotLog.d("Pivot power: " +  pivotPower);
+  ;
     }
 
     @Override
@@ -55,6 +43,6 @@ public class PivotMove implements Command {
 
     @Override
     public Subsystem getRequiredSubsystem() {
-        return null;
+        return pivotSubsystem;
     }
 }

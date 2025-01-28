@@ -19,7 +19,7 @@ import java.util.Set;
 import java.util.function.BooleanSupplier;
 import java.util.function.Supplier;
 
-public class PolarPathFollower implements Command {
+public class FirstPathFollower implements Command {
 
     private Set<String> addedCommandKeys;
     private CommandScheduler scheduler;
@@ -28,14 +28,14 @@ public class PolarPathFollower implements Command {
 
     private PID xPID = new PID(3.6, 0, 1.9);
     private PID yPID = new PID(3.6, 0, 1.9);
-    private PID yawPID = new PID(2, 0, 0);
+    private PID yawPID = new PID(3, 0, 0);
     private HashMap<String, Supplier<Command>> commandMap;
     private HashMap<String, BooleanSupplier> conditionMap;
 
     private ArrayList<Command> activeCommands = new ArrayList<>();
     private double nextX, nextY;
 
-    public PolarPathFollower(Drive drive, Peripherals peripherals, JSONObject pathJSON,
+    public FirstPathFollower(Drive drive, Peripherals peripherals, JSONObject pathJSON,
                              HashMap<String, Supplier<Command>> commandMap,
                              HashMap<String, BooleanSupplier> conditionMap,
                              CommandScheduler scheduler) throws JSONException {
@@ -63,6 +63,7 @@ public class PolarPathFollower implements Command {
             nextY = currentPoint.getDouble("y");
             double nextTheta = currentPoint.getDouble("angle");
 
+            Mouse.setPosition(nextX, nextY, Math.toDegrees(nextTheta));
         } catch (JSONException e) {
             throw new RuntimeException("Error reading point data from JSON", e);
         }

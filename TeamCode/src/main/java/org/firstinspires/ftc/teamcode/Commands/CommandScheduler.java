@@ -39,6 +39,7 @@ public class CommandScheduler {
     }
 
     public void run() {
+        Robot.run();
         List<Command> finishedCommands = new ArrayList<>();
 
         // Iterate through all scheduled commands and check if they have finished
@@ -81,7 +82,7 @@ public class CommandScheduler {
     }
 
     public void printCurrentCommands() {
-        RobotLog.d("===== Current Commands =====");
+        RobotLog.d("===== <Current Commands> =====");
         for (Map.Entry<Subsystem, Command> entry : activeSubsystemCommands.entrySet()) {
             Subsystem subsystem = entry.getKey();
             Command command = entry.getValue();
@@ -110,6 +111,7 @@ public class CommandScheduler {
         subsystems.add(Robot.wrist);
         return subsystems;
     }
+
     private boolean isDefaultCommand(Command command) {
         return command.getClass().getSimpleName().contains("Default");
     }

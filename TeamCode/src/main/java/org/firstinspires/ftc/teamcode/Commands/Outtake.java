@@ -1,15 +1,18 @@
 package org.firstinspires.ftc.teamcode.Commands;
 
+import com.qualcomm.robotcore.hardware.HardwareMap;
 import org.firstinspires.ftc.teamcode.Subsystems.Intake;
 import org.firstinspires.ftc.teamcode.Subsystems.Subsystem;
 
-public class IntakeCommand implements Command {
+public class Outtake implements Command {
 
     private final Intake intakeSubsystem;
-    private long startTime;
+    private final long timeout; // Duration in milliseconds
+    private long endTime; // Time when the command should stop
 
-    public IntakeCommand(Intake intake) {
+    public Outtake(Intake intake, long timeoutMilliseconds) {
         this.intakeSubsystem = intake;
+        this.timeout = timeoutMilliseconds;
     }
 
     public String getSubsystem() {
@@ -18,26 +21,25 @@ public class IntakeCommand implements Command {
 
     @Override
     public void start() {
-        startTime = System.currentTimeMillis();
+        // Calculate end time using the current system time and the timeout
+        endTime = System.currentTimeMillis() + timeout;
     }
 
     @Override
     public void execute() {
-        if (!intakeSubsystem.getCorrectColor()) {
-            intakeSubsystem.intake();
-        } else {
-            Intake.stopIntake();
-        }
+        intakeSubsystem.outtake();
     }
 
     @Override
     public void end() {
+        // Stop the intake when the command ends
         Intake.stopIntake();
     }
 
     @Override
     public boolean isFinished() {
-        return intakeSubsystem.getCorrectColor() || (System.currentTimeMillis() - startTime) >= 5000;
+        // Check if the current time has reached or exceeded the end time
+        return false;
     }
 
     @Override

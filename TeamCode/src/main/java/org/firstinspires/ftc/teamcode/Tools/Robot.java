@@ -10,10 +10,11 @@ import org.firstinspires.ftc.teamcode.Subsystems.Pivot;
 import org.firstinspires.ftc.teamcode.Subsystems.Wrist;
 
 public class Robot {
+    public static String CURRENT_STATE = "Auto";
     public static double CURRENT_PIVOT;
     public static double CURRENT_WRIST;
     public static double CURRENT_INTAKE_POWER;
-    public static double CURRENT_ELEVATOR;
+    public static double CURRENT_ELEVATOR = 0;
     public static double elevatorPower = 0;
 
     public static void initialize(HardwareMap hardwareMap) {
@@ -32,7 +33,7 @@ public class Robot {
     public static Pivot pivot = new Pivot("pivot");
 
     public static void run() {
-
+        pivot.checkForZero();
     }
 
     public static double elevatorPowerCalc(boolean right, boolean left) {

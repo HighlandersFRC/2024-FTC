@@ -8,14 +8,14 @@ import org.firstinspires.ftc.teamcode.Tools.Constants;
 import org.firstinspires.ftc.teamcode.Tools.PID;
 import org.firstinspires.ftc.teamcode.Tools.Robot;
 
-public class PivotMove implements Command {
+public class Pivot1 implements Command {
     public static final PID pivotPID = new PID(0.002, 0.0, 0.0);
     public static double setPos;
     public static double pivotPower;
     String name = "Pivot";
     Pivot pivotSubsystem;
 
-    public PivotMove(Pivot pivot, double targetPos) {
+    public Pivot1(Pivot pivot, double targetPos) {
         pivotSubsystem = pivot;
         setPos = targetPos;
         pivotPID.setSetPoint(targetPos);
@@ -50,7 +50,7 @@ public class PivotMove implements Command {
 
     @Override
     public boolean isFinished() {
-        return Math.abs(Pivot.getAngle() - setPos) <= (1);
+        return Math.abs(Pivot.getAngle() - setPos) <= (3);
     }
 
     @Override

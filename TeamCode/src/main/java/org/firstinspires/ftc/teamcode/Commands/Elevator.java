@@ -9,7 +9,7 @@ import org.firstinspires.ftc.teamcode.Tools.Robot;
 
 public class Elevator implements Command {
 
-    private final PID elevatorPID = new PID(0.005, 0.0, 0.01);
+    private final PID elevatorPID = new PID(0.3, 0.0, 0.01);
     private final Elevators elevators;
     private final double targetPosition;
 
@@ -18,6 +18,7 @@ public class Elevator implements Command {
     public Elevator(Elevators elevators, double pos) {
         this.elevators = elevators;
         this.targetPosition = pos;
+        Robot.CURRENT_ELEVATOR = pos;
         elevatorPID.setSetPoint(pos);
     }
 
@@ -44,11 +45,18 @@ public class Elevator implements Command {
     @Override
     public boolean isFinished() {
         double averageEncoderPosition = (elevators.getLeftEncoder() + elevators.getRightEncoder()) / 2;
-        return Math.abs(elevatorPID.getSetPoint() - averageEncoderPosition) < 50;
+        if (Math.abs(elevatorPID.getSetPoint() - averageEncoderPosition) < 200 || averageEncoderPosition < -20){
+            if (averageEncoderPosition < -30){
+                Elevators.resetEncoders();
+                return true;
+            }
+            return true;
+        }
+        return false;
     }
 
     @Override
     public Subsystem getRequiredSubsystem() {
-        return elevators; // Return the instance of the subsystem
+        return elevators;
     }
 }
