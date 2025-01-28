@@ -39,6 +39,7 @@ public class CommandScheduler {
     }
 
     public void run() {
+        Robot.run();
         List<Command> finishedCommands = new ArrayList<>();
 
         // Iterate through all scheduled commands and check if they have finished

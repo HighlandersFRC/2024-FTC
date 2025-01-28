@@ -33,7 +33,7 @@ public class Robot {
     public static Pivot pivot = new Pivot("pivot");
 
     public static void run() {
-
+        pivot.checkForZero();
     }
 
     public static double elevatorPowerCalc(boolean right, boolean left) {

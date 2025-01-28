@@ -2,9 +2,12 @@
 package org.firstinspires.ftc.teamcode.Subsystems;
 
 import com.qualcomm.robotcore.hardware.CRServo;
+import com.qualcomm.robotcore.hardware.CRServoImplEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.NormalizedColorSensor;
 import com.qualcomm.robotcore.hardware.NormalizedRGBA;
+import com.qualcomm.robotcore.hardware.PWMOutputImplEx;
+import com.qualcomm.robotcore.hardware.PwmControl;
 
 import org.firstinspires.ftc.teamcode.Commands.Command;
 import org.firstinspires.ftc.teamcode.Commands.DefaultCommands.ElevatorDefault;
@@ -16,6 +19,8 @@ public class Intake extends Subsystem{
     private static NormalizedColorSensor colorSensor;
     public static CRServo leftServo;
     public static CRServo rightServo;
+
+    private static CRServoImplEx left, right;
     private static final String setColor = "red";
 
     public Intake(String name) {
@@ -25,29 +30,56 @@ public class Intake extends Subsystem{
 
     public static void initialize(HardwareMap hardwareMap) {
         colorSensor = hardwareMap.get(NormalizedColorSensor.class, "colorSensor");
+/*
         leftServo = hardwareMap.get(CRServo.class, "left_servo");
-        rightServo = hardwareMap.get(CRServo.class, "right_servo");
+*/
+/*        rightServo = hardwareMap.get(CRServo.class, "right_servo");*/
+
+        left = hardwareMap.get(CRServoImplEx.class, "left_servo");
+        right = hardwareMap.get(CRServoImplEx.class, "right_servo");
+
+        left.isPwmEnabled();
+        right.isPwmEnabled();
+
+        left.setPwmRange(new PwmControl.PwmRange(500,2500));
+        right.setPwmRange(new PwmControl.PwmRange(500,2500));
 
         Intake.stopIntake();
     }
 
     public void intake() {
+/*
         leftServo.setPower(-1);
-        rightServo.setPower(1);
+*/
+        left.setPower(-1);
+        right.setPower(1);
     }
 
     public void outtake() {
+/*
         leftServo.setPower(1);
-        rightServo.setPower(-1);
+*/
+        left.setPower(1);
+        right.setPower(-1);
     }
-    public void outtakePower(double left, double right){
-        leftServo.setPower(left);
-        rightServo.setPower(-right);
+    public void outtakePower(double Left, double Right){
+        left.setPower(Left);
+        right.setPower(-Right);
     }
 
-    public static void stopIntake() {
+    public static void stopIntake()  {
+       /* try {
+            leftServo.setPower(0.05);
+            rightServo.setPower(-0.05);
+            Thread.sleep(50);*/
+
+/*
         leftServo.setPower(0);
-        rightServo.setPower(0);
+*/      left.setPower(0);
+        right.setPower(0);
+       /* } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }*/
     }
 
     public boolean getCorrectColor() {

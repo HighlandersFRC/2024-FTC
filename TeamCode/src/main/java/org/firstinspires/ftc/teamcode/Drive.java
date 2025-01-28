@@ -118,12 +118,10 @@ public class Drive extends LinearOpMode {
                 Pivot.resetEncoder();
             }
             if (gamepad1.dpad_left){
-                Pivot.setPower(-0.3);
+                scheduler.schedule(new PivotMove(pivot, -100));
             }else
             if (gamepad1.dpad_right){
-                Pivot.setPower(0.3);
-            }else {
-                Pivot.setPower(0);
+                scheduler.schedule(new PivotMove(pivot, 100));
             }
 
 
