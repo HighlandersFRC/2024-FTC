@@ -33,7 +33,7 @@ public class Pivot extends Subsystem {
     }
 
     public static void checkForZero(){
-    if (limitSwitch.getState()){
+    if (!limitSwitch.getState()){
         resetEncoder();
     }
     }

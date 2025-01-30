@@ -94,7 +94,7 @@ public class TestAuto extends LinearOpMode {
             Command place2 = new SequentialCommandGroup(scheduler,
                     new Pivot3(Robot.pivot, Constants.ARM_HIGH),
                     new Elevator(Robot.elevators, Constants.ELEVATOR_AUTO),
-                    new WristMove(wrist, 0.6));
+                    new WristMove(wrist, 0.6 - Constants.WRIST_OFFSET));
                     new ParallelCommandGroup(scheduler, Parameters.ANY,
                         new Outtake(Robot.intake, 2000),
                          new Wait(2000)
@@ -105,33 +105,33 @@ public class TestAuto extends LinearOpMode {
                     new Elevator(Robot.elevators, Constants.ELEVATOR_AUTO));
 
             Command reset = new SequentialCommandGroup(scheduler,
-                    new WristMove(wrist, 0.1),
+                    new WristMove(wrist, 0.1 - Constants.WRIST_OFFSET),
                     new Elevator(Robot.elevators, 0),
-                    new WristMove(wrist, 1),
+                    new WristMove(wrist, 1 - Constants.WRIST_OFFSET),
                     new Pivot1(Robot.pivot, -10)
             );
 
 
             scheduler.schedule(new SequentialCommandGroup(scheduler,
-                    new WristMove(Robot.wrist, 0.2),
+                    new WristMove(Robot.wrist, 0.2 - Constants.WRIST_OFFSET),
                     path0,
                     place,
-                    new WristMove(wrist, 0.4),
+                    new WristMove(wrist, 0.4 - Constants.WRIST_OFFSET),
                     new Wait(1000),
                     new ParallelCommandGroup(scheduler, Parameters.ANY,
-                            new OuttakeSpecify(Robot.intake, 1000, 1, 0.55),
+                            new OuttakeSpecify(Robot.intake, 1000, 1, 0.6),
                             new Wait(1000)
                     ),
                     reset,
                     new ParallelCommandGroup(scheduler, Parameters.ALL,
                             path1,
-                            new WristMove(Robot.wrist, 0.1),
+                            new WristMove(Robot.wrist, 0.1 - Constants.WRIST_OFFSET),
                             new IntakeCommand(Robot.intake)
                     ),
                     path2command,
-                    new WristMove(Robot.wrist, 0.2),
+                    new WristMove(Robot.wrist, 0.3 - Constants.WRIST_OFFSET),
                     place3,
-                    new WristMove(wrist, 0.4),
+                    new WristMove(wrist, 0.4 - Constants.WRIST_OFFSET),
                     new ParallelCommandGroup(scheduler, Parameters.ANY,
                             new Outtake(Robot.intake, 500),
                             new Wait(500)
@@ -139,12 +139,12 @@ public class TestAuto extends LinearOpMode {
                     reset,
                     new ParallelCommandGroup(scheduler, Parameters.ALL,
                             path3,
-                            new WristMove(Robot.wrist, 0.1),
+                            new WristMove(Robot.wrist, 0.1 - Constants.WRIST_OFFSET),
                             new IntakeCommand(Robot.intake)
                     ),
                     path4,
                     place3,
-                    new WristMove(wrist, 0.4),
+                    new WristMove(wrist, 0.4 - Constants.WRIST_OFFSET),
                     new ParallelCommandGroup(scheduler, Parameters.ANY,
                             new Outtake(Robot.intake, 500),
                             new Wait(500)
@@ -153,12 +153,15 @@ public class TestAuto extends LinearOpMode {
                             new Outtake(Robot.intake, 500),
                             new Wait(500)
                     ),
-                    new ParallelCommandGroup(scheduler, Parameters.ALL, new Elevator(elevators, 500), path5),
-                    new WristMove(wrist, 0.5),
+                    new ParallelCommandGroup(scheduler, Parameters.ALL, new Elevator(elevators, 500)),
+                    new WristMove(wrist, 0.5 - Constants.WRIST_OFFSET),
                     new ParallelCommandGroup(scheduler, Parameters.ALL,
-                    new Pivot1(pivot, 45),
-                    new Elevator(elevators, 500)
-            )));
+                    new Elevator(elevators, 0),
+                  /*  path5,*/
+                    new SequentialCommandGroup(scheduler, new Wait(500),
+                    new Pivot1(pivot, -16)
+                  /*  new Elevator(elevators, 500)*/
+            ))));
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

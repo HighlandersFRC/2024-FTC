@@ -13,7 +13,7 @@ public class ElevatorDefault implements Command {
     private final PID elevatorPID = new PID(0.005, 0.004, 0.01); // PID for elevator control
     private final Elevators elevators = Robot.elevators;
 
-    private static final double LOWER_LIMIT = 0;
+    private static final double LOWER_LIMIT = -200;
     private static final double UPPER_LIMIT = 2200;
     private static final double PIVOT_THRESHOLD = 10; // Threshold for pivot to switch control mode
 

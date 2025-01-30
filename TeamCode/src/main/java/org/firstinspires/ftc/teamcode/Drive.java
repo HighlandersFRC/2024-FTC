@@ -42,8 +42,8 @@ public class Drive extends LinearOpMode {
         Robot.CURRENT_STATE = "Tele-Op";
 
         while (opModeIsActive()) {
-            gamepad2.rumble(1000);
-            gamepad1.rumble(100);
+ /*           gamepad2.rumble(1000);
+            gamepad1.rumble(100);*/
 
             Mouse.update();
             FinalPose.poseUpdate();
@@ -73,12 +73,12 @@ public class Drive extends LinearOpMode {
 
             // Set wrist position based on pivot angle and toggle
             if (wristPositionToggled) {
-                scheduler.schedule(new WristMove(wrist, 0.1)); // Set to position 0.1 if toggled
+                scheduler.schedule(new WristMove(wrist, 0.1  - Constants.WRIST_OFFSET)); // Set to position 0.1 if toggled
             } else {
                 if (pivot.getAngle() < 90) {
-                    scheduler.schedule(new WristMove(wrist, 0.8)); // Low pivot angle, wrist at 0.1
+                    scheduler.schedule(new WristMove(wrist, 0.8 - Constants.WRIST_OFFSET)); // Low pivot angle, wrist at 0.1
                 } else {
-                    scheduler.schedule(new WristMove(wrist, 0.6)); // High pivot angle, wrist at 0.8
+                    scheduler.schedule(new WristMove(wrist, 0.6 - Constants.WRIST_OFFSET)); // High pivot angle, wrist at 0.8
                 }
             }
 
@@ -125,11 +125,12 @@ public class Drive extends LinearOpMode {
             }
 
 
+
             // Run the scheduler to execute any pending commands
             scheduler.run();
 
             // Telemetry Data
-            telemetry.addLine("Pivot").addData("Encoder", Pivot.getEncoderPosition()).addData("Pivot Angle", Pivot.getAngle());
+            telemetry.addLine("Pivot").addData("Encoder", Pivot.getEncoderPosition()).addData("Pivot Angle", Pivot.getAngle()).addData("Limit Switch", Pivot.limitSwitch.getState());
             telemetry.addLine("Elevator").addData("Left Encoder", Elevators.getLeftEncoder()).addData("Right Encoder", Elevators.getRightEncoder());
             telemetry.addLine("Pose").addData("x", FinalPose.x).addData("y", FinalPose.y).addData("current", FieldOfMerit.currentState).addData("yaw", FinalPose.yaw);
             telemetry.update();
