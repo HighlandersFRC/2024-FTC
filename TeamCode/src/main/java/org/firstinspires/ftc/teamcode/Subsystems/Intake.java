@@ -30,19 +30,17 @@ public class Intake extends Subsystem{
 
     public static void initialize(HardwareMap hardwareMap) {
         colorSensor = hardwareMap.get(NormalizedColorSensor.class, "colorSensor");
-/*
         leftServo = hardwareMap.get(CRServo.class, "left_servo");
-*/
-/*        rightServo = hardwareMap.get(CRServo.class, "right_servo");*/
+        rightServo = hardwareMap.get(CRServo.class, "right_servo");
 
-        left = hardwareMap.get(CRServoImplEx.class, "left_servo");
+       /* left = hardwareMap.get(CRServoImplEx.class, "left_servo");
         right = hardwareMap.get(CRServoImplEx.class, "right_servo");
 
         left.isPwmEnabled();
-        right.isPwmEnabled();
+        right.isPwmEnabled();*/
 
-        left.setPwmRange(new PwmControl.PwmRange(500,2500));
-        right.setPwmRange(new PwmControl.PwmRange(500,2500));
+    /*    left.setPwmRange(new PwmControl.PwmRange(500,2500));
+        right.setPwmRange(new PwmControl.PwmRange(500,2500));*/
 
         Intake.stopIntake();
     }
@@ -51,20 +49,20 @@ public class Intake extends Subsystem{
 /*
         leftServo.setPower(-1);
 */
-        left.setPower(-1);
-        right.setPower(1);
+        leftServo.setPower(-1);
+        rightServo.setPower(1);
     }
 
     public void outtake() {
 /*
         leftServo.setPower(1);
 */
-        left.setPower(1);
-        right.setPower(-1);
+        leftServo.setPower(1);
+        rightServo.setPower(-1);
     }
     public void outtakePower(double Left, double Right){
-        left.setPower(Left);
-        right.setPower(-Right);
+        leftServo.setPower(Left);
+        rightServo.setPower(-Right);
     }
 
     public static void stopIntake()  {
@@ -75,8 +73,10 @@ public class Intake extends Subsystem{
 
 /*
         leftServo.setPower(0);
-*/      left.setPower(0);
-        right.setPower(0);
+*/      leftServo.setPower(0);
+        rightServo.setPower(0);
+        /*left.setPwmDisable();
+        right.setPwmDisable();*/
        /* } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }*/
