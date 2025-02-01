@@ -13,9 +13,10 @@ import org.firstinspires.ftc.teamcode.Tools.Constants;
 import org.firstinspires.ftc.teamcode.Tools.PID;
 
 public class Pivot extends Subsystem {
-    private static final PID pid = new PID(0.009, 0.0, 0.012);
+    private static final PID pid = new PID(0.012, 0.0, 0.012);
     public static DcMotor pivotMotor, pivotMotor2;
     public static DigitalChannel limitSwitch;
+    public static double Pivot_Offset = 16.9;
 
     public Pivot(String name) {
         super(name);
@@ -29,11 +30,12 @@ public class Pivot extends Subsystem {
 
         pivotMotor2.setDirection(DcMotorSimple.Direction.REVERSE);
 
-        resetEncoder();
+        justReset();
     }
 
     public static void checkForZero(){
     if (!limitSwitch.getState()){
+
         resetEncoder();
     }
     }
@@ -51,6 +53,14 @@ public class Pivot extends Subsystem {
     }
 
     public static void resetEncoder() {
+        pivotMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        pivotMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        pivotMotor2.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        pivotMotor2.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        Pivot_Offset = -16.1;
+    }
+    public static void justReset(){
         pivotMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         pivotMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         pivotMotor2.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -77,7 +87,7 @@ public class Pivot extends Subsystem {
     }
 
     public static double getAngle() {
-        return ((getEncoderPosition()) / (674 / 90)) + Constants.PIVOT_STARTING_ANGLE;
+        return ((getEncoderPosition()) / (674 / 90)) + Pivot_Offset;
     }
 
     @Override

@@ -1,10 +1,13 @@
 package org.firstinspires.ftc.teamcode.Commands.DefaultCommands;
 
+import static org.firstinspires.ftc.teamcode.Tools.Robot.CURRENT_STATE;
+
 import com.qualcomm.robotcore.util.RobotLog;
 
 import org.firstinspires.ftc.teamcode.Commands.Command;
 import org.firstinspires.ftc.teamcode.Subsystems.Elevators;
 import org.firstinspires.ftc.teamcode.Subsystems.Subsystem;
+import org.firstinspires.ftc.teamcode.Tools.Constants;
 import org.firstinspires.ftc.teamcode.Tools.PID;
 import org.firstinspires.ftc.teamcode.Tools.Robot;
 
@@ -13,7 +16,7 @@ public class ElevatorDefault implements Command {
     private final PID elevatorPID = new PID(0.005, 0.004, 0.01); // PID for elevator control
     private final Elevators elevators = Robot.elevators;
 
-    private static final double LOWER_LIMIT = -200;
+    private static final double LOWER_LIMIT = 0;
     private static final double UPPER_LIMIT = 2200;
     private static final double PIVOT_THRESHOLD = 10; // Threshold for pivot to switch control mode
 
@@ -27,8 +30,18 @@ public class ElevatorDefault implements Command {
 
     @Override
     public void execute() {
+        if (CURRENT_STATE.equals("Auto")){
+            Constants.PIVOT_STARTING_ANGLE  = 16.9;
+        }
+        else {
+            Constants.PIVOT_STARTING_ANGLE = -16.1;
+        }
         // Only apply the changes during TeleOp mode
-        if (Robot.CURRENT_STATE.equals("Tele-Op")) {
+        if (CURRENT_STATE.equals("Tele-Op")) {
+
+            Constants.PIVOT_STARTING_ANGLE = -16.1;
+
+
             double power = Robot.elevatorPower;
             double leftEncoder = elevators.getLeftEncoder();
             double rightEncoder = elevators.getRightEncoder();
@@ -68,7 +81,7 @@ public class ElevatorDefault implements Command {
                     }
                 }
             }
-        } else if (Robot.CURRENT_STATE.equals("Auto")) {
+        } else if (CURRENT_STATE.equals("Auto")) {
 
         }
     }

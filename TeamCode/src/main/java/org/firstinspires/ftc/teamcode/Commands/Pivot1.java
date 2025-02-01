@@ -9,7 +9,7 @@ import org.firstinspires.ftc.teamcode.Tools.PID;
 import org.firstinspires.ftc.teamcode.Tools.Robot;
 
 public class Pivot1 implements Command {
-    public static final PID pivotPID = new PID(0.002, 0.0, 0.0);
+    public static final PID pivotPID = new PID(0.008, 0.0, 0.0);
     public static double setPos;
     public static double pivotPower;
     String name = "Pivot";

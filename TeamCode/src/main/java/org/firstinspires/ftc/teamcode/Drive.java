@@ -1,6 +1,5 @@
 package org.firstinspires.ftc.teamcode;
 
-import static org.firstinspires.ftc.teamcode.Tools.Robot.elevatorPower;
 import static org.firstinspires.ftc.teamcode.Tools.Robot.elevators;
 import static org.firstinspires.ftc.teamcode.Tools.Robot.intake;
 import static org.firstinspires.ftc.teamcode.Tools.Robot.pivot;
@@ -28,27 +27,23 @@ import org.firstinspires.ftc.teamcode.Tools.Robot;
 @TeleOp
 public class Drive extends LinearOpMode {
 
-    private boolean wristPositionToggled = false; // Tracks if wrist position has been toggled
-    private double defaultWristPosition = 0.8; // Default wrist position when pivot angle is high
+    private boolean wristPositionToggled = false;
+    private double toggledWristPosition = 0.1 - Constants.WRIST_OFFSET;
+    private double defaultWristPosition = 0.8 - Constants.WRIST_OFFSET;
 
     @Override
     public void runOpMode() throws InterruptedException {
         waitForStart();
 
         Robot.initialize(hardwareMap);
-
         CommandScheduler scheduler = new CommandScheduler();
-
         Robot.CURRENT_STATE = "Tele-Op";
+        Elevators.resetEncoders();
 
         while (opModeIsActive()) {
- /*           gamepad2.rumble(1000);
-            gamepad1.rumble(100);*/
-
             Mouse.update();
             FinalPose.poseUpdate();
 
-            // Control for Pivot
             if (gamepad2.right_bumper) {
                 scheduler.schedule(new PivotMove(pivot, 99));
             } else if (gamepad2.left_bumper) {
@@ -57,7 +52,6 @@ public class Drive extends LinearOpMode {
                 scheduler.schedule(new PivotMove(pivot, 0));
             }
 
-            // Elevator and Wrist Control
             if (gamepad2.dpad_right) {
                 scheduler.schedule(new SequentialCommandGroup(scheduler, new Elevator(elevators, 0), new Wait(50), new PivotMove(pivot, -10)));
             }
@@ -66,37 +60,33 @@ public class Drive extends LinearOpMode {
                 scheduler.schedule(new SequentialCommandGroup(scheduler, new PivotMove(pivot, 90), new Wait(50), new Elevator(elevators, 1000)));
             }
 
-            // Control for Wrist (toggle on press of the left stick button on gamepad1)
             if (gamepad1.left_stick_button) {
-                wristPositionToggled = !wristPositionToggled; // Toggle wrist position on button press
+                wristPositionToggled = !wristPositionToggled;
+                telemetry.addData("Wrist Toggle State", wristPositionToggled);
+                telemetry.update();
             }
 
-            // Set wrist position based on pivot angle and toggle
             if (wristPositionToggled) {
-                scheduler.schedule(new WristMove(wrist, 0.1  - Constants.WRIST_OFFSET)); // Set to position 0.1 if toggled
+                scheduler.schedule(new WristMove(wrist, toggledWristPosition));
             } else {
-                if (pivot.getAngle() < 90) {
-                    scheduler.schedule(new WristMove(wrist, 0.8 - Constants.WRIST_OFFSET)); // Low pivot angle, wrist at 0.1
+                if (Elevators.getLeftEncoder() < 200 && Pivot.getAngle() > 90) {
+                    scheduler.schedule(new WristMove(wrist, defaultWristPosition));
+                } else if (pivot.getAngle() < 90) {
+                    scheduler.schedule(new WristMove(wrist, 0.8 - Constants.WRIST_OFFSET));
                 } else {
-                    scheduler.schedule(new WristMove(wrist, 0.6 - Constants.WRIST_OFFSET)); // High pivot angle, wrist at 0.8
+                    scheduler.schedule(new WristMove(wrist, 0.6 - Constants.WRIST_OFFSET));
                 }
             }
-
-            // Intake Control
-
 
             if (gamepad1.right_trigger > 0.1) {
                 scheduler.schedule(new IntakeCommand(intake));
             }
 
             if (gamepad1.left_trigger > 0.1) {
-
                 Intake.leftServo.setPower(1);
                 Intake.rightServo.setPower(-1);
-
             }
 
-            // Driving Control
             double leftStickX = gamepad1.left_stick_x;
             double leftStickY = -gamepad1.left_stick_y;
             double rightStickX = gamepad1.right_stick_x;
@@ -111,31 +101,25 @@ public class Drive extends LinearOpMode {
                 org.firstinspires.ftc.teamcode.Subsystems.Drive.stop();
             }
 
-            if (gamepad2.dpad_left){
+            if (gamepad2.dpad_left) {
                 Elevators.resetEncoders();
             }
-            if (gamepad1.options){
+            if (gamepad1.options) {
                 Pivot.resetEncoder();
             }
-            if (gamepad1.dpad_left){
+            if (gamepad1.dpad_left) {
                 scheduler.schedule(new PivotMove(pivot, -100));
-            }else
-            if (gamepad1.dpad_right){
+            } else if (gamepad1.dpad_right) {
                 scheduler.schedule(new PivotMove(pivot, 100));
             }
 
-
-
-            // Run the scheduler to execute any pending commands
             scheduler.run();
 
-            // Telemetry Data
             telemetry.addLine("Pivot").addData("Encoder", Pivot.getEncoderPosition()).addData("Pivot Angle", Pivot.getAngle()).addData("Limit Switch", Pivot.limitSwitch.getState());
             telemetry.addLine("Elevator").addData("Left Encoder", Elevators.getLeftEncoder()).addData("Right Encoder", Elevators.getRightEncoder());
             telemetry.addLine("Pose").addData("x", FinalPose.x).addData("y", FinalPose.y).addData("current", FieldOfMerit.currentState).addData("yaw", FinalPose.yaw);
             telemetry.update();
 
-            // Update the elevator power for gamepad2 input
             Robot.elevatorPower = (((Math.sqrt(gamepad2.right_trigger)) / Math.pow(gamepad2.right_trigger - 2, 2))) - gamepad2.left_trigger;
 
             scheduler.printCurrentCommands();
