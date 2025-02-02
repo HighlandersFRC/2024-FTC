@@ -119,7 +119,7 @@ public class TestAuto extends LinearOpMode {
                     new WristMove(wrist, 0.4 - Constants.WRIST_OFFSET),
                     new Wait(1000),
                     new ParallelCommandGroup(scheduler, Parameters.ANY,
-                            new OuttakeSpecify(Robot.intake, 1000, 1, 0.6),
+                            new OuttakeSpecify(Robot.intake, 1000, 1, 1),
                             new Wait(1000)
                     ),
                     reset,
@@ -153,8 +153,8 @@ public class TestAuto extends LinearOpMode {
                             new Outtake(Robot.intake, 500),
                             new Wait(500)
                     ),
+                    new WristMove(wrist, 0.1),
                     new ParallelCommandGroup(scheduler, Parameters.ALL, new Elevator(elevators, 500)),
-                    new WristMove(wrist, 0.5 - Constants.WRIST_OFFSET),
                     new ParallelCommandGroup(scheduler, Parameters.ALL,
                     new Elevator(elevators, 0),
                   /*  path5,*/

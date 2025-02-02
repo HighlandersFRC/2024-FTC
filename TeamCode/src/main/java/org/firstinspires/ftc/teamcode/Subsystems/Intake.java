@@ -21,7 +21,7 @@ public class Intake extends Subsystem{
     public static CRServo rightServo;
 
     private static CRServoImplEx left, right;
-    private static final String setColor = "red";
+    private static final String setColor = "blue";
 
     public Intake(String name) {
         super(name);

@@ -12,6 +12,8 @@ import org.firstinspires.ftc.teamcode.Commands.PivotMove;
 import org.firstinspires.ftc.teamcode.Commands.SequentialCommandGroup;
 import org.firstinspires.ftc.teamcode.Commands.Wait;
 import org.firstinspires.ftc.teamcode.Commands.WristMove;
+import org.firstinspires.ftc.teamcode.PathingTool.FirstPathFollower;
+import org.firstinspires.ftc.teamcode.PathingTool.PathLoader0;
 import org.firstinspires.ftc.teamcode.PathingTool.PathLoading;
 import org.firstinspires.ftc.teamcode.PathingTool.PolarPathFollower;
 import org.firstinspires.ftc.teamcode.Subsystems.Drive;
@@ -46,11 +48,13 @@ public class Specimen extends LinearOpMode {
         Drive.setPosition(0, 0, 0);
 
 
-        PathLoading pathLoading = new PathLoading(hardwareMap.appContext, "parabolic.polarpath");
+        PathLoading pathLoading = new PathLoading(hardwareMap.appContext, "Autos/Specimen.polarpath");
+        PathLoader0 pathLoader0 = new PathLoader0(hardwareMap.appContext, "Autos/1Specimen.polarpath");
         CommandScheduler scheduler = new CommandScheduler();
         Drive drive = new Drive("drive");
         Peripherals peripherals = new Peripherals("peripherals");
-        PolarPathFollower moveToPosition;
+        FirstPathFollower moveToPosition;
+        PolarPathFollower move1;
 
 
  /*       try {9[
@@ -62,14 +66,15 @@ public class Specimen extends LinearOpMode {
         waitForStart();
 
         try {
-            moveToPosition = new PolarPathFollower(drive, peripherals, pathLoading.getJsonPathData(), Constants.commandMap, Constants.conditionMap, scheduler);
+            moveToPosition = new FirstPathFollower(drive, peripherals, pathLoading.getJsonPathData(), Constants.commandMap, Constants.conditionMap, scheduler);
+            move1 = new PolarPathFollower(drive, peripherals, pathLoader0.getJsonPathData(), Constants.commandMap, Constants.conditionMap, scheduler);
 
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
 
 
-scheduler.schedule(new SequentialCommandGroup(scheduler, new Wait(1000), moveToPosition));
+scheduler.schedule(new SequentialCommandGroup(scheduler, new Wait(1000), new WristMove(Robot.wrist, 1), moveToPosition, new PivotMove(Robot.pivot, Constants.ARM_HIGH), new WristMove(Robot.wrist, 0.1), move1));
 
         while (opModeIsActive()) {
 
