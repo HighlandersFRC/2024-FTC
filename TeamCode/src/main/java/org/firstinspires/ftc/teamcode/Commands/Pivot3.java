@@ -12,6 +12,8 @@ public class Pivot3 implements Command {
     public static final PID pivotPID = new PID(0.008, 0.0, 0.0);
     public static double setPos;
     public static double pivotPower;
+
+    private long startTime;
     String name = "Pivot";
     Pivot pivotSubsystem;
 
@@ -33,6 +35,7 @@ public class Pivot3 implements Command {
     @Override
     public void start() {
         Robot.CURRENT_PIVOT = setPos;
+        startTime=System.currentTimeMillis();
     }
 
     @Override
@@ -50,7 +53,7 @@ public class Pivot3 implements Command {
 
     @Override
     public boolean isFinished() {
-        return Math.abs(Pivot.getAngle() - setPos) <= (1);
+        return Math.abs(Pivot.getAngle() - setPos) <= (1)|| (System.currentTimeMillis()-startTime)>=3300;
     }
 
     @Override
