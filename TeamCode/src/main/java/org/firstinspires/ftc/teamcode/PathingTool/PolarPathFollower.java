@@ -28,7 +28,7 @@ public class PolarPathFollower implements Command {
 
     private PID xPID = new PID(3.6, 0, 1.9);
     private PID yPID = new PID(3.6, 0, 1.9);
-    private PID yawPID = new PID(2, 0, 0);
+    private PID yawPID = new PID(2, 0, 1);
     private HashMap<String, Supplier<Command>> commandMap;
     private HashMap<String, BooleanSupplier> conditionMap;
 

@@ -21,6 +21,7 @@ import org.firstinspires.ftc.teamcode.PathingTool.PathLoader3;
 import org.firstinspires.ftc.teamcode.PathingTool.PathLoader4;
 import org.firstinspires.ftc.teamcode.PathingTool.PathLoader5;
 import org.firstinspires.ftc.teamcode.PathingTool.PathLoader6;
+import org.firstinspires.ftc.teamcode.PathingTool.PathLoader7;
 import org.firstinspires.ftc.teamcode.PathingTool.PathLoading;
 import org.firstinspires.ftc.teamcode.PathingTool.PolarPathFollower;
 import org.firstinspires.ftc.teamcode.Subsystems.Drive;
@@ -58,10 +59,11 @@ public class Specimen extends LinearOpMode {
         PathLoading pathLoading = new PathLoading(hardwareMap.appContext, "Autos/Specimen.polarpath");
         PathLoader0 pathLoader0 = new PathLoader0(hardwareMap.appContext, "Autos/1Specimen.polarpath");
         PathLoader2 pathLoader2 = new PathLoader2(hardwareMap.appContext, "Autos/2Specimen.polarpath");
-        PathLoader3 pathLoader3 = new PathLoader3(hardwareMap.appContext, "Autos/3Specimen.polarpath");
+        PathLoader3 pathLoader3 = new PathLoader3(hardwareMap.appContext, "Autos/7Specimen.polarpath");
         PathLoader4 pathLoader4 = new PathLoader4(hardwareMap.appContext, "Autos/4Specimen.polarpath");
         PathLoader5 pathLoader5 = new PathLoader5(hardwareMap.appContext, "Autos/5Specimen.polarpath");
         PathLoader6 pathLoader6 = new PathLoader6(hardwareMap.appContext, "Autos/6Specimen.polarpath");
+        PathLoader7 pathLoader7 = new PathLoader7(hardwareMap.appContext, "Autos/8Specimen.polarpath");
         CommandScheduler scheduler = new CommandScheduler();
         Drive drive = new Drive("drive");
         Peripherals peripherals = new Peripherals("peripherals");
@@ -72,6 +74,7 @@ public class Specimen extends LinearOpMode {
         PolarPathFollower move4;
         PolarPathFollower move5;
         PolarPathFollower move6;
+        PolarPathFollower move7;
 
 
 
@@ -91,21 +94,23 @@ public class Specimen extends LinearOpMode {
             move4 = new PolarPathFollower(drive,peripherals,pathLoader4.getJsonPathData(),Constants.commandMap,Constants.conditionMap,scheduler);
             move5 = new PolarPathFollower(drive,peripherals,pathLoader5.getJsonPathData(),Constants.commandMap,Constants.conditionMap,scheduler);
             move6 = new PolarPathFollower(drive,peripherals,pathLoader6.getJsonPathData(),Constants.commandMap,Constants.conditionMap,scheduler);
+            move7 = new PolarPathFollower(drive,peripherals,pathLoader7.getJsonPathData(),Constants.commandMap,Constants.conditionMap,scheduler);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
 
 
 scheduler.schedule(new SequentialCommandGroup(scheduler,
+        new ParallelCommandGroup(scheduler,Parameters.ALL,
         new Wait(1000),
         new WristMove(Robot.wrist, 1),
-        moveToPosition,
+        moveToPosition),
         new Pivot3(Robot.pivot, Constants.ARM_HIGH),
         new WristMove(Robot.wrist, 0.48533192541184481),
         move1,
         new Pivot1(Robot.pivot,-10),
         move2,
-        move3,
+       /* move3,*/
         new Elevator(Robot.elevators,930),
         new ParallelCommandGroup(scheduler, Parameters.ALL,
                 move4,
@@ -117,7 +122,13 @@ scheduler.schedule(new SequentialCommandGroup(scheduler,
         move5,
         new Pivot3(Robot.pivot, Constants.ARM_HIGH),
         new WristMove(Robot.wrist,0.48533192541184481),
-        move6
+        move6,
+        new Pivot1(Robot.pivot,-10),
+        new ParallelCommandGroup(scheduler,Parameters.ALL,
+                move3,
+                new WristMove(Robot.wrist,0.15),
+                new IntakeCommand(Robot.intake)),
+        move7
         ));
 
         while (opModeIsActive()) {
