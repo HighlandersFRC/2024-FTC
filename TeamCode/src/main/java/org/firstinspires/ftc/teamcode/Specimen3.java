@@ -41,7 +41,7 @@ import org.json.JSONException;
 import java.security.Permissions;
 
 @Autonomous
-public class Specimen extends LinearOpMode {
+public class Specimen3 extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -100,36 +100,36 @@ public class Specimen extends LinearOpMode {
         }
 
 
-scheduler.schedule(new SequentialCommandGroup(scheduler,
-        new ParallelCommandGroup(scheduler,Parameters.ALL,
-        new Wait(1000),
-        new WristMove(Robot.wrist, 1),
-        moveToPosition),
-        new Pivot3(Robot.pivot, Constants.ARM_HIGH),
-        new WristMove(Robot.wrist, 0.48533192541184481),
-        move1,
-        new Pivot1(Robot.pivot,-10),
-        move2,
-       /* move3,*/
-        new Elevator(Robot.elevators,930),
-        new ParallelCommandGroup(scheduler, Parameters.ALL,
-                move4,
-                new WristMove(Robot.wrist, 0.15),
-                new IntakeCommand(Robot.intake)
-        ),
-        new Elevator(Robot.elevators,0),
-        new WristMove(Robot.wrist, 0.9),
-        move5,
-        new Pivot3(Robot.pivot, Constants.ARM_HIGH),
-        new WristMove(Robot.wrist,0.48533192541184481),
-        move6,
-        new Pivot1(Robot.pivot,-10),
-        new ParallelCommandGroup(scheduler,Parameters.ALL,
-                move3,
-                new WristMove(Robot.wrist,0.15),
-                new IntakeCommand(Robot.intake)),
-        new WristMove(Robot.wrist,1),
-        move7
+        scheduler.schedule(new SequentialCommandGroup(scheduler,
+                new ParallelCommandGroup(scheduler,Parameters.ALL,
+                        new Wait(1000),
+                        new WristMove(Robot.wrist, 1),
+                        moveToPosition),
+                new Pivot3(Robot.pivot, Constants.ARM_HIGH),
+                new WristMove(Robot.wrist, 0.48533192541184481),
+                move1,
+                new Pivot1(Robot.pivot,-10),
+                move2,
+                /* move3,*/
+                new Elevator(Robot.elevators,930),
+                new ParallelCommandGroup(scheduler, Parameters.ALL,
+                        move4,
+                        new WristMove(Robot.wrist, 0.15),
+                        new IntakeCommand(Robot.intake)
+                ),
+                new Elevator(Robot.elevators,0),
+                new WristMove(Robot.wrist, 0.9),
+                move5,
+                new Pivot3(Robot.pivot, Constants.ARM_HIGH),
+                new WristMove(Robot.wrist,0.48533192541184481),
+                move6,
+                new Pivot1(Robot.pivot,-10),
+                new ParallelCommandGroup(scheduler,Parameters.ALL,
+                        move3,
+                        new WristMove(Robot.wrist,0.15),
+                        new IntakeCommand(Robot.intake)),
+                new WristMove(Robot.wrist,1),
+                move7
         ));
 
         while (opModeIsActive()) {
