@@ -7,6 +7,9 @@ import org.firstinspires.ftc.teamcode.Commands.Command;
 import org.firstinspires.ftc.teamcode.Commands.CommandScheduler;
 import org.firstinspires.ftc.teamcode.Commands.Elevator;
 import org.firstinspires.ftc.teamcode.Commands.IntakeCommand;
+import org.firstinspires.ftc.teamcode.Commands.Outtake;
+import org.firstinspires.ftc.teamcode.Commands.OuttakeSpec;
+import org.firstinspires.ftc.teamcode.Commands.OuttakeSpecify;
 import org.firstinspires.ftc.teamcode.Commands.ParallelCommandGroup;
 import org.firstinspires.ftc.teamcode.Commands.Pivot1;
 import org.firstinspires.ftc.teamcode.Commands.Pivot3;
@@ -56,14 +59,14 @@ public class Specimen3 extends LinearOpMode {
         Drive.setPosition(0, 0, 0);
 
 
-        PathLoading pathLoading = new PathLoading(hardwareMap.appContext, "Autos/Specimen.polarpath");
-        PathLoader0 pathLoader0 = new PathLoader0(hardwareMap.appContext, "Autos/1Specimen.polarpath");
-        PathLoader2 pathLoader2 = new PathLoader2(hardwareMap.appContext, "Autos/2Specimen.polarpath");
-        PathLoader3 pathLoader3 = new PathLoader3(hardwareMap.appContext, "Autos/7Specimen.polarpath");
-        PathLoader4 pathLoader4 = new PathLoader4(hardwareMap.appContext, "Autos/4Specimen.polarpath");
+        PathLoading pathLoading = new PathLoading(hardwareMap.appContext, "Autos/3S1.polarpath");
+        PathLoader0 pathLoader0 = new PathLoader0(hardwareMap.appContext, "Autos/3Spec2.polarpath");
+        PathLoader2 pathLoader2 = new PathLoader2(hardwareMap.appContext, "Autos/3Spec3.polarpath");
+        PathLoader3 pathLoader3 = new PathLoader3(hardwareMap.appContext, "Autos/3Specimen3.polarpath");
+       /* PathLoader4 pathLoader4 = new PathLoader4(hardwareMap.appContext, "Autos/4Specimen.polarpath");
         PathLoader5 pathLoader5 = new PathLoader5(hardwareMap.appContext, "Autos/5Specimen.polarpath");
         PathLoader6 pathLoader6 = new PathLoader6(hardwareMap.appContext, "Autos/6Specimen.polarpath");
-        PathLoader7 pathLoader7 = new PathLoader7(hardwareMap.appContext, "Autos/8Specimen.polarpath");
+        PathLoader7 pathLoader7 = new PathLoader7(hardwareMap.appContext, "Autos/8Specimen.polarpath");*/
         CommandScheduler scheduler = new CommandScheduler();
         Drive drive = new Drive("drive");
         Peripherals peripherals = new Peripherals("peripherals");
@@ -91,10 +94,11 @@ public class Specimen3 extends LinearOpMode {
             move1 = new PolarPathFollower(drive, peripherals, pathLoader0.getJsonPathData(), Constants.commandMap, Constants.conditionMap, scheduler);
             move2 = new PolarPathFollower(drive,peripherals, pathLoader2.getJsonPathData(),Constants.commandMap,Constants.conditionMap,scheduler);
             move3 = new PolarPathFollower(drive,peripherals,pathLoader3.getJsonPathData(),Constants.commandMap,Constants.conditionMap,scheduler);
-            move4 = new PolarPathFollower(drive,peripherals,pathLoader4.getJsonPathData(),Constants.commandMap,Constants.conditionMap,scheduler);
+           /* move4 = new PolarPathFollower(drive,peripherals,pathLoader4.getJsonPathData(),Constants.commandMap,Constants.conditionMap,scheduler);
             move5 = new PolarPathFollower(drive,peripherals,pathLoader5.getJsonPathData(),Constants.commandMap,Constants.conditionMap,scheduler);
             move6 = new PolarPathFollower(drive,peripherals,pathLoader6.getJsonPathData(),Constants.commandMap,Constants.conditionMap,scheduler);
             move7 = new PolarPathFollower(drive,peripherals,pathLoader7.getJsonPathData(),Constants.commandMap,Constants.conditionMap,scheduler);
+        */
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -104,32 +108,18 @@ public class Specimen3 extends LinearOpMode {
                 new ParallelCommandGroup(scheduler,Parameters.ALL,
                         new Wait(1000),
                         new WristMove(Robot.wrist, 1),
+                        new Pivot3(Robot.pivot,Constants.ARM_HIGH),
                         moveToPosition),
-                new Pivot3(Robot.pivot, Constants.ARM_HIGH),
-                new WristMove(Robot.wrist, 0.48533192541184481),
+                new WristMove(Robot.wrist, 0.48533162541184481),
                 move1,
-                new Pivot1(Robot.pivot,-10),
-                move2,
-                /* move3,*/
-                new Elevator(Robot.elevators,930),
-                new ParallelCommandGroup(scheduler, Parameters.ALL,
-                        move4,
-                        new WristMove(Robot.wrist, 0.15),
-                        new IntakeCommand(Robot.intake)
-                ),
-                new Elevator(Robot.elevators,0),
-                new WristMove(Robot.wrist, 0.9),
-                move5,
-                new Pivot3(Robot.pivot, Constants.ARM_HIGH),
-                new WristMove(Robot.wrist,0.48533192541184481),
-                move6,
-                new Pivot1(Robot.pivot,-10),
                 new ParallelCommandGroup(scheduler,Parameters.ALL,
-                        move3,
-                        new WristMove(Robot.wrist,0.15),
-                        new IntakeCommand(Robot.intake)),
-                new WristMove(Robot.wrist,1),
-                move7
+                        new Pivot1(Robot.pivot,-16),
+                        new IntakeCommand(Robot.intake),
+                        new WristMove(Robot.wrist,0.2),
+                        move2),
+                move3,
+                new Elevator(Robot.elevators,1000),
+                new OuttakeSpec(Robot.intake)
         ));
 
         while (opModeIsActive()) {
