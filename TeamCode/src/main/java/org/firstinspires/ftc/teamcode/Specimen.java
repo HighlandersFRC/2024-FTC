@@ -6,6 +6,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import org.firstinspires.ftc.teamcode.Commands.Command;
 import org.firstinspires.ftc.teamcode.Commands.CommandScheduler;
 import org.firstinspires.ftc.teamcode.Commands.Elevator;
+import org.firstinspires.ftc.teamcode.Commands.IntakeAutoSpecimen;
 import org.firstinspires.ftc.teamcode.Commands.IntakeCommand;
 import org.firstinspires.ftc.teamcode.Commands.ParallelCommandGroup;
 import org.firstinspires.ftc.teamcode.Commands.Pivot1;
@@ -115,7 +116,7 @@ scheduler.schedule(new SequentialCommandGroup(scheduler,
         new ParallelCommandGroup(scheduler, Parameters.ALL,
                 move4,
                 new WristMove(Robot.wrist, 0.15),
-                new IntakeCommand(Robot.intake)
+                new IntakeAutoSpecimen(Robot.intake)
         ),
         new Elevator(Robot.elevators,0),
         new WristMove(Robot.wrist, 0.9),
@@ -127,7 +128,7 @@ scheduler.schedule(new SequentialCommandGroup(scheduler,
         new ParallelCommandGroup(scheduler,Parameters.ALL,
                 move3,
                 new WristMove(Robot.wrist,0.15),
-                new IntakeCommand(Robot.intake)),
+                new IntakeAutoSpecimen(Robot.intake)),
         new WristMove(Robot.wrist,1),
         move7
         ));

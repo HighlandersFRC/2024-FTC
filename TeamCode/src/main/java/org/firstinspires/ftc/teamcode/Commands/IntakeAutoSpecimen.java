@@ -1,17 +1,15 @@
 package org.firstinspires.ftc.teamcode.Commands;
 
-import com.qualcomm.robotcore.hardware.HardwareMap;
 import org.firstinspires.ftc.teamcode.Subsystems.Intake;
 import org.firstinspires.ftc.teamcode.Subsystems.Subsystem;
 
-public class OuttakeSpec implements Command {
+public class IntakeAutoSpecimen implements Command {
 
     private final Intake intakeSubsystem;
     private long startTime;
 
-    public OuttakeSpec(Intake intake) {
+    public IntakeAutoSpecimen(Intake intake) {
         this.intakeSubsystem = intake;
-
     }
 
     public String getSubsystem() {
@@ -20,23 +18,26 @@ public class OuttakeSpec implements Command {
 
     @Override
     public void start() {
-        startTime=System.currentTimeMillis();
+        startTime = System.currentTimeMillis();
     }
 
     @Override
     public void execute() {
-        intakeSubsystem.outtake();
+        if (!intakeSubsystem.getCorrectColor()) {
+            intakeSubsystem.intake();
+        } else {
+            Intake.stopIntake();
+        }
     }
 
     @Override
     public void end() {
-
         Intake.stopIntake();
     }
 
     @Override
     public boolean isFinished() {
-        return (System.currentTimeMillis() - startTime) >= 750;
+        return intakeSubsystem.getCorrectColor() || (System.currentTimeMillis() - startTime) >= 2500;
     }
 
     @Override

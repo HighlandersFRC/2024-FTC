@@ -9,7 +9,7 @@ import org.firstinspires.ftc.teamcode.Tools.Robot;
 
 public class Elevator implements Command {
 
-    private final PID elevatorPID = new PID(0.3, 0.0, 0.01);
+    private final PID elevatorPID = new PID(0.3, 0.0, 0.06);
     private final Elevators elevators;
     private final double targetPosition;
 
