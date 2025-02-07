@@ -53,7 +53,7 @@ public class Pivot3 implements Command {
 
     @Override
     public boolean isFinished() {
-        return Math.abs(Pivot.getAngle() - setPos) <= (1)|| (System.currentTimeMillis()-startTime)>=2350;
+        return Math.abs(Pivot.getAngle() - setPos) <= (1)|| (System.currentTimeMillis()-startTime)>=3300;
     }
 
     @Override

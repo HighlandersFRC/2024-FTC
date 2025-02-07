@@ -125,7 +125,7 @@ public class TestAuto extends LinearOpMode {
                     reset,
                     new ParallelCommandGroup(scheduler, Parameters.ALL,
                             path1,
-                            new WristMove(Robot.wrist, 0.1 - Constants.WRIST_OFFSET),
+                            new WristMove(Robot.wrist, 0.173),
                             new IntakeCommand(Robot.intake)
                     ),
                     path2command,
@@ -139,7 +139,7 @@ public class TestAuto extends LinearOpMode {
                     reset,
                     new ParallelCommandGroup(scheduler, Parameters.ALL,
                             path3,
-                            new WristMove(Robot.wrist, 0.1 - Constants.WRIST_OFFSET),
+                            new WristMove(Robot.wrist, 0.173),
                             new IntakeCommand(Robot.intake)
                     ),
                     path4,
@@ -156,12 +156,10 @@ public class TestAuto extends LinearOpMode {
                     new WristMove(wrist, 0.1),
                     new ParallelCommandGroup(scheduler, Parameters.ALL, new Elevator(elevators, 500)),
                     new ParallelCommandGroup(scheduler, Parameters.ALL,
-                    new Elevator(elevators, 0),
+                    new Elevator(elevators, 0)
                   /*  path5,*/
-                    new SequentialCommandGroup(scheduler, new Wait(500),
-                    new Pivot1(pivot, -16)
                   /*  new Elevator(elevators, 500)*/
-            ))));
+            )));
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

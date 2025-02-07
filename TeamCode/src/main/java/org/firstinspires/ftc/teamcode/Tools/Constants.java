@@ -16,7 +16,7 @@ public class Constants {
 
     public static double ARM_HIGH = 98;
 
-    public static double ELEVATOR_AUTO = 2200;
+    public static double ELEVATOR_AUTO = 2439;
 
     public static double WRIST_OFFSET = -0.1;
 
