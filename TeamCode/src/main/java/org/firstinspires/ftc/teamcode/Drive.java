@@ -94,7 +94,7 @@ public class Drive extends LinearOpMode {
             if (gamepad1.left_bumper) {
                 org.firstinspires.ftc.teamcode.Subsystems.Drive.RobotCentric(leftStickX / 4, leftStickY / 4, rightStickX / 4);
             } else {
-                org.firstinspires.ftc.teamcode.Subsystems.Drive.RobotCentric(leftStickX, leftStickY, rightStickX);
+                org.firstinspires.ftc.teamcode.Subsystems.Drive.RobotCentric(leftStickX, leftStickY, rightStickX * 0.75);
             }
 
             if (gamepad1.right_bumper) {
@@ -111,6 +111,14 @@ public class Drive extends LinearOpMode {
                 scheduler.schedule(new PivotMove(pivot, -100));
             } else if (gamepad1.dpad_right) {
                 scheduler.schedule(new PivotMove(pivot, 100));
+            }
+
+            if(gamepad1.ps){
+                Robot.PIVOT_STATE = "Power";
+                Robot.PIVOT_RAW_POWER = -1;
+            }else {
+                Robot.PIVOT_STATE = "PID";
+                Robot.PIVOT_RAW_POWER = 0;
             }
 
             scheduler.run();

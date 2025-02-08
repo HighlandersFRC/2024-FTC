@@ -128,7 +128,7 @@ public class Specimen3 extends LinearOpMode {
                 new ParallelCommandGroup(scheduler,Parameters.ALL,
                         new Pivot1(Robot.pivot,-16),
                         new IntakeAutoSpecimen(Robot.intake),
-                        new WristMove(Robot.wrist,0.167),
+                        new WristMove(Robot.wrist,0.2),
                         move2),
                 move3,
                 new OuttakeSpec(Robot.intake),

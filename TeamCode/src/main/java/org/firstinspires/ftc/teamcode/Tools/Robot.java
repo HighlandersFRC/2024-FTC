@@ -12,6 +12,8 @@ import org.firstinspires.ftc.teamcode.Subsystems.Wrist;
 public class Robot {
     public static String CURRENT_STATE = "Auto";
     public static double CURRENT_PIVOT;
+    public static String PIVOT_STATE = "PID";
+    public static double PIVOT_RAW_POWER = 0;
     public static double CURRENT_WRIST;
     public static double CURRENT_INTAKE_POWER;
     public static double CURRENT_ELEVATOR = 0;

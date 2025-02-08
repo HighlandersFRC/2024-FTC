@@ -37,7 +37,7 @@ public class IntakeAutoSpecimen implements Command {
 
     @Override
     public boolean isFinished() {
-        return intakeSubsystem.getCorrectColor() || (System.currentTimeMillis() - startTime) >= 2500;
+        return intakeSubsystem.getCorrectColor() || (System.currentTimeMillis() - startTime) >= 1750;
     }
 
     @Override

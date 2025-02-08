@@ -3,6 +3,8 @@ package org.firstinspires.ftc.teamcode.Commands.DefaultCommands;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.teamcode.Commands.Command;
+import org.firstinspires.ftc.teamcode.Commands.PivotMove;
+import org.firstinspires.ftc.teamcode.Subsystems.Elevators;
 import org.firstinspires.ftc.teamcode.Subsystems.Pivot;
 import org.firstinspires.ftc.teamcode.Subsystems.Subsystem;
 import org.firstinspires.ftc.teamcode.Tools.Constants;
@@ -24,18 +26,23 @@ public class PivotDefault implements Command {
 
     @Override
     public void execute() {
-
-        if (Pivot.getAngle() > 105) {
+        if (Robot.PIVOT_STATE.equals("PID")){
+        if (Elevators.getAvgEncoder() >= 1500){
+            pivotPID.setSetPoint(Constants.ARM_HIGH);
+        }
+        if (Pivot.getAngle() > 110) {
             move = false;
             setPos = Robot.CURRENT_PIVOT;
 
             pivotPID.setSetPoint(Robot.CURRENT_PIVOT);
             pivotPower = pivotPID.updatePID(Pivot.getAngle());
             Pivot.setPower(pivotPower + (Constants.PIVOT_FEED_FORWARD * Math.cos(Math.toRadians(Pivot.getAngle()) + Constants.ARM_BALANCE_OFFSET)));
-        } else {
-            move = true;
         }
         Pivot.pivotMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        Pivot.pivotMotor2.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);}
+        if (Robot.PIVOT_STATE.equals("Power")){
+            Pivot.setPower(Robot.PIVOT_RAW_POWER);
+        }
     }
 
     @Override

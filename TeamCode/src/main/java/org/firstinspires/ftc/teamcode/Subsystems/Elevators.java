@@ -64,6 +64,9 @@ public class Elevators extends Subsystem {
         return rightElevator.getCurrentPosition();
     }
 
+    public static double getAvgEncoder(){
+        return  (getLeftEncoder() + getRightEncoder()) / 2;
+    }
     private static void setPower(double power) {
         leftElevator.setPower(power);
         rightElevator.setPower(power);

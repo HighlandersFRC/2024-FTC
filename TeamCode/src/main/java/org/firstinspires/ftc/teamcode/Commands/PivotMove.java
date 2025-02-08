@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.Commands;
 
 import com.qualcomm.robotcore.util.RobotLog;
 
+import org.firstinspires.ftc.teamcode.Subsystems.Elevators;
 import org.firstinspires.ftc.teamcode.Subsystems.Pivot;
 import org.firstinspires.ftc.teamcode.Subsystems.Subsystem;
 import org.firstinspires.ftc.teamcode.Tools.Constants;
@@ -37,6 +38,9 @@ public class PivotMove implements Command {
 
     @Override
     public void execute() {
+        if (Elevators.getAvgEncoder() >= 1500){
+            pivotPID.setSetPoint(Constants.ARM_HIGH);
+        }
         pivotPower = pivotPID.updatePID(Pivot.getAngle());
         pivotPower += (Constants.PIVOT_FEED_FORWARD * Math.cos(Math.toRadians(Pivot.getAngle()) + Constants.ARM_BALANCE_OFFSET));
         Pivot.setPower(pivotPower);
