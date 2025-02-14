@@ -8,6 +8,9 @@ import org.firstinspires.ftc.teamcode.Subsystems.Subsystem;
 
 public class ElevatorUp implements Command {
     private ElevatorSubsystem elevator;
+    public ElevatorUp(ElevatorSubsystem elevator) {
+        this.elevator = elevator;
+    }
     @Override
     public void start() {
         System.out.println("Elevator Up started");

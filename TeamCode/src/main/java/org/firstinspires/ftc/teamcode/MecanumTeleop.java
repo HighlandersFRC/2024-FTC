@@ -27,7 +27,7 @@ import static org.firstinspires.ftc.teamcode.Tools.Constants.DegreesToEncoderTic
 import static org.firstinspires.ftc.teamcode.Tools.Constants.getDegrees;
 
 @TeleOp
-public class CommandKitBot extends LinearOpMode {
+public class MecanumTeleop extends LinearOpMode {
     private FtcDashboard dashboard;
     @Override
     public void runOpMode() throws InterruptedException {
@@ -58,24 +58,19 @@ public class CommandKitBot extends LinearOpMode {
 
         while (opModeIsActive()) {
 
-if (gamepad1.left_bumper) {
-    ArmUp Up = new ArmUp(robot.arm);
-    scheduler.schedule(Up);
-} else if (gamepad1.right_bumper) {
-    ArmDown Down = new ArmDown(robot.arm);
-    scheduler.schedule(Down);
-} else {
-    StopArm Stop = new StopArm(robot.arm);
-    scheduler.schedule(Stop);
-}
+            if (gamepad1.left_bumper) {
+                ArmUp Up = new ArmUp(robot.arm);
+                scheduler.schedule(Up);
+            } else if (gamepad1.right_bumper) {
+                ArmDown Down = new ArmDown(robot.arm);
+                scheduler.schedule(Down);
+            } else {
+                StopArm Stop = new StopArm(robot.arm);
+                scheduler.schedule(Stop);
+            }
 
-
-
-            scheduler.removeDuplicateCommands();
             scheduler.run();
 
-
-            scheduler.printCurrentCommands();
 
         }
     }

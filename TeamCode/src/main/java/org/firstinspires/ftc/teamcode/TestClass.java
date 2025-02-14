@@ -2,7 +2,6 @@ package org.firstinspires.ftc.teamcode;
 
 import static org.firstinspires.ftc.teamcode.Tools.Constants.DegreesToEncoderTicks;
 import static org.firstinspires.ftc.teamcode.Tools.Constants.getDegrees;
-import static org.firstinspires.ftc.teamcode.Tools.Constants.piviotPID;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
@@ -20,20 +19,13 @@ public class TestClass extends LinearOpMode {
     private FtcDashboard dashboard;
     @Override
     public void runOpMode() throws InterruptedException {
-
+       ElevatorSubsystem elevatorSubsystem = new ElevatorSubsystem("Elevator", hardwareMap);
         waitForStart();
-        dashboard = FtcDashboard.getInstance();
-        ArmSubsystem armSubsystem = new ArmSubsystem("arm", hardwareMap);
-        ElevatorSubsystem elevatorSubsystem = new ElevatorSubsystem("elevator", hardwareMap);
-        Drive drive = new Drive("drive", hardwareMap);
+
         while (opModeIsActive()) {
-//         armSubsystem.ArmMovement(gamepad1);
-         elevatorSubsystem.contolElevatorSetPoint(gamepad1);
-         drive.FeildCentric(gamepad1);
-            TelemetryPacket packet = new TelemetryPacket();
-                packet.put("Degrees-Arm", getDegrees(armSubsystem.getCurrentPositionWithLimitSwitch()));
-                packet.put("Degrees-Elevator", elevatorSubsystem.getCurrentPosition());
-            dashboard.sendTelemetryPacket(packet);
+           elevatorSubsystem.contolElevatorSetPoint(gamepad1);
         }
+
+
     }
 }

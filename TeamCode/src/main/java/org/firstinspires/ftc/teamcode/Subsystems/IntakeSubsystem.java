@@ -8,7 +8,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 import org.firstinspires.ftc.teamcode.Commands.Command;
 import org.firstinspires.ftc.teamcode.Commands.DefaultCommands.IntakeDefault;
 public class IntakeSubsystem extends Subsystem {
-   public Servo RightIntake;
+    public Servo RightIntake;
     public Servo LeftIntake;
 
 
@@ -40,10 +40,10 @@ public class IntakeSubsystem extends Subsystem {
             setPosition(0.4);
         } else if (gamepad1.right_trigger != 0) {
             //Outtake
-            setPosition(0.85);
+            setPosition(0.75);
         }
 
-        }
+    }
 
 
 

@@ -11,7 +11,7 @@ import org.firstinspires.ftc.teamcode.Subsystems.Subsystem;
 
 public class ElevatorDefault implements Command{
 
-
+    private static final double gravityEffect = 1.47;
     private double elevatorPower;
 
     private String name = "Elevator";
@@ -29,7 +29,7 @@ elevatorPID.setSetPoint(-1 * Math.abs(elePos));
 
     @Override
     public void execute() {
-elevatorPower = elevatorPID.updatePID(elevatorSubsystem.getCurrentPosition());
+elevatorPower = elevatorPID.updatePIDF(elevatorSubsystem.getCurrentPosition(), gravityEffect);
 double feed = GravityTerm(elevatorSubsystem.getCurrentPosition());
 elevatorSubsystem.setPower(-elevatorPower * feed);
     }

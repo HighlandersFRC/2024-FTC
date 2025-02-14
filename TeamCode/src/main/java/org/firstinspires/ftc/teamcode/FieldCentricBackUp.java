@@ -43,8 +43,8 @@ public class FieldCentricBackUp extends LinearOpMode {
         if (isStopRequested()) return;
 
         while (opModeIsActive()) {
-            double x = gamepad1.left_stick_x*2;
-            double y = gamepad1.left_stick_y;
+            double x = -gamepad1.left_stick_x*2;
+            double y = -gamepad1.left_stick_y;
             double rx = gamepad1.right_stick_x;
 
             double botHeading = -Math.toRadians(Mouse.getTheta());

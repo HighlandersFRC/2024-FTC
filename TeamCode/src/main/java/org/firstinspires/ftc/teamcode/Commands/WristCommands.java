@@ -4,14 +4,14 @@ import org.firstinspires.ftc.teamcode.Subsystems.Subsystem;
 import org.firstinspires.ftc.teamcode.Subsystems.Wrist;
 
 public class WristCommands implements Command {
-    public static double pos;
+    public double pos;
 
     private String name = "Wrist";
     private Wrist wristSubsystem;
 
     public WristCommands(Wrist wristSubsystem, double pos) {
         this.wristSubsystem = wristSubsystem;
-        WristCommands.pos = pos; // Set the position for the wrist
+        this.pos = pos;
 
     }
 
@@ -22,18 +22,17 @@ public class WristCommands implements Command {
 
     @Override
     public void execute() {
-        wristSubsystem.setPosition(pos); // Use the wrist subsystem to set position
+        wristSubsystem.setPosition(pos);
     }
 
     @Override
     public void end() {
-        wristSubsystem.setPosition(pos); // Reset to neutral position
+        wristSubsystem.setPosition(pos);
     }
 
     @Override
     public boolean isFinished() {
-        
-        return false;
+        return wristSubsystem.getPosition() == pos;
     }
 
     @Override

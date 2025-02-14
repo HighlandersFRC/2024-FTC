@@ -2,7 +2,7 @@
 package org.firstinspires.ftc.teamcode.Commands.DefaultCommands;
 
 import static org.firstinspires.ftc.teamcode.Subsystems.Pivot.pivotMotor;
-import static org.firstinspires.ftc.teamcode.Tools.Constants.piviotPID;
+import static org.firstinspires.ftc.teamcode.Tools.Constants.pivotPID;
 
 import org.firstinspires.ftc.teamcode.Commands.Command;
 import org.firstinspires.ftc.teamcode.Subsystems.ArmSubsystem;
@@ -19,23 +19,23 @@ public class ArmDefault implements Command {
 
     public ArmDefault(ArmSubsystem arm) {
         this.arm = arm;
-        piviotPID.setMaxOutput(0.5);
-        piviotPID.setMinOutput(-0.5);
+        pivotPID.setMaxOutput(1);
+        pivotPID.setMinOutput(-1);
     }
 
     @Override
     public void start() {
-       pos = arm.getCurrentPositionWithLimitSwitch();
+        pos = arm.getCurrentPositionWithLimitSwitch();
     }
 
     @Override
     public void execute() {
-      arm.setPosition(pos);
+        arm.setPosition(pos);
     }
 
     @Override
     public void end() {
-        arm.setPower(0);
+        arm.setPosition(pos);
         System.out.println("Command ended.");
     }
 

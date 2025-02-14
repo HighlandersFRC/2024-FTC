@@ -7,6 +7,9 @@ import org.firstinspires.ftc.teamcode.Subsystems.Subsystem;
 
 public class StopElevator implements Command{
     private ElevatorSubsystem elevator;
+    public StopElevator(ElevatorSubsystem elevator) {
+        this.elevator = elevator;
+    }
     @Override
     public void start() {
         System.out.println("Elevator Stop Started");

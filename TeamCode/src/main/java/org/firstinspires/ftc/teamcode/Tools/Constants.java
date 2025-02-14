@@ -5,10 +5,12 @@ import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.har
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Gamepad;
+import com.qualcomm.robotcore.hardware.PIDCoefficients;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.Commands.Command;
+import org.firstinspires.ftc.teamcode.Commands.DefaultCommands.PivotDefault;
 import org.firstinspires.ftc.teamcode.Subsystems.ArmSubsystem;
 
 import java.util.HashMap;
@@ -33,8 +35,8 @@ public class Constants {
     public static double ElevatorsDownPosition = 200;
     public static double ArmDownPosition = 200;
     public static Object SetPoints;
-    public static PID piviotPID = new PID( 0.006, 0.001, 0);
-    public static PID elevatorPID = new PID(0.01 ,0,0.01);
+    public static PID pivotPID = new PID( 0.006, 0.001, 0);
+    public static PIDF elevatorPID = new PIDF(0.01 ,0,0, 1.47);
     public static double nextX;
     public static double nextY;
     public static double nextTheta;
@@ -97,9 +99,9 @@ public class Constants {
     }
 
     public static double setPowerToPercentage(double percentage) {
-        if (percentage > 100) {
+        if (percentage > 1) {
             percentage = 100;
-        } else if (percentage < -100) {
+        } else if (percentage < -1) {
             percentage = -100;
         }
         return percentage / 100;

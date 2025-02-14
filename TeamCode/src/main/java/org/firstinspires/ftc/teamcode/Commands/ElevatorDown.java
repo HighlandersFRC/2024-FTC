@@ -9,6 +9,10 @@ import org.firstinspires.ftc.teamcode.Subsystems.Subsystem;
 public class ElevatorDown implements Command {
 
     private ElevatorSubsystem elevator;
+
+    public ElevatorDown(ElevatorSubsystem elevator) {
+        this.elevator = elevator;
+    }
     @Override
     public void start() {
         System.out.println("Elevator Down Started");

@@ -69,10 +69,6 @@ public class Drive extends Subsystem {
         backRightMotor.setDirection(DcMotorSimple.Direction.FORWARD);
 
 // Set zero power behavior for all motors
-        frontLeftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        backLeftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        frontRightMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        backRightMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
 // Reset encoders
         frontLeftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -194,7 +190,13 @@ public class Drive extends Subsystem {
         backRightMotor.setPower(-rightBackPower);
     }
 
+
+
     public void FeildCentric(Gamepad gamepad1) {
+
+
+
+
         double x = -gamepad1.left_stick_x*2;
         double y = -gamepad1.left_stick_y;
         double rx = gamepad1.right_stick_x;
@@ -216,11 +218,30 @@ public class Drive extends Subsystem {
         double frontRightPower = (rotY + rotX + rx);
         double backRightPower = (rotY - rotX + rx);
 
-        frontLeftMotor.setPower(-frontLeftPower);
-        backLeftMotor.setPower(-backLeftPower);
-        frontRightMotor.setPower(-frontRightPower);
-        backRightMotor.setPower(-backRightPower);
-    }
+        boolean driveSlowed = true;
+        boolean rightStickPrev = false;
+
+        boolean rightStickPressed = gamepad1.right_stick_button;
+        if (rightStickPressed && !rightStickPrev) {
+            driveSlowed = !driveSlowed;
+        }
+        rightStickPrev = rightStickPressed;
+
+        if (driveSlowed) {
+
+            frontLeftMotor.setPower(-frontLeftPower);
+            backLeftMotor.setPower(-backLeftPower);
+            frontRightMotor.setPower(-frontRightPower);
+            backRightMotor.setPower(-backRightPower);
+
+        }else {
+            frontLeftMotor.setPower(-frontLeftPower/100);
+            backLeftMotor.setPower(-backLeftPower/100);
+            frontRightMotor.setPower(-frontRightPower/100);
+            backRightMotor.setPower(-backRightPower/100);
+        }
+
+     }
 
     public void resetEncoder() {
         frontLeftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -242,12 +263,7 @@ public class Drive extends Subsystem {
         lastCenterPos = 0;
     }
 
-    private void setZeroPowerBehavior(DcMotor.ZeroPowerBehavior behavior) {
-        backLeftMotor.setZeroPowerBehavior(behavior);
-        backRightMotor.setZeroPowerBehavior(behavior);
-        frontLeftMotor.setZeroPowerBehavior(behavior);
-        frontRightMotor.setZeroPowerBehavior(behavior);
-    }
+
 
     private boolean insideRadius(double deltaX, double deltaY, double deltaTheta, double radius) {
         return Math.sqrt(Math.pow(deltaX, 2) + Math.pow(deltaY, 2) + Math.pow(deltaTheta, 2)) < radius;
@@ -397,60 +413,43 @@ public class Drive extends Subsystem {
         return frontRightMotor.getCurrentPosition();
     }
 
-
     public void autoDrive(Vector vector, double angle) {
-//        double vx = vector.getI();
-//        double vy = vector.getJ();
-//
-//        double rotationFactor = angle;
-//
-//        double botHeading = Math.toRadians(FinalPose.Yaw);
-//
-//        /*double rotX = vx * Math.cos(-botHeading) + vy * Math.sin(-botHeading);
-//        double rotY = - vx * Math.sin(-botHeading) + vy * Math.cos(-botHeading);
-//
-//        rotX *= 1.1;
-//
-//
-//        double denominator = Math.max(Math.abs(rotY) + Math.abs(rotX) + Math.abs(rotationFactor), 1);
-//        double frontLeftPower = (rotY - rotX + rotationFactor) / denominator;
-//        double backLeftPower = (-rotY - rotX + rotationFactor) / denominator;
-//        double frontRightPower = (rotY + rotX - rotationFactor) / denominator;
-//        double backRightPower = (rotY - rotX - rotationFactor) / denominator;*/
-//
-//        double rotX = vx * Math.cos(-botHeading) - vy * Math.sin(-botHeading);
-//        double rotY = vx * Math.sin(-botHeading) + vy * Math.cos(-botHeading);
-//        // Front Left
-//        double frontLeftPower = (rotX + rotY + rotationFactor);
-//        // Back Left
-//        double backLeftPower = (rotX + rotY - rotationFactor);
-//        // Front Right
-//        double frontRightPower = (rotX - rotY + rotationFactor);
-//        // Back Right
-//        double backRightPower = (rotX - rotY + rotationFactor);
-
         double vx = vector.getI();
         double vy = -vector.getJ();
 
         double rotationFactor = -(angle);
 
-        double botHeading = -Math.toRadians(FinalPose.Yaw);
+        double botHeading = Math.toRadians(FinalPose.Yaw);
 
-        double rotY = vx * Math.cos(-botHeading) - vy * Math.sin(-botHeading);
-        double rotX = vx * Math.sin(-botHeading) + vy * Math.cos(-botHeading);
+        double rotX = vx * Math.cos(-botHeading) + vy * Math.sin(-botHeading);
+        double rotY = - vx * Math.sin(-botHeading) + vy * Math.cos(-botHeading);
 
-        rotY *= 1.1;
+        rotX *= 1.1;
 
         double denominator = Math.max(Math.abs(rotY) + Math.abs(rotX) + Math.abs(rotationFactor), 1);
+        double frontLeftPower = (rotX + rotY + rotationFactor);
+        double frontRightPower = (rotX - rotY - rotationFactor);
+        double backLeftPower = (rotX - rotY + rotationFactor);
+        double backRightPower = (rotX + rotY - rotationFactor);
 
-        double frontLeftPower = (rotY + rotX - rotationFactor) / denominator;
-        double backLeftPower = (-rotY + rotX + rotationFactor) / denominator;
-        double frontRightPower = (rotY + rotX + rotationFactor) / denominator;
-        double backRightPower = (rotY - rotX + rotationFactor) / denominator;
+/*
+        double frontLeftPower = vx + vy + rotationFactor;
+        double frontRightPower = vx - vy - rotationFactor;
+        double backLeftPower = vx - vy + rotationFactor;
+        double backRightPower = vx + vy - rotationFactor;
 
-        drive(-frontLeftPower, -frontRightPower, -backLeftPower, -backRightPower);
-        System.out.println("Rotation Y " + rotY + " Rotation X " + rotX+ " vy "+vy+" vx "+vx);
+        double maxMagnitude = Math.max(Math.max(Math.abs(frontLeftPower), Math.abs(frontRightPower)),
+                Math.max(Math.abs(backLeftPower), Math.abs(backRightPower)));
 
+        if (maxMagnitude > 1) {
+            frontLeftPower /= maxMagnitude;
+            frontRightPower /= maxMagnitude;
+            backLeftPower /= maxMagnitude;
+            backRightPower /= maxMagnitude;
+        }
+*/
+
+        drive(-frontLeftPower / denominator, -frontRightPower / denominator, -backLeftPower / denominator, -backRightPower / denominator);
     }
 
     public void sketchDrive(Gamepad gamepad1) {
@@ -464,9 +463,9 @@ public class Drive extends Subsystem {
 //        } else if (gamepad1.dpad_down) {
 //            drive(1,-1,1,-1);
 //        } else {
-            stop();
-            drive(0,0,0,0);
-        }
+        stop();
+        drive(0,0,0,0);
+    }
 
 
 

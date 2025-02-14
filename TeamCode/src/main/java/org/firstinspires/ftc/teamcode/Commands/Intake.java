@@ -12,7 +12,7 @@ public class Intake implements Command  {
 
     public Intake(IntakeSubsystem intakeSubsystem) {
         this.intakeSubsystem = intakeSubsystem;
-        this.intakeSubsystem.setPosition(0.5);
+        this.intakeSubsystem.setPosition(0.3);
     }
 
     public String getSubsystem() {
@@ -26,17 +26,17 @@ public class Intake implements Command  {
     @Override
     public void execute() {
         System.out.println("Intake executing");
-        intakeSubsystem.setPosition(0.5);
+        intakeSubsystem.setPosition(0.3);
     }
 
     @Override
     public void end() {
-        intakeSubsystem.setPosition(0.5);
+        intakeSubsystem.setPosition(0.3);
     }
 
     @Override
     public boolean isFinished() {
-        return intakeSubsystem.getPositionLeft() == 1 && intakeSubsystem.getPositionRight() == -1;
+        return intakeSubsystem.getPositionLeft() == 0.7 && intakeSubsystem.getPositionRight() == 0.4;
     }
     @Override
     public Subsystem getRequiredSubsystem() {

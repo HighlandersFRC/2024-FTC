@@ -34,6 +34,10 @@ public class Robot {
         this.elevator = new ElevatorSubsystem("elevator", hardwareMap);
     }
 
+    public void run() {
+
+    }
+
     // Initialize hardware for all subsystems
     public void initialize(HardwareMap hardwareMap, Telemetry telemetry) {
         this.drive = new Drive("drive", hardwareMap);

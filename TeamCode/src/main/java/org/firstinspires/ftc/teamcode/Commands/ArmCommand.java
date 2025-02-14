@@ -2,7 +2,6 @@
 package org.firstinspires.ftc.teamcode.Commands;
 
 import static org.firstinspires.ftc.teamcode.Subsystems.Pivot.pivotMotor;
-import static org.firstinspires.ftc.teamcode.Tools.Constants.piviotPID;
 import static org.firstinspires.ftc.teamcode.Tools.Constants.setPowerToPercentage;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -35,7 +34,7 @@ public class ArmCommand implements Command {
     public void execute() {
 //        pos = arm.getCurrentPositionWithLimitSwitch(); // Update static pos
 //        posToo =arm.getCurrentPositionWithLimitSwitch(); // Update  posToo
-System.out.println("Executing");
+        System.out.println("Executing");
         arm.setPosition(setPos);
     }
 
@@ -47,14 +46,14 @@ System.out.println("Executing");
 //        piviotPID.setMinOutput(-1);
 //        arm.setPower(piviotPID.getResult());
 
-        arm.setZeroPowerBehavior();
+        arm.setPosition(arm.getCurrentPositionWithLimitSwitch());
         System.out.println("Command ended.");
         System.out.println("serdtgf");
     }
 
     @Override
     public boolean isFinished() {
-        double tolerance = 10;
+        double tolerance = 20;
         double currentPosition = arm.getCurrentPositionWithLimitSwitch();
         return Math.abs(currentPosition - setPos) <= tolerance;
 

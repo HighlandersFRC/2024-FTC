@@ -1,11 +1,9 @@
 package org.firstinspires.ftc.teamcode.Subsystems;
 
 import static org.firstinspires.ftc.teamcode.Tools.Constants.DegreesToEncoderTicks;
-import static org.firstinspires.ftc.teamcode.Tools.Constants.EncodersTicksToDegrees;
-import static org.firstinspires.ftc.teamcode.Tools.Constants.GravityTerm;
-import static org.firstinspires.ftc.teamcode.Tools.Constants.elevatorPID;
-import static org.firstinspires.ftc.teamcode.Tools.Constants.piviotPID;
-import static org.firstinspires.ftc.teamcode.Tools.Constants.BRAKE;
+import static org.firstinspires.ftc.teamcode.Tools.Constants.MAX_TICKS;
+import static org.firstinspires.ftc.teamcode.Tools.Constants.MIN_TICKS;
+import static org.firstinspires.ftc.teamcode.Tools.Constants.pivotPID;
 import static org.firstinspires.ftc.teamcode.Tools.Constants.setPowerToPercentage;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -13,195 +11,112 @@ import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
-import org.firstinspires.ftc.teamcode.Commands.Command;
-import org.firstinspires.ftc.teamcode.Commands.DefaultCommands.ArmDefault;
-
 public class ArmSubsystem extends Subsystem {
-    public double wristPosition = 0.2;
-    public double intakePosition = 0.85;
-    private DcMotor pivotMotor;
-    private DigitalChannel limitSwitch;
-
-
-    private double pos;
-    public double elePos;
-    private double manualPower;
-    private boolean isManualControlActive = false;
-    private boolean armControlToggle = true;
+    public DcMotor pivot;
+    private double armPos = 0;
+    public DigitalChannel limitSwitch;
+    double power = 0;
 
     public ArmSubsystem(String name, HardwareMap hardwareMap) {
         super(name);
-
+        this.pivot = null;
+        initialize(hardwareMap);
+        pivot.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        pivot.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
     }
+
+    private double getCurrentPosition() {
+        return pivot.getCurrentPosition();
+    }
+
 
     public void initialize(HardwareMap hardwareMap) {
-        try {
-            this.pos = 0;
-            this.manualPower = 0.0;
-            pivotMotor = hardwareMap.dcMotor.get("pivotMotor");
-            limitSwitch = hardwareMap.digitalChannel.get("limitSwitch");
-            limitSwitch.setMode(DigitalChannel.Mode.INPUT);
-
-            // Set the default command explicitly after initialization
-            setDefaultCommand(new ArmDefault(this));
-
-        } catch (Exception e) {
-            throw new IllegalStateException("Failed to initialize ArmSubsystem: " + e.getMessage());
+        pivot = hardwareMap.dcMotor.get("pivotMotor");
+        limitSwitch = hardwareMap.get(DigitalChannel.class, "limitSwitch");
+        pivot.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+    }
+public double getCurrentPositionWithLimitSwitch() {
+        double currentPos = getCurrentPosition();
+        if (limitSwitch != null && !limitSwitch.getState()) {
+            currentPos = 0;
         }
-    }
+        return currentPos;
+}
 
-    public double getPower() {
-        return pivotMotor.getPower();
-    }
 
     public void setPower(double power) {
-        if (pivotMotor != null) {
-            pivotMotor.setPower(-power);
+        if (pivot != null) {
+            pivot.setPower(power);
         }
-    }
-
-    public void setZeroPowerBehavior() {
-            pivotMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-            pivotMotor.setPower(0);
-    }
-
-    public void HOLDPos() {
-        piviotPID.setSetPoint(getCurrentPositionWithLimitSwitch());
-        piviotPID.updatePID(getCurrentPositionWithLimitSwitch());
-        piviotPID.setMinOutput(-1);
-        piviotPID.setMaxOutput(1);
-        pivotMotor.setPower(-piviotPID.getResult());
-    }
-
-
-    public double getCurrentPosition() {
-        return pivotMotor != null ? pivotMotor.getCurrentPosition() : 0;
-    }
-
-    public boolean getLimit(){
-        return limitSwitch.getState();
-    }
-
-    public double getCurrentPositionWithLimitSwitch() {
-        if (limitSwitch != null && !limitSwitch.getState()) {
-            // Update pos only once when the limit switch is triggered
-                pos = getCurrentPosition();  // Store initial position when triggered
-        }
-        System.out.println(pos);
-        return getCurrentPosition() - pos; // Return offset from the initial position
-    }
-
-
-    public double ifLimitSwitchDies(Gamepad gamepad1) {
-        boolean buttonPressed = false;
-
-        if (gamepad1.b && !buttonPressed) {
-            pos = getCurrentPosition();
-            buttonPressed = true;
-        } else if (!gamepad1.b) {
-            buttonPressed = false;
-        }
-
-        return getCurrentPosition() - pos;
-
-    }
-
-
-    public void ArmMovement(Gamepad gamepad1) {
-        if (gamepad1.y) {
-            pos = DegreesToEncoderTicks(0);
-            wristPosition = 0;
-            intakePosition = 0.85;
-            elePos = 2004;
-       } else if(gamepad1.b) {
-            pos = DegreesToEncoderTicks(-45);
-            wristPosition = 0;
-            intakePosition = 0.85;
-            elePos = 0;
-        } else if (gamepad1.x) {
-            pos = DegreesToEncoderTicks(-20);
-            wristPosition = 0;
-            intakePosition = 0.85;
-            elePos = 1500;
-        } else if (gamepad1.a) {
-            pos = DegreesToEncoderTicks(-10);
-            wristPosition = 0;
-            intakePosition = 0.85;
-            elePos = 2004;
-        }
-
-        piviotPID.setSetPoint(pos);
-        piviotPID.updatePID(getCurrentPositionWithLimitSwitch());
-        piviotPID.setMaxOutput(setPowerToPercentage(50));
-        piviotPID.setMinOutput(setPowerToPercentage(-50));
-
-        pivotMotor.setPower(piviotPID.getResult());
-
-
-//
-//        System.out.println("Target Position: " + pos);
-//        System.out.println("Current Position: " + getCurrentPositionWithLimitSwitch());
-//        System.out.println("PID Output: " + pidResult);
-    }
-
-    public void climb(Gamepad gamepad1) {
-        if (!gamepad1.b || !gamepad1.dpad_down || !gamepad1.y || !gamepad1.x) {
-            if (gamepad1.a) {
-                setPower(-1.0);
-                if (!limitSwitch.getState()) {
-                    pos = 0;
-                    BRAKE(pivotMotor);
-                    setPower(0.0);
-                    System.out.println("Limit switch triggered, position reset.");
-                }
-            }
-        }
-    }
-
-
-
-    public void setPosition(double position) {
-        piviotPID.setSetPoint(position);
-        piviotPID.updatePID(getCurrentPositionWithLimitSwitch());
-        piviotPID.setMaxOutput(0.5);
-        piviotPID.setMinOutput(-0.5);
-        setPower(-piviotPID.getResult());
-//        setZeroPowerBehavior();
     }
 
     public void manual(Gamepad gamepad1) {
-        wristPosition = 0.35;
-        if (gamepad1.a) {
-            setPower(0.5);
-        } else if (gamepad1.b) {
-            setPower(-0.5);
+//
+//        double currentPosition = getCurrentPosition();
+//        System.out.println("asxsssdf");
+//        System.out.println(gamepad1.b &&!(currentPosition < -300));
+//
+//            if (!(currentPosition > MIN_TICKS - 100)&&gamepad1.a) {
+//                System.out.println("First Passed");
+//
+//                    System.out.println("Second Passed");
+//                    power = setPowerToPercentage(100);
+//                    setPower(setPowerToPercentage(100));
+//
+//            } else if (gamepad1.b && !(currentPosition < -300)) {
+//                System.out.println("b");
+//                power = setPowerToPercentage(-100);
+//                setPower(setPowerToPercentage(-100));
+//
+//            } else {
+//                System.out.println("else Statement");
+//                Elevator.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+//                setPower(0);
+//            }
+
+        if (gamepad1.left_bumper){
+            setPower(0.8);
+        } else if (gamepad1.right_bumper) {
+            setPower(-0.8);
         } else {
-            setPosition(getCurrentPositionWithLimitSwitch());
+            setPower(0);
         }
 
-//        if (gamepad1.b) {
-//            wristPosition = 0.55;
-//        } else if (gamepad1.a) {
-//            wristPosition = 0.75;
-//        }
-//
-//
-//        if (gamepad1.x) {
-//            elePos = 1;
-//        } else if (gamepad1.y) {
-//            elePos = -1;
-//        }
+    }
+
+    public void setPosition(double pos) {
+        if (pivot != null) {
+            pivotPID.setSetPoint(pos);
+            pivotPID.updatePID(getCurrentPositionWithLimitSwitch());
+            pivotPID.setMaxOutput(0.3);
+            pivotPID.setMinOutput(-0.3);
+            pivot.setPower(pivotPID.getResult());
+        }
     }
 
 
-    @Override
-    public void setDefaultCommand(Command command) {
-        super.setDefaultCommand(command);
-    }
 
-    @Override
-    public Command getDefaultCommand() {
-        return new ArmDefault(this);
+    public void contolArm(Gamepad gamepad1) {
+
+            if (gamepad1.y) {
+                armPos = DegreesToEncoderTicks(120);
+            } else if (gamepad1.b) {
+                armPos = DegreesToEncoderTicks(0);
+            } else if (gamepad1.touchpad) {
+                armPos = DegreesToEncoderTicks(90);
+            } else if (gamepad1.a) {
+               armPos = DegreesToEncoderTicks(35);
+            } else if (gamepad1.x) {
+                armPos = DegreesToEncoderTicks(70);
+            }
+
+            pivotPID.setSetPoint(armPos);
+
+            pivotPID.updatePID(getCurrentPositionWithLimitSwitch());
+            pivotPID.setMaxOutput(1);
+            pivotPID.setMinOutput(-1);
+            pivot.setPower(pivotPID.getResult());
+        }
+
     }
-}
