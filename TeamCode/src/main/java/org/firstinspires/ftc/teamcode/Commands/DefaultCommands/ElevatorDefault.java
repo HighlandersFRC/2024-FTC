@@ -17,7 +17,7 @@ public class ElevatorDefault implements Command {
     private final Elevators elevators = Robot.elevators;
 
     private static final double LOWER_LIMIT = -2200;
-    private static final double UPPER_LIMIT = 2500;
+    private static final double UPPER_LIMIT = 2300;
     private static final double PIVOT_THRESHOLD = 10; // Threshold for pivot to switch control mode
 
     String name = "Elevator";

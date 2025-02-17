@@ -18,7 +18,7 @@ public class Constants {
 
     public static double ELEVATOR_AUTO = 2439;
 
-    public static double WRIST_OFFSET = -0.1;
+    public static double WRIST_OFFSET = -0.05;
 
     public static double yCorrected(double AY) {
         return AY - ((0.172 * AY) + 0.00307);
