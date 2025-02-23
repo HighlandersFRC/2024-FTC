@@ -34,7 +34,6 @@ public class ArmSubsystem extends Subsystem {
     public void initialize(HardwareMap hardwareMap) {
         pivot = hardwareMap.dcMotor.get("pivotMotor");
         limitSwitch = hardwareMap.get(DigitalChannel.class, "limitSwitch");
-        pivot.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
     }
 public double getCurrentPositionWithLimitSwitch() {
         double currentPos = getCurrentPosition();
@@ -71,14 +70,14 @@ public double getCurrentPositionWithLimitSwitch() {
 //
 //            } else {
 //                System.out.println("else Statement");
-//                Elevator.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+//                Elevator.s etZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 //                setPower(0);
 //            }
 
         if (gamepad1.left_bumper){
-            setPower(0.8);
+            setPower(1);
         } else if (gamepad1.right_bumper) {
-            setPower(-0.8);
+            setPower(-1);
         } else {
             setPower(0);
         }
@@ -89,8 +88,8 @@ public double getCurrentPositionWithLimitSwitch() {
         if (pivot != null) {
             pivotPID.setSetPoint(pos);
             pivotPID.updatePID(getCurrentPositionWithLimitSwitch());
-            pivotPID.setMaxOutput(0.3);
-            pivotPID.setMinOutput(-0.3);
+            pivotPID.setMaxOutput(0.5);
+            pivotPID.setMinOutput(-0.5);
             pivot.setPower(pivotPID.getResult());
         }
     }
@@ -110,6 +109,15 @@ public double getCurrentPositionWithLimitSwitch() {
             } else if (gamepad1.x) {
                 armPos = DegreesToEncoderTicks(70);
             }
+
+        int tolerance = 5;
+        if (Math.abs(getCurrentPositionWithLimitSwitch() - armPos) <= tolerance) {
+            gamepad1.setLedColor(0, 255, 0, 1000000000);
+        } else if (armPos == 0) {
+            gamepad1.setLedColor(0, 0, 255, 1000000000);
+        } else {
+            gamepad1.setLedColor(255, 0, 0, 1000000000);
+        }
 
             pivotPID.setSetPoint(armPos);
 

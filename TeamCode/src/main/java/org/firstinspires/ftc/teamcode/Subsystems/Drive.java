@@ -160,17 +160,22 @@ public class Drive extends Subsystem {
     }
 
     public void teleopDrive(Gamepad gamepad1) {
-        double forward = -gamepad1.left_stick_y;
-        double strafe = gamepad1.left_stick_x * 2;
-        double pivot = gamepad1.right_stick_x;
-
-        double frontLeftPower = (-forward + strafe + pivot);
-        double backLeftPower = (forward + strafe - pivot);
-        double frontRightPower = (forward + strafe + pivot);
-        double backRightPower = (forward - strafe + pivot);
+        double x = -gamepad1.left_stick_x*2;
+        double y = -gamepad1.left_stick_y;
+        double rx = gamepad1.right_stick_x;
 
 
-        drive(frontLeftPower, -frontRightPower, -backLeftPower, -backRightPower);
+
+        double frontLeftPower = (-y + x + rx);
+        double backLeftPower = (y + x - rx);
+        double frontRightPower = (y + x + rx);
+        double backRightPower = (y - x + rx);
+
+
+        frontLeftMotor.setPower(frontLeftPower);
+        backLeftMotor.setPower(backLeftPower);
+        frontRightMotor.setPower(frontRightPower);
+        backRightMotor.setPower(backRightPower);
     }
 
     public  void stop() {
@@ -192,22 +197,25 @@ public class Drive extends Subsystem {
 
 
 
-    public void FeildCentric(Gamepad gamepad1) {
+    public void FeildCentric(Gamepad gamepad) {
 
 
 
 
-        double x = -gamepad1.left_stick_x*2;
-        double y = -gamepad1.left_stick_y;
-        double rx = gamepad1.right_stick_x;
+        double x = -gamepad.left_stick_x*2;
+        double y = -gamepad.left_stick_y;
+        double rx = gamepad.right_stick_x;
 
 
         double botHeading = -Math.toRadians(Mouse.getTheta());
         Mouse.update();
 
-        if (gamepad1.options) {
+        if (gamepad.options) {
+            gamepad.setLedColor(255,0,0, 1000);
             Mouse.configureOtos();
         }
+
+
 
 
         double rotX = x * Math.cos(-botHeading) - y * Math.sin(-botHeading);
@@ -218,30 +226,17 @@ public class Drive extends Subsystem {
         double frontRightPower = (rotY + rotX + rx);
         double backRightPower = (rotY - rotX + rx);
 
-        boolean driveSlowed = true;
-        boolean rightStickPrev = false;
 
-        boolean rightStickPressed = gamepad1.right_stick_button;
-        if (rightStickPressed && !rightStickPrev) {
-            driveSlowed = !driveSlowed;
-        }
-        rightStickPrev = rightStickPressed;
-
-        if (driveSlowed) {
 
             frontLeftMotor.setPower(-frontLeftPower);
             backLeftMotor.setPower(-backLeftPower);
             frontRightMotor.setPower(-frontRightPower);
             backRightMotor.setPower(-backRightPower);
 
-        }else {
-            frontLeftMotor.setPower(-frontLeftPower/100);
-            backLeftMotor.setPower(-backLeftPower/100);
-            frontRightMotor.setPower(-frontRightPower/100);
-            backRightMotor.setPower(-backRightPower/100);
-        }
 
-     }
+
+
+    }
 
     public void resetEncoder() {
         frontLeftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -426,11 +421,11 @@ public class Drive extends Subsystem {
 
         rotX *= 1.1;
 
-        double denominator = Math.max(Math.abs(rotY) + Math.abs(rotX) + Math.abs(rotationFactor), 1);
-        double frontLeftPower = (rotX + rotY + rotationFactor);
-        double frontRightPower = (rotX - rotY - rotationFactor);
-        double backLeftPower = (rotX - rotY + rotationFactor);
-        double backRightPower = (rotX + rotY - rotationFactor);
+        double denominator = Math.max(1, Math.abs(rotY) + Math.abs(rotX) + Math.abs(rotationFactor));
+        double frontLeftPower = (rotX + rotY - rotationFactor) / denominator;
+        double frontRightPower = (rotX - rotY + rotationFactor) / denominator;
+        double backLeftPower = (rotX - rotY - rotationFactor) / denominator;
+        double backRightPower = (rotX + rotY + rotationFactor) / denominator;
 
 /*
         double frontLeftPower = vx + vy + rotationFactor;
@@ -449,7 +444,7 @@ public class Drive extends Subsystem {
         }
 */
 
-        drive(-frontLeftPower / denominator, -frontRightPower / denominator, -backLeftPower / denominator, -backRightPower / denominator);
+        drive(-frontLeftPower, -frontRightPower, -backLeftPower, -backRightPower);
     }
 
     public void sketchDrive(Gamepad gamepad1) {

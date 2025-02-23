@@ -29,9 +29,9 @@ elevatorPID.setSetPoint(-1 * Math.abs(elePos));
 
     @Override
     public void execute() {
-elevatorPower = elevatorPID.updatePIDF(elevatorSubsystem.getCurrentPosition(), gravityEffect);
-double feed = GravityTerm(elevatorSubsystem.getCurrentPosition());
-elevatorSubsystem.setPower(-elevatorPower * feed);
+        double feed = GravityTerm(elevatorSubsystem.getCurrentPosition());
+        elevatorPower = elevatorPID.updatePID(elevatorSubsystem.getCurrentPosition());
+        elevatorSubsystem.setPower(-elevatorPower * feed);
     }
 
     @Override

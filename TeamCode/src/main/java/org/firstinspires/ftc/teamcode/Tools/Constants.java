@@ -36,7 +36,7 @@ public class Constants {
     public static double ArmDownPosition = 200;
     public static Object SetPoints;
     public static PID pivotPID = new PID( 0.006, 0.001, 0);
-    public static PIDF elevatorPID = new PIDF(0.01 ,0,0, 1.47);
+    public static PID elevatorPID = new PID(0.01 ,0,0);
     public static double nextX;
     public static double nextY;
     public static double nextTheta;
@@ -49,6 +49,10 @@ public class Constants {
         return ((degrees / (360) * TPR));
     }
 
+    public static double EncoderTicksToDegrees(double encoders) {
+        double TPR = 5700.4;
+        return (encoders * (360) / 5700.4);
+    }
     public static double InchesToEncoderTicks(double inches) {
         double circumference = 4.71238898038;
         double ticksPerRotation = 28;

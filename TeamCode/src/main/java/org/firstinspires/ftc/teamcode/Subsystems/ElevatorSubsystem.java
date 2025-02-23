@@ -63,7 +63,7 @@ public class ElevatorSubsystem extends Subsystem {
 //                setPower(0);
 //            }
 
-        if (gamepad1.left_bumper && getCurrentPosition() <= -100){
+        if (gamepad1.left_bumper && getCurrentPosition() <= -50){
             setPower(0.8);
         } else if (gamepad1.right_bumper && getCurrentPosition() >= -1600) {
             setPower(-0.8);
@@ -76,7 +76,7 @@ public class ElevatorSubsystem extends Subsystem {
 
     public void setPosition(double pos) {
         elevatorPID.setSetPoint(pos);
-        elevatorPID.updatePIDF(Elevator.getCurrentPosition(), gravityEffect);
+        elevatorPID.updatePID(Elevator.getCurrentPosition());
         elevatorPID.setMaxOutput(1);
         elevatorPID.setMinOutput(-1);
         Elevator.setPower(elevatorPID.getResult());
@@ -93,7 +93,7 @@ public class ElevatorSubsystem extends Subsystem {
         }
 
         elevatorPID.setSetPoint(elePos);
-        elevatorPID.updatePIDF(Elevator.getCurrentPosition(), gravityEffect);
+        elevatorPID.updatePID(Elevator.getCurrentPosition());
         elevatorPID.setMaxOutput(0.8);
         elevatorPID.setMinOutput(-0.8);
         Elevator.setPower(elevatorPID.getResult());
@@ -122,7 +122,7 @@ public class ElevatorSubsystem extends Subsystem {
 
             elevatorPID.setSetPoint(elePos);
 
-            elevatorPID.updatePIDF(Elevator.getCurrentPosition(), gravityEffect);
+            elevatorPID.updatePID(Elevator.getCurrentPosition());
             elevatorPID.setMaxOutput(0.5);
             elevatorPID.setMinOutput(-0.5);
             Elevator.setPower(elevatorPID.getResult());
