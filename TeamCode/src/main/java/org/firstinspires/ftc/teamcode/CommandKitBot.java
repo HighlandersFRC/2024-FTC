@@ -79,7 +79,7 @@ public class CommandKitBot extends LinearOpMode {
                 scheduler.schedule(new StopElevator(robot.elevator));
             }
 
-
+        driveSubsystem.FeildCentric(gamepad1);
             scheduler.removeDuplicateCommands();
             scheduler.run();
             scheduler.printCurrentCommands();
