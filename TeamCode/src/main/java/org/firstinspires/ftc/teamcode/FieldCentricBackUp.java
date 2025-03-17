@@ -20,7 +20,6 @@ public class FieldCentricBackUp extends LinearOpMode {
        DcMotor backLeftMotor = hardwareMap.get(DcMotorEx.class, "left_back");
        DcMotor frontRightMotor = hardwareMap.get(DcMotorEx.class, "right_front");
        DcMotor backRightMotor = hardwareMap.get(DcMotorEx.class, "right_back");
-        Mouse.init(hardwareMap);
 
         // Reverse the right side motors. This may be wrong for your setup.
         // If your robot moves backwards when commanded to go forwards,
@@ -28,15 +27,6 @@ public class FieldCentricBackUp extends LinearOpMode {
         // See the note about this earlier on this page.
         frontRightMotor.setDirection(DcMotorSimple.Direction.REVERSE);
         backRightMotor.setDirection(DcMotorSimple.Direction.REVERSE);
-
-        // Retrieve the IMU from the hardware map
-        IMU imu = hardwareMap.get(IMU.class, "imu");
-        // Adjust the orientation parameters to match your robot
-        IMU.Parameters parameters = new IMU.Parameters(new RevHubOrientationOnRobot(
-                RevHubOrientationOnRobot.LogoFacingDirection.UP,
-                RevHubOrientationOnRobot.UsbFacingDirection.FORWARD));
-        // Without this, the REV Hub's orientation is assumed to be logo up / USB forward
-        imu.initialize(parameters);
 
         waitForStart();
 
@@ -47,21 +37,12 @@ public class FieldCentricBackUp extends LinearOpMode {
             double y = -gamepad1.left_stick_y;
             double rx = gamepad1.right_stick_x;
 
-            double botHeading = -Math.toRadians(Mouse.getTheta());
-            Mouse.update();
-
-            if (gamepad1.options) {
-                Mouse.configureOtos();
-            }
 
 
-            double rotX = x * Math.cos(-botHeading) - y * Math.sin(-botHeading);
-            double rotY = x * Math.sin(-botHeading) + y * Math.cos(-botHeading);
-
-            double frontLeftPower = (-rotY + rotX + rx);
-            double backLeftPower = (rotY + rotX - rx);
-            double frontRightPower = (rotY + rotX + rx);
-            double backRightPower = (rotY - rotX + rx);
+            double frontLeftPower = (-y + x + rx);
+            double backLeftPower = (y + x - rx);
+            double frontRightPower = (y + x + rx);
+            double backRightPower = (y - x + rx);
 
 
             frontLeftMotor.setPower(frontLeftPower);

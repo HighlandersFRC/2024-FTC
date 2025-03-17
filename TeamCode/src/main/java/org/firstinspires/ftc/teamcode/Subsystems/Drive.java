@@ -416,16 +416,16 @@ public class Drive extends Subsystem {
 
         double botHeading = Math.toRadians(FinalPose.Yaw);
 
-        double rotX = vx * Math.cos(-botHeading) + vy * Math.sin(-botHeading);
-        double rotY = - vx * Math.sin(-botHeading) + vy * Math.cos(-botHeading);
+        double rotX = - vx * Math.sin(botHeading) + vy * Math.cos(botHeading);
+        double rotY = vx * Math.cos(botHeading) + vy * Math.sin(botHeading);
 
         rotX *= 1.1;
 
-        double denominator = Math.max(1, Math.abs(rotY) + Math.abs(rotX) + Math.abs(rotationFactor));
-        double frontLeftPower = (rotX + rotY - rotationFactor) / denominator;
-        double frontRightPower = (rotX - rotY + rotationFactor) / denominator;
-        double backLeftPower = (rotX - rotY - rotationFactor) / denominator;
-        double backRightPower = (rotX + rotY + rotationFactor) / denominator;
+        double denominator = Math.max(0.3, Math.abs(rotY) + Math.abs(rotX) + Math.abs(rotationFactor));
+        double frontLeftPower = (rotX + rotY - rotationFactor) / 2;
+        double frontRightPower = (rotX - rotY + rotationFactor) / 2;
+        double backLeftPower = (rotX - rotY - rotationFactor) / 2;
+        double backRightPower = (rotX + rotY + rotationFactor) / 2;
 
 /*
         double frontLeftPower = vx + vy + rotationFactor;
@@ -444,7 +444,7 @@ public class Drive extends Subsystem {
         }
 */
 
-        drive(-frontLeftPower, -frontRightPower, -backLeftPower, -backRightPower);
+        drive(frontLeftPower, frontRightPower, -backLeftPower, -backRightPower);
     }
 
     public void sketchDrive(Gamepad gamepad1) {

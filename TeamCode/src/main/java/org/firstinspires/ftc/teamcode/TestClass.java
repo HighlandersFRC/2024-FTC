@@ -19,11 +19,19 @@ public class TestClass extends LinearOpMode {
     private FtcDashboard dashboard;
     @Override
     public void runOpMode() throws InterruptedException {
-       ElevatorSubsystem elevatorSubsystem = new ElevatorSubsystem("Elevator", hardwareMap);
+ArmSubsystem arm = new ArmSubsystem("Arm", hardwareMap);
         waitForStart();
 
         while (opModeIsActive()) {
-           elevatorSubsystem.contolElevatorSetPoint(gamepad1);
+            if (gamepad1.cross) { // X Button - Blue
+                gamepad1.setLedColor(0, 0, 255, 1000000000);
+            } else if (gamepad1.circle) { // O Button - Red
+                gamepad1.setLedColor(255, 0, 0, 1000000000);
+            } else if (gamepad1.triangle) { // Triangle - Green
+                gamepad1.setLedColor(0, 255, 0, 1000000000);
+            } else if (gamepad1.square) { // Square - Purple
+                gamepad1.setLedColor(128, 0, 128, 1000000000);
+            }
         }
 
 

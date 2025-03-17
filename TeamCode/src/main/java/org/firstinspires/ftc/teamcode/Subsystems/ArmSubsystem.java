@@ -5,6 +5,7 @@ import static org.firstinspires.ftc.teamcode.Tools.Constants.MAX_TICKS;
 import static org.firstinspires.ftc.teamcode.Tools.Constants.MIN_TICKS;
 import static org.firstinspires.ftc.teamcode.Tools.Constants.pivotPID;
 import static org.firstinspires.ftc.teamcode.Tools.Constants.setPowerToPercentage;
+import static org.firstinspires.ftc.teamcode.Tools.Constants.slowedPivotPID;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
@@ -14,9 +15,11 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 public class ArmSubsystem extends Subsystem {
     public DcMotor pivot;
     private double armPos = 0;
+    private double armPos2 = 0;
     public DigitalChannel limitSwitch;
-    double power = 0;
+    double power = 0.6;
 
+    public double wristPos = 0;
     public ArmSubsystem(String name, HardwareMap hardwareMap) {
         super(name);
         this.pivot = null;
@@ -99,31 +102,28 @@ public double getCurrentPositionWithLimitSwitch() {
     public void contolArm(Gamepad gamepad1) {
 
             if (gamepad1.y) {
+                wristPos = 0.6;
                 armPos = DegreesToEncoderTicks(120);
-            } else if (gamepad1.b) {
-                armPos = DegreesToEncoderTicks(0);
             } else if (gamepad1.touchpad) {
+                wristPos = 0;
                 armPos = DegreesToEncoderTicks(90);
             } else if (gamepad1.a) {
+                wristPos = 0;
                armPos = DegreesToEncoderTicks(35);
             } else if (gamepad1.x) {
                 armPos = DegreesToEncoderTicks(70);
+                wristPos = 0;
+            } else if (gamepad1.b) {
+                armPos = DegreesToEncoderTicks(0);
+                wristPos = 0.6;
             }
 
-        int tolerance = 5;
-        if (Math.abs(getCurrentPositionWithLimitSwitch() - armPos) <= tolerance) {
-            gamepad1.setLedColor(0, 255, 0, 1000000000);
-        } else if (armPos == 0) {
-            gamepad1.setLedColor(0, 0, 255, 1000000000);
-        } else {
-            gamepad1.setLedColor(255, 0, 0, 1000000000);
-        }
+
 
             pivotPID.setSetPoint(armPos);
-
             pivotPID.updatePID(getCurrentPositionWithLimitSwitch());
-            pivotPID.setMaxOutput(1);
-            pivotPID.setMinOutput(-1);
+            pivotPID.setMaxOutput(0.5);
+            pivotPID.setMinOutput(-0.5);
             pivot.setPower(pivotPID.getResult());
         }
 

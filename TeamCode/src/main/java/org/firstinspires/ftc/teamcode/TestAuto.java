@@ -55,7 +55,7 @@ public class TestAuto extends LinearOpMode {
 
         waitForStart();
         try {
-           Test = new PolarPathFollower(drive, peripherals, path1.getJsonPathData(), Constants.commandMap, Constants.conditionMap, scheduler);
+            Test = new PolarPathFollower(drive, peripherals, path1.getJsonPathData(), Constants.commandMap, Constants.conditionMap, scheduler);
             scheduler.schedule(new SequentialCommandGroup(scheduler,
                     Test
             ));
