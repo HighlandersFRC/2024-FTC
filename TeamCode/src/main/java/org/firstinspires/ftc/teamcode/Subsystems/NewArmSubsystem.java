@@ -1,17 +1,19 @@
 package org.firstinspires.ftc.teamcode.Subsystems;
 
 
-import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.hardwareMap;
 import static org.firstinspires.ftc.teamcode.Tools.Constants.DegreesToEncoderTicks;
 import static org.firstinspires.ftc.teamcode.Tools.Constants.pivotPID;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 public class NewArmSubsystem extends Subsystem {
 Gamepad gamepad;
+private DigitalChannel limitSwitch;
 public DcMotor pivot;
+private double pos;
     private NewArmSubsystem.ARM_STATE wantedSuperState = NewArmSubsystem.ARM_STATE.IDLE;
     private NewArmSubsystem.ARM_STATE currentSuperState = NewArmSubsystem.ARM_STATE.IDLE;
     public NewArmSubsystem(String name, Gamepad gamepad2) {
@@ -21,9 +23,16 @@ public DcMotor pivot;
 
     public void init(HardwareMap hardwareMap) {
         pivot = hardwareMap.dcMotor.get("pivotMotor");
+        limitSwitch = hardwareMap.digitalChannel.get("limitSwitch");
         pivot.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
     }
-
+    public double getCurrentPositionWithLimitSwitch() {
+        double currentPos = pivot.getCurrentPosition();
+        if (limitSwitch != null && !limitSwitch.getState()) {
+            currentPos = 0;
+        }
+        return currentPos;
+    }
     public void setWantedState(ARM_STATE armState){
         wantedSuperState = armState;
     }
@@ -70,43 +79,59 @@ public DcMotor pivot;
     }
 
     private void handleDefaultState(){
-
     }
     private void handleIdleState() {
-        pivot.setPower(0);
+        pivotPID.setSetPoint(pos);
+        pivotPID.updatePID(getCurrentPositionWithLimitSwitch());
+        pivotPID.setMaxOutput(0.5);
+        pivotPID.setMinOutput(-0.5);
+        pivot.setPower(-pivotPID.getResult());
     }
 
     private void handleArmUpState() {
         pivot.setPower(-0.5);
-
     }
 
     private void handleArmDownState() {
             pivot.setPower(0.5);
     }
 
-    private void setPosition(double pos) {
-        pivotPID.setSetPoint(pos);
-        pivotPID.updatePID(pivot.getCurrentPosition());
-        pivotPID.setMaxOutput(0.5);
-        pivotPID.setMinOutput(-0.5);
-        pivot.setPower(pivotPID.getResult());
-    }
+
 
     private void handleArmFullyUpState() {
-        setPosition(DegreesToEncoderTicks(90));
+       pos = DegreesToEncoderTicks(90);
+        pivotPID.setSetPoint(pos);
+        pivotPID.updatePID(getCurrentPositionWithLimitSwitch());
+        pivotPID.setMaxOutput(0.5);
+        pivotPID.setMinOutput(-0.5);
+        pivot.setPower(-pivotPID.getResult());
     }
 
     private void handleArmFullyDownState() {
-        setPosition(DegreesToEncoderTicks(0));
+        pos = DegreesToEncoderTicks(0);
+        pivotPID.setSetPoint(pos);
+        pivotPID.updatePID(getCurrentPositionWithLimitSwitch());
+        pivotPID.setMaxOutput(0.5);
+        pivotPID.setMinOutput(-0.5);
+        pivot.setPower(-pivotPID.getResult());
     }
 
     private void handleSpecimenState() {
-        setPosition(DegreesToEncoderTicks(50));
+        pos = DegreesToEncoderTicks(50);
+        pivotPID.setSetPoint(pos);
+        pivotPID.updatePID(getCurrentPositionWithLimitSwitch());
+        pivotPID.setMaxOutput(0.5);
+        pivotPID.setMinOutput(-0.5);
+        pivot.setPower(-pivotPID.getResult());
     }
 
     private void handleHighBucketState() {
-        setPosition(DegreesToEncoderTicks(70));
+        pos = DegreesToEncoderTicks(70);
+        pivotPID.setSetPoint(pos);
+        pivotPID.updatePID(getCurrentPositionWithLimitSwitch());
+        pivotPID.setMaxOutput(0.5);
+        pivotPID.setMinOutput(-0.5);
+        pivot.setPower(-pivotPID.getResult());
     }
 
     @Override

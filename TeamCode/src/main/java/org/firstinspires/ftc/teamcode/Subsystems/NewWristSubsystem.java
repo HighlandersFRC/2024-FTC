@@ -59,12 +59,11 @@ public class NewWristSubsystem extends Subsystem {
     }
 
     private void handleWristDownState() {
-
-
+wrist.setPosition(0.5);
     }
 
     private void handleWristUpState() {
-
+wrist.setPosition(0);
     }
 
     @Override

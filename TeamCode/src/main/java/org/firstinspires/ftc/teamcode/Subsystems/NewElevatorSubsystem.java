@@ -2,6 +2,8 @@ package org.firstinspires.ftc.teamcode.Subsystems;
 
 
 import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.hardwareMap;
+import static org.firstinspires.ftc.teamcode.Tools.Constants.elevatorPID;
+import static org.firstinspires.ftc.teamcode.Tools.Constants.pivotPID;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Gamepad;
@@ -18,7 +20,7 @@ public class NewElevatorSubsystem extends Subsystem {
     }
 
     public void init(HardwareMap hardwareMap) {
-        elevator = hardwareMap.dcMotor.get(""); //UPDATE THIS
+        elevator = hardwareMap.dcMotor.get("Elevator"); //UPDATE THIS
     }
 
     public void setWantedState(ELEVATOR_STATE elevatorState){
@@ -55,7 +57,11 @@ public class NewElevatorSubsystem extends Subsystem {
 
     }
     private void handleIdleState() {
-        elevator.setPower(0);
+        elevatorPID.setSetPoint(elevator.getCurrentPosition());
+        elevatorPID.updatePID(elevator.getCurrentPosition());
+        elevatorPID.setMaxOutput(0.5);
+        elevatorPID.setMinOutput(-0.5);
+        elevator.setPower(-pivotPID.getResult());
     }
 
     private void handleExtendState() {

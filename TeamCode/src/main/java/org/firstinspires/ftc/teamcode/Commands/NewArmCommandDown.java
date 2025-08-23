@@ -22,7 +22,7 @@ public class NewArmCommandDown implements Command {
 
     @Override
     public void execute() {
-        if (Math.abs(armSubsystem.pivot.getCurrentPosition() - DegreesToEncoderTicks(0)) < 10) {
+        if (Math.abs(armSubsystem.getCurrentPositionWithLimitSwitch() - DegreesToEncoderTicks(0)) < 10) {
             finished = true;
         }
     }

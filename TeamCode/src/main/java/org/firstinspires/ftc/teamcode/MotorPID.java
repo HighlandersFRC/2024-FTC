@@ -1,6 +1,6 @@
 package org.firstinspires.ftc.teamcode;
 
-import static org.firstinspires.ftc.teamcode.Tools.Constants.NewDegreesToEncoderTicks;
+import static org.firstinspires.ftc.teamcode.Tools.Constants.DegreesToEncoderTicks;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -15,7 +15,7 @@ public class MotorPID extends LinearOpMode {
         PID Test = new PID(0.035, 0.0, 0.04);
         DcMotor motor1;
         motor1 = hardwareMap.dcMotor.get("motor1");
-        Test.setSetPoint(NewDegreesToEncoderTicks(1800));
+        Test.setSetPoint(DegreesToEncoderTicks(1800));
 
         waitForStart();
 

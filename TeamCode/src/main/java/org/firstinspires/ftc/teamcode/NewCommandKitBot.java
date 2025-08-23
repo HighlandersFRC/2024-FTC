@@ -1,6 +1,8 @@
 package org.firstinspires.ftc.teamcode;
 
+
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.Commands.CommandScheduler;
 import org.firstinspires.ftc.teamcode.Commands.NewArmCommandDown;
@@ -8,7 +10,7 @@ import org.firstinspires.ftc.teamcode.Commands.NewArmCommandHighBucket;
 import org.firstinspires.ftc.teamcode.Commands.NewArmCommandSpecimen;
 import org.firstinspires.ftc.teamcode.Commands.NewArmCommandUp;
 import org.firstinspires.ftc.teamcode.Subsystems.NewArmSubsystem;
-
+@TeleOp
 public class NewCommandKitBot extends LinearOpMode {
 
     public void runOpMode() throws InterruptedException {
