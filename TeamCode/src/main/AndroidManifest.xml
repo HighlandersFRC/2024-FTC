@@ -1,11 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<!-- Note: the actual manifest file used in your APK merges this file with contributions
+<!-- Note: The actual manifest file used in your APK merges this file with contributions
      from the modules on which your app depends (such as FtcRobotController, etc).
      So it won't ultimately be as empty as it might here appear to be :-) -->
 
-<!-- The package name here determines the package for your R class and your BuildConfig class -->
-<manifest
-    xmlns:android="http://schemas.android.com/apk/res/android">
-    <application/>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <!-- Removed the 'package' attribute as it's no longer supported -->
+
+    <application
+        android:label="FTC Robot Controller"
+        android:icon="@mipmap/ic_launcher"
+        android:theme="@style/Theme.AppCompat.DayNight"
+        tools:replace="android:icon, android:label, android:theme">
+
+        <!-- Specify android:exported attribute for the activities -->
+        <activity android:name="org.firstinspires.ftc.robotcontroller.internal.FtcRobotControllerActivity"
+            android:exported="true">
+            <!-- Add other necessary attributes like intent filters if applicable -->
+        </activity>
+
+        <activity android:name="org.firstinspires.ftc.robotcontroller.internal.PermissionValidatorWrapper"
+            android:exported="false">
+            <!-- Add other necessary attributes like intent filters if applicable -->
+        </activity>
+
+    </application>
 </manifest>
