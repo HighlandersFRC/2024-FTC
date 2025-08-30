@@ -1,18 +1,13 @@
 package org.firstinspires.ftc.teamcode.Commands;
 
 
-import org.firstinspires.ftc.teamcode.Subsystems.ArmSubsystem;
 import org.firstinspires.ftc.teamcode.Subsystems.NewArmSubsystem;
 import org.firstinspires.ftc.teamcode.Subsystems.Subsystem;
-import org.firstinspires.ftc.teamcode.Subsystems.Superstructure;
 
 public class NewArmCommandDown implements Command {
-
     NewArmSubsystem armSubsystem;
-    Superstructure superstructure;
-    public NewArmCommandDown(NewArmSubsystem arm, Superstructure superstructure) {
+    public NewArmCommandDown(NewArmSubsystem arm) {
         this.armSubsystem = arm;
-        this.superstructure = superstructure;
     }
 
 

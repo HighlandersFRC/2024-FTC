@@ -2,14 +2,13 @@ package org.firstinspires.ftc.teamcode.Commands;
 
 import org.firstinspires.ftc.teamcode.Subsystems.NewElevatorSubsystem;
 import org.firstinspires.ftc.teamcode.Subsystems.Subsystem;
-import org.firstinspires.ftc.teamcode.Subsystems.Superstructure;
 
 public class NewElevatorCommandRetract implements Command{
     NewElevatorSubsystem elevatorSubsystem;
-    Superstructure superstructure;
-    public NewElevatorCommandRetract(NewElevatorSubsystem elevator, Superstructure superstructure) {
+
+    public NewElevatorCommandRetract(NewElevatorSubsystem elevator) {
         this.elevatorSubsystem = elevator;
-        this.superstructure = superstructure;
+
     }
 
     @Override

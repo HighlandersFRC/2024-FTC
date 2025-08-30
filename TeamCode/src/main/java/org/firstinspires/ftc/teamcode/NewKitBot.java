@@ -10,61 +10,28 @@ import org.firstinspires.ftc.teamcode.Subsystems.NewElevatorSubsystem;
 import org.firstinspires.ftc.teamcode.Subsystems.NewIntakeSubsystem;
 import org.firstinspires.ftc.teamcode.Subsystems.NewWristSubsystem;
 import org.firstinspires.ftc.teamcode.Subsystems.Superstructure;
+
 @TeleOp
 public class NewKitBot extends LinearOpMode {
 
-NewArmSubsystem armSubsystem = new NewArmSubsystem("Arm");
-NewElevatorSubsystem elevatorSubsystem = new NewElevatorSubsystem("Elevator");
-NewIntakeSubsystem intakeSubsystem = new NewIntakeSubsystem("Intake");
-NewWristSubsystem wristSubsystem = new NewWristSubsystem("Wrist");
-Superstructure superstructure = new Superstructure("Structure");
+Superstructure superstructure = new Superstructure("superstructure");
+
     @Override
     public void runOpMode() throws InterruptedException {
-      armSubsystem.init(hardwareMap);
-      wristSubsystem.init(hardwareMap);
-      intakeSubsystem.init(hardwareMap);
-      elevatorSubsystem.init(hardwareMap);
+
       Drive drive = new Drive("Drive",hardwareMap);
+      superstructure.init(hardwareMap);
         waitForStart();
         while (opModeIsActive()) {
-            armSubsystem.periodic();
-            elevatorSubsystem.periodic();
-            intakeSubsystem.periodic();
-            wristSubsystem.periodic();
-            superstructure.periodic();
+           superstructure.periodic();
+
+           if (gamepad2.a) {
+
+           }
 
 
-            if (gamepad2.left_bumper) {
-                elevatorSubsystem.setWantedState(NewElevatorSubsystem.ELEVATOR_STATE.ELEVATOR_EXTEND);
-            } else if (gamepad2.right_bumper) {
-                elevatorSubsystem.setWantedState(NewElevatorSubsystem.ELEVATOR_STATE.ELEVATOR_RETRACT);
-            } else {
-                elevatorSubsystem.setWantedState(NewElevatorSubsystem.ELEVATOR_STATE.IDLE);
-            }
 
-            if (gamepad2.left_trigger > 0) {
-                intakeSubsystem.setWantedState(NewIntakeSubsystem.INTAKE_STATE.INTAKE);
-            } else if (gamepad2.right_trigger > 0) {
-                intakeSubsystem.setWantedState(NewIntakeSubsystem.INTAKE_STATE.OUTTAKE);
-            }
 
-            if (gamepad2.dpad_up) {
-                wristSubsystem.setWantedState(NewWristSubsystem.WRIST_STATE.WRIST_UP);
-            } else if (gamepad2.dpad_down) {
-                wristSubsystem.setWantedState(NewWristSubsystem.WRIST_STATE.WRIST_DOWN);
-            }
-
-            if (gamepad2.a) {
-                armSubsystem.setWantedState(NewArmSubsystem.ARM_STATE.ARM_FULLY_UP);
-            } else if (gamepad2.b) {
-                armSubsystem.setWantedState(NewArmSubsystem.ARM_STATE.ARM_FULLY_DOWN);
-            } else if (gamepad2.x) {
-                armSubsystem.setWantedState(NewArmSubsystem.ARM_STATE.SPECIMEN);
-            } else if (gamepad2.y) {
-                armSubsystem.setWantedState(NewArmSubsystem.ARM_STATE.HIGH_BUCKET);
-            } else {
-                armSubsystem.setWantedState(NewArmSubsystem.ARM_STATE.IDLE);
-            }
 drive.FeildCentric(gamepad1);
         }
     }

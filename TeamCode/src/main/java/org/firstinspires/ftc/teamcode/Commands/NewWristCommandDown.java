@@ -2,14 +2,12 @@ package org.firstinspires.ftc.teamcode.Commands;
 
 import org.firstinspires.ftc.teamcode.Subsystems.NewWristSubsystem;
 import org.firstinspires.ftc.teamcode.Subsystems.Subsystem;
-import org.firstinspires.ftc.teamcode.Subsystems.Superstructure;
 
 public class NewWristCommandDown implements Command{
     NewWristSubsystem wristSubsystem;
-    Superstructure superstructure;
-    public NewWristCommandDown(NewWristSubsystem elevator, Superstructure superstructure) {
+
+    public NewWristCommandDown(NewWristSubsystem elevator) {
         this.wristSubsystem = elevator;
-        this.superstructure = superstructure;
     }
 
     @Override

@@ -21,7 +21,7 @@ import org.firstinspires.ftc.teamcode.Subsystems.NewArmSubsystem;
 import org.firstinspires.ftc.teamcode.Subsystems.NewElevatorSubsystem;
 import org.firstinspires.ftc.teamcode.Subsystems.NewIntakeSubsystem;
 import org.firstinspires.ftc.teamcode.Subsystems.NewWristSubsystem;
-import org.firstinspires.ftc.teamcode.Subsystems.Superstructure;
+import org.firstinspires.ftc.teamcode.Tools.Mouse;
 import org.firstinspires.ftc.teamcode.Tools.NewRobot;
 
 
@@ -34,7 +34,7 @@ public class NewCommandKitBot extends LinearOpMode {
         NewWristSubsystem wristSubsystem = new NewWristSubsystem("wristSubsystem");
         NewIntakeSubsystem intakeSubsystem = new NewIntakeSubsystem("intakeSubsystem");
         Drive drive = new Drive("drive", hardwareMap);
-        Superstructure superstructure = new Superstructure("superstructure");
+
         armSubsystem.init(hardwareMap);
         elevatorSubsystem.init(hardwareMap);
         wristSubsystem.init(hardwareMap);
@@ -46,7 +46,7 @@ public class NewCommandKitBot extends LinearOpMode {
         robot.elevator = elevatorSubsystem;
         robot.wrist = wristSubsystem;
         robot.intake = intakeSubsystem;
-        robot.superstructure = superstructure;
+
         scheduler.setNewRobot(robot);
         waitForStart();
 
@@ -55,41 +55,46 @@ public class NewCommandKitBot extends LinearOpMode {
             armSubsystem.periodic();
             wristSubsystem.periodic();
             intakeSubsystem.periodic();
-            superstructure.periodic();
 
-            if (gamepad1.a) {
-                scheduler.schedule(new NewArmCommandDown(robot.arm, robot.superstructure));
-            } else if (gamepad1.b) {
-                scheduler.schedule(new NewArmCommandUp(robot.arm, robot.superstructure));
-            } else if (gamepad1.x) {
-                scheduler.schedule(new NewArmCommandSpecimen(robot.arm, robot.superstructure));
+
+            if (gamepad1.b) {
+                scheduler.schedule(new NewArmCommandDown(robot.arm));
             } else if (gamepad1.y) {
-                scheduler.schedule(new NewArmCommandHighBucket(robot.arm, robot.superstructure));
+                scheduler.schedule(new NewArmCommandUp(robot.arm));
+            } else if (gamepad1.x) {
+                scheduler.schedule(new NewArmCommandSpecimen(robot.arm));
+            } else if (gamepad1.a) {
+                scheduler.schedule(new NewArmCommandHighBucket(robot.arm));
             }
 
             if (gamepad1.right_bumper) {
-                scheduler.schedule(new NewElevatorCommandExtend(robot.elevator, robot.superstructure));
+                scheduler.schedule(new NewElevatorCommandExtend(robot.elevator));
             } else if (gamepad1.left_bumper) {
-                scheduler.schedule(new NewElevatorCommandRetract(robot.elevator, robot.superstructure));
+                scheduler.schedule(new NewElevatorCommandRetract(robot.elevator));
             } else {
-                scheduler.schedule(new NewElevatorCommandStop(robot.elevator, robot.superstructure));
+                scheduler.schedule(new NewElevatorCommandStop(robot.elevator));
             }
 
             if (gamepad1.dpad_up) {
-                scheduler.schedule(new NewWristCommandUp(robot.wrist, robot.superstructure));
+                scheduler.schedule(new NewWristCommandUp(robot.wrist));
             } else if (gamepad1.dpad_down) {
-                scheduler.schedule(new NewWristCommandDown(robot.wrist, robot.superstructure));
+                scheduler.schedule(new NewWristCommandDown(robot.wrist));
             }
 
             if (gamepad1.right_trigger > 0) {
-                scheduler.schedule(new NewIntakeCommandIntake(robot.intake, robot.superstructure));
+                scheduler.schedule(new NewIntakeCommandIntake(robot.intake));
             } else if(gamepad1.left_trigger > 0) {
-                scheduler.schedule(new NewIntakeCommandOuttake(robot.intake, robot.superstructure));
+                scheduler.schedule(new NewIntakeCommandOuttake(robot.intake));
             }
 
             drive.FeildCentric(gamepad1);
             scheduler.run();
             scheduler.printCurrentCommands();
+
+            telemetry.addData("mouse X", Mouse.getX());
+            telemetry.addData("mouse Y", Mouse.getY());
+            telemetry.addData("mouse theta", Mouse.getTheta());
+            telemetry.update();
         }
     }
 }

@@ -4,22 +4,15 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.teamcode.Commands.CommandScheduler;
-import org.firstinspires.ftc.teamcode.Commands.NewArmCommandDown;
-import org.firstinspires.ftc.teamcode.Commands.NewArmCommandUp;
-import org.firstinspires.ftc.teamcode.Commands.SequentialCommandGroup;
-import org.firstinspires.ftc.teamcode.Commands.Wait;
 import org.firstinspires.ftc.teamcode.PathingTool.PathLoading;
 import org.firstinspires.ftc.teamcode.PathingTool.PolarPathFollower;
 import org.firstinspires.ftc.teamcode.Subsystems.Drive;
 import org.firstinspires.ftc.teamcode.Subsystems.NewArmSubsystem;
 import org.firstinspires.ftc.teamcode.Subsystems.Peripherals;
-import org.firstinspires.ftc.teamcode.Subsystems.Superstructure;
-import org.firstinspires.ftc.teamcode.Tools.Constants;
 import org.firstinspires.ftc.teamcode.Tools.FieldOfMerit;
 import org.firstinspires.ftc.teamcode.Tools.FinalPose;
 import org.firstinspires.ftc.teamcode.Tools.Mouse;
 import org.firstinspires.ftc.teamcode.Tools.NewRobot;
-import org.json.JSONException;
 
 
 @Autonomous
@@ -34,7 +27,7 @@ public class DriveForwardAuto extends LinearOpMode {
         Drive drive = new Drive("drive",hardwareMap);
         NewArmSubsystem armSubsystem = new NewArmSubsystem("armSubsystem");
         armSubsystem.init(hardwareMap);
-        Superstructure superstructure = new Superstructure("superstructure");
+
 
         drive.setPosition(0.928, 2.821, 0);
 
@@ -45,7 +38,7 @@ public class DriveForwardAuto extends LinearOpMode {
         PolarPathFollower moveToPosition;
         NewRobot robot = new NewRobot(hardwareMap);
         robot.arm = armSubsystem;
-        robot.superstructure = superstructure;
+
         scheduler.setNewRobot(robot);
 
  /*       try {
@@ -56,8 +49,8 @@ public class DriveForwardAuto extends LinearOpMode {
  */
         waitForStart();
         try {
-            moveToPosition = new PolarPathFollower(drive, peripherals, pathLoading.getJsonPathData(), Constants.commandMap, Constants.conditionMap, scheduler);
-            scheduler.schedule(moveToPosition);
+            //moveToPosition = new PolarPathFollower(drive, peripherals, pathLoading.getJsonPathData(), Constants.commandMap, Constants.conditionMap, scheduler);
+            //scheduler.schedule(moveToPosition);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -66,7 +59,7 @@ public class DriveForwardAuto extends LinearOpMode {
         while (opModeIsActive()) {
             FinalPose.poseUpdate();
 
-            superstructure.periodic();
+
             armSubsystem.periodic();
             scheduler.run();
 
@@ -76,9 +69,17 @@ public class DriveForwardAuto extends LinearOpMode {
             double robotX = FinalPose.x;
             double robotY = FinalPose.y;
             double robotTheta = FinalPose.Yaw;
+
+            double robotDriveX = drive.getOdometryX();
+            double robotDriveY = drive.getOdometryY();
+            double robotDriveTheta = drive.getOdometryTheta();
             telemetry.addData("X", -robotY);
             telemetry.addData("Y", -robotX);
             telemetry.addData("Theta", robotTheta);
+            telemetry.addData("Drive X", robotDriveX);
+            telemetry.addData("Drive Y", robotDriveY);
+            telemetry.addData("Drive Theta", robotDriveTheta);
+            telemetry.addData("I am ", " a Skibidi sigma");
 
 
             telemetry.update();

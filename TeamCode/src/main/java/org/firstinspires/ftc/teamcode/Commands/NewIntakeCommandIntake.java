@@ -1,16 +1,14 @@
 package org.firstinspires.ftc.teamcode.Commands;
 
 import org.firstinspires.ftc.teamcode.Subsystems.NewIntakeSubsystem;
-import org.firstinspires.ftc.teamcode.Subsystems.NewWristSubsystem;
 import org.firstinspires.ftc.teamcode.Subsystems.Subsystem;
-import org.firstinspires.ftc.teamcode.Subsystems.Superstructure;
 
 public class NewIntakeCommandIntake implements Command{
     NewIntakeSubsystem intakeSubsystem;
-    Superstructure superstructure;
-    public NewIntakeCommandIntake(NewIntakeSubsystem intake, Superstructure superstructure) {
+
+    public NewIntakeCommandIntake(NewIntakeSubsystem intake) {
         this.intakeSubsystem = intake;
-        this.superstructure = superstructure;
+
     }
 
     @Override

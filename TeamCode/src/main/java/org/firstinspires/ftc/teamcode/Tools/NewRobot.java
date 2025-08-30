@@ -11,7 +11,6 @@ import org.firstinspires.ftc.teamcode.Subsystems.NewIntakeSubsystem;
 import org.firstinspires.ftc.teamcode.Subsystems.NewWristSubsystem;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.teamcode.Subsystems.Superstructure;
 
 public class NewRobot {
 
@@ -21,7 +20,7 @@ public class NewRobot {
     public NewWristSubsystem wrist;
     public NewArmSubsystem arm;
     public NewElevatorSubsystem elevator;
-    public Superstructure superstructure;
+
 
     public NewRobot(HardwareMap hardwareMap) {
         this.drive = new Drive("drive", hardwareMap);
@@ -29,7 +28,7 @@ public class NewRobot {
         this.wrist = new NewWristSubsystem("wrist");
         this.arm = new NewArmSubsystem("arm");
         this.elevator = new NewElevatorSubsystem("elevator");
-        this.superstructure = new Superstructure("superstructure");
+
     }
 
     public void run() {
@@ -43,7 +42,7 @@ public class NewRobot {
         this.wrist = new NewWristSubsystem("wrist");
         this.arm = new NewArmSubsystem("arm");
         this.elevator = new NewElevatorSubsystem("elevator");
-        this.superstructure = new Superstructure("superstructure");
+
     }
 
 }

@@ -26,7 +26,7 @@ public class PolarPathFollower implements Command {
     private JSONArray points;
     private PID xPID = new PID(3.6, 0, 1.9);
     private PID yPID = new PID(3.6, 0, 1.9);
-    private final PID yawPID = new PID(1, 0, 0);
+    private final PID yawPID = new PID(3, 0, 0);
     private HashMap<String, Supplier<Command>> commandMap;
     private HashMap<String, BooleanSupplier> conditionMap;
     private ArrayList<Command> activeCommands = new ArrayList<>();
@@ -57,6 +57,7 @@ public class PolarPathFollower implements Command {
             nextY = currentPoint.getDouble("y");
             double nextTheta = currentPoint.getDouble("angle");
             Mouse.setPosition(nextX, nextY, Math.toDegrees(nextTheta));
+            System.out.println("x"+nextX + "Y"+nextY + "theta"+nextTheta);
         } catch (JSONException e) {
             throw new RuntimeException("Error reading point data from JSON", e);
         }
@@ -88,7 +89,7 @@ public class PolarPathFollower implements Command {
             yawPID.updatePID(currentTheta);
             Vector relativePos = new Vector(-xPID.getResult(), -yPID.getResult());
             // Pass the 'drive' instance here to autoDrive
-            drive.autoDrive(relativePos, -yawPID.getResult());
+            drive.autoDrive(relativePos, yawPID.getResult());
             JSONArray commands = points.getJSONObject(index).optJSONArray("commands");
             if (commands != null) {
                 for (int i = 0; i < commands.length(); i++) {
