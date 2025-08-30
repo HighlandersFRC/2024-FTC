@@ -2,18 +2,19 @@ package org.firstinspires.ftc.teamcode.Commands;
 
 import org.firstinspires.ftc.teamcode.Subsystems.NewElevatorSubsystem;
 import org.firstinspires.ftc.teamcode.Subsystems.Subsystem;
+import org.firstinspires.ftc.teamcode.Subsystems.Superstructure;
 
 public class NewElevatorCommandRetract implements Command{
-    NewElevatorSubsystem elevatorSubsystem;
+    Superstructure superstructure;
 
-    public NewElevatorCommandRetract(NewElevatorSubsystem elevator) {
-        this.elevatorSubsystem = elevator;
+    public NewElevatorCommandRetract(Superstructure superstructure) {
+        this.superstructure = superstructure;
 
     }
 
     @Override
     public void start() {
-        elevatorSubsystem.setWantedState(NewElevatorSubsystem.ELEVATOR_STATE.ELEVATOR_RETRACT);
+        superstructure.setWantedState(Superstructure.SUPER_STATE.ELEVATOR_RETRACT);
     }
 
     @Override
@@ -23,7 +24,7 @@ public class NewElevatorCommandRetract implements Command{
 
     @Override
     public void end() {
-        elevatorSubsystem.setWantedState(NewElevatorSubsystem.ELEVATOR_STATE.DEFAULT);
+        superstructure.setWantedState(Superstructure.SUPER_STATE.DEFAULT);
     }
 
     @Override
@@ -33,6 +34,6 @@ public class NewElevatorCommandRetract implements Command{
 
     @Override
     public Subsystem getRequiredSubsystem() {
-        return elevatorSubsystem;
+        return superstructure;
     }
 }

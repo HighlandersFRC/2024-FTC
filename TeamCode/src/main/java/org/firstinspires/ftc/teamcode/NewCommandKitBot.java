@@ -21,6 +21,7 @@ import org.firstinspires.ftc.teamcode.Subsystems.NewArmSubsystem;
 import org.firstinspires.ftc.teamcode.Subsystems.NewElevatorSubsystem;
 import org.firstinspires.ftc.teamcode.Subsystems.NewIntakeSubsystem;
 import org.firstinspires.ftc.teamcode.Subsystems.NewWristSubsystem;
+import org.firstinspires.ftc.teamcode.Subsystems.Superstructure;
 import org.firstinspires.ftc.teamcode.Tools.Mouse;
 import org.firstinspires.ftc.teamcode.Tools.NewRobot;
 
@@ -29,62 +30,49 @@ import org.firstinspires.ftc.teamcode.Tools.NewRobot;
 public class NewCommandKitBot extends LinearOpMode {
 
     public void runOpMode() throws InterruptedException {
-        NewArmSubsystem armSubsystem = new NewArmSubsystem("armSubsystem");
-        NewElevatorSubsystem elevatorSubsystem = new NewElevatorSubsystem("elevatorSubsystem");
-        NewWristSubsystem wristSubsystem = new NewWristSubsystem("wristSubsystem");
-        NewIntakeSubsystem intakeSubsystem = new NewIntakeSubsystem("intakeSubsystem");
+        Superstructure superstructure = new Superstructure("superstructure");
         Drive drive = new Drive("drive", hardwareMap);
 
-        armSubsystem.init(hardwareMap);
-        elevatorSubsystem.init(hardwareMap);
-        wristSubsystem.init(hardwareMap);
-        intakeSubsystem.init(hardwareMap);
+        superstructure.init(hardwareMap);
         CommandScheduler scheduler = new CommandScheduler();
 
         NewRobot robot = new NewRobot(hardwareMap);
-        robot.arm = armSubsystem;
-        robot.elevator = elevatorSubsystem;
-        robot.wrist = wristSubsystem;
-        robot.intake = intakeSubsystem;
-
+        robot.superstructure = superstructure;
         scheduler.setNewRobot(robot);
         waitForStart();
 
         while (opModeIsActive()) {
-            elevatorSubsystem.periodic();
-            armSubsystem.periodic();
-            wristSubsystem.periodic();
-            intakeSubsystem.periodic();
+            superstructure.periodic();
 
 
             if (gamepad1.b) {
-                scheduler.schedule(new NewArmCommandDown(robot.arm));
+                scheduler.schedule(new NewArmCommandDown(robot.superstructure));
             } else if (gamepad1.y) {
-                scheduler.schedule(new NewArmCommandUp(robot.arm));
+                scheduler.schedule(new NewArmCommandUp(robot.superstructure));
             } else if (gamepad1.x) {
-                scheduler.schedule(new NewArmCommandSpecimen(robot.arm));
+                scheduler.schedule(new NewArmCommandSpecimen(robot.superstructure));
             } else if (gamepad1.a) {
-                scheduler.schedule(new NewArmCommandHighBucket(robot.arm));
+                scheduler.schedule(new NewArmCommandHighBucket(robot.superstructure));
             }
 
             if (gamepad1.right_bumper) {
-                scheduler.schedule(new NewElevatorCommandExtend(robot.elevator));
+                scheduler.schedule(new NewElevatorCommandExtend(robot.superstructure));
             } else if (gamepad1.left_bumper) {
-                scheduler.schedule(new NewElevatorCommandRetract(robot.elevator));
+                scheduler.schedule(new NewElevatorCommandRetract(robot.superstructure));
             } else {
-                scheduler.schedule(new NewElevatorCommandStop(robot.elevator));
+                scheduler.schedule(new NewElevatorCommandStop(robot.superstructure));
             }
 
             if (gamepad1.dpad_up) {
-                scheduler.schedule(new NewWristCommandUp(robot.wrist));
+                scheduler.schedule(new NewWristCommandUp(robot.superstructure));
             } else if (gamepad1.dpad_down) {
-                scheduler.schedule(new NewWristCommandDown(robot.wrist));
+                scheduler.schedule(new NewWristCommandDown(robot.superstructure));
             }
 
             if (gamepad1.right_trigger > 0) {
-                scheduler.schedule(new NewIntakeCommandIntake(robot.intake));
+                scheduler.schedule(new NewIntakeCommandIntake(robot.superstructure));
             } else if(gamepad1.left_trigger > 0) {
-                scheduler.schedule(new NewIntakeCommandOuttake(robot.intake));
+                scheduler.schedule(new NewIntakeCommandOuttake(robot.superstructure));
             }
 
             drive.FeildCentric(gamepad1);

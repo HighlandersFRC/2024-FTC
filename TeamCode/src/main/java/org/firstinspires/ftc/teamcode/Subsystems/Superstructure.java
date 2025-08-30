@@ -22,6 +22,10 @@ public class Superstructure extends Subsystem {
         super(name);
     }
 
+    public void setWantedState(Superstructure.SUPER_STATE superState){
+        wantedSuperState = superState;
+    }
+
     public void init(HardwareMap hardwareMap) {
         elevatorSubsystem.init(hardwareMap);
         intakeSubsystem.init(hardwareMap);

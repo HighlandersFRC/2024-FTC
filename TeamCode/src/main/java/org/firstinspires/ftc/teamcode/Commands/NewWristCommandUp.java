@@ -2,17 +2,18 @@ package org.firstinspires.ftc.teamcode.Commands;
 
 import org.firstinspires.ftc.teamcode.Subsystems.NewWristSubsystem;
 import org.firstinspires.ftc.teamcode.Subsystems.Subsystem;
+import org.firstinspires.ftc.teamcode.Subsystems.Superstructure;
 
 public class NewWristCommandUp implements Command{
-    NewWristSubsystem wristSubsystem;
+    Superstructure superstructure;
 
-    public NewWristCommandUp(NewWristSubsystem elevator) {
-        this.wristSubsystem = elevator;
+    public NewWristCommandUp(Superstructure superstructure) {
+        this.superstructure = superstructure;
     }
 
     @Override
     public void start() {
-        wristSubsystem.setWantedState(NewWristSubsystem.WRIST_STATE.WRIST_UP);
+        superstructure.setWantedState(Superstructure.SUPER_STATE.WRIST_UP);
     }
 
     @Override
@@ -22,7 +23,8 @@ public class NewWristCommandUp implements Command{
 
     @Override
     public void end() {
-        wristSubsystem.setWantedState(NewWristSubsystem.WRIST_STATE.DEFAULT);
+        superstructure.setWantedState(Superstructure.SUPER_STATE.DEFAULT);
+
     }
 
     @Override
@@ -32,6 +34,6 @@ public class NewWristCommandUp implements Command{
 
     @Override
     public Subsystem getRequiredSubsystem() {
-        return wristSubsystem;
+        return superstructure;
     }
 }
