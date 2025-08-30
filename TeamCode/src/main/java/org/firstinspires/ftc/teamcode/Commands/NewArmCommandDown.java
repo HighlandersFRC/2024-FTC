@@ -1,41 +1,41 @@
 package org.firstinspires.ftc.teamcode.Commands;
 
-import static org.firstinspires.ftc.teamcode.Tools.Constants.DegreesToEncoderTicks;
 
+import org.firstinspires.ftc.teamcode.Subsystems.ArmSubsystem;
 import org.firstinspires.ftc.teamcode.Subsystems.NewArmSubsystem;
 import org.firstinspires.ftc.teamcode.Subsystems.Subsystem;
 import org.firstinspires.ftc.teamcode.Subsystems.Superstructure;
 
 public class NewArmCommandDown implements Command {
-    private final NewArmSubsystem armSubsystem;
-    private boolean finished = false;
-    private Superstructure superstructure = new Superstructure("superStructure");
-    public NewArmCommandDown(NewArmSubsystem armSubsystem) {
-        this.armSubsystem = armSubsystem;
+
+    NewArmSubsystem armSubsystem;
+    Superstructure superstructure;
+    public NewArmCommandDown(NewArmSubsystem arm, Superstructure superstructure) {
+        this.armSubsystem = arm;
+        this.superstructure = superstructure;
     }
+
 
     @Override
     public void start() {
-        superstructure.periodic();
         armSubsystem.setWantedState(NewArmSubsystem.ARM_STATE.ARM_FULLY_DOWN);
     }
 
+
     @Override
     public void execute() {
-        if (Math.abs(armSubsystem.getCurrentPositionWithLimitSwitch() - DegreesToEncoderTicks(0)) < 10) {
-            finished = true;
-        }
+
     }
 
     @Override
     public void end() {
-        superstructure.periodic();
-        armSubsystem.setWantedState(NewArmSubsystem.ARM_STATE.IDLE);
+        armSubsystem.setWantedState(NewArmSubsystem.ARM_STATE.DEFAULT);
     }
 
+    // Returns true when the command should end.
     @Override
     public boolean isFinished() {
-        return finished;
+        return false;
     }
 
     @Override

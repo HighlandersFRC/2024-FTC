@@ -1,9 +1,5 @@
 package org.firstinspires.ftc.teamcode.Commands;
 
-import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.gamepad1;
-
-import com.qualcomm.robotcore.hardware.DcMotor;
-
 import org.firstinspires.ftc.teamcode.Subsystems.ArmSubsystem;
 import org.firstinspires.ftc.teamcode.Subsystems.Subsystem;
 
@@ -39,5 +35,8 @@ arm.setPower(0);
     @Override
     public Subsystem getRequiredSubsystem() {
         return arm;
+    }
+
+    public static class NewWristCommandDown {
     }
 }

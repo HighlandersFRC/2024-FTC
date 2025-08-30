@@ -16,9 +16,9 @@ public DcMotor pivot;
 private double pos;
     private NewArmSubsystem.ARM_STATE wantedSuperState = NewArmSubsystem.ARM_STATE.IDLE;
     private NewArmSubsystem.ARM_STATE currentSuperState = NewArmSubsystem.ARM_STATE.IDLE;
-    public NewArmSubsystem(String name, Gamepad gamepad2) {
+    public NewArmSubsystem(String name) {
         super(name);
-        this.gamepad = gamepad2;
+
     }
 
     public void init(HardwareMap hardwareMap) {

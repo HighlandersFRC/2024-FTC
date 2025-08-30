@@ -13,11 +13,10 @@ import org.firstinspires.ftc.teamcode.Subsystems.Superstructure;
 @TeleOp
 public class NewKitBot extends LinearOpMode {
 
-NewArmSubsystem armSubsystem = new NewArmSubsystem("Arm", gamepad1);
-NewElevatorSubsystem elevatorSubsystem = new NewElevatorSubsystem("Elevator", gamepad1);
-NewIntakeSubsystem intakeSubsystem = new NewIntakeSubsystem("Intake", gamepad1);
-NewWristSubsystem wristSubsystem = new NewWristSubsystem("Wrist", gamepad1);
-
+NewArmSubsystem armSubsystem = new NewArmSubsystem("Arm");
+NewElevatorSubsystem elevatorSubsystem = new NewElevatorSubsystem("Elevator");
+NewIntakeSubsystem intakeSubsystem = new NewIntakeSubsystem("Intake");
+NewWristSubsystem wristSubsystem = new NewWristSubsystem("Wrist");
 Superstructure superstructure = new Superstructure("Structure");
     @Override
     public void runOpMode() throws InterruptedException {
@@ -25,6 +24,7 @@ Superstructure superstructure = new Superstructure("Structure");
       wristSubsystem.init(hardwareMap);
       intakeSubsystem.init(hardwareMap);
       elevatorSubsystem.init(hardwareMap);
+      Drive drive = new Drive("Drive",hardwareMap);
         waitForStart();
         while (opModeIsActive()) {
             armSubsystem.periodic();
@@ -65,11 +65,7 @@ Superstructure superstructure = new Superstructure("Structure");
             } else {
                 armSubsystem.setWantedState(NewArmSubsystem.ARM_STATE.IDLE);
             }
-
-            telemetry.addData("Current Pos Right", intakeSubsystem.RightIntake.getPosition());
-            telemetry.addData("Current Pos Left", intakeSubsystem.LeftIntake.getPosition());
-            telemetry.update();
-
+drive.FeildCentric(gamepad1);
         }
     }
 }

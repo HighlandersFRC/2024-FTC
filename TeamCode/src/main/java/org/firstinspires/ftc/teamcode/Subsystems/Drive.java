@@ -69,6 +69,10 @@ public class Drive extends Subsystem {
         backRightMotor.setDirection(DcMotorSimple.Direction.FORWARD);
 
 // Set zero power behavior for all motors
+        frontLeftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        frontRightMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        backRightMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        backLeftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
 // Reset encoders
         frontLeftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -204,7 +208,7 @@ public class Drive extends Subsystem {
 
         double x = -gamepad.left_stick_x*2;
         double y = -gamepad.left_stick_y;
-        double rx = gamepad.right_stick_x;
+        double rx = -gamepad.right_stick_x;
 
 
         double botHeading = -Math.toRadians(Mouse.getTheta());
@@ -222,8 +226,8 @@ public class Drive extends Subsystem {
         double rotY = x * Math.sin(-botHeading) + y * Math.cos(-botHeading);
 
         double frontLeftPower = (-rotY + rotX + rx);
-        double backLeftPower = (rotY + rotX - rx);
-        double frontRightPower = (rotY + rotX + rx);
+        double backLeftPower = (-rotY - rotX + rx);
+        double frontRightPower = (-rotY - rotX - rx);
         double backRightPower = (rotY - rotX + rx);
 
 
@@ -419,13 +423,13 @@ public class Drive extends Subsystem {
         double rotX = - vx * Math.sin(botHeading) + vy * Math.cos(botHeading);
         double rotY = vx * Math.cos(botHeading) + vy * Math.sin(botHeading);
 
-        rotX *= 1.1;
+//        rotX *= 1.1;
 
         double denominator = Math.max(0.3, Math.abs(rotY) + Math.abs(rotX) + Math.abs(rotationFactor));
-        double frontLeftPower = (rotX + rotY - rotationFactor) / 2;
-        double frontRightPower = (rotX - rotY + rotationFactor) / 2;
-        double backLeftPower = (rotX - rotY - rotationFactor) / 2;
-        double backRightPower = (rotX + rotY + rotationFactor) / 2;
+        double frontLeftPower = (-rotX + rotY - rotationFactor) / 4;
+        double frontRightPower = (-rotX - rotY + rotationFactor) / 2;
+        double backLeftPower = (rotX - rotY - rotationFactor) / 4;
+        double backRightPower = (-rotX + rotY + rotationFactor) / 2;
 
 /*
         double frontLeftPower = vx + vy + rotationFactor;

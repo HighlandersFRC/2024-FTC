@@ -13,9 +13,9 @@ public class NewIntakeSubsystem extends Subsystem {
     public Servo LeftIntake;
     private NewIntakeSubsystem.INTAKE_STATE wantedSuperState = NewIntakeSubsystem.INTAKE_STATE.IDLE;
     private NewIntakeSubsystem.INTAKE_STATE currentSuperState = NewIntakeSubsystem.INTAKE_STATE.IDLE;
-    public NewIntakeSubsystem(String name, Gamepad gamepad2) {
+    public NewIntakeSubsystem(String name) {
         super(name);
-        this.gamepad = gamepad2;
+
     }
 
     public void init(HardwareMap hardwareMap) {
@@ -61,7 +61,7 @@ public class NewIntakeSubsystem extends Subsystem {
     }
 
     private void handleIntakeState() {
-        RightIntake.setPosition(0.7);
+        RightIntake.setPosition(0.63);
         LeftIntake.setPosition(0.7);
     }
 

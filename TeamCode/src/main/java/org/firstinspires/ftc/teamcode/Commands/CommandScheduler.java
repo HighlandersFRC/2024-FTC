@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.Commands;
 
 import com.qualcomm.robotcore.util.RobotLog;
 import org.firstinspires.ftc.teamcode.Subsystems.Subsystem;
+import org.firstinspires.ftc.teamcode.Tools.NewRobot;
 import org.firstinspires.ftc.teamcode.Tools.Robot;
 
 import java.util.*;
@@ -12,6 +13,7 @@ public class CommandScheduler {
     private final List<Command> scheduledCommands = new ArrayList<>();
     private final Map<Subsystem, Command> activeSubsystemCommands = new HashMap<>();
     private Robot robot;
+    private NewRobot newRobot;
 
     public CommandScheduler() {
 
@@ -26,6 +28,10 @@ public class CommandScheduler {
 
     public void setRobot(Robot robot) {
         this.robot = robot;
+    }
+
+    public void setNewRobot(NewRobot robot) {
+        this.newRobot = robot;
     }
 
     public void schedule(Command command) {

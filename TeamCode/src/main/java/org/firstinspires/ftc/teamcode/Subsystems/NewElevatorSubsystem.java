@@ -1,26 +1,25 @@
 package org.firstinspires.ftc.teamcode.Subsystems;
 
 
-import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.hardwareMap;
-import static org.firstinspires.ftc.teamcode.Tools.Constants.elevatorPID;
-import static org.firstinspires.ftc.teamcode.Tools.Constants.pivotPID;
+
 
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.Gamepad;
+
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 public class NewElevatorSubsystem extends Subsystem {
-    Gamepad gamepad;
+
     DcMotor elevator;
     private NewElevatorSubsystem.ELEVATOR_STATE wantedSuperState = NewElevatorSubsystem.ELEVATOR_STATE.IDLE;
     private NewElevatorSubsystem.ELEVATOR_STATE currentSuperState = NewElevatorSubsystem.ELEVATOR_STATE.IDLE;
-    public NewElevatorSubsystem(String name, Gamepad gamepad2) {
+    public NewElevatorSubsystem(String name) {
         super(name);
-        this.gamepad = gamepad2;
+
     }
 
     public void init(HardwareMap hardwareMap) {
         elevator = hardwareMap.dcMotor.get("Elevator"); //UPDATE THIS
+        elevator.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
     }
 
     public void setWantedState(ELEVATOR_STATE elevatorState){
@@ -54,14 +53,10 @@ public class NewElevatorSubsystem extends Subsystem {
     }
 
     private void handleDefaultState(){
-
+        elevator.setPower(0);
     }
     private void handleIdleState() {
-        elevatorPID.setSetPoint(elevator.getCurrentPosition());
-        elevatorPID.updatePID(elevator.getCurrentPosition());
-        elevatorPID.setMaxOutput(0.5);
-        elevatorPID.setMinOutput(-0.5);
-        elevator.setPower(-pivotPID.getResult());
+        elevator.setPower(0);
     }
 
     private void handleExtendState() {

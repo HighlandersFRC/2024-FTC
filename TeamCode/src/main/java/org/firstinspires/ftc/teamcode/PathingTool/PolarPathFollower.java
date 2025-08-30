@@ -88,7 +88,7 @@ public class PolarPathFollower implements Command {
             yawPID.updatePID(currentTheta);
             Vector relativePos = new Vector(-xPID.getResult(), -yPID.getResult());
             // Pass the 'drive' instance here to autoDrive
-            drive.autoDrive(relativePos, yawPID.getResult());
+            drive.autoDrive(relativePos, -yawPID.getResult());
             JSONArray commands = points.getJSONObject(index).optJSONArray("commands");
             if (commands != null) {
                 for (int i = 0; i < commands.length(); i++) {

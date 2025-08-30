@@ -12,9 +12,9 @@ public class NewWristSubsystem extends Subsystem {
     Servo wrist;
     private NewWristSubsystem.WRIST_STATE wantedSuperState = NewWristSubsystem.WRIST_STATE.IDLE;
     private NewWristSubsystem.WRIST_STATE currentSuperState = NewWristSubsystem.WRIST_STATE.IDLE;
-    public NewWristSubsystem(String name, Gamepad gamepad2) {
+    public NewWristSubsystem(String name) {
         super(name);
-        this.gamepad = gamepad2;
+
     }
 
     public void init(HardwareMap hardwareMap) {
