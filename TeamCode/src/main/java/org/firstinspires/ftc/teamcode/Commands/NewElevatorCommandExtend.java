@@ -6,10 +6,10 @@ import org.firstinspires.ftc.teamcode.Subsystems.Superstructure;
 
 public class NewElevatorCommandExtend implements Command{
     NewElevatorSubsystem elevatorSubsystem;
-
-    public NewElevatorCommandExtend(NewElevatorSubsystem elevatorSubsystem) {
-      this.elevatorSubsystem = elevatorSubsystem;
-
+    Superstructure superstructure;
+    public NewElevatorCommandExtend(NewElevatorSubsystem elevator, Superstructure superstructure) {
+        this.elevatorSubsystem = elevator;
+        this.superstructure = superstructure;
     }
 
     @Override

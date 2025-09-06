@@ -6,9 +6,10 @@ import org.firstinspires.ftc.teamcode.Subsystems.Superstructure;
 
 public class NewWristCommandDown implements Command{
     NewWristSubsystem wristSubsystem;
-
-    public NewWristCommandDown(NewWristSubsystem wristSubsystem) {
-        this.wristSubsystem = wristSubsystem;
+    Superstructure superstructure;
+    public NewWristCommandDown(NewWristSubsystem elevator, Superstructure superstructure) {
+        this.wristSubsystem = elevator;
+        this.superstructure = superstructure;
     }
 
     @Override
@@ -23,8 +24,7 @@ public class NewWristCommandDown implements Command{
 
     @Override
     public void end() {
-        wristSubsystem.setWantedState(NewWristSubsystem.WRIST_STATE.WRIST_UP);
-
+        wristSubsystem.setWantedState(NewWristSubsystem.WRIST_STATE.DEFAULT);
     }
 
     @Override

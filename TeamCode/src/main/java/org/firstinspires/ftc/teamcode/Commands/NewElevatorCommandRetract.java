@@ -6,10 +6,10 @@ import org.firstinspires.ftc.teamcode.Subsystems.Superstructure;
 
 public class NewElevatorCommandRetract implements Command{
     NewElevatorSubsystem elevatorSubsystem;
-
-    public NewElevatorCommandRetract(NewElevatorSubsystem elevatorSubsystem) {
-        this.elevatorSubsystem = elevatorSubsystem;
-
+    Superstructure superstructure;
+    public NewElevatorCommandRetract(NewElevatorSubsystem elevator, Superstructure superstructure) {
+        this.elevatorSubsystem = elevator;
+        this.superstructure = superstructure;
     }
 
     @Override

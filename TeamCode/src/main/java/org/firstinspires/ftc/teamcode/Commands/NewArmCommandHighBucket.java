@@ -1,14 +1,18 @@
 package org.firstinspires.ftc.teamcode.Commands;
 
 
+import org.firstinspires.ftc.teamcode.Subsystems.ArmSubsystem;
 import org.firstinspires.ftc.teamcode.Subsystems.NewArmSubsystem;
 import org.firstinspires.ftc.teamcode.Subsystems.Subsystem;
 import org.firstinspires.ftc.teamcode.Subsystems.Superstructure;
 
 public class NewArmCommandHighBucket implements Command {
+
     NewArmSubsystem armSubsystem;
-    public NewArmCommandHighBucket(NewArmSubsystem armSubsystem) {
-        this.armSubsystem = armSubsystem;
+    Superstructure superstructure;
+    public NewArmCommandHighBucket(NewArmSubsystem arm, Superstructure superstructure) {
+        this.armSubsystem = arm;
+        this.superstructure = superstructure;
     }
 
 
