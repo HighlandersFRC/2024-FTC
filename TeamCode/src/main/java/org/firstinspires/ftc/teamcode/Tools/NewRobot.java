@@ -17,11 +17,17 @@ public class NewRobot {
 
     // Instance variables for subsystems
     public Drive drive;
-    public Superstructure superstructure;
+    public NewIntakeSubsystem intakeSubsystem;
+    public NewWristSubsystem wristSubsystem;
+    public NewArmSubsystem armSubsystem;
+    public NewElevatorSubsystem elevatorSubsystem;
 
     public NewRobot(HardwareMap hardwareMap) {
         this.drive = new Drive("drive", hardwareMap);
-       this.superstructure = new Superstructure("superstructure");
+        this.armSubsystem = new NewArmSubsystem("arm");
+        this.elevatorSubsystem = new NewElevatorSubsystem("elevator");
+        this.intakeSubsystem = new NewIntakeSubsystem("intake");
+        this.wristSubsystem = new NewWristSubsystem("wrist");
 
     }
 
@@ -32,8 +38,10 @@ public class NewRobot {
     // Initialize hardware for all subsystems
     public void initialize(HardwareMap hardwareMap, Telemetry telemetry) {
         this.drive = new Drive("drive", hardwareMap);
-        this.superstructure = new Superstructure("superstructure");
-
+        armSubsystem.init(hardwareMap);
+        elevatorSubsystem.init(hardwareMap);
+        intakeSubsystem.init(hardwareMap);
+        wristSubsystem.init(hardwareMap);
     }
 
 }

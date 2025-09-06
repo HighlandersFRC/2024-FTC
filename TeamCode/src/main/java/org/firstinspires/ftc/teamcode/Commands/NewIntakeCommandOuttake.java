@@ -5,16 +5,16 @@ import org.firstinspires.ftc.teamcode.Subsystems.Subsystem;
 import org.firstinspires.ftc.teamcode.Subsystems.Superstructure;
 
 public class NewIntakeCommandOuttake implements Command{
-    Superstructure superstructure;
+    NewIntakeSubsystem intakeSubsystem;
 
-    public NewIntakeCommandOuttake(Superstructure superstructure) {
-        this.superstructure = superstructure;
+    public NewIntakeCommandOuttake(NewIntakeSubsystem intakeSubsystem) {
+        this.intakeSubsystem = intakeSubsystem;
 
     }
 
     @Override
     public void start() {
-        superstructure.setWantedState(Superstructure.SUPER_STATE.OUTTAKE);
+        intakeSubsystem.setWantedState(NewIntakeSubsystem.INTAKE_STATE.OUTTAKE);
     }
 
     @Override
@@ -24,7 +24,7 @@ public class NewIntakeCommandOuttake implements Command{
 
     @Override
     public void end() {
-        superstructure.setWantedState(Superstructure.SUPER_STATE.DEFAULT);
+        intakeSubsystem.setWantedState(NewIntakeSubsystem.INTAKE_STATE.OUTTAKE);
     }
 
     @Override
@@ -34,6 +34,6 @@ public class NewIntakeCommandOuttake implements Command{
 
     @Override
     public Subsystem getRequiredSubsystem() {
-        return superstructure;
+        return intakeSubsystem;
     }
 }

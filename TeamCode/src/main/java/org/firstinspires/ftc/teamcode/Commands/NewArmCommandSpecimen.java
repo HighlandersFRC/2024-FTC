@@ -6,16 +6,15 @@ import org.firstinspires.ftc.teamcode.Subsystems.Subsystem;
 import org.firstinspires.ftc.teamcode.Subsystems.Superstructure;
 
 public class NewArmCommandSpecimen implements Command {
-
-   Superstructure superstructure;
-    public NewArmCommandSpecimen(Superstructure superstructure) {
-        this.superstructure = superstructure;
+    NewArmSubsystem armSubsystem;
+    public NewArmCommandSpecimen(NewArmSubsystem armSubsystem) {
+        this.armSubsystem = armSubsystem;
     }
 
 
     @Override
     public void start() {
-        superstructure.setWantedState(Superstructure.SUPER_STATE.ARM_SPECIMEN);
+        armSubsystem.setWantedState(NewArmSubsystem.ARM_STATE.SPECIMEN);
     }
 
 
@@ -26,7 +25,7 @@ public class NewArmCommandSpecimen implements Command {
 
     @Override
     public void end() {
-        superstructure.setWantedState(Superstructure.SUPER_STATE.DEFAULT);
+        armSubsystem.setWantedState(NewArmSubsystem.ARM_STATE.DEFAULT);
     }
 
     // Returns true when the command should end.
@@ -37,6 +36,6 @@ public class NewArmCommandSpecimen implements Command {
 
     @Override
     public Subsystem getRequiredSubsystem() {
-        return superstructure;
+        return armSubsystem;
     }
 }

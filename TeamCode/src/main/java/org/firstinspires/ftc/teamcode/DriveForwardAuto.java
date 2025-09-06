@@ -9,6 +9,7 @@ import org.firstinspires.ftc.teamcode.PathingTool.PolarPathFollower;
 import org.firstinspires.ftc.teamcode.Subsystems.Drive;
 import org.firstinspires.ftc.teamcode.Subsystems.NewArmSubsystem;
 import org.firstinspires.ftc.teamcode.Subsystems.Peripherals;
+import org.firstinspires.ftc.teamcode.Subsystems.Superstructure;
 import org.firstinspires.ftc.teamcode.Tools.FieldOfMerit;
 import org.firstinspires.ftc.teamcode.Tools.FinalPose;
 import org.firstinspires.ftc.teamcode.Tools.Mouse;
@@ -25,8 +26,8 @@ public class DriveForwardAuto extends LinearOpMode {
 
         Mouse.configureOtos();
         Drive drive = new Drive("drive",hardwareMap);
-        NewArmSubsystem armSubsystem = new NewArmSubsystem("armSubsystem");
-        armSubsystem.init(hardwareMap);
+        Superstructure superstructure = new Superstructure("superstructure");
+        superstructure.init(hardwareMap);
 
 
         drive.setPosition(0.928, 2.821, 0);
@@ -37,7 +38,7 @@ public class DriveForwardAuto extends LinearOpMode {
         Peripherals peripherals = new Peripherals("peripherals");
         PolarPathFollower moveToPosition;
         NewRobot robot = new NewRobot(hardwareMap);
-        robot.arm = armSubsystem;
+
 
         scheduler.setNewRobot(robot);
 
@@ -60,7 +61,7 @@ public class DriveForwardAuto extends LinearOpMode {
             FinalPose.poseUpdate();
 
 
-            armSubsystem.periodic();
+            superstructure.periodic();
             scheduler.run();
 
 

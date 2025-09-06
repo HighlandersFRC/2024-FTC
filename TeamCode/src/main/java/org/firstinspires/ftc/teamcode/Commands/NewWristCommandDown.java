@@ -5,15 +5,15 @@ import org.firstinspires.ftc.teamcode.Subsystems.Subsystem;
 import org.firstinspires.ftc.teamcode.Subsystems.Superstructure;
 
 public class NewWristCommandDown implements Command{
-    Superstructure superstructure;
+    NewWristSubsystem wristSubsystem;
 
-    public NewWristCommandDown(Superstructure superstructure) {
-        this.superstructure = superstructure;
+    public NewWristCommandDown(NewWristSubsystem wristSubsystem) {
+        this.wristSubsystem = wristSubsystem;
     }
 
     @Override
     public void start() {
-        superstructure.setWantedState(Superstructure.SUPER_STATE.WRIST_DOWN);
+        wristSubsystem.setWantedState(NewWristSubsystem.WRIST_STATE.WRIST_DOWN);
     }
 
     @Override
@@ -23,7 +23,7 @@ public class NewWristCommandDown implements Command{
 
     @Override
     public void end() {
-        superstructure.setWantedState(Superstructure.SUPER_STATE.DEFAULT);
+        wristSubsystem.setWantedState(NewWristSubsystem.WRIST_STATE.WRIST_UP);
 
     }
 
@@ -34,6 +34,6 @@ public class NewWristCommandDown implements Command{
 
     @Override
     public Subsystem getRequiredSubsystem() {
-        return superstructure;
+        return wristSubsystem;
     }
 }

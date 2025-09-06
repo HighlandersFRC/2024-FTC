@@ -1,12 +1,6 @@
 package org.firstinspires.ftc.teamcode.Subsystems;
 
 
-import static org.firstinspires.ftc.teamcode.Tools.Constants.DegreesToEncoderTicks;
-import static org.firstinspires.ftc.teamcode.Tools.Constants.pivotPID;
-
-import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DigitalChannel;
-import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 public class Superstructure extends Subsystem {
@@ -18,6 +12,7 @@ public class Superstructure extends Subsystem {
 
     private Superstructure.SUPER_STATE wantedSuperState = Superstructure.SUPER_STATE.IDLE;
     private Superstructure.SUPER_STATE currentSuperState = Superstructure.SUPER_STATE.IDLE;
+
     public Superstructure(String name) {
         super(name);
     }
@@ -30,12 +25,14 @@ public class Superstructure extends Subsystem {
         elevatorSubsystem.init(hardwareMap);
         intakeSubsystem.init(hardwareMap);
         wristSubsystem.init(hardwareMap);
-        elevatorSubsystem.init(hardwareMap);
+        armSubsystem.init(hardwareMap);
     }
 
 
     public enum SUPER_STATE {
         DEFAULT,
+        DEFAULT_ARM,
+        DEFAULT_ELEVATOR,
         IDLE,
         ARM_UP,
         ARM_DOWN,
@@ -55,6 +52,12 @@ public class Superstructure extends Subsystem {
         switch (wantedSuperState) {
             case DEFAULT:
                 currentSuperState = SUPER_STATE.DEFAULT;
+                break;
+            case DEFAULT_ARM:
+                currentSuperState = SUPER_STATE.DEFAULT_ARM;
+                break;
+            case DEFAULT_ELEVATOR:
+                currentSuperState = SUPER_STATE.DEFAULT_ELEVATOR;
                 break;
             case IDLE:
                 currentSuperState = SUPER_STATE.IDLE;
@@ -100,7 +103,15 @@ public class Superstructure extends Subsystem {
     }
 
     private void handleDefaultState() {
+        armSubsystem.setWantedState(NewArmSubsystem.ARM_STATE.IDLE);
+        elevatorSubsystem.setWantedState(NewElevatorSubsystem.ELEVATOR_STATE.DEFAULT);
+    }
+
+    private void handleDefaultArmState() {
         armSubsystem.setWantedState(NewArmSubsystem.ARM_STATE.DEFAULT);
+    }
+
+    private void handleDefaultElevatorState() {
         elevatorSubsystem.setWantedState(NewElevatorSubsystem.ELEVATOR_STATE.DEFAULT);
     }
     private void handleIdleState() {
@@ -150,10 +161,20 @@ public class Superstructure extends Subsystem {
 
     @Override
     public void periodic() {
+        armSubsystem.periodic();
+        elevatorSubsystem.periodic();
+        intakeSubsystem.periodic();
+        wristSubsystem.periodic();
         handleStateTransitions();
         switch (currentSuperState) {
             case DEFAULT:
                 handleDefaultState();
+                break;
+            case DEFAULT_ARM:
+                handleDefaultArmState();
+                break;
+            case DEFAULT_ELEVATOR:
+                handleDefaultElevatorState();
                 break;
             case IDLE:
                 handleIdleState();

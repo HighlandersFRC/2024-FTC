@@ -5,16 +5,16 @@ import org.firstinspires.ftc.teamcode.Subsystems.Subsystem;
 import org.firstinspires.ftc.teamcode.Subsystems.Superstructure;
 
 public class NewElevatorCommandStop implements Command{
-    Superstructure superstructure;
+    NewElevatorSubsystem elevatorSubsystem;
 
-    public NewElevatorCommandStop(Superstructure superstructure) {
-        this.superstructure = superstructure;
+    public NewElevatorCommandStop(NewElevatorSubsystem elevatorSubsystem) {
+        this.elevatorSubsystem = elevatorSubsystem;
 
     }
 
     @Override
     public void start() {
-        superstructure.setWantedState(Superstructure.SUPER_STATE.DEFAULT);
+        elevatorSubsystem.setWantedState(NewElevatorSubsystem.ELEVATOR_STATE.DEFAULT);
     }
 
     @Override
@@ -24,7 +24,7 @@ public class NewElevatorCommandStop implements Command{
 
     @Override
     public void end() {
-        superstructure.setWantedState(Superstructure.SUPER_STATE.DEFAULT);
+        elevatorSubsystem.setWantedState(NewElevatorSubsystem.ELEVATOR_STATE.DEFAULT);
     }
 
     @Override
@@ -34,6 +34,6 @@ public class NewElevatorCommandStop implements Command{
 
     @Override
     public Subsystem getRequiredSubsystem() {
-        return superstructure;
+        return elevatorSubsystem;
     }
 }
