@@ -39,7 +39,7 @@ import com.qualcomm.robotcore.eventloop.opmode.OpModeRegister;
  * @see #register(OpModeManager)
  */
 public class FtcOpModeRegister implements OpModeRegister {
-
+    //John Was here
     /**
      * {@link #register(OpModeManager)} is called by the SDK game in order to register
      * OpMode classes or instances that will participate in an FTC game.
